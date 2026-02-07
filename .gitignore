@@ -1,0 +1,56 @@
+# OS/editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.venv*/
+.env
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# Large bioinformatics artefacts (never commit)
+*.fastq
+*.fastq.gz
+*.fq.gz
+*.bam
+*.bai
+*.cram
+*.crai
+*.vcf
+*.vcf.gz
+*.tbi
+*.g.vcf.gz
+*.bcf
+*.sam
+*.metrics
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.zip
+*.tar
+*.tar.gz
+
+# Data + results policy (keep templates only)
+data/raw/
+data/fastq/
+data/bam/
+data/cram/
+data/vcf/
+results/*
+
+# Allow placeholders to remain tracked
+!results/.gitkeep
+!data/.gitkeep
+config/config.local.yaml

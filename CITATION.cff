@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+title: "prnp-somatic"
+message: "If you use this software, please cite it."
+authors:
+  - family-names: "Carta"
+    given-names: "Manfredi"
+repository-code: "https://github.com/ManfrediC/prnp-somatic"
+license: "TODO"
+version: "0.0.0"
+date-released: "2026-02-07"

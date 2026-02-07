@@ -1,0 +1,17 @@
+# Copy to config/config.local.yaml and edit paths for your machine.
+project_root: "."
+data_dir: "data"
+results_dir: "results"
+
+reference_fasta: "/path/to/reference.fasta"
+targets_bed: "resources/targets.bed"
+prnp_coding_bed: "resources/prnp_coding.bed"
+
+tools:
+  bwa: "bwa"
+  samtools: "samtools"
+  gatk: "gatk"
+
+params:
+  min_mapq: 20
+  coverage_thresholds: [100, 500, 1250]
