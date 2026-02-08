@@ -8,4 +8,5 @@ doc/inventory.tsv -text
 
 # Keep Ubuntu-generated inventory byte-identical
 doc/inventory.tsv -text
+.gitattributes text eol=lf
 
