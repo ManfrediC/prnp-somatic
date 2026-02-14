@@ -67,7 +67,6 @@ resources/*.idx
 !resources/dataset.tsv
 !resources/.gitkeep
 
-
 # Data + results policy (keep templates only)
 data/raw/
 data/fastq/
@@ -79,4 +78,11 @@ results/*
 # Allow placeholders to remain tracked
 !results/.gitkeep
 !data/.gitkeep
+
+# Logs
+v*.log
+*.log.*
+nohup.out
+
+# Config
 config/config.local.yaml
