@@ -19,5 +19,8 @@ FASTQ -> BAM (GATK best practices) -> Mutect2 -> QC -> result tables/figures.
 - `doc/` notes and documentation
 - `tests/` smoke tests
 
+## Conda environment
+- Analyses were performed using the `Conda` environment defined in `env/environment.yml`.
+
 ## Data availability
 FASTQs are hosted on xxx.
