@@ -1,9 +1,10 @@
 # Toolchain (recommended baseline)
 
-This repository was developed and validated with the tool versions listed below.
-Where possible, use the same **major.minor** versions to minimise behavioural differences.
+This repository was developed and validated using the Conda environment defined in `env/environment.yml`.
+The exact resolved package set used for analyses is recorded in `env/environment.lock.yml`.
 
-To see the versions on your machine:
+To inspect versions on your machine (after activating Conda):
+- `conda activate prnp-somatic`
 - `make versions`
 
 To write a snapshot into the repository:
@@ -19,22 +20,22 @@ To write a snapshot into the repository:
 
 ## Alignment / HTS tools
 - bwa: 0.7.17-r1188
-- samtools: 1.13 (htslib 1.13+ds)
-- bcftools: 1.13 (htslib 1.13+ds)
-- bgzip/tabix: 1.19.1
-- bedtools: 2.30.0
+- samtools: 1.20 (htslib 1.20)
+- bcftools: 1.20 (htslib 1.20)
+- bgzip/tabix (htslib): 1.20
+- bedtools: 2.31.1
 
 ## Java / GATK
 - OpenJDK: 17.0.18
 - GATK: 4.5.0.0 (HTSJDK 4.1.0; Picard 3.1.1)
 
 ## Python
-- Python: 3.10.12
-- pip: 22.0.2
+- Python: 3.10.14
+- pip: 26.0.1
 
-## QC helpers (optional)
-- FastQC: 0.11.9
-- MultiQC: 1.27
+## QC helpers
+- FastQC: 0.12.1
+- MultiQC: 1.33
 
-## R (optional)
+## R
 - R: 4.4.1

@@ -3,6 +3,8 @@ SHELL := /bin/bash
 
 # Modular targets
 include mk/versions.mk
+include mk/toolchain.mk
+include mk/conda.mk
 
 .SHELLFLAGS := -eu -o pipefail -c
 
@@ -14,6 +16,8 @@ include mk/versions.mk
 LEGACY_AUTH_DIR ?= src/legacy/ubuntu/authoritative_files
 VALIDATE_SCRIPT := $(LEGACY_AUTH_DIR)/validate_manifest.sh
 METRICS_SCRIPT  := $(LEGACY_AUTH_DIR)/compute_sequencing_metrics.py
+MANIFEST_TSV    := $(LEGACY_AUTH_DIR)/manifest.tsv
+MANIFEST_QC_TSV := $(LEGACY_AUTH_DIR)/manifest_qc.tsv
 
 # -------------------------------------------------------------------
 # Outputs (choose a run label without editing the Makefile)
@@ -42,25 +46,23 @@ help:
 	@echo "  make versions"
 	@echo "  make qc_metrics QC_RUN=2026-02-14_test"
 
-qc_validate:
+qc_validate: check_conda
 	mkdir -p "$(QC_DIR)"
 	echo "== validate_manifest ==" | tee "$(QC_VALIDATE_LOG)"
-	bash -lc "cd '$(LEGACY_AUTH_DIR)' && bash './$$(basename "$(VALIDATE_SCRIPT)")'" \
-	  2>&1 | tee -a "$(QC_VALIDATE_LOG)"
+	bash "$(VALIDATE_SCRIPT)" "$(MANIFEST_TSV)" "$(MANIFEST_QC_TSV)" 2>&1 | tee -a "$(QC_VALIDATE_LOG)"
 	@echo "Log: $(QC_VALIDATE_LOG)"
 
 qc_metrics: qc_validate
 	mkdir -p "$(QC_DIR)"
-	echo "== compute_sequencing_metrics ==" 
+	echo "== compute_sequencing_metrics =="
 	echo "TSV: $(QC_METRICS_TSV)"
 	echo "STDERR: $(QC_METRICS_ERR)"
-	# stdout is the TSV; stderr is kept as a log (and also shown on screen)
-	bash -lc "cd '$(LEGACY_AUTH_DIR)' && python3 './$$(basename "$(METRICS_SCRIPT)")'" \
-	  > "$(QC_METRICS_TSV)" \
-	  2> >(tee "$(QC_METRICS_ERR)" >&2)
-	# sanity check: consistent column counts
+	cd "$(LEGACY_AUTH_DIR)"
+	python3 "$(notdir $(METRICS_SCRIPT))" \
+	  > "$(abspath $(QC_METRICS_TSV))" \
+	  2> >(tee "$(abspath $(QC_METRICS_ERR))" >&2)
 	awk -F'\t' 'NR==1{n=NF; next} NF!=n{print "Column mismatch at line " NR ": " NF " vs " n; exit 1}' "$(QC_METRICS_TSV)"
-	@echo "OK: wrote $$(($(wc -l < "$(QC_METRICS_TSV)") - 1)) rows (excluding header)"
+	@echo "OK: wrote $$(( $$(wc -l < "$(QC_METRICS_TSV)") - 1 )) rows (excluding header)"
 
 clean_qc:
 	rm -rf "$(QC_DIR)"

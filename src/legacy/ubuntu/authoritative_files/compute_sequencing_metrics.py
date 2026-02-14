@@ -9,13 +9,30 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-# ---- authoritative inputs ----
-MANIFEST = Path("/add/authoritative_files/manifest.tsv")
-SCHEMA_HEADER_FILE = Path("/add/authoritative_files/sequencing_metrics_per_sample.schema.tsv")
+# ---- inputs (repo-relative defaults; overridable via env vars) ----
+HERE = Path(__file__).resolve()
+def find_repo_root(start: Path) -> Path:
+    for p in [start] + list(start.parents):
+        if (p / "Makefile").exists() and (p / "README.md").exists():
+            return p
+    # fallback to script dir ancestry
+    return start.parents[4]
 
-TARGETS_BED = Path("/home/mcarta/databases/targets.bed")
-CODING_BED = Path("/home/mcarta/databases/prnp_coding.bed")  # hg38 chr20:4699221-4699982 (0-based BED)
-REFERENCE_FASTA = Path("/home/mcarta/databases/chr2_chr4_chr20.fasta")
+REPO_ROOT = find_repo_root(HERE.parent)
+
+def env_path(var: str, default: Path) -> Path:
+    v = os.environ.get(var)
+    return Path(v).expanduser().resolve() if v else default
+
+AUTH_DIR = REPO_ROOT / "authoritative_files"
+RES_DIR = REPO_ROOT / "resources"
+
+MANIFEST = env_path("PRNP_MANIFEST", AUTH_DIR / "manifest.tsv")
+SCHEMA_HEADER_FILE = env_path("PRNP_SCHEMA", AUTH_DIR / "sequencing_metrics_per_sample.schema.tsv")
+
+TARGETS_BED = env_path("PRNP_TARGETS_BED", RES_DIR / "targets.bed")
+CODING_BED = env_path("PRNP_CODING_BED", RES_DIR / "prnp_coding.bed")
+REFERENCE_FASTA = env_path("PRNP_REFERENCE_FASTA", RES_DIR / "chr2_chr4_chr20.fasta")
 
 # Thresholds (must match schema)
 COV_THR_X = (100, 500, 1250)
