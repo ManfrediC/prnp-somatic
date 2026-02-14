@@ -13,11 +13,11 @@ include mk/conda.mk
 # -------------------------------------------------------------------
 # Paths inside the repo (adjust only if you move directories)
 # -------------------------------------------------------------------
-LEGACY_AUTH_DIR ?= src/legacy/ubuntu/authoritative_files
-VALIDATE_SCRIPT := $(LEGACY_AUTH_DIR)/validate_manifest.sh
-METRICS_SCRIPT  := $(LEGACY_AUTH_DIR)/compute_sequencing_metrics.py
-MANIFEST_TSV    := $(LEGACY_AUTH_DIR)/manifest.tsv
-MANIFEST_QC_TSV := $(LEGACY_AUTH_DIR)/manifest_qc.tsv
+AUTH_DIR ?= authoritative_files
+VALIDATE_SCRIPT := $(AUTH_DIR)/validate_manifest.sh
+METRICS_SCRIPT  := $(AUTH_DIR)/compute_sequencing_metrics.py
+MANIFEST_TSV    := $(AUTH_DIR)/manifest.tsv
+MANIFEST_QC_TSV := $(AUTH_DIR)/manifest_qc.tsv
 
 # -------------------------------------------------------------------
 # Outputs (choose a run label without editing the Makefile)
@@ -58,7 +58,7 @@ qc_metrics: qc_validate
 	echo "TSV: $(QC_METRICS_TSV)"
 	echo "STDERR: $(QC_METRICS_ERR)"
 	cd "$(LEGACY_AUTH_DIR)"
-	python3 "$(notdir $(METRICS_SCRIPT))" \
+	python3 "$(METRICS_SCRIPT)" \
 	  > "$(abspath $(QC_METRICS_TSV))" \
 	  2> >(tee "$(abspath $(QC_METRICS_ERR))" >&2)
 	awk -F'\t' 'NR==1{n=NF; next} NF!=n{print "Column mismatch at line " NR ": " NF " vs " n; exit 1}' "$(QC_METRICS_TSV)"

@@ -1,0 +1,1 @@
+The scripts in ´/src/legacy´ are kept for archival purposes and are not intended for current runs.
