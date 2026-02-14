@@ -1,0 +1,4 @@
+@HD	VN:1.6
+@SQ	SN:chr2	LN:242193529	M5:4bb4f82880a14111eb7327169ffb729b	UR:file:/Users/giancarlorusso/work/projects/p3111_pipelineManfredi/fastqFiles/chr2_chr4_chr20.fasta
+@SQ	SN:chr20	LN:64444167	M5:b18e6c531b0bd70e949a7fc20859cb01	UR:file:/Users/giancarlorusso/work/projects/p3111_pipelineManfredi/fastqFiles/chr2_chr4_chr20.fasta
+@SQ	SN:chr4	LN:190214555	M5:3210fecf1eb92d5489da4346b3fddc6e	UR:file:/Users/giancarlorusso/work/projects/p3111_pipelineManfredi/fastqFiles/chr2_chr4_chr20.fasta

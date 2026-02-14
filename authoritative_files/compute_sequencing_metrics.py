@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
 import csv
 import datetime as dt
 import os
@@ -8,24 +9,6 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
-
-# ---- authoritative inputs ----
-MANIFEST = Path("/add/authoritative_files/manifest.tsv")
-SCHEMA_HEADER_FILE = Path("/add/authoritative_files/sequencing_metrics_per_sample.schema.tsv")
-
-TARGETS_BED = Path("/home/mcarta/databases/targets.bed")
-CODING_BED = Path("/home/mcarta/databases/prnp_coding.bed")  # hg38 chr20:4699221-4699982 (0-based BED)
-REFERENCE_FASTA = Path("/home/mcarta/databases/chr2_chr4_chr20.fasta")
-
-# Thresholds (must match schema)
-COV_THR_X = (100, 500, 1250)
-MIN_MAPQ = 20
-
-# Flag sets (hex strings are written to output as-is)
-# common: unmapped + secondary + QC-fail + supplementary
-EXCLUDE_FLAGS_COMMON_HEX = "0xB04"
-# unique: common + duplicates
-EXCLUDE_FLAGS_UNIQUE_HEX = "0xF04"
 
 
 def eprint(*args: object) -> None:
@@ -96,7 +79,8 @@ def load_output_columns(schema_path: Path) -> List[str]:
 
 def discover_bam(sample_id: str, input_dir: Path) -> Tuple[Path, str]:
     """
-    Tries short name first (<sample_id>.bam), then long GATK name (<sample_id>.bwa.picard.markedDup.recal.bam).
+    Tries short name first (<sample_id>.bam), then long GATK name
+    (<sample_id>.bwa.picard.markedDup.recal.bam).
     Returns (bam_path, bam_style).
     """
     short = input_dir / f"{sample_id}.bam"
@@ -115,7 +99,6 @@ def picard_metrics_path_for(sample_id: str, input_dir: Path, bam_style: str) -> 
         p = input_dir / f"{sample_id}.bwa.picard.markedDup.metrics"
         return p if p.exists() else None
 
-    # for short BAMs, only use a metrics file if it happens to exist
     candidates = [
         input_dir / f"{sample_id}.picard.markedDup.metrics",
         input_dir / f"{sample_id}.markedDup.metrics",
@@ -136,8 +119,6 @@ def parse_picard_markdup_metrics(metrics_path: Path) -> Tuple[Optional[float], O
 
     lines = metrics_path.read_text().splitlines()
 
-    # Find the table that includes PERCENT_DUPLICATION
-    # Typical Picard structure: header lines, then a row header line with fields.
     for i, ln in enumerate(lines):
         if ln.startswith("LIBRARY") and "PERCENT_DUPLICATION" in ln and "ESTIMATED_LIBRARY_SIZE" in ln:
             headers = ln.split("\t")
@@ -146,7 +127,8 @@ def parse_picard_markdup_metrics(metrics_path: Path) -> Tuple[Optional[float], O
                 if len(vals) >= len(headers):
                     d = dict(zip(headers, vals))
                     try:
-                        pct_dup = float(d.get("PERCENT_DUPLICATION")) if d.get("PERCENT_DUPLICATION") not in (None, "") else None
+                        raw = d.get("PERCENT_DUPLICATION")
+                        pct_dup = float(raw) if raw not in (None, "") else None
                     except ValueError:
                         pct_dup = None
                     try:
@@ -165,13 +147,18 @@ def samtools_view_count(bam: Path, extra_args: List[str]) -> int:
     return int(out)
 
 
-def depth_stats_from_bed(bam: Path, bed: Path, bases_total: int, min_mapq: int, exclude_flags_hex: str) -> Dict[str, object]:
+def depth_stats_from_bed(
+    bam: Path,
+    bed: Path,
+    bases_total: int,
+    min_mapq: int,
+    exclude_flags_hex: str,
+    cov_thr_x: Tuple[int, int, int],
+) -> Dict[str, object]:
     """
     Computes depth distribution across all bases in a BED.
     """
     excl_int = parse_hex_flag(exclude_flags_hex)
-
-    # NOTE: -Q = minimum mapping quality
 
     cmd = [
         "samtools", "depth",
@@ -190,7 +177,6 @@ def depth_stats_from_bed(bam: Path, bed: Path, bases_total: int, min_mapq: int, 
             continue
         depths.append(int(parts[2]))
 
-    # If samtools doesn't emit all positions for some reason, pad with zeros (defensive).
     if bases_total > len(depths):
         depths.extend([0] * (bases_total - len(depths)))
 
@@ -204,14 +190,12 @@ def depth_stats_from_bed(bam: Path, bed: Path, bases_total: int, min_mapq: int, 
     total_depth = sum(depths)
     mean = total_depth / bases_total
 
-    # median
     mid = bases_total // 2
     if bases_total % 2 == 1:
         median = float(depths[mid])
     else:
         median = (depths[mid - 1] + depths[mid]) / 2.0
 
-    # 20th percentile depth (i.e. depth at which 80% of bases are >= that depth)
     p20_index = int(0.20 * (bases_total - 1))
     p20 = float(depths[p20_index])
 
@@ -221,7 +205,7 @@ def depth_stats_from_bed(bam: Path, bed: Path, bases_total: int, min_mapq: int, 
 
     bases_ge = []
     pct_ge = []
-    for thr in COV_THR_X:
+    for thr in cov_thr_x:
         n = sum(1 for d in depths if d >= thr)
         bases_ge.append(n)
         pct_ge.append((n / bases_total) * 100.0)
@@ -248,23 +232,84 @@ def fmt_int(x: object) -> str:
     return str(int(x))
 
 
+def parse_cov_thr(s: str) -> Tuple[int, int, int]:
+    parts = [p.strip() for p in s.split(",") if p.strip()]
+    if len(parts) != 3:
+        raise argparse.ArgumentTypeError("cov-thr must be three comma-separated integers, e.g. 100,500,1250")
+    try:
+        a, b, c = (int(parts[0]), int(parts[1]), int(parts[2]))
+    except ValueError as e:
+        raise argparse.ArgumentTypeError("cov-thr values must be integers") from e
+    return (a, b, c)
+
+
+def build_argparser() -> argparse.ArgumentParser:
+    script_dir = Path(__file__).resolve().parent
+    p = argparse.ArgumentParser(
+        description="Compute per-sample sequencing QC metrics from BAMs listed in a manifest."
+    )
+
+    # Portable defaults: look next to the script
+    p.add_argument("--manifest", type=Path, default=script_dir / "manifest.tsv",
+                   help="Path to manifest.tsv (default: alongside script).")
+    p.add_argument("--schema", type=Path, default=script_dir / "sequencing_metrics_per_sample.schema.tsv",
+                   help="Schema/header file defining output columns (default: alongside script).")
+
+    # Keep your current absolute paths as defaults, but allow overrides
+    p.add_argument("--targets-bed", type=Path, default=Path("/home/mcarta/databases/targets.bed"),
+                   help="Targets BED file.")
+    p.add_argument("--coding-bed", type=Path, default=Path("/home/mcarta/databases/prnp_coding.bed"),
+                   help="PRNP coding BED file.")
+    p.add_argument("--reference-fasta", type=Path, default=Path("/home/mcarta/databases/chr2_chr4_chr20.fasta"),
+                   help="Reference FASTA (reported in output; not otherwise used).")
+
+    p.add_argument("--min-mapq", type=int, default=20, help="Minimum MAPQ for depth (-Q) and counts.")
+    p.add_argument("--cov-thr", type=parse_cov_thr, default=(100, 500, 1250),
+                   help="Coverage thresholds as three comma-separated integers (default: 100,500,1250).")
+
+    p.add_argument("--exclude-flags-common-hex", type=str, default="0xB04",
+                   help="Samtools flag mask for common exclusions, written to output as-is.")
+    p.add_argument("--exclude-flags-unique-hex", type=str, default="0xF04",
+                   help="Samtools flag mask for unique exclusions (typically includes duplicates).")
+
+    p.add_argument("--limit", type=int, default=0,
+                   help="Process only the first N manifest rows (0 = all). Useful for fast smoke tests.")
+
+    return p
+
+
 def main() -> None:
-    out_cols = load_output_columns(SCHEMA_HEADER_FILE)
+    args = build_argparser().parse_args()
 
-    target_bases_total = bed_total_bases(TARGETS_BED)
-    coding_bases_total = bed_total_bases(CODING_BED)
+    manifest: Path = args.manifest
+    schema: Path = args.schema
+    targets_bed: Path = args.targets_bed
+    coding_bed: Path = args.coding_bed
+    reference_fasta: Path = args.reference_fasta
 
-    # Emit header
+    cov_thr_x: Tuple[int, int, int] = args.cov_thr
+    min_mapq: int = args.min_mapq
+    excl_common_hex: str = args.exclude_flags_common_hex
+    excl_unique_hex: str = args.exclude_flags_unique_hex
+    limit: int = args.limit
+
+    out_cols = load_output_columns(schema)
+
+    target_bases_total = bed_total_bases(targets_bed)
+    coding_bases_total = bed_total_bases(coding_bed)
+
     sys.stdout.write("\t".join(out_cols) + "\n")
 
-    # Read manifest
-    with MANIFEST.open() as f:
+    with manifest.open() as f:
         reader = csv.DictReader(f, delimiter="\t")
         required = {"sample_id", "group", "batch", "input_dir"}
         if not required.issubset(reader.fieldnames or []):
             raise RuntimeError(f"Manifest missing required columns {sorted(required)}; found {reader.fieldnames}")
 
-        for row in reader:
+        for i, row in enumerate(reader, start=1):
+            if limit and i > limit:
+                break
+
             sample_id = row["sample_id"].strip()
             group = row["group"].strip()
             batch = row["batch"].strip()
@@ -272,17 +317,15 @@ def main() -> None:
 
             bam_path, bam_style = discover_bam(sample_id, input_dir)
 
-            # read counts (samtools view uses -q for MAPQ; depth uses -Q)
             reads_total = samtools_view_count(bam_path, [])
             reads_mapped = samtools_view_count(bam_path, ["-F", "0x4"])
-            reads_primary_mapped = samtools_view_count(bam_path, ["-F", EXCLUDE_FLAGS_COMMON_HEX])
+            reads_primary_mapped = samtools_view_count(bam_path, ["-F", excl_common_hex])
             reads_qc_fail = samtools_view_count(bam_path, ["-f", "0x200"])
-            reads_duplicate = samtools_view_count(bam_path, ["-f", "0x400", "-F", EXCLUDE_FLAGS_COMMON_HEX])
+            reads_duplicate = samtools_view_count(bam_path, ["-f", "0x400", "-F", excl_common_hex])
 
-            # On-target reads (primary mapped; no duplicate removal here)
             on_target_reads = samtools_view_count(
                 bam_path,
-                ["-F", EXCLUDE_FLAGS_COMMON_HEX, "-L", str(TARGETS_BED)]
+                ["-F", excl_common_hex, "-L", str(targets_bed)]
             )
 
             on_target_fraction = "NA"
@@ -291,17 +334,15 @@ def main() -> None:
                 on_target_fraction = on_target_reads / reads_primary_mapped
                 on_target_percent = on_target_fraction * 100.0
 
-            # Depth stats (exclude duplicates via EXCLUDE_FLAGS_UNIQUE_HEX)
             targ = depth_stats_from_bed(
-                bam=bam_path, bed=TARGETS_BED, bases_total=target_bases_total,
-                min_mapq=MIN_MAPQ, exclude_flags_hex=EXCLUDE_FLAGS_UNIQUE_HEX
+                bam=bam_path, bed=targets_bed, bases_total=target_bases_total,
+                min_mapq=min_mapq, exclude_flags_hex=excl_unique_hex, cov_thr_x=cov_thr_x
             )
             cod = depth_stats_from_bed(
-                bam=bam_path, bed=CODING_BED, bases_total=coding_bases_total,
-                min_mapq=MIN_MAPQ, exclude_flags_hex=EXCLUDE_FLAGS_UNIQUE_HEX
+                bam=bam_path, bed=coding_bed, bases_total=coding_bases_total,
+                min_mapq=min_mapq, exclude_flags_hex=excl_unique_hex, cov_thr_x=cov_thr_x
             )
 
-            # Picard metrics (if present)
             pic_path = picard_metrics_path_for(sample_id, input_dir, bam_style)
             pct_dup, est_lib = (None, None)
             if pic_path is not None:
@@ -310,7 +351,6 @@ def main() -> None:
             st = bam_path.stat()
             bam_mtime_iso = dt.datetime.fromtimestamp(st.st_mtime).isoformat(timespec="seconds")
 
-            # Build output row dict (strings only)
             out: Dict[str, str] = {
                 "sample_id": sample_id,
                 "group": group,
@@ -318,17 +358,17 @@ def main() -> None:
                 "input_dir": str(input_dir),
                 "bam_path": str(bam_path),
                 "bam_style": bam_style,
-                "targets_bed": str(TARGETS_BED),
-                "coding_bed": str(CODING_BED),
-                "reference_fasta": str(REFERENCE_FASTA),
+                "targets_bed": str(targets_bed),
+                "coding_bed": str(coding_bed),
+                "reference_fasta": str(reference_fasta),
                 "target_bases_total": str(target_bases_total),
                 "coding_bases_total": str(coding_bases_total),
-                "cov_thr_x1": str(COV_THR_X[0]),
-                "cov_thr_x2": str(COV_THR_X[1]),
-                "cov_thr_x3": str(COV_THR_X[2]),
-                "min_mapq": str(MIN_MAPQ),
-                "exclude_flags_common_hex": EXCLUDE_FLAGS_COMMON_HEX,
-                "exclude_flags_unique_hex": EXCLUDE_FLAGS_UNIQUE_HEX,
+                "cov_thr_x1": str(cov_thr_x[0]),
+                "cov_thr_x2": str(cov_thr_x[1]),
+                "cov_thr_x3": str(cov_thr_x[2]),
+                "min_mapq": str(min_mapq),
+                "exclude_flags_common_hex": excl_common_hex,
+                "exclude_flags_unique_hex": excl_unique_hex,
                 "reads_total": str(reads_total),
                 "reads_mapped": str(reads_mapped),
                 "reads_primary_mapped": str(reads_primary_mapped),
@@ -365,7 +405,6 @@ def main() -> None:
                 "pipeline_run_id": os.environ.get("PIPELINE_RUN_ID", "NA"),
             }
 
-            # Emit row in locked column order
             sys.stdout.write("\t".join(out.get(c, "NA") for c in out_cols) + "\n")
 
 
