@@ -1,0 +1,24 @@
+name: prnp-somatic
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  # Python (pin major.minor; let conda choose compatible patch/build)
+  - python=3.10
+  - pip
+
+  # Core bioinformatics tools (pin major.minor; allow compatible builds)
+  - bwa=0.7.17
+  - samtools>=1.17,<1.21
+  - bcftools>=1.17,<1.21
+  - htslib>=1.17,<1.21
+  - bedtools>=2.30,<2.32
+
+  # QC helpers (optional)
+  - fastqc
+  - multiqc
+
+  # Java + GATK
+  - openjdk=17
+  - gatk4=4.5.0.0
