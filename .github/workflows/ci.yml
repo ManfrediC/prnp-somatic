@@ -1,0 +1,24 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  qc-sanity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Basic repo sanity (paths)
+        run: make print_qc_paths
+
+      - name: Verify resources hashes
+        run: make verify_resources
+
+      - name: Validate manifest
+        run: make qc_validate QC_RUN=ci
+
+      - name: Python syntax check
+        run: python -m py_compile authoritative_files/compute_sequencing_metrics.py
