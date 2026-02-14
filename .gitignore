@@ -42,6 +42,32 @@ __pycache__/
 *.tar
 *.tar.gz
 
+# Large reference resources (do not commit)
+resources/*.fa
+resources/*.fa.gz
+resources/*.fasta
+resources/*.fasta.*
+resources/*.vcf
+resources/*.vcf.gz
+resources/*.vcf.gz.tbi
+resources/*.vcf.idx
+resources/*.gtf.gz
+
+# If you keep indexes with big VCFs, ignore those too
+resources/*.tbi
+resources/*.idx
+
+# Keep small, hand-authored resource descriptors
+!resources/README.md
+!resources/RESOURCES.md
+!resources/*.bed
+!resources/*.interval_list
+!resources/*.dict
+!resources/*.fai
+!resources/dataset.tsv
+!resources/.gitkeep
+
+
 # Data + results policy (keep templates only)
 data/raw/
 data/fastq/
