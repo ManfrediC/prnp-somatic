@@ -8,7 +8,7 @@ include mk/conda.mk
 
 .SHELLFLAGS := -eu -o pipefail -c
 
-.PHONY: help versions qc_validate qc_metrics clean_qc
+.PHONY: help versions qc_validate qc_metrics clean_qc print_qc_paths verify_resources
 
 # -------------------------------------------------------------------
 # Paths inside the repo (adjust only if you move directories)
@@ -57,13 +57,23 @@ qc_metrics: qc_validate
 	echo "== compute_sequencing_metrics =="
 	echo "TSV: $(QC_METRICS_TSV)"
 	echo "STDERR: $(QC_METRICS_ERR)"
-	cd "$(LEGACY_AUTH_DIR)"
-	python3 "$(METRICS_SCRIPT)" \
-	  > "$(abspath $(QC_METRICS_TSV))" \
-	  2> >(tee "$(abspath $(QC_METRICS_ERR))" >&2)
+	python "$(METRICS_SCRIPT)" \
+	  > "$(QC_METRICS_TSV)" \
+	  2> >(tee "$(QC_METRICS_ERR)" >&2)
+	test -s "$(QC_METRICS_TSV)"
 	awk -F'\t' 'NR==1{n=NF; next} NF!=n{print "Column mismatch at line " NR ": " NF " vs " n; exit 1}' "$(QC_METRICS_TSV)"
 	@echo "OK: wrote $$(( $$(wc -l < "$(QC_METRICS_TSV)") - 1 )) rows (excluding header)"
 
 clean_qc:
 	rm -rf "$(QC_DIR)"
 	@echo "Removed: $(QC_DIR)"
+
+print_qc_paths:
+	@echo "AUTH_DIR=$(AUTH_DIR)"
+	@echo "VALIDATE_SCRIPT=$(VALIDATE_SCRIPT)"
+	@echo "METRICS_SCRIPT=$(METRICS_SCRIPT)"
+	@echo "MANIFEST_TSV=$(MANIFEST_TSV)"
+	@echo "MANIFEST_QC_TSV=$(MANIFEST_QC_TSV)"
+ 
+verify_resources:
+	cd resources && sha256sum -c SHA256SUMS.txt
