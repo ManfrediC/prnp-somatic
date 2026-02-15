@@ -86,3 +86,6 @@ nohup.out
 
 # Config
 config/config.local.yaml
+
+# Raw FASTQ data (large; keep out of git)
+/fastq/
