@@ -89,3 +89,6 @@ config/config.local.yaml
 
 # Raw FASTQ data (large; keep out of git)
 /fastq/
+
+# Pipeline run outputs (large; keep out of git)
+/runs/
