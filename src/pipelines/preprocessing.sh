@@ -5,10 +5,10 @@ set -euo pipefail
 # Batch selection (toggle by commenting/uncommenting)
 # -----------------------
 BATCHES=(
-  # CJD_16_samples
-  # CJD_8_samples
-   first_CJD_seq
-  # sequencing_of_dilutions
+  CJD_16_samples
+  CJD_8_samples
+  # first_CJD_seq
+  sequencing_of_dilutions
 )
 
 # -----------------------
