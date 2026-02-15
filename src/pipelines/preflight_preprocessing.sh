@@ -122,8 +122,8 @@ check_tools() {
   require_tool bwa
   require_tool samtools
   require_tool gatk
-  # If you call trimmomatic explicitly, uncomment:
-  # require_tool trimmomatic
+  require_tool trimmomatic
+  require_tool picard
 }
 
 # Checks whether resources are present

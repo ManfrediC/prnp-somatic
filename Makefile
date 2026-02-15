@@ -8,7 +8,7 @@ include mk/conda.mk
 
 .SHELLFLAGS := -eu -o pipefail -c
 
-.PHONY: help versions qc_validate qc_metrics clean_qc print_qc_paths verify_resources
+.PHONY: help versions qc_validate qc_metrics clean_qc print_qc_paths verify_resources preprocessing_preflight preprocessing_dry preprocessing_run
 
 # -------------------------------------------------------------------
 # Paths inside the repo (adjust only if you move directories)
@@ -77,3 +77,12 @@ print_qc_paths:
  
 verify_resources:
 	cd resources && sha256sum -c SHA256SUMS.txt
+
+preprocessing_preflight: check_conda
+	@src/pipelines/preflight_preprocessing.sh
+
+preprocessing_dry: check_conda
+	@DRY_RUN=1 src/pipelines/preprocessing.sh
+
+preprocessing_run: check_conda
+	@DRY_RUN=0 src/pipelines/preprocessing.sh
