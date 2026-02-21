@@ -7,7 +7,7 @@ set -euo pipefail
 BATCHES=(
   CJD_16_samples
   CJD_8_samples
-  # first_CJD_seq
+  first_CJD_seq
   sequencing_of_dilutions
 )
 
