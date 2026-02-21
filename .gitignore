@@ -92,4 +92,5 @@ config/config.local.yaml
 
 # Pipeline run outputs (large; keep out of git)
 /runs/
+/run/
 config/preprocessing.env

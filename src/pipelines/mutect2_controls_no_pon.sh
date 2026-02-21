@@ -5,7 +5,7 @@ shopt -s nullglob
 # ------------------------------------------------------------
 # Mutect2 tumour-only (no PoN), CONTROLS ONLY.
 # Inputs: results/final_bam/Ctrl*.bam (+ .bai)
-# Outputs: runs/mutect2_controls_no_pon/{vcf,f1r2}/
+# Outputs: run/mutect2_controls_no_pon/{vcf,f1r2}/
 # ------------------------------------------------------------
 
 # -----------------------
@@ -30,7 +30,10 @@ JAVA_MEM_GB="${JAVA_MEM_GB:-8}"
 # Repo root discovery (works from anywhere)
 # -----------------------
 find_repo_root() {
-  local start="$1" d="$start"
+  local start d
+  start="${1:-}"
+  [[ -n "$start" ]] || { echo "ERROR: find_repo_root requires a start directory" >&2; return 2; }
+  d="$start"
   while [[ "$d" != "/" ]]; do
     [[ -f "$d/Makefile" ]] && { echo "$d"; return 0; }
     d="$(dirname "$d")"
@@ -56,8 +59,8 @@ fi
 # Inputs/outputs (repo-relative defaults)
 # -----------------------
 FINAL_BAM_DIR="${FINAL_BAM_DIR:-results/final_bam}"
-RUNS_DIR="${RUNS_DIR:-runs}"
-OUT_ROOT="${OUT_ROOT:-$RUNS_DIR/mutect2_controls_no_pon}"
+MUTECT2_CONTROLS_OUT_ROOT="${MUTECT2_CONTROLS_OUT_ROOT:-run/mutect2_controls_no_pon}"
+OUT_ROOT="${OUT_ROOT:-$MUTECT2_CONTROLS_OUT_ROOT}"
 
 REF_FASTA="${REF_FASTA:-resources/chr2_chr4_chr20.fasta}"
 INTERVALS="${INTERVALS:-resources/capture_targets.interval_list}"
