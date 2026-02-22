@@ -57,10 +57,12 @@ resources/*.gtf.gz
 resources/*.tbi
 resources/*.idx
 resources/funcotator_data_somatic/
+resources/backup/funcotator_excluded_datasources/
 
 # Keep small, hand-authored resource descriptors
 !resources/README.md
 !resources/RESOURCES.md
+!resources/backup/README.md
 !resources/*.bed
 !resources/*.interval_list
 !resources/*.dict
