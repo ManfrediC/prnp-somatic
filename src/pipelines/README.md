@@ -132,6 +132,7 @@ Writes (within each group: `cjd`, `dilutions`):
 - `runs/mutect2_cjd_dilutions_with_pon/<group>/norm/`
 - `runs/mutect2_cjd_dilutions_with_pon/<group>/annot/`
 - `runs/mutect2_cjd_dilutions_with_pon/<group>/annot_with_gnomad/`
+- `runs/mutect2_cjd_dilutions_with_pon/logs/stage9_postprocess_with_pon.log`
 
 ### Config keys used
 
