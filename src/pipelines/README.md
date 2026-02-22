@@ -28,6 +28,9 @@ This folder contains executable pipeline entry points.
 - `fastq/<batch_id>/...` (not committed)
 - `resources/` references (committed)
 
+The `first_CJD_seq` block in `config/preprocessing_samples.tsv` should include:
+`CJD1`, `CJD2`, `CJD6`, `CJD13`, `CJD22`, `CJD23`, `CJD25`, `CJD27`.
+
 ### Outputs
 
 - `runs/preprocessing/<batch_id>/<sample_id>/` (intermediates/logs)

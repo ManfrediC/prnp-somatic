@@ -1938,14 +1938,44 @@ The goal is to verify that the controls don't contain somatic PRNP mutations and
 
 ## 22.02.2026
 
-Next step for reproducible control-only evaluation (somatic PRNP check) is to port and standardise the legacy normalisation/annotation workflow into the repository structure with relative paths.
+Major pipeline restructuring was completed today, with the repository moved to a staged, reproducible workflow for both no-PoN controls and PoN-based CJD+dilution analyses.
 
-### TODO
+Summary of completed work (Git history + today’s execution):
 
-- [ ] Use `src/legacy/ubuntu/code/mutect_without_pon/run_no_pon_pipeline.sh` as the primary template for the processing chain after Mutect2 outputs: LearnReadOrientationModel -> FilterMutectCalls -> PASS filtering -> bcftools normalise -> Funcotator.
-- [ ] Adapt that logic for the current controls run at `runs/mutect2_controls_no_pon/` (input raw VCFs and F1R2 tarballs), without CJD/dilution loops.
-- [ ] Remove hard-coded absolute paths (`/add/...`, `/home/...`) and replace with repo-relative configuration-driven paths.
-- [ ] Add a dedicated post-Funcotator gnomAD annotation step, based on `src/legacy/ubuntu/code/mutect_without_pon/bcftools_gnomAD.sh`, with reproducible input/output locations.
-- [ ] Keep `src/legacy/ubuntu/code/annotation_pipeline/1_annotation_preprocessing.sh` and `src/legacy/ubuntu/code/annotation_pipeline/2_funcotator_samples.sh` only as references for implementation details, not as the primary script base.
-- [ ] Add a verification/export step for review (likely from `src/legacy/ubuntu/code/mutect_without_pon/VariantsToTable_noPoN.sh`) so PRNP calls in controls can be inspected in a table.
-- [ ] Document the final controls-only flow in repo docs (inputs, stages, outputs, and expected file naming), then run and verify the outputs in `runs/` and `results/`.
+- Standardised legacy path usage from `run/` to `runs/` and aligned defaults/config entries.
+- Added `doc/sequencing_methods.md` with formatted methods text.
+- Added controls no-PoN staged scripts and docs:
+- `src/pipelines/1_controls_mutect2_no_pon.sh`
+- `src/pipelines/2_controls_postprocess_no_pon.sh`
+- `src/pipelines/3_controls_readcount_qc_no_pon.sh`
+- `src/pipelines/4_readcount_to_tsv.py`
+- `src/pipelines/5_controls_variant_qc_no_pon.sh`
+- `src/pipelines/6_controls_variant_table_qc_no_pon.R`
+- Added PoN creation and PoN run stages:
+- `src/pipelines/7_controls_create_pon.sh`
+- `src/pipelines/8_cjd_dilutions_mutect2_with_pon.sh`
+- `src/pipelines/9_cjd_dilutions_postprocess_with_pon.sh`
+- `src/pipelines/10_cjd_dilutions_readcount_qc_with_pon.sh`
+- `src/pipelines/11_cjd_dilutions_readcount_to_tsv_with_pon.sh`
+- `src/pipelines/12_cjd_dilutions_variant_qc_with_pon.sh`
+- `src/pipelines/12_cjd_dilutions_variant_table_qc_with_pon.R`
+- Updated repo and pipeline documentation (`README.md`, `src/pipelines/README.md`, `config/README.md`) to reflect staged execution and output layout.
+- Added/updated config templates for new stage variables (`config/preprocessing.env.example`).
+- Added Windows legacy scripts under `src/legacy/windows/` and a dedicated README.
+- Added Funcotator resources under `resources/funcotator_data_somatic/` and updated ignore policy so large datasource artefacts remain out of Git.
+- Verified that the repo-local Funcotator datasource path is structurally valid:
+- `resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
+- Ran preflight checks for controls post-processing prerequisites:
+- tools (`gatk`, `bcftools`, `tabix`)
+- reference FASTA + index
+- stage-1 outputs (`.raw.vcf.gz`, `.stats`, `.f1r2.tar.gz`) for all controls
+- Synced FASTQ storage between `/add/seq_data` and `/add/prnp-somatic/fastq`:
+- identified and copied 6 missing files into `fastq/first_CJD_seq`
+- verified all 78 mapped `.fastq.gz` files by binary equality (`cmp`)
+- removed 78 redundant `.fastq.gz` files from `/add/seq_data` only after exact match confirmation
+
+Outcome:
+
+- Controls and PoN workflows are now represented as explicit reproducible stages in `src/pipelines`.
+- Configuration and documentation are aligned with current staged execution.
+- FASTQ storage is consolidated under `/add/prnp-somatic/fastq` with verified integrity.

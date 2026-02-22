@@ -4,6 +4,9 @@ Committed:
 - `preprocessing_samples.tsv` - sample manifest for preprocessing (`batch_id`, `sample_id`, `R1`, `R2`)
 - `preprocessing.env.example` - template for local configuration
 
+Current note:
+- `preprocessing_samples.tsv` includes all `first_CJD_seq` CJD samples used in the authoritative manifest (`CJD1`, `CJD2`, `CJD6`, `CJD13`, `CJD22`, `CJD23`, `CJD25`, `CJD27`).
+
 Not committed (local machine only):
 - `preprocessing.env` - local paths and settings (ignored by `.gitignore`)
 
