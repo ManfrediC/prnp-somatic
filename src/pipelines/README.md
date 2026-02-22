@@ -6,8 +6,9 @@ This folder contains executable pipeline entry points.
 
 - `preflight_preprocessing.sh`: checks inputs/tools for preprocessing
 - `preprocessing.sh`: FASTQ to final BAM preprocessing
-- `mutect2_controls_no_pon.sh`: controls-only Mutect2 tumour-only calling (Stage 1)
-- `mutect2_controls_postprocess_no_pon.sh`: controls-only post-processing (Stages 2-7)
+- `1_controls_mutect2_no_pon.sh`: controls-only Mutect2 tumour-only calling (Stage 1)
+- `2_controls_postprocess_no_pon.sh`: controls-only post-processing (Stages 2-7)
+- `3_controls_readcount_qc_no_pon.sh`: controls-only read/base quality metrics from annotated variants
 
 ## Preprocessing
 
@@ -47,7 +48,7 @@ The script fails fast if required per-sample inputs are missing at any stage.
 
 ### Stage 1
 
-- `src/pipelines/mutect2_controls_no_pon.sh`
+- `src/pipelines/1_controls_mutect2_no_pon.sh`
 
 Writes:
 
@@ -56,7 +57,7 @@ Writes:
 
 ### Stages 2-7
 
-- `src/pipelines/mutect2_controls_postprocess_no_pon.sh`
+- `src/pipelines/2_controls_postprocess_no_pon.sh`
 
 Writes:
 
@@ -66,6 +67,18 @@ Writes:
 - `runs/mutect2_controls_no_pon/norm/`
 - `runs/mutect2_controls_no_pon/annot/`
 - `runs/mutect2_controls_no_pon/annot_with_gnomad/`
+
+### Readcount QC
+
+- `src/pipelines/3_controls_readcount_qc_no_pon.sh`
+
+Writes:
+
+- `runs/mutect2_controls_no_pon/readcount_qc/beds/`
+- `runs/mutect2_controls_no_pon/readcount_qc/bam_work/`
+- `runs/mutect2_controls_no_pon/readcount_qc/bam_nodup/`
+- `runs/mutect2_controls_no_pon/readcount_qc/readcounts/`
+- `runs/mutect2_controls_no_pon/readcount_qc/metrics/`
 
 ### Config keys used
 

@@ -4,7 +4,7 @@ This directory stores large resource folders that are intentionally excluded fro
 
 ## Funcotator excluded datasources
 
-The controls post-processing pipeline (`src/pipelines/mutect2_controls_postprocess_no_pon.sh`) uses:
+The controls post-processing pipeline (`src/pipelines/2_controls_postprocess_no_pon.sh`) uses:
 
 - `resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
 

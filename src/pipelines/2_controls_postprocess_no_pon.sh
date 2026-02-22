@@ -76,6 +76,7 @@ GNOMAD_AF_VCF="${GNOMAD_AF_VCF:-resources/somatic-hg38_af-only-gnomad.hg38.vcf.g
 
 to_abs() {
   local p="$1"
+  # Allow both repo-relative and absolute paths in ENV overrides.
   if [[ "$p" = /* ]]; then
     echo "$p"
   else
@@ -130,6 +131,7 @@ raw_vcfs=( "$RAW_DIR"/*.raw.vcf.gz )
 [[ "${#raw_vcfs[@]}" -gt 0 ]] || die "No raw VCFs found in: $RAW_DIR"
 raw_samples=()
 for vcf in "${raw_vcfs[@]}"; do
+  # Final completeness check is anchored to raw sample IDs.
   raw_samples+=( "$(basename "$vcf" .raw.vcf.gz)" )
 done
 
@@ -187,6 +189,7 @@ for vcf in "${raw_vcfs[@]}"; do
   run bcftools view -f PASS "$tmp" -Oz -o "$out"
   run tabix -f -p vcf "$out"
   if [[ "$DRY_RUN" == "0" ]]; then
+    # Keep only final PASS-filtered file to avoid stale intermediates.
     rm -f "$tmp"
   fi
 done
@@ -258,6 +261,7 @@ for vcf in "${annot_vcfs[@]}"; do
   [[ -s "$out" ]] && { echo "[Stage7] SKIP $sample"; continue; }
   run bcftools annotate \
     -a "$GNOMAD_AF_VCF" \
+    # Copy AF from the gnomAD VCF into a separate INFO tag.
     -c CHROM,POS,REF,ALT,INFO/GNOMAD_AF:=INFO/AF \
     -h <(echo '##INFO=<ID=GNOMAD_AF,Number=A,Type=Float,Description="gnomAD AF from somatic-hg38_af-only-gnomad.hg38.vcf.gz">') \
     -Oz -o "$out" \

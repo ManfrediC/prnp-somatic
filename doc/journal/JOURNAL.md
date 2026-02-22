@@ -1931,7 +1931,7 @@ The pre-processing step seems to have been incomplete. I am re-running it. It is
 Afterwards, I’ll run mutect2 on the controls only:
 
 ```
-/add/prnp-somatic/src/pipelines/mutect2_controls_no_pon.sh
+/add/prnp-somatic/src/pipelines/1_controls_mutect2_no_pon.sh
 ```
 
 The goal is to verify that the controls don't contain somatic PRNP mutations and make the PoN next.
