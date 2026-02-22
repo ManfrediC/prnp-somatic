@@ -20,6 +20,7 @@ For controls-only somatic variant calling without a panel of normals:
 6. Create controls PoN: `src/pipelines/7_controls_create_pon.sh` (writes to `results/mutect2_controls_pon/panel_of_normals/`)
 7. Run CJD + dilution Mutect2 with PoN: `src/pipelines/8_cjd_dilutions_mutect2_with_pon.sh`
 8. Run CJD + dilution post-processing with PoN: `src/pipelines/9_cjd_dilutions_postprocess_with_pon.sh`
+9. Run CJD + dilution readcount collection: `src/pipelines/10_cjd_dilutions_readcount_qc_with_pon.sh`
 
 Pipeline details and outputs are documented in `src/pipelines/README.md`.
 

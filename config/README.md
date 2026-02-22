@@ -112,3 +112,19 @@ Recommended values:
 - `REF_FASTA="resources/chr2_chr4_chr20.fasta"`
 - `INTERVALS="resources/capture_targets.interval_list"`
 - `GNOMAD_AF_VCF="resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz"`
+
+## CJD + dilution readcount collection settings
+
+For `src/pipelines/10_cjd_dilutions_readcount_qc_with_pon.sh`, set:
+
+- `MUTECT2_WITH_PON_READCOUNT_ROOT`
+- `WITH_PON_READCOUNT_GROUPS`
+- `WITH_PON_READCOUNT_BAM_DIR`
+- `WITH_PON_READCOUNT_REF_FASTA`
+
+Recommended values:
+
+- `MUTECT2_WITH_PON_READCOUNT_ROOT="runs/mutect2_cjd_dilutions_with_pon"`
+- `WITH_PON_READCOUNT_GROUPS="cjd dilutions"`
+- `WITH_PON_READCOUNT_BAM_DIR="results/final_bam"`
+- `WITH_PON_READCOUNT_REF_FASTA="resources/chr2_chr4_chr20.fasta"`
