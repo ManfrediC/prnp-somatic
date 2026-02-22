@@ -12,6 +12,7 @@ This folder contains executable pipeline entry points.
 - `5_controls_variant_qc_no_pon.sh`: controls-only variant table extraction and QC filtering (shell entry point)
 - `6_controls_variant_table_qc_no_pon.R`: R implementation of table integration and QC filters
 - `7_controls_create_pon.sh`: controls-only Panel of Normals (PoN) creation from filtered control VCFs
+- `8_cjd_dilutions_mutect2_with_pon.sh`: Mutect2 tumour-only with PoN for CJD and dilution BAMs
 
 ## Preprocessing
 
@@ -106,6 +107,17 @@ Writes:
 - `results/mutect2_controls_pon/panel_of_normals/controls_multisample.filtered.vcf.gz`
 - `results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz`
 
+### CJD + Dilution Mutect2 With PoN
+
+- `src/pipelines/8_cjd_dilutions_mutect2_with_pon.sh`
+
+Writes:
+
+- `runs/mutect2_cjd_dilutions_with_pon/cjd/vcf/`
+- `runs/mutect2_cjd_dilutions_with_pon/cjd/f1r2/`
+- `runs/mutect2_cjd_dilutions_with_pon/dilutions/vcf/`
+- `runs/mutect2_cjd_dilutions_with_pon/dilutions/f1r2/`
+
 ### Config keys used
 
 Set in `config/preprocessing.env` (or via environment variables):
@@ -138,6 +150,8 @@ Additional keys used by PoN creation:
 - `PON_MERGED_VCF`
 - `PON_VCF`
 - `PON_CONTROLS`
+- `MUTECT2_WITH_PON_OUT_ROOT`
+- `DILUTION_SAMPLES`
 
 ### Funcotator files required
 

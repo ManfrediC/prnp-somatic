@@ -18,6 +18,7 @@ For controls-only somatic variant calling without a panel of normals:
 4. Run variant extraction + QC: `src/pipelines/5_controls_variant_qc_no_pon.sh` (calls `src/pipelines/6_controls_variant_table_qc_no_pon.R`)
 5. Final controls QC tables are written to: `results/mutect2_controls_no_pon/variant_qc/`
 6. Create controls PoN: `src/pipelines/7_controls_create_pon.sh` (writes to `results/mutect2_controls_pon/panel_of_normals/`)
+7. Run CJD + dilution Mutect2 with PoN: `src/pipelines/8_cjd_dilutions_mutect2_with_pon.sh`
 
 Pipeline details and outputs are documented in `src/pipelines/README.md`.
 

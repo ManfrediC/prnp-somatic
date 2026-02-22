@@ -78,3 +78,17 @@ Recommended values:
 - `PON_MERGED_VCF="results/mutect2_controls_pon/panel_of_normals/controls_multisample.filtered.vcf.gz"`
 - `PON_VCF="results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz"`
 - `PON_CONTROLS="Ctrl1 Ctrl2 Ctrl3 Ctrl4 Ctrl5 Ctrl7"`
+
+## CJD + dilution Mutect2 with PoN settings
+
+For `src/pipelines/8_cjd_dilutions_mutect2_with_pon.sh`, set:
+
+- `MUTECT2_WITH_PON_OUT_ROOT`
+- `PON_VCF`
+- `DILUTION_SAMPLES`
+
+Recommended values:
+
+- `MUTECT2_WITH_PON_OUT_ROOT="runs/mutect2_cjd_dilutions_with_pon"`
+- `PON_VCF="results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz"`
+- `DILUTION_SAMPLES="NA100_undil NA100_1to10 NA99A1_undil A100_1to2 NA99A1_1to5 NA995A05_undil NA100_1to2"`
