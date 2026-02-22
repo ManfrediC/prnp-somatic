@@ -19,3 +19,9 @@ For controls post-processing and annotation, set these in `preprocessing.env`:
 Recommended `FUNCOTATOR_DS` value:
 
 - `resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
+
+For controls post-processing, `gnomAD_exome` and `gnomAD_genome` should remain excluded from
+the active datasource tree to avoid requester-pays access requirements.
+Archived copies are kept under:
+
+- `resources/backup/funcotator_excluded_datasources/`

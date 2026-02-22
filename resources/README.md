@@ -64,9 +64,16 @@ Typical datasource subfolders include:
 - `clinvar/`
 - `dbsnp/`
 - `gencode/`
-- `gnomAD_exome/`
-- `gnomAD_genome/`
 - `hgnc/`
+
+For `src/pipelines/mutect2_controls_postprocess_no_pon.sh`, `gnomAD_exome/` and
+`gnomAD_genome/` are intentionally excluded from the active datasource tree to avoid
+requester-pays access errors.
+
+Archived copies are stored in:
+
+- `resources/backup/funcotator_excluded_datasources/gnomAD_exome/`
+- `resources/backup/funcotator_excluded_datasources/gnomAD_genome/`
 
 ---
 

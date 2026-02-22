@@ -88,8 +88,10 @@ Expected contents under that directory include source folders such as:
 - `clinvar/`
 - `dbsnp/`
 - `gencode/`
-- `gnomAD_exome/`
-- `gnomAD_genome/`
 - `hgnc/`
 
 These are separate from the reference FASTA (`REF_FASTA`).
+
+Note: `gnomAD_exome` and `gnomAD_genome` are intentionally excluded from the active
+datasource tree to avoid requester-pays bucket access during Funcotator. Archived copies are in
+`resources/backup/funcotator_excluded_datasources/`.

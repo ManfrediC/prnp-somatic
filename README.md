@@ -26,6 +26,7 @@ The controls post-processing pipeline requires a local Funcotator datasource tre
 - `resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
 
 Reference FASTA (`REF_FASTA`) and Funcotator datasources (`FUNCOTATOR_DS`) are separate requirements.
+`gnomAD_exome` and `gnomAD_genome` are intentionally excluded from the active Funcotator datasource tree to avoid requester-pays access. They are archived under `resources/backup/funcotator_excluded_datasources/`.
 
 ## Repository structure
 - `bin/` command-line entrypoints / wrappers
