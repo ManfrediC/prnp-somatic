@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+"""Flatten bam-readcount text output into per-allele TSV rows.
+
+Input rows contain one site followed by multiple allele blocks (A/C/G/T/indels).
+This parser emits one output row per allele block so downstream joins are simple.
+"""
+
 import argparse
 import csv
 import glob
@@ -42,6 +48,8 @@ def parse_bam_readcount(input_file: str, output_file: str) -> None:
             pos = row[1]
             ref = row[2]
 
+            # row[4:] holds allele-specific payloads such as:
+            # A:count:meanBQ:meanMQ:...  C:count:meanBQ:meanMQ:...
             for allele_field in row[4:]:
                 if not allele_field:
                     continue
@@ -49,6 +57,7 @@ def parse_bam_readcount(input_file: str, output_file: str) -> None:
                 base = parts[0]
                 metrics = parts[1:]
 
+                # Keep a stable column shape even if bam-readcount omits tail metrics.
                 if len(metrics) < 13:
                     metrics += [""] * (13 - len(metrics))
 
@@ -79,6 +88,7 @@ def process_directory(input_dir: str, output_dir: str) -> int:
     input_files = sorted(glob.glob(os.path.join(input_dir, "*.txt")))
 
     for input_file in input_files:
+        # Preserve sample naming from the source file stem.
         sample_name = os.path.splitext(os.path.basename(input_file))[0]
         output_path = os.path.join(output_dir, f"{sample_name}_metrics.tsv")
         parse_bam_readcount(input_file, output_path)

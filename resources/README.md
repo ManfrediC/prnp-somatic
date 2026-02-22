@@ -24,6 +24,10 @@ These files are expected to be present after cloning the repo:
 ### Minimal manifests / example inputs
 - `dataset.tsv`  
 
+### Annotation helper tables
+- `annotations/manual_population_freq.tsv`  
+  Manually curated population frequencies used by the controls no-PoN QC table step.
+
 ### Small reference sidecar files
 These may be tracked because they are small and sometimes helpful for validation, but are not sufficient alone without the corresponding large reference:
 - `hg38.dict`

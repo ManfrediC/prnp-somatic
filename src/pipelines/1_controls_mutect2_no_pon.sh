@@ -6,6 +6,8 @@ shopt -s nullglob
 # Mutect2 tumour-only (no PoN), CONTROLS ONLY.
 # Inputs: results/final_bam/Ctrl*.bam (+ .bai)
 # Outputs: runs/mutect2_controls_no_pon/{vcf,f1r2}/
+# Stage notes: this script only performs Mutect2 calling and F1R2 export.
+# Downstream filtering/annotation are handled by 2_controls_postprocess_no_pon.sh.
 # ------------------------------------------------------------
 
 # -----------------------
@@ -131,6 +133,8 @@ for bam in "${bams[@]}"; do
 
   out_vcf="$OUT_ROOT/vcf/${sample}.raw.vcf.gz"
   out_f1r2="$OUT_ROOT/f1r2/${sample}.f1r2.tar.gz"
+
+  # raw.vcf.gz and f1r2.tar.gz are paired outputs required by the next stage.
 
   if [[ -s "$out_vcf" ]]; then
     echo "SKIP: $out_vcf exists"

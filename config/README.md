@@ -16,6 +16,13 @@ For controls post-processing and annotation, set these in `preprocessing.env`:
 - `FUNCOTATOR_DS`
 - `REF_FASTA`
 - `GNOMAD_AF_VCF`
+- `VARIANT_QC_ROOT`
+- `VARIANT_QC_VCF_DIR`
+- `VARIANT_QC_READCOUNT_METRICS_DIR`
+- `VARIANT_QC_R_SCRIPT`
+- `MANUAL_POP_FREQ_TSV`
+- `ENABLE_AAF_FILTER`
+- `AAF_THRESHOLD`
 
 Recommended `FUNCOTATOR_DS` value:
 
@@ -25,6 +32,14 @@ Recommended `GNOMAD_AF_VCF` value:
 
 - `resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz`
 
+Recommended `MANUAL_POP_FREQ_TSV` value:
+
+- `resources/annotations/manual_population_freq.tsv`
+
+Recommended `VARIANT_QC_R_SCRIPT` value:
+
+- `src/pipelines/6_controls_variant_table_qc_no_pon.R`
+
 The corresponding index (`.tbi` or `.csi`) must also be present.
 
 For controls post-processing, `gnomAD_exome` and `gnomAD_genome` should remain excluded from
@@ -32,3 +47,11 @@ the active datasource tree to avoid requester-pays access requirements.
 Archived copies are kept under:
 
 - `resources/backup/funcotator_excluded_datasources/`
+
+## Variant QC toggle
+
+`src/pipelines/5_controls_variant_qc_no_pon.sh` supports temporary disabling of the final AAF
+threshold filter:
+
+- `ENABLE_AAF_FILTER=1` applies `AAF > AAF_THRESHOLD` (default, recommended)
+- `ENABLE_AAF_FILTER=0` keeps all rows after the upstream QC filters for review
