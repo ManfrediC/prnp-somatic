@@ -97,7 +97,7 @@ run() {
 
 has_vcf_index() {
   local vcf="$1"
-  [[ -s "${vcf}.tbi" || -s "${vcf}.csi" ]]
+  [[ -s "${vcf}.tbi" || -s "${vcf}.csi" || -s "${vcf}.idx" ]]
 }
 
 # -----------------------
@@ -149,9 +149,14 @@ done
 echo "=== Stage 2: Merge control VCFs ==="
 if [[ -s "$PON_MERGED_VCF" ]] && has_vcf_index "$PON_MERGED_VCF"; then
   echo "[Stage2] SKIP merged VCF exists: $PON_MERGED_VCF"
+  if [[ ! -s "${PON_MERGED_VCF}.idx" ]]; then
+    run gatk IndexFeatureFile -I "$PON_MERGED_VCF"
+  fi
 else
   run bcftools merge -m all -O z -o "$PON_MERGED_VCF" "${input_vcfs[@]}"
   run bcftools index -f "$PON_MERGED_VCF"
+  # Create a Tribble index because CreateSomaticPanelOfNormals in this setup expects it.
+  run gatk IndexFeatureFile -I "$PON_MERGED_VCF"
 fi
 
 # ------------------------------------------------------------
