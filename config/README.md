@@ -138,3 +138,21 @@ For `src/pipelines/11_cjd_dilutions_readcount_to_tsv_with_pon.sh`, set:
 Recommended value:
 
 - `READCOUNT_TO_TSV_PY="src/pipelines/4_readcount_to_tsv.py"`
+
+## CJD + dilution variant-table + QC settings
+
+For `src/pipelines/12_cjd_dilutions_variant_qc_with_pon.sh`, set:
+
+- `MUTECT2_WITH_PON_VARIANT_QC_ROOT`
+- `WITH_PON_VARIANT_QC_GROUPS`
+- `WITH_PON_VARIANT_QC_RESULTS_ROOT`
+- `WITH_PON_VARIANT_QC_R_SCRIPT`
+- `MANUAL_POP_FREQ_TSV`
+
+Recommended values:
+
+- `MUTECT2_WITH_PON_VARIANT_QC_ROOT="runs/mutect2_cjd_dilutions_with_pon"`
+- `WITH_PON_VARIANT_QC_GROUPS="cjd dilutions"`
+- `WITH_PON_VARIANT_QC_RESULTS_ROOT="results/mutect2_cjd_dilutions_with_pon/variant_qc"`
+- `WITH_PON_VARIANT_QC_R_SCRIPT="src/pipelines/12_cjd_dilutions_variant_table_qc_with_pon.R"`
+- `MANUAL_POP_FREQ_TSV="resources/annotations/manual_population_freq.tsv"`

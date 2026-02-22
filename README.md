@@ -22,6 +22,7 @@ For controls-only somatic variant calling without a panel of normals:
 8. Run CJD + dilution post-processing with PoN: `src/pipelines/9_cjd_dilutions_postprocess_with_pon.sh`
 9. Run CJD + dilution readcount collection: `src/pipelines/10_cjd_dilutions_readcount_qc_with_pon.sh`
 10. Parse CJD + dilution readcounts to metrics TSV: `src/pipelines/11_cjd_dilutions_readcount_to_tsv_with_pon.sh`
+11. Run CJD + dilution variant table + QC: `src/pipelines/12_cjd_dilutions_variant_qc_with_pon.sh` (calls `src/pipelines/12_cjd_dilutions_variant_table_qc_with_pon.R`)
 
 Pipeline details and outputs are documented in `src/pipelines/README.md`.
 

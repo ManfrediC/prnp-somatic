@@ -16,6 +16,8 @@ This folder contains executable pipeline entry points.
 - `9_cjd_dilutions_postprocess_with_pon.sh`: post-processing for CJD+dilutions with PoN (orientation/filtering/annotation)
 - `10_cjd_dilutions_readcount_qc_with_pon.sh`: readcount extraction (BED/BAM dedup/bam-readcount) for CJD+dilutions
 - `11_cjd_dilutions_readcount_to_tsv_with_pon.sh`: convert readcount text outputs to per-allele TSV metrics
+- `12_cjd_dilutions_variant_qc_with_pon.sh`: SelectVariants + VariantsToTable + R QC entry point for CJD+dilutions
+- `12_cjd_dilutions_variant_table_qc_with_pon.R`: R implementation of table integration and QC filters (with PoN)
 
 ## Preprocessing
 
@@ -157,6 +159,21 @@ Writes (within each group: `cjd`, `dilutions`):
 - `runs/mutect2_cjd_dilutions_with_pon/<group>/readcount_qc/metrics/`
 - `runs/mutect2_cjd_dilutions_with_pon/logs/stage11_readcount_to_tsv_with_pon.log`
 
+### CJD + Dilution Variant Table + QC With PoN
+
+- `src/pipelines/12_cjd_dilutions_variant_qc_with_pon.sh`
+- `src/pipelines/12_cjd_dilutions_variant_table_qc_with_pon.R` (called by Stage 12 shell script)
+
+Writes:
+
+- `runs/mutect2_cjd_dilutions_with_pon/<group>/variant_qc/select_variants/`
+- `runs/mutect2_cjd_dilutions_with_pon/<group>/variant_qc/variant_tables/`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/<group>/summary_combined_variants.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/<group>/filtered_variants.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/<group>/filtered_prnp_variants.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/<group>/filter_counts.tsv`
+- `runs/mutect2_cjd_dilutions_with_pon/logs/stage12_variant_qc_with_pon.log`
+
 ### Config keys used
 
 Set in `config/preprocessing.env` (or via environment variables):
@@ -197,6 +214,10 @@ Additional keys used by PoN creation:
 - `WITH_PON_READCOUNT_BAM_DIR`
 - `WITH_PON_READCOUNT_REF_FASTA`
 - `READCOUNT_TO_TSV_PY`
+- `MUTECT2_WITH_PON_VARIANT_QC_ROOT`
+- `WITH_PON_VARIANT_QC_GROUPS`
+- `WITH_PON_VARIANT_QC_RESULTS_ROOT`
+- `WITH_PON_VARIANT_QC_R_SCRIPT`
 - `DILUTION_SAMPLES`
 
 ### Funcotator files required
