@@ -34,6 +34,16 @@ This folder contains executable pipeline entry points.
 
 Use this when Stage 1 Mutect2 has been run for controls and you want orientation/filtering/annotation.
 
+Post-processing stage order is linear:
+
+- Stage 2 `f1r2 -> orientation`
+- Stage 3 `raw vcf + orientation + stats -> filtered (PASS)`
+- Stage 4 `filtered -> scores`
+- Stage 5 `scores -> norm`
+- Stage 6 `norm -> annot`
+
+The script fails fast if required per-sample inputs are missing at any stage.
+
 ### Stage 1
 
 - `src/pipelines/mutect2_controls_no_pon.sh`
@@ -64,3 +74,22 @@ Set in `config/preprocessing.env` (or via environment variables):
 - `FUNCOTATOR_DS`
 - `JAVA_MEM_GB`
 - `DRY_RUN`
+
+### Funcotator files required
+
+`FUNCOTATOR_DS` must point to the datasource directory used by `gatk Funcotator --data-sources-path`.
+
+Recommended value:
+
+- `resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
+
+Expected contents under that directory include source folders such as:
+
+- `clinvar/`
+- `dbsnp/`
+- `gencode/`
+- `gnomAD_exome/`
+- `gnomAD_genome/`
+- `hgnc/`
+
+These are separate from the reference FASTA (`REF_FASTA`).

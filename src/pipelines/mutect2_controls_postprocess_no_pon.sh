@@ -69,7 +69,7 @@ NORM_DIR="${NORM_DIR:-$OUT_ROOT/norm}"
 ANNOT_DIR="${ANNOT_DIR:-$OUT_ROOT/annot}"
 
 REF_FASTA="${REF_FASTA:-resources/chr2_chr4_chr20.fasta}"
-FUNCOTATOR_DS="${FUNCOTATOR_DS:-resources/funcotator_dataSources.v1.8.hg38.20230908s/hg38}"
+FUNCOTATOR_DS="${FUNCOTATOR_DS:-resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38}"
 
 to_abs() {
   local p="$1"
@@ -121,6 +121,10 @@ f1r2_tars=( "$F1R2_DIR"/*.f1r2.tar.gz )
 raw_vcfs=( "$RAW_DIR"/*.raw.vcf.gz )
 [[ "${#f1r2_tars[@]}" -gt 0 ]] || die "No F1R2 tarballs found in: $F1R2_DIR"
 [[ "${#raw_vcfs[@]}" -gt 0 ]] || die "No raw VCFs found in: $RAW_DIR"
+raw_samples=()
+for vcf in "${raw_vcfs[@]}"; do
+  raw_samples+=( "$(basename "$vcf" .raw.vcf.gz)" )
+done
 
 echo "== Controls post-processing (no PoN) =="
 echo "Repo root:      $REPO_ROOT"
@@ -162,23 +166,14 @@ for vcf in "${raw_vcfs[@]}"; do
   stats="${vcf}.stats"
 
   [[ -s "$out" ]] && { echo "[Stage3] SKIP $sample"; continue; }
-  [[ -s "$orient" ]] || { echo "[Stage3] WARN missing orientation for $sample, skipping"; continue; }
-
-  if [[ -s "$stats" ]]; then
-    run gatk --java-options "-Xmx${JAVA_MEM_GB}g" FilterMutectCalls \
-      -R "$REF_FASTA" \
-      -V "$vcf" \
-      --orientation-bias-artifact-priors "$orient" \
-      --stats "$stats" \
-      -O "$tmp"
-  else
-    echo "[Stage3] WARN stats missing for $sample, running without --stats"
-    run gatk --java-options "-Xmx${JAVA_MEM_GB}g" FilterMutectCalls \
-      -R "$REF_FASTA" \
-      -V "$vcf" \
-      --orientation-bias-artifact-priors "$orient" \
-      -O "$tmp"
-  fi
+  [[ -s "$orient" ]] || die "Stage 3 requires orientation file for $sample: $orient"
+  [[ -s "$stats" ]] || die "Stage 3 requires stats file for $sample: $stats"
+  run gatk --java-options "-Xmx${JAVA_MEM_GB}g" FilterMutectCalls \
+    -R "$REF_FASTA" \
+    -V "$vcf" \
+    --orientation-bias-artifact-priors "$orient" \
+    --stats "$stats" \
+    -O "$tmp"
 
   run bcftools view -f PASS "$tmp" -Oz -o "$out"
   run tabix -f -p vcf "$out"
@@ -191,7 +186,9 @@ done
 # Stage 4: VariantAnnotator (QUAL, MQ, QD, RankSum)
 # ------------------------------------------------------------
 echo "=== Stage 4: VariantAnnotator ==="
-for vcf in "$FILTERED_DIR"/*.filtered.vcf.gz; do
+filtered_vcfs=( "$FILTERED_DIR"/*.filtered.vcf.gz )
+[[ "${#filtered_vcfs[@]}" -gt 0 ]] || die "Stage 4 has no filtered VCFs in: $FILTERED_DIR"
+for vcf in "${filtered_vcfs[@]}"; do
   sample="$(basename "$vcf" .filtered.vcf.gz)"
   out="$SCORES_DIR/${sample}.scores.vcf.gz"
   [[ -s "$out" ]] && { echo "[Stage4] SKIP $sample"; continue; }
@@ -210,8 +207,10 @@ done
 # Stage 5: bcftools normalise (split + left-align)
 # ------------------------------------------------------------
 echo "=== Stage 5: bcftools normalise ==="
-for vcf in "$FILTERED_DIR"/*.filtered.vcf.gz; do
-  sample="$(basename "$vcf" .filtered.vcf.gz)"
+scores_vcfs=( "$SCORES_DIR"/*.scores.vcf.gz )
+[[ "${#scores_vcfs[@]}" -gt 0 ]] || die "Stage 5 has no scored VCFs in: $SCORES_DIR"
+for vcf in "${scores_vcfs[@]}"; do
+  sample="$(basename "$vcf" .scores.vcf.gz)"
   out="$NORM_DIR/${sample}.norm.vcf.gz"
   [[ -s "$out" ]] && { echo "[Stage5] SKIP $sample"; continue; }
   run bcftools norm -m-any -f "$REF_FASTA" "$vcf" -Oz -o "$out"
@@ -222,7 +221,9 @@ done
 # Stage 6: Funcotator annotation
 # ------------------------------------------------------------
 echo "=== Stage 6: Funcotator annotation ==="
-for vcf in "$NORM_DIR"/*.norm.vcf.gz; do
+norm_vcfs=( "$NORM_DIR"/*.norm.vcf.gz )
+[[ "${#norm_vcfs[@]}" -gt 0 ]] || die "Stage 6 has no normalised VCFs in: $NORM_DIR"
+for vcf in "${norm_vcfs[@]}"; do
   sample="$(basename "$vcf" .norm.vcf.gz)"
   out="$ANNOT_DIR/${sample}.func.vcf.gz"
   [[ -s "$out" ]] && { echo "[Stage6] SKIP $sample"; continue; }
@@ -235,5 +236,11 @@ for vcf in "$NORM_DIR"/*.norm.vcf.gz; do
     --output-file-format VCF
   run tabix -f -p vcf "$out"
 done
+
+missing_samples=()
+for sample in "${raw_samples[@]}"; do
+  [[ -s "$ANNOT_DIR/${sample}.func.vcf.gz" ]] || missing_samples+=( "$sample" )
+done
+[[ "${#missing_samples[@]}" -eq 0 ]] || die "Final completeness check failed; missing annotated VCFs for: ${missing_samples[*]}"
 
 echo "=== Pipeline finished ==="

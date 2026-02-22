@@ -51,6 +51,23 @@ The following are typically required for full execution, but are **not** stored 
 - `somatic-hg38_af-only-gnomad.hg38.vcf.gz` (+ `.tbi` and/or `.idx`)
 - `somatic-hg38_1000g_pon.hg38.vcf.gz` (+ `.tbi`) (panel of normals; if used)
 
+### Funcotator datasource bundle (required for annotation stages)
+- `funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s.tar.gz` (archive)
+- `funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38/` (extracted datasource root)
+
+The pipeline expects `FUNCOTATOR_DS` to point to:
+
+- `resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
+
+Typical datasource subfolders include:
+
+- `clinvar/`
+- `dbsnp/`
+- `gencode/`
+- `gnomAD_exome/`
+- `gnomAD_genome/`
+- `hgnc/`
+
 ---
 
 ## How to obtain large resources
@@ -69,4 +86,3 @@ After placing resources, record and verify checksums:
 cd resources
 sha256sum * > SHA256SUMS.txt
 sha256sum -c SHA256SUMS.txt
-
