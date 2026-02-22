@@ -1,0 +1,6 @@
+bash pipeline.sh "/home/mcarta/rawdata/"
+
+
+bash test.sh "/home/mcarta/rawdata/"
+
+
