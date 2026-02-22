@@ -1,4 +1,4 @@
-# variant_id	dbsnp_id	population_frequency	source	retrieved_date	notes
+variant_id	dbsnp_id	population_frequency	source	retrieved_date	notes
 	rs1012397146	0.00001318	manual_gnomAD_dbSNP_lookup	2025-04-29	
 	rs1931969	0.2146	manual_gnomAD_dbSNP_lookup	2025-04-29	
 	rs2093390	0.3055	manual_gnomAD_dbSNP_lookup	2025-04-29	
