@@ -125,6 +125,10 @@ have tabix    || die "tabix not in PATH (did you activate conda?)"
 [[ -s "$GNOMAD_AF_VCF" ]] || die "Missing GNOMAD_AF_VCF: $GNOMAD_AF_VCF"
 [[ -s "$GNOMAD_AF_VCF.tbi" || -s "$GNOMAD_AF_VCF.csi" ]] || die "Missing index for GNOMAD_AF_VCF: $GNOMAD_AF_VCF.tbi/.csi"
 
+GNOMAD_AF_HEADER_FILE="$(mktemp "${TMPDIR:-/tmp}/gnomad_af_header.XXXXXX.txt")"
+trap 'rm -f "$GNOMAD_AF_HEADER_FILE"' EXIT
+printf '%s\n' '##INFO=<ID=GNOMAD_AF,Number=A,Type=Float,Description="gnomAD AF from somatic-hg38_af-only-gnomad.hg38.vcf.gz">' > "$GNOMAD_AF_HEADER_FILE"
+
 f1r2_tars=( "$F1R2_DIR"/*.f1r2.tar.gz )
 raw_vcfs=( "$RAW_DIR"/*.raw.vcf.gz )
 [[ "${#f1r2_tars[@]}" -gt 0 ]] || die "No F1R2 tarballs found in: $F1R2_DIR"
@@ -262,11 +266,11 @@ for vcf in "${annot_vcfs[@]}"; do
   out="$ANNOT_GNOMAD_DIR/${sample}.func.af.vcf.gz"
   # Keep AF in a dedicated INFO/GNOMAD_AF field so downstream filters can read one stable column.
   [[ -s "$out" ]] && { echo "[Stage7] SKIP $sample"; continue; }
+  # Copy AF from the gnomAD VCF into a separate INFO tag.
   run bcftools annotate \
     -a "$GNOMAD_AF_VCF" \
-    # Copy AF from the gnomAD VCF into a separate INFO tag.
     -c CHROM,POS,REF,ALT,INFO/GNOMAD_AF:=INFO/AF \
-    -h <(echo '##INFO=<ID=GNOMAD_AF,Number=A,Type=Float,Description="gnomAD AF from somatic-hg38_af-only-gnomad.hg38.vcf.gz">') \
+    -h "$GNOMAD_AF_HEADER_FILE" \
     -Oz -o "$out" \
     "$vcf"
   run tabix -f -p vcf "$out"
