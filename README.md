@@ -17,6 +17,16 @@ For controls-only somatic variant calling without a panel of normals:
 
 Pipeline details and outputs are documented in `src/pipelines/README.md`.
 
+### Funcotator resources
+
+The controls post-processing pipeline requires a local Funcotator datasource tree.
+
+- Config key: `FUNCOTATOR_DS` in `config/preprocessing.env`
+- Recommended repo-relative path:
+- `resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
+
+Reference FASTA (`REF_FASTA`) and Funcotator datasources (`FUNCOTATOR_DS`) are separate requirements.
+
 ## Repository structure
 - `bin/` command-line entrypoints / wrappers
 - `src/` reusable code (Python/R)

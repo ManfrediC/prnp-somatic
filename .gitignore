@@ -56,6 +56,7 @@ resources/*.gtf.gz
 # If you keep indexes with big VCFs, ignore those too
 resources/*.tbi
 resources/*.idx
+resources/funcotator_data_somatic/
 
 # Keep small, hand-authored resource descriptors
 !resources/README.md
