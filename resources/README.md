@@ -48,7 +48,7 @@ The following are typically required for full execution, but are **not** stored 
 - `Homo_sapiens.GRCh38.110.gtf.gz` (Ensembl GTF; version 110)
 - `dbsnp_146.hg38.vcf.gz` (+ `.tbi`)
 - `Mills_and_1000G_gold_standard.indels.hg38.vcf.gz` (+ `.tbi`)
-- `somatic-hg38_af-only-gnomad.hg38.vcf.gz` (+ `.tbi` and/or `.idx`)
+- `somatic-hg38_af-only-gnomad.hg38.vcf.gz` (+ `.tbi` and/or `.csi`; used for Stage 1 Mutect2 germline resource and Stage 7 post-Funcotator `bcftools annotate`)
 - `somatic-hg38_1000g_pon.hg38.vcf.gz` (+ `.tbi`) (panel of normals; if used)
 
 ### Funcotator datasource bundle (required for annotation stages)

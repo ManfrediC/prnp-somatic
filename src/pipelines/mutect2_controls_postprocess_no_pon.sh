@@ -6,6 +6,7 @@
 #   Stage 4: VariantAnnotator (QUAL/MQ/QD/RankSum annotations)
 #   Stage 5: bcftools normalise (split + left-align)
 #   Stage 6: Funcotator annotation
+#   Stage 7: bcftools annotate gnomAD AF
 # ============================================================
 set -euo pipefail
 shopt -s nullglob
@@ -67,9 +68,11 @@ FILTERED_DIR="${FILTERED_DIR:-$OUT_ROOT/filtered}"
 SCORES_DIR="${SCORES_DIR:-$OUT_ROOT/scores}"
 NORM_DIR="${NORM_DIR:-$OUT_ROOT/norm}"
 ANNOT_DIR="${ANNOT_DIR:-$OUT_ROOT/annot}"
+ANNOT_GNOMAD_DIR="${ANNOT_GNOMAD_DIR:-$OUT_ROOT/annot_with_gnomad}"
 
 REF_FASTA="${REF_FASTA:-resources/chr2_chr4_chr20.fasta}"
 FUNCOTATOR_DS="${FUNCOTATOR_DS:-resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38}"
+GNOMAD_AF_VCF="${GNOMAD_AF_VCF:-resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz}"
 
 to_abs() {
   local p="$1"
@@ -87,10 +90,12 @@ FILTERED_DIR="$(to_abs "$FILTERED_DIR")"
 SCORES_DIR="$(to_abs "$SCORES_DIR")"
 NORM_DIR="$(to_abs "$NORM_DIR")"
 ANNOT_DIR="$(to_abs "$ANNOT_DIR")"
+ANNOT_GNOMAD_DIR="$(to_abs "$ANNOT_GNOMAD_DIR")"
 REF_FASTA="$(to_abs "$REF_FASTA")"
 FUNCOTATOR_DS="$(to_abs "$FUNCOTATOR_DS")"
+GNOMAD_AF_VCF="$(to_abs "$GNOMAD_AF_VCF")"
 
-mkdir -p "$ORIENT_DIR" "$FILTERED_DIR" "$SCORES_DIR" "$NORM_DIR" "$ANNOT_DIR"
+mkdir -p "$ORIENT_DIR" "$FILTERED_DIR" "$SCORES_DIR" "$NORM_DIR" "$ANNOT_DIR" "$ANNOT_GNOMAD_DIR"
 
 # -----------------------
 # Tiny helpers
@@ -116,6 +121,8 @@ have tabix    || die "tabix not in PATH (did you activate conda?)"
 [[ -s "$REF_FASTA" ]] || die "Missing REF_FASTA: $REF_FASTA"
 [[ -s "$REF_FASTA.fai" ]] || die "Missing FASTA index: $REF_FASTA.fai"
 [[ -d "$FUNCOTATOR_DS" ]] || die "Missing Funcotator data sources dir: $FUNCOTATOR_DS"
+[[ -s "$GNOMAD_AF_VCF" ]] || die "Missing GNOMAD_AF_VCF: $GNOMAD_AF_VCF"
+[[ -s "$GNOMAD_AF_VCF.tbi" || -s "$GNOMAD_AF_VCF.csi" ]] || die "Missing index for GNOMAD_AF_VCF: $GNOMAD_AF_VCF.tbi/.csi"
 
 f1r2_tars=( "$F1R2_DIR"/*.f1r2.tar.gz )
 raw_vcfs=( "$RAW_DIR"/*.raw.vcf.gz )
@@ -135,8 +142,10 @@ echo "FILTERED_DIR:   $FILTERED_DIR"
 echo "SCORES_DIR:     $SCORES_DIR"
 echo "NORM_DIR:       $NORM_DIR"
 echo "ANNOT_DIR:      $ANNOT_DIR"
+echo "ANNOT_GNOMAD_DIR: $ANNOT_GNOMAD_DIR"
 echo "REF_FASTA:      $REF_FASTA"
 echo "FUNCOTATOR_DS:  $FUNCOTATOR_DS"
+echo "GNOMAD_AF_VCF:  $GNOMAD_AF_VCF"
 echo "JAVA_MEM_GB:    $JAVA_MEM_GB"
 echo
 
@@ -237,10 +246,29 @@ for vcf in "${norm_vcfs[@]}"; do
   run tabix -f -p vcf "$out"
 done
 
+# ------------------------------------------------------------
+# Stage 7: gnomAD AF annotation with bcftools annotate
+# ------------------------------------------------------------
+echo "=== Stage 7: gnomAD AF annotation ==="
+annot_vcfs=( "$ANNOT_DIR"/*.func.vcf.gz )
+[[ "${#annot_vcfs[@]}" -gt 0 ]] || die "Stage 7 has no Funcotator VCFs in: $ANNOT_DIR"
+for vcf in "${annot_vcfs[@]}"; do
+  sample="$(basename "$vcf" .func.vcf.gz)"
+  out="$ANNOT_GNOMAD_DIR/${sample}.func.af.vcf.gz"
+  [[ -s "$out" ]] && { echo "[Stage7] SKIP $sample"; continue; }
+  run bcftools annotate \
+    -a "$GNOMAD_AF_VCF" \
+    -c CHROM,POS,REF,ALT,INFO/GNOMAD_AF:=INFO/AF \
+    -h <(echo '##INFO=<ID=GNOMAD_AF,Number=A,Type=Float,Description="gnomAD AF from somatic-hg38_af-only-gnomad.hg38.vcf.gz">') \
+    -Oz -o "$out" \
+    "$vcf"
+  run tabix -f -p vcf "$out"
+done
+
 missing_samples=()
 for sample in "${raw_samples[@]}"; do
-  [[ -s "$ANNOT_DIR/${sample}.func.vcf.gz" ]] || missing_samples+=( "$sample" )
+  [[ -s "$ANNOT_GNOMAD_DIR/${sample}.func.af.vcf.gz" ]] || missing_samples+=( "$sample" )
 done
-[[ "${#missing_samples[@]}" -eq 0 ]] || die "Final completeness check failed; missing annotated VCFs for: ${missing_samples[*]}"
+[[ "${#missing_samples[@]}" -eq 0 ]] || die "Final completeness check failed; missing gnomAD-annotated VCFs for: ${missing_samples[*]}"
 
 echo "=== Pipeline finished ==="
