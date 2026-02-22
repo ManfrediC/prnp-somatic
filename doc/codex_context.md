@@ -126,7 +126,7 @@ Do not introduce undocumented toolchain dependencies.
   - `src/pipelines/` contains the current maintained pipeline scripts:
     - `preflight_preprocessing.sh`
     - `preprocessing.sh`
-    - `mutect2_controls_no_pon.sh`
+    - `1_controls_mutect2_no_pon.sh`
   - `src/legacy/` contains historical scripts preserved for provenance; do not refactor. These are the scripts which we will edit and adapt in a new for in ´/src´ to make the code publication-ready
 
 - `tests/`

@@ -66,7 +66,7 @@ Typical datasource subfolders include:
 - `gencode/`
 - `hgnc/`
 
-For `src/pipelines/mutect2_controls_postprocess_no_pon.sh`, `gnomAD_exome/` and
+For `src/pipelines/2_controls_postprocess_no_pon.sh`, `gnomAD_exome/` and
 `gnomAD_genome/` are intentionally excluded from the active datasource tree to avoid
 requester-pays access errors.
 

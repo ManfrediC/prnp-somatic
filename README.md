@@ -12,8 +12,8 @@ FASTQ -> BAM (GATK best practices) -> Mutect2 -> QC -> result tables/figures.
 
 For controls-only somatic variant calling without a panel of normals:
 
-1. Run Stage 1 Mutect2: `src/pipelines/mutect2_controls_no_pon.sh`
-2. Run Stages 2-7 post-processing: `src/pipelines/mutect2_controls_postprocess_no_pon.sh`
+1. Run Stage 1 Mutect2: `src/pipelines/1_controls_mutect2_no_pon.sh`
+2. Run Stages 2-7 post-processing: `src/pipelines/2_controls_postprocess_no_pon.sh`
 
 Pipeline details and outputs are documented in `src/pipelines/README.md`.
 
