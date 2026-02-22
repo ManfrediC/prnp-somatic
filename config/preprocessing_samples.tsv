@@ -26,6 +26,9 @@ CJD_8_samples	Ctrl5	fastq/CJD_8_samples/312091_8-Ctrl5_H02_S3_R1_001.fastq.gz	fa
 first_CJD_seq	CJD13	fastq/first_CJD_seq/20211027.0-o26424_1_4-CJD13_fr_R1.fastq.gz	fastq/first_CJD_seq/20211027.0-o26424_1_4-CJD13_fr_R2.fastq.gz
 first_CJD_seq	CJD1	fastq/first_CJD_seq/20211027.0-o26424_1_1-CJD1_fr_R1.fastq.gz	fastq/first_CJD_seq/20211027.0-o26424_1_1-CJD1_fr_R2.fastq.gz
 first_CJD_seq	CJD22	fastq/first_CJD_seq/20211027.0-o26424_1_5-CJD22_fr_R1.fastq.gz	fastq/first_CJD_seq/20211027.0-o26424_1_5-CJD22_fr_R2.fastq.gz
+first_CJD_seq	CJD23	fastq/first_CJD_seq/20211027.0-o26424_1_6-CJD23_fr_R1.fastq.gz	fastq/first_CJD_seq/20211027.0-o26424_1_6-CJD23_fr_R2.fastq.gz
+first_CJD_seq	CJD25	fastq/first_CJD_seq/20211027.0-o26424_1_7-CJD25_fr_R1.fastq.gz	fastq/first_CJD_seq/20211027.0-o26424_1_7-CJD25_fr_R2.fastq.gz
+first_CJD_seq	CJD27	fastq/first_CJD_seq/20211027.0-o26424_1_8-CJD27_fr_R1.fastq.gz	fastq/first_CJD_seq/20211027.0-o26424_1_8-CJD27_fr_R2.fastq.gz
 first_CJD_seq	CJD2	fastq/first_CJD_seq/20211027.0-o26424_1_2-CJD2_fr_R1.fastq.gz	fastq/first_CJD_seq/20211027.0-o26424_1_2-CJD2_fr_R2.fastq.gz
 first_CJD_seq	CJD6	fastq/first_CJD_seq/20211027.0-o26424_1_3-CJD6_fr_R1.fastq.gz	fastq/first_CJD_seq/20211027.0-o26424_1_3-CJD6_fr_R2.fastq.gz
 sequencing_of_dilutions	A100_1to2	fastq/sequencing_of_dilutions/20210203.0-o23928_1_5-A100_1to2_F01_R1.fastq.gz	fastq/sequencing_of_dilutions/20210203.0-o23928_1_5-A100_1to2_F01_R2.fastq.gz
