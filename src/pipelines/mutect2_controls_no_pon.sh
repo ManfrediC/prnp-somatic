@@ -5,7 +5,7 @@ shopt -s nullglob
 # ------------------------------------------------------------
 # Mutect2 tumour-only (no PoN), CONTROLS ONLY.
 # Inputs: results/final_bam/Ctrl*.bam (+ .bai)
-# Outputs: run/mutect2_controls_no_pon/{vcf,f1r2}/
+# Outputs: runs/mutect2_controls_no_pon/{vcf,f1r2}/
 # ------------------------------------------------------------
 
 # -----------------------
@@ -59,7 +59,12 @@ fi
 # Inputs/outputs (repo-relative defaults)
 # -----------------------
 FINAL_BAM_DIR="${FINAL_BAM_DIR:-results/final_bam}"
-MUTECT2_CONTROLS_OUT_ROOT="${MUTECT2_CONTROLS_OUT_ROOT:-run/mutect2_controls_no_pon}"
+MUTECT2_CONTROLS_OUT_ROOT="${MUTECT2_CONTROLS_OUT_ROOT:-runs/mutect2_controls_no_pon}"
+# Normalize legacy /run paths to /runs
+if [[ "$MUTECT2_CONTROLS_OUT_ROOT" == run/* ]]; then
+  MUTECT2_CONTROLS_OUT_ROOT="runs/${MUTECT2_CONTROLS_OUT_ROOT#run/}"
+fi
+
 OUT_ROOT="${OUT_ROOT:-$MUTECT2_CONTROLS_OUT_ROOT}"
 
 REF_FASTA="${REF_FASTA:-resources/chr2_chr4_chr20.fasta}"
