@@ -13,6 +13,7 @@ This folder contains executable pipeline entry points.
 - `6_controls_variant_table_qc_no_pon.R`: R implementation of table integration and QC filters
 - `7_controls_create_pon.sh`: controls-only Panel of Normals (PoN) creation from filtered control VCFs
 - `8_cjd_dilutions_mutect2_with_pon.sh`: Mutect2 tumour-only with PoN for CJD and dilution BAMs
+- `9_cjd_dilutions_postprocess_with_pon.sh`: post-processing for CJD+dilutions with PoN (orientation/filtering/annotation)
 
 ## Preprocessing
 
@@ -117,6 +118,20 @@ Writes:
 - `runs/mutect2_cjd_dilutions_with_pon/cjd/f1r2/`
 - `runs/mutect2_cjd_dilutions_with_pon/dilutions/vcf/`
 - `runs/mutect2_cjd_dilutions_with_pon/dilutions/f1r2/`
+- `runs/mutect2_cjd_dilutions_with_pon/logs/`
+
+### CJD + Dilution Post-processing With PoN
+
+- `src/pipelines/9_cjd_dilutions_postprocess_with_pon.sh`
+
+Writes (within each group: `cjd`, `dilutions`):
+
+- `runs/mutect2_cjd_dilutions_with_pon/<group>/orientation/`
+- `runs/mutect2_cjd_dilutions_with_pon/<group>/filtered/`
+- `runs/mutect2_cjd_dilutions_with_pon/<group>/scores/`
+- `runs/mutect2_cjd_dilutions_with_pon/<group>/norm/`
+- `runs/mutect2_cjd_dilutions_with_pon/<group>/annot/`
+- `runs/mutect2_cjd_dilutions_with_pon/<group>/annot_with_gnomad/`
 
 ### Config keys used
 
@@ -151,6 +166,8 @@ Additional keys used by PoN creation:
 - `PON_VCF`
 - `PON_CONTROLS`
 - `MUTECT2_WITH_PON_OUT_ROOT`
+- `MUTECT2_WITH_PON_POSTPROCESS_ROOT`
+- `WITH_PON_GROUPS`
 - `DILUTION_SAMPLES`
 
 ### Funcotator files required

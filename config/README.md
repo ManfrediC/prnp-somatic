@@ -92,3 +92,23 @@ Recommended values:
 - `MUTECT2_WITH_PON_OUT_ROOT="runs/mutect2_cjd_dilutions_with_pon"`
 - `PON_VCF="results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz"`
 - `DILUTION_SAMPLES="NA100_undil NA100_1to10 NA99A1_undil A100_1to2 NA99A1_1to5 NA995A05_undil NA100_1to2"`
+
+## CJD + dilution post-processing with PoN settings
+
+For `src/pipelines/9_cjd_dilutions_postprocess_with_pon.sh`, set:
+
+- `MUTECT2_WITH_PON_POSTPROCESS_ROOT`
+- `WITH_PON_GROUPS`
+- `FUNCOTATOR_DS`
+- `REF_FASTA`
+- `INTERVALS`
+- `GNOMAD_AF_VCF`
+
+Recommended values:
+
+- `MUTECT2_WITH_PON_POSTPROCESS_ROOT="runs/mutect2_cjd_dilutions_with_pon"`
+- `WITH_PON_GROUPS="cjd dilutions"`
+- `FUNCOTATOR_DS="resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38"`
+- `REF_FASTA="resources/chr2_chr4_chr20.fasta"`
+- `INTERVALS="resources/capture_targets.interval_list"`
+- `GNOMAD_AF_VCF="resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz"`
