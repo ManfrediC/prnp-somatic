@@ -1979,3 +1979,14 @@ Outcome:
 - Controls and PoN workflows are now represented as explicit reproducible stages in `src/pipelines`.
 - Configuration and documentation are aligned with current staged execution.
 - FASTQ storage is consolidated under `/add/prnp-somatic/fastq` with verified integrity.
+- Conducted full pipeline rune
+
+Next steps:
+
+- Cross check results of the pipeline with tables and graphs that are already made.
+- dilutions: remove the min AAF part from the QC, as you used the dilutions to determine the threshold
+- add ddPCR to the repo
+- add the exon-exon junction part to the repo
+- add scripts creating figures to the repo
+- sync the repo to Windows properly (in C/Projects)
+
