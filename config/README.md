@@ -128,3 +128,13 @@ Recommended values:
 - `WITH_PON_READCOUNT_GROUPS="cjd dilutions"`
 - `WITH_PON_READCOUNT_BAM_DIR="results/final_bam"`
 - `WITH_PON_READCOUNT_REF_FASTA="resources/chr2_chr4_chr20.fasta"`
+
+## CJD + dilution readcount parsing settings
+
+For `src/pipelines/11_cjd_dilutions_readcount_to_tsv_with_pon.sh`, set:
+
+- `READCOUNT_TO_TSV_PY`
+
+Recommended value:
+
+- `READCOUNT_TO_TSV_PY="src/pipelines/4_readcount_to_tsv.py"`
