@@ -1,0 +1,5 @@
+"Sample","Chromosome","Position","REF","ALT","Mutation Type","Population Frequency","Read Depth (DP)","REF Count","ALT Count","AAF (%)","Base Quality","Mapping Quality","REF Forward Count","REF Reverse Count","ALT Forward Count","ALT Reverse Count"
+"CJD2","chr20",4691920,"G","A","INTRON","not described",4706,4680,26,0.55,37.9,22.01,2327,2353,10,16
+"CJD23","chr20",4691920,"G","A","INTRON","not described",5133,5102,31,0.6,38.49,21,2525,2577,12,19
+"CJD23","chr20",4694249,"T","C","INTRON","not described",1344,1333,11,0.82,30.01,20.62,686,647,5,6
+"CJD6","chr20",4691920,"G","A","INTRON","not described",3482,3464,18,0.52,33.44,20.1,1787,1677,6,12

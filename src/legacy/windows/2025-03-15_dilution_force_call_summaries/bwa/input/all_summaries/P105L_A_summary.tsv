@@ -1,0 +1,8 @@
+Sample          CHROM  POS      ID  REF  ALT  QUAL  FILTER  GT   FORMAT-DP  AD-REF  AD-ALT
+A100_1to2       chr20  4699533  .   C    A    .     .       0/1  5449       5448    1
+NA100_1to10     chr20  4699533  .   C    A    .     .       0/1  5473       5473    0
+NA100_1to2      chr20  4699533  .   C    A    .     .       0/1  3508       3508    0
+NA100_undil     chr20  4699533  .   C    A    .     .       0/1  4926       4926    0
+NA995A05_undil  chr20  4699533  .   C    A    .     .       0/1  6608       6608    0
+NA99A1_1to5     chr20  4699533  .   C    A    .     .       0/1  2663       2662    1
+NA99A1_undil    chr20  4699533  .   C    A    .     .       0/1  4115       4114    1

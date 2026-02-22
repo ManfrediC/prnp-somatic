@@ -1,0 +1,3 @@
+"Sample","Variant","dbSNP ID","Chromosome","Position","REF","ALT","Mutation Type","Read Depth (DP)","REF Count","ALT Count","AAF (%)","Base Quality","Mapping Quality","REF Forward Count","REF Reverse Count","ALT Forward Count","ALT Reverse Count"
+"A117V 0.5% spike-in","A117V","rs74315402","chr20",4699570,"C","T","MISSENSE",6961,6869,92,1.32164918833501,60,21.88,3730,3139,40,52
+"A117V 1% spike-in","A117V","rs74315402","chr20",4699570,"C","T","MISSENSE",4315,4280,35,0.811123986095017,60,22.24,2216,2064,16,19

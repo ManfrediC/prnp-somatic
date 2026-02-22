@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage[landscape,margin=1cm]{geometry}
+\usepackage{booktabs}
+\usepackage{adjustbox}       % for \adjustbox or \resizebox
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\begin{document}
+	
+	\begin{table}[ht]
+		\centering
+		\caption{A117V Spike-In Samples}
+		% Scale the table to the full text width:
+		\resizebox{\linewidth}{!}{%
+			\begin{tabular}{%
+					l  % Sample
+					l  % Variant
+					l  % dbSNP ID
+					l  % Chromosome
+					r  % Position
+					c  % REF
+					c  % ALT
+					l  % Mutation Type
+					r  % Read Depth (DP)
+					r  % REF Count
+					r  % ALT Count
+					r  % AAF (\%)
+					r  % Base Quality
+					r  % Mapping Quality
+					r  % REF Forward Count
+					r  % REF Reverse Count
+					r  % ALT Forward Count
+					r  % ALT Reverse Count
+				}
+				\toprule
+				Sample & Variant & dbSNP ID & Chromosome & Position & REF & ALT 
+				& Mutation Type & Read Depth (DP) & REF Count & ALT Count 
+				& AAF (\%) & Base Quality & Mapping Quality 
+				& REF Forward Count & REF Reverse Count 
+				& ALT Forward Count & ALT Reverse Count \\
+				\midrule
+				A117V 0.5\% spike-in & A117V & rs74315402 & chr20 & 4699570 
+				& C & T & MISSENSE & 6961 & 6869 & 92 
+				& 1.321649 & 60 & 21.88 
+				& 3730 & 3139 & 40 & 52 \\
+				A117V 1\% spike-in   & A117V & rs74315402 & chr20 & 4699570 
+				& C & T & MISSENSE & 4315 & 4280 & 35 
+				& 0.811124 & 60 & 22.24 
+				& 2216 & 2064 & 16 & 19 \\
+				\bottomrule
+			\end{tabular}%
+		}
+	\end{table}
+	
+	
+	
+	
+	
+\end{document}
