@@ -91,10 +91,10 @@ Writes:
 
 - `runs/mutect2_controls_no_pon/variant_qc/select_variants/`
 - `runs/mutect2_controls_no_pon/variant_qc/variant_tables/`
-- `runs/mutect2_controls_no_pon/variant_qc/output/summary_combined_variants.tsv`
-- `runs/mutect2_controls_no_pon/variant_qc/output/filtered_variants.tsv`
-- `runs/mutect2_controls_no_pon/variant_qc/output/filtered_prnp_variants.tsv`
-- `runs/mutect2_controls_no_pon/variant_qc/output/filter_counts.tsv`
+- `results/mutect2_controls_no_pon/variant_qc/summary_combined_variants.tsv`
+- `results/mutect2_controls_no_pon/variant_qc/filtered_variants.tsv`
+- `results/mutect2_controls_no_pon/variant_qc/filtered_prnp_variants.tsv`
+- `results/mutect2_controls_no_pon/variant_qc/filter_counts.tsv`
 
 ### Config keys used
 
@@ -109,6 +109,7 @@ Set in `config/preprocessing.env` (or via environment variables):
 - `VARIANT_QC_ROOT`
 - `VARIANT_QC_VCF_DIR`
 - `VARIANT_QC_READCOUNT_METRICS_DIR`
+- `VARIANT_QC_OUTPUT_DIR`
 - `MANUAL_POP_FREQ_TSV`
 - `ENABLE_AAF_FILTER`
 - `AAF_THRESHOLD`

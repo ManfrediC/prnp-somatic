@@ -19,6 +19,7 @@ For controls post-processing and annotation, set these in `preprocessing.env`:
 - `VARIANT_QC_ROOT`
 - `VARIANT_QC_VCF_DIR`
 - `VARIANT_QC_READCOUNT_METRICS_DIR`
+- `VARIANT_QC_OUTPUT_DIR`
 - `VARIANT_QC_R_SCRIPT`
 - `MANUAL_POP_FREQ_TSV`
 - `ENABLE_AAF_FILTER`
@@ -35,6 +36,10 @@ Recommended `GNOMAD_AF_VCF` value:
 Recommended `MANUAL_POP_FREQ_TSV` value:
 
 - `resources/annotations/manual_population_freq.tsv`
+
+Recommended `VARIANT_QC_OUTPUT_DIR` value:
+
+- `results/mutect2_controls_no_pon/variant_qc`
 
 Recommended `VARIANT_QC_R_SCRIPT` value:
 

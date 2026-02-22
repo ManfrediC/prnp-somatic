@@ -16,6 +16,7 @@ For controls-only somatic variant calling without a panel of normals:
 2. Run Stages 2-7 post-processing: `src/pipelines/2_controls_postprocess_no_pon.sh`
 3. Run readcount metrics: `src/pipelines/3_controls_readcount_qc_no_pon.sh`
 4. Run variant extraction + QC: `src/pipelines/5_controls_variant_qc_no_pon.sh` (calls `src/pipelines/6_controls_variant_table_qc_no_pon.R`)
+5. Final controls QC tables are written to: `results/mutect2_controls_no_pon/variant_qc/`
 
 Pipeline details and outputs are documented in `src/pipelines/README.md`.
 
