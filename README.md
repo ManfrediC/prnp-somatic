@@ -8,6 +8,15 @@ FASTQ -> BAM (GATK best practices) -> Mutect2 -> QC -> result tables/figures.
 2. Configure paths in `config/config.local.yaml` (not committed)
 3. Run: `make all`
 
+## Controls Variant Calling (No PoN)
+
+For controls-only somatic variant calling without a panel of normals:
+
+1. Run Stage 1 Mutect2: `src/pipelines/mutect2_controls_no_pon.sh`
+2. Run Stages 2-6 post-processing: `src/pipelines/mutect2_controls_postprocess_no_pon.sh`
+
+Pipeline details and outputs are documented in `src/pipelines/README.md`.
+
 ## Repository structure
 - `bin/` command-line entrypoints / wrappers
 - `src/` reusable code (Python/R)

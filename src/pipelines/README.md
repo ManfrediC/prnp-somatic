@@ -1,128 +1,66 @@
 # Pipelines
 
-This folder contains executable pipeline entry points. For preprocessing (FASTQ ? final BAM), use:
+This folder contains executable pipeline entry points.
 
-- `preflight_preprocessing.sh` (checks only; fail fast)
-- `preprocessing.sh` (runs the pipeline; no preflight checks inside)
+## Available scripts
 
-## Preprocessing overview
+- `preflight_preprocessing.sh`: checks inputs/tools for preprocessing
+- `preprocessing.sh`: FASTQ to final BAM preprocessing
+- `mutect2_controls_no_pon.sh`: controls-only Mutect2 tumour-only calling (Stage 1)
+- `mutect2_controls_postprocess_no_pon.sh`: controls-only post-processing (Stages 2-6)
 
-**Inputs**
-- Sample sheet: `config/preprocessing_samples.tsv` (committed)
-- Local config: `config/preprocessing.env` (gitignored)
-- Raw FASTQs: `fastq/<batch_id>/...` (gitignored; large)
-- Reference resources: `resources/` (committed; verified with SHA256)
+## Preprocessing
 
-**Outputs**
-- Intermediates and logs: `runs/preprocessing/<batch_id>/<sample_id>/` (gitignored; large)
-- Published final BAMs: `results/final_bam/<sample_id>.bam` + `.bam.bai` (gitignored; large)
+### Inputs
 
-## Quick start
+- `config/preprocessing_samples.tsv` (committed)
+- `config/preprocessing.env` (gitignored)
+- `fastq/<batch_id>/...` (not committed)
+- `resources/` references (committed)
 
-1) Activate the Conda environment (recommended baseline):
+### Outputs
 
-```conda activate prnp-somatic```
+- `runs/preprocessing/<batch_id>/<sample_id>/` (intermediates/logs)
+- `results/final_bam/<sample_id>.bam` (+ index)
 
-2) Run "preflight" check (checks tools, references, sample sheet, FASTQ presence):
+### Run
 
-`src/pipelines/preflight_preprocessing.sh`
+1. `conda activate prnp-somatic`
+2. `src/pipelines/preflight_preprocessing.sh`
+3. `DRY_RUN=1 src/pipelines/preprocessing.sh`
+4. `DRY_RUN=0 src/pipelines/preprocessing.sh`
 
-3) Preview what would run (no filesystem changes):
+## Controls Variant Calling (No PoN)
 
-`DRY_RUN=1 src/pipelines/preprocessing.sh`
+Use this when Stage 1 Mutect2 has been run for controls and you want orientation/filtering/annotation.
 
-4) Run the pipeline:
+### Stage 1
 
-`DRY_RUN=0 src/pipelines/preprocessing.sh`
+- `src/pipelines/mutect2_controls_no_pon.sh`
 
-## Batch selection
+Writes:
 
-Both scripts contain a `BATCHES=(...)` block. Enable/disable batches by commenting lines, e.g.
+- `runs/mutect2_controls_no_pon/vcf/`
+- `runs/mutect2_controls_no_pon/f1r2/`
 
-```BATCHES=(
-  CJD_16_samples
-  # CJD_8_samples
-)```
+### Stages 2-6
 
-The sample sheet is filtered to these selected batch IDs.
+- `src/pipelines/mutect2_controls_postprocess_no_pon.sh`
 
-## Behaviour and reproducibility
+Writes:
 
-### Resume
-The pipeline is designed to be re-runnable:
+- `runs/mutect2_controls_no_pon/orientation/`
+- `runs/mutect2_controls_no_pon/filtered/`
+- `runs/mutect2_controls_no_pon/scores/`
+- `runs/mutect2_controls_no_pon/norm/`
+- `runs/mutect2_controls_no_pon/annot/`
 
-* If the expected output for a stage already exists and is non-empty, that stage is skipped.
-* If `FORCE=1`, existing per-sample outputs are removed and re-created.
+### Config keys used
 
-Example:
+Set in `config/preprocessing.env` (or via environment variables):
 
-```bash
-FORCE=1 DRY_RUN=0 src/pipelines/preprocessing.sh
-```
-
-### Logs and metadata
-
-For each processed sample:
-
-* Logs are written to: `runs/preprocessing/<batch>/<sample>/logs/`
-* Minimal run metadata is written to: `runs/preprocessing/<batch>/<sample>/RUN_META.txt`
-
-### Configuration file
-
-The pipeline reads `config/preprocessing.env`. A template is provided as:
-
-* `config/preprocessing.env.example` (committed)
-
-Create your local config (gitignored):
-
-```bash
-cp -n config/preprocessing.env.example config/preprocessing.env
-```
-
-Key variables include:
-
-* `THREADS`, `JAVA_MEM_GB`
-* `REF_FASTA`, `REF_DICT`, `DBSNP_VCF`, `MILLS_VCF`, `ADAPTERS_FA`
-* `RUNS_DIR`, `FINAL_BAM_DIR`, `SAMPLES_TSV`
-
-## Troubleshooting
-
-* If preflight fails with “missing FASTQ”: check `config/preprocessing_samples.tsv` paths and that FASTQs are present under `fastq/`.
-* If a run stops mid-sample: re-run `preprocessing.sh` (it will skip completed stages).
-* If you suspect a stale output is being reused: run with `FORCE=1` for that sample’s batch.
-* Tool availability: preflight expects `bwa`, `samtools`, `gatk`, and (once enabled) also `trimmomatic` and `picard`.
-
-````
-
----
-
-## 2) Add this section to the repo root `README.md`
-
-Insert somewhere near “Getting started”:
-
-```markdown
-## Preprocessing (FASTQ ? final BAM)
-
-This repository can reproduce the preprocessing pipeline used in the PRNP project.
-
-Directory conventions:
-- Raw FASTQs: `fastq/` (not committed; large)
-- Intermediates/logs: `runs/` (not committed; large)
-- Final BAMs: `results/final_bam/` (not committed; large)
-- Reference assets: `resources/` (committed; checksummed)
-
-Workflow:
-```bash
-conda activate prnp-somatic
-src/pipelines/preflight_preprocessing.sh
-DRY_RUN=1 src/pipelines/preprocessing.sh
-DRY_RUN=0 src/pipelines/preprocessing.sh
-````
-
-Configuration:
-
-* Template: `config/preprocessing.env.example`
-* Local (gitignored): `config/preprocessing.env`
-* Sample sheet (committed): `config/preprocessing_samples.tsv`
-
-Batch selection is controlled by toggling comment lines in the `BATCHES=(...)` block inside the pipeline scripts.
+- `MUTECT2_CONTROLS_OUT_ROOT`
+- `REF_FASTA`
+- `FUNCOTATOR_DS`
+- `JAVA_MEM_GB`
+- `DRY_RUN`
