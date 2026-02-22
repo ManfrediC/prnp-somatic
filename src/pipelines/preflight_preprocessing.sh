@@ -9,6 +9,7 @@ set -euo pipefail
 # -----------------------
 # Batch selection (toggle by commenting/uncommenting)
 # -----------------------
+# Keep this in sync with preprocessing.sh so checks match execution scope.
 BATCHES=(
    CJD_16_samples
    CJD_8_samples
@@ -128,6 +129,7 @@ check_tools() {
 
 # Checks whether resources are present
 check_resources() {
+  # Resolve all resource paths before checks so env overrides behave predictably.
   local ref dbsnp mills adapters
   ref="$(abs_path "$REF_FASTA")"
   dict="$(abs_path "$REF_DICT")"
@@ -148,6 +150,7 @@ check_resources() {
 
 # validating the samples TSV and FASTQs
 check_samples_tsv() {
+  # This enforces both table structure and file presence before long compute starts.
   local tsv
   tsv="$(abs_path "$SAMPLES_TSV")"
   require_file "$tsv"

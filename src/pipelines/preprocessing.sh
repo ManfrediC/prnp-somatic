@@ -4,6 +4,7 @@ set -euo pipefail
 # -----------------------
 # Batch selection (toggle by commenting/uncommenting)
 # -----------------------
+# This array is the single run-selection switch for preprocessing batches.
 BATCHES=(
   CJD_16_samples
   CJD_8_samples
@@ -42,6 +43,7 @@ MILLS_VCF="${MILLS_VCF:-resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.
 ADAPTERS_FA="${ADAPTERS_FA:-resources/TruSeq3-PE.fa}"
 
 # Convert relative paths to absolute paths
+# Keep path normalisation centralised so downstream commands always see absolute inputs.
 SAMPLES_TSV="$REPO_ROOT/$SAMPLES_TSV"
 RUNS_DIR="$REPO_ROOT/$RUNS_DIR"
 FINAL_BAM_DIR="$REPO_ROOT/$FINAL_BAM_DIR"
@@ -61,6 +63,7 @@ mkdir -p "$FINAL_BAM_DIR"
 # Minimal helper
 # -----------------------
 run() {
+  # DRY_RUN prints the resolved command exactly as it would execute.
   if [[ "$DRY_RUN" == "1" ]]; then
     echo "+ $*"
   else
@@ -73,6 +76,7 @@ run() {
 # -----------------------
 
 # Read and validate header
+# Expected schema is fixed so pipeline parsing remains deterministic.
 header="$(grep -v '^#' "$SAMPLES_TSV" | head -n 1)"
 [[ "$header" == $'batch_id\tsample_id\tr1\tr2' ]] || {
   echo "ERROR: unexpected header in $SAMPLES_TSV: $header" >&2
@@ -87,6 +91,7 @@ tail -n +2 "$SAMPLES_TSV" | grep -v '^#' | while IFS=$'\t' read -r batch sample 
   [[ -n "${batch// }" ]] || continue #skip blanks/whitespace
 
   # Filter to selected batches (loop)
+  # This enforces BATCHES selection without editing the input TSV.
   selected=0
   for b in "${BATCHES[@]}"; do
     if [[ "$batch" == "$b" ]]; then selected=1; break; fi

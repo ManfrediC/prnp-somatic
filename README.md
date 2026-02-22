@@ -14,6 +14,8 @@ For controls-only somatic variant calling without a panel of normals:
 
 1. Run Stage 1 Mutect2: `src/pipelines/1_controls_mutect2_no_pon.sh`
 2. Run Stages 2-7 post-processing: `src/pipelines/2_controls_postprocess_no_pon.sh`
+3. Run readcount metrics: `src/pipelines/3_controls_readcount_qc_no_pon.sh`
+4. Run variant extraction + QC: `src/pipelines/5_controls_variant_qc_no_pon.sh` (calls `src/pipelines/6_controls_variant_table_qc_no_pon.R`)
 
 Pipeline details and outputs are documented in `src/pipelines/README.md`.
 
@@ -25,6 +27,7 @@ The controls post-processing pipeline requires a local Funcotator datasource tre
 - `REF_FASTA`
 - `FUNCOTATOR_DS`
 - `GNOMAD_AF_VCF`
+- `MANUAL_POP_FREQ_TSV`
 - Recommended repo-relative paths:
 - `resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
 - `resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz`

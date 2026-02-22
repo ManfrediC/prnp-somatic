@@ -1,0 +1,30 @@
+# variant_id	dbsnp_id	population_frequency	source	retrieved_date	notes
+	rs1012397146	0.00001318	manual_gnomAD_dbSNP_lookup	2025-04-29	
+	rs1931969	0.2146	manual_gnomAD_dbSNP_lookup	2025-04-29	
+	rs2093390	0.3055	manual_gnomAD_dbSNP_lookup	2025-04-29	
+	rs2093391	0.2583	manual_gnomAD_dbSNP_lookup	2025-04-29	
+	rs6037932	0.2872	manual_gnomAD_dbSNP_lookup	2025-04-29	
+	rs6052769	0.4115	manual_gnomAD_dbSNP_lookup	2025-04-29	
+	rs6052772	0.2361	manual_gnomAD_dbSNP_lookup	2025-04-29	
+	rs6107516	0.2271	manual_gnomAD_dbSNP_lookup	2025-04-29	
+	rs781755787	0.000001369	manual_gnomAD_dbSNP_lookup	2025-04-29	
+	rs996098774		manual_gnomAD_dbSNP_lookup	2025-04-29	invalid_or_unresolved_id
+2-178581749-C-T			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+2-178585952-T-A			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+2-178585984-A-T			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+2-178649895-C-T			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+2-178649897-T-A			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+2-178698399-T-A			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+2-178698412-G-A			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+20-4691495-C-G			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+20-4691920-G-A			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+20-4693834-CA-AG			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+20-4694249-T-C			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+20-4694270-A-G			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+20-4695237-T-C			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+20-4695357-G-C			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+4-105175251-A-G			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+4-105175261-T-G			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+4-105215846-T-G			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+4-105261420-A-T			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found
+4-105273277-G-A			manual_gnomAD_dbSNP_lookup	2025-04-29	not_found

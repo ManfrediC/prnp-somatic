@@ -9,6 +9,8 @@ This folder contains executable pipeline entry points.
 - `1_controls_mutect2_no_pon.sh`: controls-only Mutect2 tumour-only calling (Stage 1)
 - `2_controls_postprocess_no_pon.sh`: controls-only post-processing (Stages 2-7)
 - `3_controls_readcount_qc_no_pon.sh`: controls-only read/base quality metrics from annotated variants
+- `5_controls_variant_qc_no_pon.sh`: controls-only variant table extraction and QC filtering (shell entry point)
+- `6_controls_variant_table_qc_no_pon.R`: R implementation of table integration and QC filters
 
 ## Preprocessing
 
@@ -80,6 +82,20 @@ Writes:
 - `runs/mutect2_controls_no_pon/readcount_qc/readcounts/`
 - `runs/mutect2_controls_no_pon/readcount_qc/metrics/`
 
+### Variant Table + QC
+
+- `src/pipelines/5_controls_variant_qc_no_pon.sh`
+- `src/pipelines/6_controls_variant_table_qc_no_pon.R` (called by Stage 5 shell script)
+
+Writes:
+
+- `runs/mutect2_controls_no_pon/variant_qc/select_variants/`
+- `runs/mutect2_controls_no_pon/variant_qc/variant_tables/`
+- `runs/mutect2_controls_no_pon/variant_qc/output/summary_combined_variants.tsv`
+- `runs/mutect2_controls_no_pon/variant_qc/output/filtered_variants.tsv`
+- `runs/mutect2_controls_no_pon/variant_qc/output/filtered_prnp_variants.tsv`
+- `runs/mutect2_controls_no_pon/variant_qc/output/filter_counts.tsv`
+
 ### Config keys used
 
 Set in `config/preprocessing.env` (or via environment variables):
@@ -90,6 +106,19 @@ Set in `config/preprocessing.env` (or via environment variables):
 - `GNOMAD_AF_VCF`
 - `JAVA_MEM_GB`
 - `DRY_RUN`
+- `VARIANT_QC_ROOT`
+- `VARIANT_QC_VCF_DIR`
+- `VARIANT_QC_READCOUNT_METRICS_DIR`
+- `MANUAL_POP_FREQ_TSV`
+- `ENABLE_AAF_FILTER`
+- `AAF_THRESHOLD`
+- `MIN_ALT_COUNT`
+- `MIN_DP`
+- `MIN_STRAND_ALT`
+- `MIN_MEAN_BQ`
+- `MIN_MEAN_MQ`
+- `MAX_POP_FREQ`
+- `MAX_BINOM_P`
 
 ### Funcotator files required
 
@@ -122,3 +151,12 @@ Recommended value:
 - `resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz`
 
 The corresponding index (`.tbi` or `.csi`) must be present.
+
+### Manual Population-Frequency Table
+
+`MANUAL_POP_FREQ_TSV` is used by Stage 5 QC (`src/pipelines/5_controls_variant_qc_no_pon.sh`) to
+provide reproducible manual population-frequency values derived from dbSNP (https://www.ncbi.nlm.nih.gov/snp/).
+
+Recommended value:
+
+- `resources/annotations/manual_population_freq.tsv`

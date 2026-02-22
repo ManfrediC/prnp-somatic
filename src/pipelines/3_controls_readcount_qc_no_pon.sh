@@ -124,6 +124,7 @@ sample_from_vcf() {
     # Fallback if using generic .vcf.gz annotations.
     sample="${base%.vcf.gz}"
   fi
+  # Return only the sample stem; all downstream filenames are rebuilt from this value.
   echo "$sample"
 }
 
@@ -173,6 +174,8 @@ for vcf in "${vcfs[@]}"; do
   sample="$(sample_from_vcf "$vcf")"
   bed="$BEDS_DIR/${sample}.bed"
   [[ -s "$bed" ]] && { echo "[Stage1] SKIP $sample"; continue; }
+  # BED columns here are: CHROM, POS0 (0-based start), POS (1-based end), ALT.
+  # This is the format expected by bam-readcount -l for per-site extraction.
   run_to_file "$bed" bcftools query -f '%CHROM\t%POS0\t%POS\t%ALT\n' "$vcf"
 done
 
@@ -206,6 +209,7 @@ echo "=== Stage 3: Remove duplicates ==="
 for sample in "${samples[@]}"; do
   in_bam="$BAM_WORK_DIR/${sample}.bam"
   out_bam="$BAM_NODUP_DIR/${sample}.nodup.bam"
+  # 0x400 is the SAM duplicate flag; dropping these matches the methods text.
   [[ -s "$out_bam" ]] && { echo "[Stage3] SKIP $sample"; continue; }
   run_to_file "$out_bam" samtools view -@ "$THREADS" -b -F 0x400 "$in_bam"
   run samtools index -@ "$THREADS" "$out_bam"

@@ -131,7 +131,8 @@ raw_vcfs=( "$RAW_DIR"/*.raw.vcf.gz )
 [[ "${#raw_vcfs[@]}" -gt 0 ]] || die "No raw VCFs found in: $RAW_DIR"
 raw_samples=()
 for vcf in "${raw_vcfs[@]}"; do
-  # Final completeness check is anchored to raw sample IDs.
+  # Track Stage-1 sample IDs once so the final completeness check is deterministic.
+  # This avoids coupling final checks to whichever intermediate glob happens to exist.
   raw_samples+=( "$(basename "$vcf" .raw.vcf.gz)" )
 done
 
@@ -158,6 +159,7 @@ echo "=== Stage 2: LearnReadOrientationModel ==="
 for tar in "${f1r2_tars[@]}"; do
   sample="$(basename "$tar" .f1r2.tar.gz)"
   out="$ORIENT_DIR/${sample}_orientation.tar.gz"
+  # Orientation priors are consumed by FilterMutectCalls in Stage 3.
   [[ -s "$out" ]] && { echo "[Stage2] SKIP $sample"; continue; }
   run gatk --java-options "-Xmx${JAVA_MEM_GB}g" LearnReadOrientationModel \
     -I "$tar" \
@@ -258,6 +260,7 @@ annot_vcfs=( "$ANNOT_DIR"/*.func.vcf.gz )
 for vcf in "${annot_vcfs[@]}"; do
   sample="$(basename "$vcf" .func.vcf.gz)"
   out="$ANNOT_GNOMAD_DIR/${sample}.func.af.vcf.gz"
+  # Keep AF in a dedicated INFO/GNOMAD_AF field so downstream filters can read one stable column.
   [[ -s "$out" ]] && { echo "[Stage7] SKIP $sample"; continue; }
   run bcftools annotate \
     -a "$GNOMAD_AF_VCF" \
