@@ -1934,4 +1934,18 @@ Afterwards, I’ll run mutect2 on the controls only:
 /add/prnp-somatic/src/pipelines/mutect2_controls_no_pon.sh
 ```
 
-The goal is to make the PoN next.
+The goal is to verify that the controls don't contain somatic PRNP mutations and make the PoN next.
+
+## 22.02.2026
+
+Next step for reproducible control-only evaluation (somatic PRNP check) is to port and standardise the legacy normalisation/annotation workflow into the repository structure with relative paths.
+
+### TODO
+
+- [ ] Use `src/legacy/ubuntu/code/mutect_without_pon/run_no_pon_pipeline.sh` as the primary template for the processing chain after Mutect2 outputs: LearnReadOrientationModel -> FilterMutectCalls -> PASS filtering -> bcftools normalise -> Funcotator.
+- [ ] Adapt that logic for the current controls run at `runs/mutect2_controls_no_pon/` (input raw VCFs and F1R2 tarballs), without CJD/dilution loops.
+- [ ] Remove hard-coded absolute paths (`/add/...`, `/home/...`) and replace with repo-relative configuration-driven paths.
+- [ ] Add a dedicated post-Funcotator gnomAD annotation step, based on `src/legacy/ubuntu/code/mutect_without_pon/bcftools_gnomAD.sh`, with reproducible input/output locations.
+- [ ] Keep `src/legacy/ubuntu/code/annotation_pipeline/1_annotation_preprocessing.sh` and `src/legacy/ubuntu/code/annotation_pipeline/2_funcotator_samples.sh` only as references for implementation details, not as the primary script base.
+- [ ] Add a verification/export step for review (likely from `src/legacy/ubuntu/code/mutect_without_pon/VariantsToTable_noPoN.sh`) so PRNP calls in controls can be inspected in a table.
+- [ ] Document the final controls-only flow in repo docs (inputs, stages, outputs, and expected file naming), then run and verify the outputs in `runs/` and `results/`.
