@@ -15,6 +15,7 @@ This folder contains executable pipeline entry points.
 - `8_cjd_dilutions_mutect2_with_pon.sh`: Mutect2 tumour-only with PoN for CJD and dilution BAMs
 - `9_cjd_dilutions_postprocess_with_pon.sh`: post-processing for CJD+dilutions with PoN (orientation/filtering/annotation)
 - `10_cjd_dilutions_readcount_qc_with_pon.sh`: readcount extraction (BED/BAM dedup/bam-readcount) for CJD+dilutions
+- `11_cjd_dilutions_readcount_to_tsv_with_pon.sh`: convert readcount text outputs to per-allele TSV metrics
 
 ## Preprocessing
 
@@ -145,6 +146,16 @@ Writes (within each group: `cjd`, `dilutions`):
 - `runs/mutect2_cjd_dilutions_with_pon/<group>/readcount_qc/bam_work/`
 - `runs/mutect2_cjd_dilutions_with_pon/<group>/readcount_qc/bam_nodup/`
 - `runs/mutect2_cjd_dilutions_with_pon/<group>/readcount_qc/readcounts/`
+- `runs/mutect2_cjd_dilutions_with_pon/logs/stage10_readcount_qc_with_pon.log`
+
+### CJD + Dilution Readcount Parsing With PoN
+
+- `src/pipelines/11_cjd_dilutions_readcount_to_tsv_with_pon.sh`
+
+Writes (within each group: `cjd`, `dilutions`):
+
+- `runs/mutect2_cjd_dilutions_with_pon/<group>/readcount_qc/metrics/`
+- `runs/mutect2_cjd_dilutions_with_pon/logs/stage11_readcount_to_tsv_with_pon.log`
 
 ### Config keys used
 
@@ -185,6 +196,7 @@ Additional keys used by PoN creation:
 - `WITH_PON_READCOUNT_GROUPS`
 - `WITH_PON_READCOUNT_BAM_DIR`
 - `WITH_PON_READCOUNT_REF_FASTA`
+- `READCOUNT_TO_TSV_PY`
 - `DILUTION_SAMPLES`
 
 ### Funcotator files required
