@@ -7,7 +7,7 @@ This folder contains executable pipeline entry points.
 - `preflight_preprocessing.sh`: checks inputs/tools for preprocessing
 - `preprocessing.sh`: FASTQ to final BAM preprocessing
 - `mutect2_controls_no_pon.sh`: controls-only Mutect2 tumour-only calling (Stage 1)
-- `mutect2_controls_postprocess_no_pon.sh`: controls-only post-processing (Stages 2-6)
+- `mutect2_controls_postprocess_no_pon.sh`: controls-only post-processing (Stages 2-7)
 
 ## Preprocessing
 
@@ -41,6 +41,7 @@ Post-processing stage order is linear:
 - Stage 4 `filtered -> scores`
 - Stage 5 `scores -> norm`
 - Stage 6 `norm -> annot`
+- Stage 7 `annot -> annot_with_gnomad`
 
 The script fails fast if required per-sample inputs are missing at any stage.
 
@@ -53,7 +54,7 @@ Writes:
 - `runs/mutect2_controls_no_pon/vcf/`
 - `runs/mutect2_controls_no_pon/f1r2/`
 
-### Stages 2-6
+### Stages 2-7
 
 - `src/pipelines/mutect2_controls_postprocess_no_pon.sh`
 
@@ -64,6 +65,7 @@ Writes:
 - `runs/mutect2_controls_no_pon/scores/`
 - `runs/mutect2_controls_no_pon/norm/`
 - `runs/mutect2_controls_no_pon/annot/`
+- `runs/mutect2_controls_no_pon/annot_with_gnomad/`
 
 ### Config keys used
 
@@ -72,6 +74,7 @@ Set in `config/preprocessing.env` (or via environment variables):
 - `MUTECT2_CONTROLS_OUT_ROOT`
 - `REF_FASTA`
 - `FUNCOTATOR_DS`
+- `GNOMAD_AF_VCF`
 - `JAVA_MEM_GB`
 - `DRY_RUN`
 
@@ -95,3 +98,14 @@ These are separate from the reference FASTA (`REF_FASTA`).
 Note: `gnomAD_exome` and `gnomAD_genome` are intentionally excluded from the active
 datasource tree to avoid requester-pays bucket access during Funcotator. Archived copies are in
 `resources/backup/funcotator_excluded_datasources/`.
+
+### gnomAD AF resource required
+
+`GNOMAD_AF_VCF` is used in Stage 7 (`bcftools annotate`) to copy population AF into
+`INFO/GNOMAD_AF`.
+
+Recommended value:
+
+- `resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz`
+
+The corresponding index (`.tbi` or `.csi`) must be present.

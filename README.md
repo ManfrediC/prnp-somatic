@@ -13,7 +13,7 @@ FASTQ -> BAM (GATK best practices) -> Mutect2 -> QC -> result tables/figures.
 For controls-only somatic variant calling without a panel of normals:
 
 1. Run Stage 1 Mutect2: `src/pipelines/mutect2_controls_no_pon.sh`
-2. Run Stages 2-6 post-processing: `src/pipelines/mutect2_controls_postprocess_no_pon.sh`
+2. Run Stages 2-7 post-processing: `src/pipelines/mutect2_controls_postprocess_no_pon.sh`
 
 Pipeline details and outputs are documented in `src/pipelines/README.md`.
 
@@ -21,9 +21,13 @@ Pipeline details and outputs are documented in `src/pipelines/README.md`.
 
 The controls post-processing pipeline requires a local Funcotator datasource tree.
 
-- Config key: `FUNCOTATOR_DS` in `config/preprocessing.env`
-- Recommended repo-relative path:
+- Config keys in `config/preprocessing.env`:
+- `REF_FASTA`
+- `FUNCOTATOR_DS`
+- `GNOMAD_AF_VCF`
+- Recommended repo-relative paths:
 - `resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
+- `resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz`
 
 Reference FASTA (`REF_FASTA`) and Funcotator datasources (`FUNCOTATOR_DS`) are separate requirements.
 `gnomAD_exome` and `gnomAD_genome` are intentionally excluded from the active Funcotator datasource tree to avoid requester-pays access. They are archived under `resources/backup/funcotator_excluded_datasources/`.
