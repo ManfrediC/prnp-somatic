@@ -11,6 +11,7 @@ This folder contains executable pipeline entry points.
 - `3_controls_readcount_qc_no_pon.sh`: controls-only read/base quality metrics from annotated variants
 - `5_controls_variant_qc_no_pon.sh`: controls-only variant table extraction and QC filtering (shell entry point)
 - `6_controls_variant_table_qc_no_pon.R`: R implementation of table integration and QC filters
+- `7_controls_create_pon.sh`: controls-only Panel of Normals (PoN) creation from filtered control VCFs
 
 ## Preprocessing
 
@@ -96,6 +97,15 @@ Writes:
 - `results/mutect2_controls_no_pon/variant_qc/filtered_prnp_variants.tsv`
 - `results/mutect2_controls_no_pon/variant_qc/filter_counts.tsv`
 
+### Controls PoN creation
+
+- `src/pipelines/7_controls_create_pon.sh`
+
+Writes:
+
+- `results/mutect2_controls_pon/panel_of_normals/controls_multisample.filtered.vcf.gz`
+- `results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz`
+
 ### Config keys used
 
 Set in `config/preprocessing.env` (or via environment variables):
@@ -120,6 +130,14 @@ Set in `config/preprocessing.env` (or via environment variables):
 - `MIN_MEAN_MQ`
 - `MAX_POP_FREQ`
 - `MAX_BINOM_P`
+
+Additional keys used by PoN creation:
+
+- `PON_INPUT_DIR`
+- `PON_OUTPUT_ROOT`
+- `PON_MERGED_VCF`
+- `PON_VCF`
+- `PON_CONTROLS`
 
 ### Funcotator files required
 

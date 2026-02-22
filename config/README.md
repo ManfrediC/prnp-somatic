@@ -60,3 +60,21 @@ threshold filter:
 
 - `ENABLE_AAF_FILTER=1` applies `AAF > AAF_THRESHOLD` (default, recommended)
 - `ENABLE_AAF_FILTER=0` keeps all rows after the upstream QC filters for review
+
+## Controls PoN creation settings
+
+For `src/pipelines/7_controls_create_pon.sh`, set:
+
+- `PON_INPUT_DIR`
+- `PON_OUTPUT_ROOT`
+- `PON_MERGED_VCF`
+- `PON_VCF`
+- `PON_CONTROLS`
+
+Recommended values:
+
+- `PON_INPUT_DIR="runs/mutect2_controls_no_pon/filtered"`
+- `PON_OUTPUT_ROOT="results/mutect2_controls_pon/panel_of_normals"`
+- `PON_MERGED_VCF="results/mutect2_controls_pon/panel_of_normals/controls_multisample.filtered.vcf.gz"`
+- `PON_VCF="results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz"`
+- `PON_CONTROLS="Ctrl1 Ctrl2 Ctrl3 Ctrl4 Ctrl5 Ctrl7"`
