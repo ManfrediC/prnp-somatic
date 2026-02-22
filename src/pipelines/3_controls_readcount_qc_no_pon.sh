@@ -64,7 +64,7 @@ READCOUNT_QC_ROOT="${READCOUNT_QC_ROOT:-$OUT_ROOT/readcount_qc}"
 READCOUNT_VCF_DIR="${READCOUNT_VCF_DIR:-$OUT_ROOT/annot_with_gnomad}"
 READCOUNT_BAM_DIR="${READCOUNT_BAM_DIR:-results/final_bam}"
 READCOUNT_REF_FASTA="${READCOUNT_REF_FASTA:-${REF_FASTA:-resources/chr2_chr4_chr20.fasta}}"
-READCOUNT_TO_TSV_PY="${READCOUNT_TO_TSV_PY:-src/pipelines/readcount_to_tsv.py}"
+READCOUNT_TO_TSV_PY="${READCOUNT_TO_TSV_PY:-src/pipelines/4_readcount_to_tsv.py}"
 
 to_abs() {
   local p="$1"
