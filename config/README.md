@@ -1,7 +1,7 @@
 # Config
 
 Committed:
-- `preprocessing_samples.tsv` - sample manifest for preprocessing (`batch_id`, `sample_id`, `R1`, `R2`)
+- `preprocessing_samples.tsv` - sample manifest for preprocessing (`batch_id`, `sample_id`, `r1`, `r2`)
 - `preprocessing.env.example` - template for local configuration
 
 Current note:

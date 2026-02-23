@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -uo pipefail
+set -euo pipefail
 
 MANIFEST="${1:-manifest.tsv}"
 OUT="${2:-manifest_qc.tsv}"
@@ -30,7 +30,7 @@ picard_metrics_suffix=".bwa.picard.markedDup.metrics"
 
 printf "sample_id\tgroup\tbatch\tinput_dir\tbam_path\tbam_style\tbam_exists\tbai_path\tbai_exists\tpicard_metrics_path\tpicard_metrics_exists\tpicard_metrics_required\terrors\n" > "$OUT"
 
-tail -n +2 "$MANIFEST" | while IFS=$'\t' read -r sample_id group batch input_dir; do
+while IFS=$'\t' read -r sample_id group batch input_dir || [[ -n "${sample_id:-}${group:-}${batch:-}${input_dir:-}" ]]; do
   if [[ -z "${sample_id}${group}${batch}${input_dir}" ]]; then
     continue
   fi
@@ -117,7 +117,7 @@ tail -n +2 "$MANIFEST" | while IFS=$'\t' read -r sample_id group batch input_dir
     "$bai_path" "$bai_exists" \
     "$picard_metrics_path" "$picard_metrics_exists" "$picard_metrics_required" \
     "$err_str" >> "$OUT"
-done
+done < <(tail -n +2 "$MANIFEST")
 
 # Failure definition:
 # - missing BAM or BAI always fails
