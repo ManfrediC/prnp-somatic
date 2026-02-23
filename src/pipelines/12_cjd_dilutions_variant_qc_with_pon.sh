@@ -13,6 +13,7 @@ CLI_DRY_RUN="${DRY_RUN-}"
 CLI_JAVA_MEM_GB="${JAVA_MEM_GB-}"
 CLI_ENABLE_AAF_FILTER="${ENABLE_AAF_FILTER-}"
 CLI_AAF_THRESHOLD="${AAF_THRESHOLD-}"
+CLI_WITH_PON_VARIANT_QC_GROUPS="${WITH_PON_VARIANT_QC_GROUPS-}"
 
 # -----------------------
 # Repo root discovery (works from anywhere)
@@ -74,7 +75,7 @@ if [[ "$MUTECT2_WITH_PON_VARIANT_QC_ROOT" == run/* ]]; then
   MUTECT2_WITH_PON_VARIANT_QC_ROOT="runs/${MUTECT2_WITH_PON_VARIANT_QC_ROOT#run/}"
 fi
 
-WITH_PON_VARIANT_QC_GROUPS="${WITH_PON_VARIANT_QC_GROUPS:-${WITH_PON_GROUPS:-cjd dilutions}}"
+WITH_PON_VARIANT_QC_GROUPS="${CLI_WITH_PON_VARIANT_QC_GROUPS:-${WITH_PON_VARIANT_QC_GROUPS:-${WITH_PON_GROUPS:-cjd dilutions}}}"
 WITH_PON_VARIANT_QC_VCF_SUBDIR="${WITH_PON_VARIANT_QC_VCF_SUBDIR:-annot_with_gnomad}"
 WITH_PON_VARIANT_QC_METRICS_SUBDIR="${WITH_PON_VARIANT_QC_METRICS_SUBDIR:-readcount_qc/metrics}"
 
@@ -251,12 +252,19 @@ for group in "${groups[@]}"; do
   # Stage 3: R-based QC integration and filtering
   # ------------------------------------------------------------
   echo "=== Stage 3 ($group): R QC integration ==="
+  # Dilution runs are used to derive the AAF threshold, so do not apply it here.
+  group_enable_aaf_filter="$ENABLE_AAF_FILTER"
+  if [[ "$group" == "dilutions" ]]; then
+    group_enable_aaf_filter="0"
+  fi
+  echo "[Stage3][$group] enable_aaf_filter=$group_enable_aaf_filter (global default: $ENABLE_AAF_FILTER)"
+
   run Rscript "$WITH_PON_VARIANT_QC_R_SCRIPT" \
     --variant-dir "$TABLE_DIR" \
     --metrics-dir "$METRICS_DIR" \
     --manual-freq "$MANUAL_POP_FREQ_TSV" \
     --output-dir "$OUTPUT_DIR" \
-    --enable-aaf-filter "$ENABLE_AAF_FILTER" \
+    --enable-aaf-filter "$group_enable_aaf_filter" \
     --aaf-threshold "$AAF_THRESHOLD" \
     --min-alt-count "$MIN_ALT_COUNT" \
     --min-dp "$MIN_DP" \

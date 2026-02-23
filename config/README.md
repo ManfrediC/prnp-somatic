@@ -159,3 +159,8 @@ Recommended values:
 - `WITH_PON_VARIANT_QC_RESULTS_ROOT="results/mutect2_cjd_dilutions_with_pon/variant_qc"`
 - `WITH_PON_VARIANT_QC_R_SCRIPT="src/pipelines/12_cjd_dilutions_variant_table_qc_with_pon.R"`
 - `MANUAL_POP_FREQ_TSV="resources/annotations/manual_population_freq.tsv"`
+
+Note:
+
+- Stage 12 always disables the final AAF filter for the `dilutions` group.
+- `ENABLE_AAF_FILTER` and `AAF_THRESHOLD` remain configurable for the `cjd` group.

@@ -177,6 +177,11 @@ Writes:
 - `results/mutect2_cjd_dilutions_with_pon/variant_qc/<group>/filter_counts.tsv`
 - `runs/mutect2_cjd_dilutions_with_pon/logs/stage12_variant_qc_with_pon.log`
 
+Behaviour note:
+
+- For `dilutions`, the final AAF filter is always disabled in Stage 12 (used for threshold derivation).
+- For `cjd`, Stage 12 uses `ENABLE_AAF_FILTER` / `AAF_THRESHOLD` as configured.
+
 ### Config keys used
 
 Set in `config/preprocessing.env` (or via environment variables):
