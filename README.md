@@ -47,6 +47,7 @@ Reference FASTA (`REF_FASTA`) and Funcotator datasources (`FUNCOTATOR_DS`) are s
 - `src/` reusable code (Python/R)
 - `config/` configuration templates
 - `resources/` small static artefacts tracked in git (BEDs, schemas)
+- `authoritative_files/` manifests and sequencing-metrics validation utilities
 - `data/` input data *not tracked* (see `data/README.md`)
 - `results/` outputs *not tracked* (date-stamped runs)
 - `env/` container/environment definitions
