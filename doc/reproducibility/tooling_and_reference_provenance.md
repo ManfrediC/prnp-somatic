@@ -27,20 +27,16 @@ Scope: `src/ddPCR`, `src/junctions`, `src/pipelines` (Stage-12 publication path)
 - `dplyr`: `1.1.4`
 - `txdbmaker`: `1.2.0` (installed in dedicated reproducible env `prnp-junctions`; required by current `GenomicFeatures::makeTxDbFromGFF()` stack)
 
-### Stage-12 pipeline workflow (`src/pipelines/12_*`)
-
-- `dplyr`: `1.1.4`
-- `readr`: `2.1.5`
-- `stringr`: `1.5.1`
-- `tidyr`: `1.3.1`
-- `tibble`: `3.2.1`
-
 ### ddPCR workflow (`src/ddPCR`)
 
-- `readr`: `2.1.5`
-- `magrittr`: `2.0.3`
 - `binom`: `1.1.1.1`
+- `dplyr`: `1.1.4`
+- `magrittr`: `2.0.3`
+- `readr`: `2.1.5`
+- `stringr`: `1.5.1`
 - `tidyverse`: `2.0.0`
+- `tidyr`: `1.3.1`
+- `tibble`: `3.2.1`
 - `openxlsx`: `4.2.8`
 
 ## Required reference artefacts and provenance notes
