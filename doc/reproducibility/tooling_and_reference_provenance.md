@@ -25,7 +25,7 @@ Scope: `src/ddPCR`, `src/junctions`, `src/pipelines` (Stage-12 publication path)
 - `rtracklayer`: `1.66.0`
 - `GenomicAlignments`: `1.42.0`
 - `dplyr`: `1.1.4`
-- `txdbmaker`: installed in dedicated reproducible env `prnp-junctions` (required by current `GenomicFeatures::makeTxDbFromGFF()` stack)
+- `txdbmaker`: `1.2.0` (installed in dedicated reproducible env `prnp-junctions`; required by current `GenomicFeatures::makeTxDbFromGFF()` stack)
 
 ### Stage-12 pipeline workflow (`src/pipelines/12_*`)
 
@@ -40,16 +40,8 @@ Scope: `src/ddPCR`, `src/junctions`, `src/pipelines` (Stage-12 publication path)
 - `readr`: `2.1.5`
 - `magrittr`: `2.0.3`
 - `binom`: `1.1.1.1`
-- `tidyverse`: **MISSING**
-- `openxlsx`: **MISSING**
-
-## Manual install guidance for missing dependencies (not executed)
-
-- Junction blocker (resolved in dedicated env):
-  - created env: `conda create -n prnp-junctions ... bioconductor-txdbmaker ...`
-  - run command used: `conda activate prnp-junctions && TMPDIR=/tmp bash src/junctions/run_junctions.sh`
-- ddPCR missing packages:
-  - `conda install -c conda-forge r-tidyverse r-openxlsx`
+- `tidyverse`: `2.0.0`
+- `openxlsx`: `4.2.8`
 
 ## Required reference artefacts and provenance notes
 
@@ -68,3 +60,4 @@ Scope: `src/ddPCR`, `src/junctions`, `src/pipelines` (Stage-12 publication path)
 ## Notes
 
 - Source URIs above were verified on `2026-02-25`; when original download logs were unavailable, the local file timestamp is recorded as the retrieval/import date proxy.
+- `tidyverse` and `openxlsx` are currently installed in base conda R (not in `prnp-somatic` env).
