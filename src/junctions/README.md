@@ -30,7 +30,8 @@ Defaults are repo-relative and resolved from script location.
 From repository root (single entrypoint):
 
 ```bash
-bash src/junctions/run_junctions.sh
+conda activate prnp-junctions
+TMPDIR=/tmp TEMP=/tmp TMP=/tmp bash src/junctions/run_junctions.sh
 ```
 
 Stepwise commands:

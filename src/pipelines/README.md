@@ -2,6 +2,14 @@
 
 This folder contains executable pipeline entry points.
 
+## Reviewer entrypoint (repo root)
+
+For the reproducibility path tracked in this repository, run:
+
+```bash
+bash src/pipelines/run_cjd_dilutions_variant_qc_with_pon.sh
+```
+
 ## Available scripts
 
 - `preflight_preprocessing.sh`: checks inputs/tools for preprocessing

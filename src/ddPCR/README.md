@@ -20,13 +20,18 @@ Expected in the repository root:
 
 ## Command
 
-Create a dedicated conda environment (reviewer-side), then run from the repository root:
+Create a dedicated conda environment (reviewer-side). Then the workflow command from repository root is:
+
+```bash
+bash src/ddPCR/run_ddpcr.sh
+```
+
+Environment setup example:
 
 ```bash
 conda --no-plugins create -n prnp-somatic-ddpcr -c conda-forge -y \
   r-base=4.3 r-readr r-tidyverse r-openxlsx r-magrittr r-binom
 conda activate prnp-somatic-ddpcr
-bash src/ddPCR/run_ddpcr.sh
 ```
 
 This repository does not provide or version-control the R tools themselves.

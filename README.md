@@ -3,10 +3,21 @@
 PRNP somatic variant analysis:
 FASTQ -> BAM (GATK best practices) -> Mutect2 -> QC -> result tables/figures.
 
-## Quickstart
-1. Prepare inputs (FASTQ + manifest)
-2. Configure paths in `config/config.local.yaml` (not committed)
-3. Run: `make all`
+## Reproducible Workflow Entrypoints (repo root)
+
+Run each workflow from the repository root with one command:
+
+- ddPCR SNV dataframe: `bash src/ddPCR/run_ddpcr.sh`
+- PRNP exon-exon junctions: `TMPDIR=/tmp bash src/junctions/run_junctions.sh`
+- Stage-12 CJD+dilutions QC table regeneration: `bash src/pipelines/run_cjd_dilutions_variant_qc_with_pon.sh`
+- Manuscript figures/tables: `Rscript manuscript/run_all.R`
+
+Detailed inputs and expected outputs for each workflow are documented in:
+
+- `src/ddPCR/README.md`
+- `src/junctions/README.md`
+- `src/pipelines/README.md`
+- `manuscript/README.md`
 
 ## Controls Variant Calling (No PoN)
 
