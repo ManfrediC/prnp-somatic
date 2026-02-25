@@ -2055,3 +2055,17 @@ Junction blocker status (updated):
   - `results/junctions/junction_counts/prnp_junction_counts.tsv`
   - `results/junctions/junction_counts/prnp_junction_summary.tsv`
 - Rewrote and re-checked checksums via `bin/verify_output_checksums.sh` (`--mode write`, then `--mode check`).
+
+25.02.2026 addendum:
+
+- Updated reviewer-facing reproducibility docs:
+  - rewrote root `README.md` into a step-by-step reviewer run guide with ordered commands and expected outputs
+  - added `doc/MAKEFILE.md` and `mk/README.md` for Makefile/module usage
+  - added `bin/README.md` documenting `verify_output_checksums.sh` and `make_inventory.py`
+- Removed stale `make all` mentions from docs.
+- Updated `doc/reproducibility/tooling_and_reference_provenance.md`:
+  - filled provenance placeholders (exact source URLs/URIs and local retrieval dates)
+  - added exact package versions for `txdbmaker`, `tidyverse`, `openxlsx`
+- Package installation status:
+  - `tidyverse` and `openxlsx` remain unavailable inside `prnp-somatic` env after repeated solver attempts
+  - global fallback succeeded in conda base environment; `Rscript` now resolves both packages (`tidyverse=TRUE`, `openxlsx=TRUE`)
