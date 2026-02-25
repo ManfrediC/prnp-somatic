@@ -3,21 +3,103 @@
 PRNP somatic variant analysis:
 FASTQ -> BAM (GATK best practices) -> Mutect2 -> QC -> result tables/figures.
 
-## Reproducible Workflow Entrypoints (repo root)
+## Reproduction Guide
 
-Run each workflow from the repository root with one command:
+Run all commands from repository root (`/add/prnp-somatic`).
 
-- ddPCR SNV dataframe: `bash src/ddPCR/run_ddpcr.sh`
-- PRNP exon-exon junctions: `TMPDIR=/tmp bash src/junctions/run_junctions.sh`
-- Stage-12 CJD+dilutions QC table regeneration: `bash src/pipelines/run_cjd_dilutions_variant_qc_with_pon.sh`
-- Manuscript figures/tables: `Rscript manuscript/run_all.R`
+### 1. Clone and enter repo
 
-Detailed inputs and expected outputs for each workflow are documented in:
+```bash
+git clone https://github.com/ManfrediC/prnp-somatic.git
+cd prnp-somatic
+```
+
+### 2. Prepare input data in expected locations
+
+Required inputs must be placed as follows:
+
+- ddPCR raw files: `ddPCR/*.csv`
+- ddPCR sample metadata: `ddPCR/sample_details.xlsx`
+- raw FASTQ files: `fastq`
+- resources for GATK workflow: `resources`
+
+### 3. Create environment for ddPCR + pipeline scripts
+
+```bash
+conda --no-plugins create -n prnp-somatic -c conda-forge -c bioconda -y \
+  r-base=4.4 r-tidyverse r-openxlsx r-readr r-magrittr r-binom \
+  r-dplyr r-stringr r-tidyr r-tibble
+conda activate prnp-somatic
+```
+
+### 4. Run ddPCR workflow
+
+```bash
+bash src/ddPCR/run_ddpcr.sh
+```
+
+Expected outputs:
+
+- `results/ddPCR/SNV_data_final.xlsx`
+- `results/ddPCR/SNV_pooled_participant.xlsx`
+- `results/ddPCR/p0_fallback.csv`
+
+### 5. Create environment for junction workflow
+
+```bash
+conda --no-plugins create -n prnp-junctions -c conda-forge -c bioconda -y \
+  r-base=4.4 bioconductor-genomicfeatures bioconductor-txdbmaker \
+  bioconductor-genomicranges bioconductor-genomeinfodb bioconductor-rsamtools \
+  bioconductor-biostrings bioconductor-rtracklayer bioconductor-genomicalignments \
+  r-dplyr
+conda activate prnp-junctions
+```
+
+### 6. Run junction workflow
+
+```bash
+TMPDIR=/tmp TEMP=/tmp TMP=/tmp bash src/junctions/run_junctions.sh
+```
+
+Expected outputs:
+
+- `results/junctions/junction_counts/prnp_junction_counts.tsv`
+- `results/junctions/junction_counts/prnp_junction_summary.tsv`
+
+
+Expected outputs:
+
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/*`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/*`
+
+### 7. Optional: regenerate manuscript artifacts
+
+```bash
+conda activate prnp-somatic
+Rscript manuscript/run_all.R
+```
+
+### 8. Verify final outputs
+
+```bash
+bash bin/verify_output_checksums.sh --mode check
+```
+
+Expected manifest/checksum files:
+
+- `doc/reproducibility/final_outputs_manifest.tsv`
+- `doc/reproducibility/final_outputs.sha256`
+
+Detailed workflow docs:
 
 - `src/ddPCR/README.md`
 - `src/junctions/README.md`
 - `src/pipelines/README.md`
 - `manuscript/README.md`
+
+Makefile helper targets are documented in:
+
+- `doc/MAKEFILE.md`
 
 ## Controls Variant Calling (No PoN)
 
@@ -57,13 +139,11 @@ Reference FASTA (`REF_FASTA`) and Funcotator datasources (`FUNCOTATOR_DS`) are s
 - `bin/` command-line entrypoints / wrappers
 - `src/` reusable code (Python/R)
 - `config/` configuration templates
-- `resources/` small static artefacts tracked in git (BEDs, schemas)
+- `resources/` small static artefacts tracked in git (BEDs, schemas). Larger resources must be downloaded manually
 - `authoritative_files/` manifests and sequencing-metrics validation utilities
-- `data/` input data *not tracked* (see `data/README.md`)
 - `results/` outputs *not tracked* (date-stamped runs)
 - `env/` container/environment definitions
 - `doc/` notes and documentation
-- `tests/` smoke tests
 
 ## Raw Data Placement (Ignored)
 

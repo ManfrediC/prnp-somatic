@@ -4,9 +4,6 @@ reproducible runs without relying on machine-specific paths.
 
 ## What is vendored here (small files)
 
-These files are copied from a local reference directory into `resources/` if they are below a defined
-size threshold (e.g. = 50 MiB). See the copy script in the repository documentation / Makefile.
-
 Typical examples:
 - BED files (targets, PRNP coding region)
 - Interval lists
@@ -27,7 +24,7 @@ or use Git LFS if you explicitly choose to version them.
 - Recommended verification:
   - Record SHA-256 checksums for the FASTA and indices.
 
-### gnomAD “af-only” resource VCF
+### gnomAD ï¿½af-onlyï¿½ resource VCF
 - Expected file(s): `somatic-hg38_af-only-gnomad.hg38.vcf.gz` (+ `.tbi` and possibly `.idx`)
 - Purpose: Mutect2 germline resource
 - How to obtain:
