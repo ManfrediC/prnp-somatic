@@ -3,12 +3,14 @@
 Committed:
 - `preprocessing_samples.tsv` - sample manifest for preprocessing (`batch_id`, `sample_id`, `r1`, `r2`)
 - `preprocessing.env.example` - template for local configuration
+- `junctions.env.example` - template for exon-exon junction workflow configuration
 
 Current note:
 - `preprocessing_samples.tsv` includes all `first_CJD_seq` CJD samples used in the authoritative manifest (`CJD1`, `CJD2`, `CJD6`, `CJD13`, `CJD22`, `CJD23`, `CJD25`, `CJD27`).
 
 Not committed (local machine only):
 - `preprocessing.env` - local paths and settings (ignored by `.gitignore`)
+- `junctions.env` - local paths and settings for `src/junctions/*` scripts
 
 Rationale: `preprocessing.env` may include machine-specific paths and runtime settings; large data directories (`fastq/`, `runs/`, `results/final_bam/`) are intentionally not committed.
 

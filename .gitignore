@@ -16,8 +16,13 @@ __pycache__/
 # R
 .Rhistory
 .RData
+.rdb
+.rds
+.rdx
 .Rproj.user/
 *.Rproj
+.Rlibs/
+.so
 
 # Large bioinformatics artefacts (never commit)
 *.fastq
@@ -70,6 +75,13 @@ resources/backup/funcotator_excluded_datasources/
 !resources/dataset.tsv
 !resources/.gitkeep
 
+# Junction reference runtime index sidecars
+resources/junctions/*.fa.amb
+resources/junctions/*.fa.ann
+resources/junctions/*.fa.bwt
+resources/junctions/*.fa.pac
+resources/junctions/*.fa.sa
+
 # Data + results policy (keep templates only)
 data/raw/
 data/fastq/
@@ -97,3 +109,4 @@ config/config.local.yaml
 /runs/
 /run/
 config/preprocessing.env
+config/junctions.env

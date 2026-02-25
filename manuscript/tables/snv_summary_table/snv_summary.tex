@@ -1,0 +1,57 @@
+\documentclass[a4paper]{article}
+\usepackage[margin=1.5cm]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{adjustbox}
+
+\captionsetup[table]{skip=5pt, font=footnotesize, justification=raggedright, singlelinecheck=false}
+\renewcommand{\arraystretch}{1.2} % Slightly more vertical space
+
+\begin{document}
+	
+	\begin{table}[htbp]
+		\centering
+		{\normalsize
+			\begin{adjustbox}{max width=\textwidth}
+				\begin{tabular}{>{\centering\arraybackslash}p{1.3cm}  % Sample
+						>{\centering\arraybackslash}p{1.9cm}  % Chromosome
+						>{\centering\arraybackslash}p{1.7cm}  % Position
+						>{\centering\arraybackslash}p{1.1cm}  % AAF
+						>{\centering\arraybackslash}p{0.7cm}  % REF
+						>{\centering\arraybackslash}p{0.7cm}  % ALT
+						>{\centering\arraybackslash}p{1.6cm}  % Mutation Type
+						>{\centering\arraybackslash}p{2.2cm}  % Pop Freq
+						>{\centering\arraybackslash}p{1.2cm}  % Read Depth
+						>{\centering\arraybackslash}p{1.3cm}  % REF Count
+						>{\centering\arraybackslash}p{1.3cm}  % ALT Count
+						>{\centering\arraybackslash}p{1.4cm}  % Base Qual
+						>{\centering\arraybackslash}p{1.4cm}  % Mapping Q
+						>{\centering\arraybackslash}p{1.0cm}  % REF Fwd
+						>{\centering\arraybackslash}p{1.0cm}  % REF Rev
+						>{\centering\arraybackslash}p{1.0cm}  % ALT Fwd
+						>{\centering\arraybackslash}p{1.0cm}} % ALT Rev
+					\toprule
+					\textbf{Sample} & \textbf{Chromosome} & \textbf{Position} & \textbf{AAF (\%)} & \textbf{REF} & \textbf{ALT} & \textbf{Mutation Type} & \textbf{Population Frequency} & \textbf{Read Depth} & \textbf{REF Count} & \textbf{ALT Count} & \textbf{Base Quality} & \textbf{Mapping Quality} & \textbf{REF Fwd} & \textbf{REF Rev} & \textbf{ALT Fwd} & \textbf{ALT Rev} \\
+					\midrule
+					\rule{0pt}{1.2em}CJD2  & Chr20 & 4691920 & 0.55 & G & A & intron & not described & 4706 & 4680 & 26 & 37.9 & 22.01 & 2327 & 2353 & 10 & 16 \\
+					\rule{0pt}{1.2em}CJD6  & Chr20 & 4691920 & 0.52 & G & A & intron & not described & 3482 & 3464 & 18 & 33.4 & 20.10 & 1787 & 1677 & 6  & 12 \\
+					\rule{0pt}{1.2em}CJD23 & Chr20 & 4691920 & 0.60 & G & A & intron & not described & 5133 & 5102 & 31 & 38.5 & 21.00 & 2525 & 2577 & 12 & 19 \\
+					\rule{0pt}{1.2em}CJD23 & Chr20 & 4694249 & 0.82 & T & C & intron & not described & 1344 & 1333 & 11 & 30.0 & 20.62 & 686  & 647  & 5  & 6 \\
+					\bottomrule
+				\end{tabular}
+			\end{adjustbox}
+		}
+		
+		\vspace{0.5em}
+		
+		\begin{adjustbox}{max width=\textwidth}
+			\begin{minipage}{\linewidth}
+				\caption{\textbf{Somatic single nucleotide variants (sSNVs)} detected in the \textit{PRNP} gene. A total of four intronic variants were identified: one variant each in samples CJD2 and CJD6, and two variants in sample CJD23. The alternative allele fraction (AAF) ranged from 0.52\% to 0.82\%. Abbreviations: AAF, alternative allele fraction; REF, reference allele; ALT, alternative allele; Fwd, forward read count; Rev, reverse read count.}
+			\end{minipage}
+		\end{adjustbox}
+		
+	\end{table}
+	
+\end{document}

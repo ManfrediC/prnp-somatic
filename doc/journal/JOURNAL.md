@@ -1990,3 +1990,68 @@ Next steps:
 - add scripts creating figures to the repo
 - sync the repo to Windows properly (in C/Projects)
 
+
+## 23.02.2026
+
+- Started reproducibility cleanup for ddPCR code.
+- Added portable script in `src/ddPCR/create_snv_dataframe.R` with repo-relative input/output paths.
+- Confirmed inputs in `ddPCR/` and metadata file `ddPCR/sample_details.xlsx`.
+- Added `src/ddPCR/README.md` with execution instructions and expected outputs.
+- Added root-level manuscript scaffold: `manuscript/` with `run_all.R`, `scripts/`, `config/`, `figures/`, and `tables/`.
+- Added `manuscript/legacy/.gitignore` to keep legacy manuscript assets out of version control.
+- Conda solver was unstable in this environment, so execution used an isolated micromamba environment in `/tmp` (no repo-space usage).
+- Successfully ran `src/ddPCR/create_snv_dataframe.R` and generated:
+  - `results/ddPCR/SNV_data_final.xlsx`
+  - `results/ddPCR/SNV_pooled_participant.xlsx`
+  - `results/ddPCR/p0_fallback.csv`
+- Migrated manuscript legacy R/LaTeX scripts into the new reproducible personal-use scaffold:
+  - `manuscript/figures/`
+  - `manuscript/tables/`
+- Preserved script structure/annotations while updating paths to repo-relative locations.
+- Added manuscript ignore policy so personal-use scripts are tracked but `manuscript/legacy` contents stay ignored.
+- Fixed `manuscript/tables/lod_calculations/lod_table.R` to read existing LoD CSV inputs via relative paths.
+
+Next steps (figures/tables reproducibility):
+
+- Define and document one canonical execution order for all `manuscript/figures` and `manuscript/tables` scripts (single entrypoint via `manuscript/run_all.R`).
+- Ensure every script reads only from repo-relative inputs under `results/` and writes outputs only to `manuscript/figures` or `manuscript/tables`.
+- Run each script once in a clean environment and record any missing package/data dependencies.
+- Add per-script headers (input files, output files, required packages) where still missing.
+- Add a final validation step that checks expected figure/table output files exist after `run_all.R`.
+- Update manuscript README instructions so reviewers can reproduce figures/tables from `results` in one pass.
+
+## 25.02.2026
+
+- Executed reproducibility pass for scoped workflows (`src/ddPCR`, `src/junctions`, Stage-12 `src/pipelines`).
+- Added workflow entrypoints:
+  - `src/ddPCR/run_ddpcr.sh`
+  - `src/pipelines/run_cjd_dilutions_variant_qc_with_pon.sh`
+- Standardised README run docs with explicit `Inputs`, `Command`, `Outputs` sections in:
+  - `src/ddPCR/README.md`
+  - `src/junctions/README.md`
+  - `src/pipelines/README.md` (Stage-12 publication path section)
+- Added reproducibility verification assets:
+  - `doc/reproducibility/final_outputs_manifest.tsv`
+  - `bin/verify_output_checksums.sh`
+  - `doc/reproducibility/final_outputs.sha256`
+  - `doc/reproducibility/tooling_and_reference_provenance.md`
+- Applied temporary manual-review change in `src/pipelines/12_cjd_dilutions_variant_table_qc_with_pon.R`:
+  - AAF filter application commented out/disabled at filtering step
+  - AAF filter disabled marker written to `run_settings.tsv`
+- Re-ran Stage-12 wrapper successfully:
+  - `bash src/pipelines/run_cjd_dilutions_variant_qc_with_pon.sh`
+  - regenerated `results/mutect2_cjd_dilutions_with_pon/variant_qc/{cjd,dilutions}/*`
+- Wrote Codex task artifacts:
+  - `doc/Codex_to_do/preflight_plan_approved.md`
+  - `doc/Codex_to_do/permission_manifest_approved.md`
+  - `doc/Codex_to_do/execution_plan_summary.md`
+  - `doc/Codex_to_do/execution_report.md`
+
+Junction blocker status (updated):
+
+- Created dedicated conda env `prnp-junctions` with R 4.4.3 and `bioconductor-txdbmaker`.
+- Re-ran `src/junctions/run_junctions.sh` successfully (with `TMPDIR=/tmp`), including all 4 steps.
+- Regenerated outputs:
+  - `results/junctions/junction_counts/prnp_junction_counts.tsv`
+  - `results/junctions/junction_counts/prnp_junction_summary.tsv`
+- Rewrote and re-checked checksums via `bin/verify_output_checksums.sh` (`--mode write`, then `--mode check`).
