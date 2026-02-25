@@ -409,12 +409,14 @@ filtered_table <- filtered_table %>%
 filtered_table <- filtered_table %>%
   filter(is.na(population_frequency) | population_frequency < max_pop_freq)
 
-if (enable_aaf_filter) {
-  filtered_final <- filtered_table %>%
-    filter(!is.na(AAF), AAF > aaf_threshold)
-} else {
-  filtered_final <- filtered_table
-}
+# TEMPORARY (manual-check need): disable application of the AAF filter.
+# if (enable_aaf_filter) {
+#   filtered_final <- filtered_table %>%
+#     filter(!is.na(AAF), AAF > aaf_threshold)
+# } else {
+#   filtered_final <- filtered_table
+# }
+filtered_final <- filtered_table
 
 # inspect rows that were filtered out
 filtered_out <- anti_join(
@@ -449,15 +451,10 @@ step4 <- step3 %>%
   filter(is.na(population_frequency) | population_frequency < max_pop_freq)
 n4 <- nrow(step4)
 
-if (enable_aaf_filter) {
-  step5 <- step4 %>% filter(!is.na(AAF), AAF > aaf_threshold)
-  n5 <- nrow(step5)
-  step5_label <- paste0("AAF > ", aaf_threshold)
-} else {
-  step5 <- step4
-  n5 <- n4
-  step5_label <- paste0("AAF filter disabled (threshold would be > ", aaf_threshold, ")")
-}
+# TEMPORARY (manual-check need): keep AAF step unfiltered in sequential counts.
+step5 <- step4
+n5 <- n4
+step5_label <- paste0("AAF filter temporarily disabled (configured threshold would be > ", aaf_threshold, ")")
 
 filter_counts <- tibble(
   step = c(
@@ -479,11 +476,11 @@ filter_counts <- tibble(
 # Write both new reproducible outputs and legacy convenience files for continuity.
 settings <- tibble(
   key = c(
-    "enable_aaf_filter", "aaf_threshold", "min_alt_count", "min_dp",
+    "enable_aaf_filter", "aaf_filter_applied", "aaf_threshold", "min_alt_count", "min_dp",
     "min_strand_alt", "min_mean_bq", "min_mean_mq", "max_pop_freq", "max_binom_p"
   ),
   value = c(
-    as.character(enable_aaf_filter), as.character(aaf_threshold), as.character(min_alt_count), as.character(min_dp),
+    as.character(enable_aaf_filter), "FALSE (temporary override)", as.character(aaf_threshold), as.character(min_alt_count), as.character(min_dp),
     as.character(min_strand_alt), as.character(min_mean_bq), as.character(min_mean_mq), as.character(max_pop_freq), as.character(max_binom_p)
   )
 )

@@ -18,6 +18,47 @@ This folder contains executable pipeline entry points.
 - `11_cjd_dilutions_readcount_to_tsv_with_pon.sh`: convert readcount text outputs to per-allele TSV metrics
 - `12_cjd_dilutions_variant_qc_with_pon.sh`: SelectVariants + VariantsToTable + R QC entry point for CJD+dilutions
 - `12_cjd_dilutions_variant_table_qc_with_pon.R`: R implementation of table integration and QC filters (with PoN)
+- `run_cjd_dilutions_variant_qc_with_pon.sh`: single wrapper entrypoint for the Stage-12 publication-path regeneration in this repo
+
+## Stage-12 Publication Path
+
+### Inputs
+
+- `runs/mutect2_cjd_dilutions_with_pon/cjd/annot_with_gnomad/*.vcf.gz`
+- `runs/mutect2_cjd_dilutions_with_pon/dilutions/annot_with_gnomad/*.vcf.gz`
+- `runs/mutect2_cjd_dilutions_with_pon/cjd/readcount_qc/metrics/*`
+- `runs/mutect2_cjd_dilutions_with_pon/dilutions/readcount_qc/metrics/*`
+- `resources/annotations/manual_population_freq.tsv`
+- optional overrides in `config/preprocessing.env` (or exported environment variables)
+
+### Command
+
+From repository root:
+
+```bash
+bash src/pipelines/run_cjd_dilutions_variant_qc_with_pon.sh
+```
+
+### Outputs
+
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/summary_combined_variants.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filtered_variants.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filtered_prnp_variants.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filtered_out_variants.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filter_counts.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/run_settings.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/final_withPoN_variants.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/summary_combined_variants.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/filtered_variants.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/filtered_prnp_variants.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/filtered_out_variants.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/filter_counts.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/run_settings.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/final_withPoN_variants.tsv`
+
+These expected output paths are also listed in:
+
+- `doc/reproducibility/final_outputs_manifest.tsv`
 
 ## Preprocessing
 

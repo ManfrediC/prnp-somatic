@@ -54,8 +54,20 @@ Reference FASTA (`REF_FASTA`) and Funcotator datasources (`FUNCOTATOR_DS`) are s
 - `doc/` notes and documentation
 - `tests/` smoke tests
 
+## Raw Data Placement (Ignored)
+
+For the workflow families in current reproducibility scope:
+
+- ddPCR raw exports: `ddPCR/*.csv` (ignored via `ddPCR/.gitignore`)
+- ddPCR metadata sheet: `ddPCR/sample_details.xlsx` (ignored via `ddPCR/.gitignore`)
+- junction BAM inputs: `results/final_bam/*.bam` (ignored via repo `.gitignore` patterns for BAM/results)
+- pipeline run intermediates: `runs/**` (ignored via repo `.gitignore`)
+- pipeline/junction outputs: `results/**` (ignored except tracked placeholders)
+
+Generated runtime index sidecars are also ignored (for example `resources/junctions/*.fa.{amb,ann,bwt,pac,sa}`).
+
 ## Conda environment
 - Analyses were performed using the `Conda` environment defined in `env/environment.yml`.
 
 ## Data availability
-FASTQs are hosted on xxx.
+Raw data files can be obtained for academic purposes upon reasonable request to the repository owner.
