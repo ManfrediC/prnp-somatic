@@ -2055,9 +2055,6 @@ Junction blocker status (updated):
   - `results/junctions/junction_counts/prnp_junction_counts.tsv`
   - `results/junctions/junction_counts/prnp_junction_summary.tsv`
 - Rewrote and re-checked checksums via `bin/verify_output_checksums.sh` (`--mode write`, then `--mode check`).
-
-25.02.2026 addendum:
-
 - Updated reviewer-facing reproducibility docs:
   - rewrote root `README.md` into a step-by-step reviewer run guide with ordered commands and expected outputs
   - added `doc/MAKEFILE.md` and `mk/README.md` for Makefile/module usage
