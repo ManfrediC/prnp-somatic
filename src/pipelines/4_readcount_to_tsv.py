@@ -33,6 +33,8 @@ HEADER = [
 
 
 def parse_bam_readcount(input_file: str, output_file: str) -> None:
+    # Convert one bam-readcount text file into one flattened TSV.
+    # Each emitted row represents one allele observation at one genomic site.
     with open(input_file, "r", encoding="utf-8") as infile, open(
         output_file, "w", newline="", encoding="utf-8"
     ) as outfile:
@@ -41,9 +43,12 @@ def parse_bam_readcount(input_file: str, output_file: str) -> None:
         writer.writerow(HEADER)
 
         for row in reader:
+            # Skip comments/empty lines; data rows are expected to be tab-delimited.
             if not row or row[0].startswith("#"):
                 continue
 
+            # bam-readcount leading site fields:
+            # 0=chromosome, 1=1-based position, 2=reference base, 3=depth.
             chrom = row[0]
             pos = row[1]
             ref = row[2]
@@ -57,7 +62,8 @@ def parse_bam_readcount(input_file: str, output_file: str) -> None:
                 base = parts[0]
                 metrics = parts[1:]
 
-                # Keep a stable column shape even if bam-readcount omits tail metrics.
+                # Keep a stable column shape even if bam-readcount omits trailing
+                # metric fields (this occurs in some low-information rows).
                 if len(metrics) < 13:
                     metrics += [""] * (13 - len(metrics))
 
@@ -84,6 +90,7 @@ def parse_bam_readcount(input_file: str, output_file: str) -> None:
 
 
 def process_directory(input_dir: str, output_dir: str) -> int:
+    # Parse every *.txt readcount file in lexical order for deterministic output.
     os.makedirs(output_dir, exist_ok=True)
     input_files = sorted(glob.glob(os.path.join(input_dir, "*.txt")))
 
@@ -101,6 +108,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Convert bam-readcount output files into flat TSV metrics tables."
     )
+    # Paths are explicit to keep the script portable
     parser.add_argument("--input-dir", required=True, help="Directory containing *.txt readcount files")
     parser.add_argument("--output-dir", required=True, help="Directory to write *_metrics.tsv files")
     args = parser.parse_args()

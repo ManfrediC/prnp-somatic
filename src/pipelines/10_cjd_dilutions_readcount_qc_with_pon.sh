@@ -10,6 +10,7 @@ set -euo pipefail
 shopt -s nullglob
 
 # Keep caller-provided values so ENV_FILE does not silently override them.
+# Precedence: explicit CLI env vars > values from ENV_FILE > script defaults.
 CLI_DRY_RUN="${DRY_RUN-}"
 CLI_THREADS="${THREADS-}"
 
@@ -39,6 +40,7 @@ cd "$REPO_ROOT"
 ENV_FILE_DEFAULT="$REPO_ROOT/config/preprocessing.env"
 ENV_FILE="${ENV_FILE:-$ENV_FILE_DEFAULT}"
 if [[ -f "$ENV_FILE" ]]; then
+  # Optional: this stage can run entirely from defaults if ENV_FILE is absent.
   # shellcheck disable=SC1090
   source "$ENV_FILE"
 fi
@@ -54,6 +56,7 @@ THREADS="${CLI_THREADS:-${THREADS:-4}}"
 # -----------------------
 MUTECT2_WITH_PON_OUT_ROOT="${MUTECT2_WITH_PON_OUT_ROOT:-runs/mutect2_cjd_dilutions_with_pon}"
 if [[ "$MUTECT2_WITH_PON_OUT_ROOT" == run/* ]]; then
+  # Backward compatibility for historical singular "run/" prefixes.
   MUTECT2_WITH_PON_OUT_ROOT="runs/${MUTECT2_WITH_PON_OUT_ROOT#run/}"
 fi
 
@@ -68,6 +71,7 @@ WITH_PON_READCOUNT_REF_FASTA="${WITH_PON_READCOUNT_REF_FASTA:-${REF_FASTA:-resou
 
 # VCF input is expected from Stage 9 output.
 WITH_PON_READCOUNT_VCF_SUBDIR="${WITH_PON_READCOUNT_VCF_SUBDIR:-annot_with_gnomad}"
+# Keep this default aligned with Stage 9 to avoid mismatched hand-off paths.
 
 
 to_abs() {
@@ -93,6 +97,7 @@ die() { echo "ERROR: $*" >&2; exit 1; }
 run() {
   echo "+ $*"
   if [[ "$DRY_RUN" == "1" ]]; then
+    # DRY_RUN prints commands only, allowing safe plan inspection.
     return 0
   fi
   "$@"
@@ -116,6 +121,7 @@ sample_from_vcf() {
   if [[ "$sample" == "$base" ]]; then
     sample="${base%.vcf.gz}"
   fi
+  # Sample stem is reused across BED/BAM/readcount filenames.
   echo "$sample"
 }
 
@@ -133,6 +139,7 @@ have bam-readcount || die "bam-readcount not in PATH (did you activate conda?)"
 
 read -r -a groups <<< "$WITH_PON_READCOUNT_GROUPS"
 [[ "${#groups[@]}" -gt 0 ]] || die "WITH_PON_READCOUNT_GROUPS is empty"
+# Group list controls independent cjd/dilutions processing branches.
 
 echo "== CJD+dilutions readcount metrics (with PoN) =="
 echo "Repo root:              $REPO_ROOT"
@@ -163,6 +170,7 @@ for group in "${groups[@]}"; do
     vcfs=( "$VCF_DIR"/*.vcf.gz )
   fi
   [[ "${#vcfs[@]}" -gt 0 ]] || die "No annotated VCFs found for group '$group' in: $VCF_DIR"
+  # Accept both current and legacy VCF suffix conventions.
 
   samples=()
   for vcf in "${vcfs[@]}"; do
@@ -201,6 +209,7 @@ for group in "${groups[@]}"; do
       die "Missing BAM index for $sample: ${src_bam}.bai"
     fi
 
+    # Use symlinks to avoid duplicating large BAM/BAM index files in run folders.
     [[ -e "$dst_bam" ]] || run ln -s "$src_bam" "$dst_bam"
     [[ -e "$dst_bai" ]] || run ln -s "$src_bai" "$dst_bai"
   done
@@ -226,6 +235,7 @@ for group in "${groups[@]}"; do
     bed="$BEDS_DIR/${sample}.bed"
     out="$READCOUNTS_DIR/${sample}.txt"
 
+    # Presence of output file marks completion (empty files are valid for empty BEDs).
     [[ -f "$out" ]] && { echo "[Stage4][$group] SKIP $sample"; continue; }
     if [[ "$DRY_RUN" == "0" ]]; then
       [[ -s "$bam" ]] || die "Missing deduplicated BAM for $sample: $bam"
@@ -233,6 +243,7 @@ for group in "${groups[@]}"; do
 
       if [[ ! -s "$bed" ]]; then
         echo "[Stage4][$group] EMPTY BED $sample -> writing empty readcount file"
+        # Keep placeholder output so downstream completeness checks remain deterministic.
         : > "$out"
         continue
       fi
@@ -242,6 +253,7 @@ for group in "${groups[@]}"; do
   done
 
   if [[ "$DRY_RUN" == "0" ]]; then
+    # Final per-group contract: one readcount file per discovered sample.
     missing_samples=()
     for sample in "${samples[@]}"; do
       [[ -f "$READCOUNTS_DIR/${sample}.txt" ]] || missing_samples+=( "$sample" )
