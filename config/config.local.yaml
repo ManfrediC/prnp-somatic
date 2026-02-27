@@ -1,0 +1,26 @@
+# Local configuration for prnp-somatic
+# ----------------------------------
+# Copy this file to: config/config.local.mk
+# Then edit paths to match your machine.
+#
+# IMPORTANT:
+# - config/config.local.mk is intentionally NOT tracked by git.
+# - Command-line variables override this file.
+#
+# Minimal variables used by current QC target:
+#   LEGACY_AUTH_DIR, MANIFEST_TSV, SCHEMA_TSV, MANIFEST_QC_TSV
+
+# Input definition files (override as needed)
+MANIFEST_TSV    := $(LEGACY_AUTH_DIR)/manifest.tsv
+SCHEMA_TSV      := $(LEGACY_AUTH_DIR)/sequencing_metrics_per_sample.schema.tsv
+MANIFEST_QC_TSV := $(LEGACY_AUTH_DIR)/manifest_qc.tsv
+
+# ---- Likely needed for later pipeline stages (placeholders for Step 6+) ----
+# Reference files
+# REF_FASTA   := /home/<user>/databases/chr2_chr4_chr20.fasta
+# TARGETS_BED := /home/<user>/databases/targets.bed
+# CODING_BED  := /home/<user>/databases/prnp_coding.bed
+#
+# Data roots (example)
+# RAW_DATA_DIR := /path/to/fastq
+# WORK_DATA_DIR := /path/to/working_area

@@ -99,9 +99,6 @@ v*.log
 *.log.*
 nohup.out
 
-# Config
-config/config.local.yaml
-
 # Raw FASTQ data (large; keep out of git)
 /fastq/
 
@@ -110,3 +107,6 @@ config/config.local.yaml
 /run/
 config/preprocessing.env
 config/junctions.env
+
+# Personal journal notes
+doc/journal/

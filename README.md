@@ -115,8 +115,6 @@ Expected outputs include:
 - `results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/*`
 - `results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/*`
 
-```
-
 ### 7. Create environment for junction workflow
 
 ```bash
@@ -157,9 +155,16 @@ Detailed workflow docs:
 - `src/pipelines/README.md`
 - `manuscript/README.md`
 
-Makefile helper targets are documented in:
+Optional Makefile helper targets:
 
-- `doc/MAKEFILE.md`
+- `make versions` (quick local tool-version check)
+- `make toolchain_lock` (writes `doc/tool_versions.lock.txt`)
+- `make qc_metrics` (manifest + sequencing metrics helper)
+- `make verify_resources` (checks `resources/SHA256SUMS.txt`)
+
+Implementation details for modular `make` fragments are documented in:
+
+- `mk/README.md`
 
 ## Raw Data Placement (Git-Ignored)
 
