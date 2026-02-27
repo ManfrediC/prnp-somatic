@@ -21,6 +21,7 @@ fi
 allowed_groups_regex='^(dilution|CJD|control)$'
 
 # Candidate BAM naming styles
+# We support both historical "short" names and full preprocessing names.
 bam_candidate_suffixes=(
   ".bam"
   ".bwa.picard.markedDup.recal.bam"
@@ -52,7 +53,7 @@ while IFS=$'\t' read -r sample_id group batch input_dir || [[ -n "${sample_id:-}
 
   input_dir="${input_dir%/}"
 
-  # Resolve BAM path by trying candidates
+  # Resolve BAM path by trying known naming conventions in order.
   bam_path=""
   bam_style="none"
   for suf in "${bam_candidate_suffixes[@]}"; do
@@ -77,7 +78,7 @@ while IFS=$'\t' read -r sample_id group batch input_dir || [[ -n "${sample_id:-}
     errors+=("missing_bam")
   fi
 
-  # Index: accept either <bam>.bai OR <bam without .bam>.bai (covers *.recal.bai case)
+  # Index: accept either <bam>.bai OR <bam without .bam>.bai (covers *.recal.bai case).
   bai_exists=0
   bai_path="${bam_path}.bai"
   alt_bai_path="${bam_path%.bam}.bai"
@@ -91,7 +92,8 @@ while IFS=$'\t' read -r sample_id group batch input_dir || [[ -n "${sample_id:-}
     errors+=("missing_bai")
   fi
 
-  # Picard MarkDuplicates metrics (required for long-style BAMs, optional for short)
+  # Picard MarkDuplicates metrics are required for long-style BAMs (preprocessing outputs),
+  # optional for short-style BAMs (legacy/manual BAMs).
   picard_metrics_path="${input_dir}/${sample_id}${picard_metrics_suffix}"
   picard_metrics_exists=0
   if [[ -f "$picard_metrics_path" ]]; then
@@ -122,6 +124,7 @@ done < <(tail -n +2 "$MANIFEST")
 # Failure definition:
 # - missing BAM or BAI always fails
 # - missing Picard metrics fails only if required (long-style)
+# - any non-empty "errors" field fails
 fail_count=$(awk -F'\t' '
   NR>1 {
     bam_ok=($7==1);
