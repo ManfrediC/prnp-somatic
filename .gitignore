@@ -96,3 +96,6 @@ config/preprocessing.env
 config/junctions.env
 # Personal journal notes
 doc/journal/
+
+# Manuscript workspace (temporarily excluded from version control)
+manuscript/
