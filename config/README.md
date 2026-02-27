@@ -5,16 +5,13 @@ Committed:
 - `preprocessing.env.example` - template for local configuration
 - `junctions.env.example` - template for exon-exon junction workflow configuration
 
-Current note:
-- `preprocessing_samples.tsv` includes all `first_CJD_seq` CJD samples used in the authoritative manifest (`CJD1`, `CJD2`, `CJD6`, `CJD13`, `CJD22`, `CJD23`, `CJD25`, `CJD27`).
-
 Not committed (local machine only):
 - `preprocessing.env` - local paths and settings (ignored by `.gitignore`)
 - `junctions.env` - local paths and settings for `src/junctions/*` scripts
 
 Rationale: `preprocessing.env` may include machine-specific paths and runtime settings; large data directories (`fastq/`, `runs/`, `results/final_bam/`) are intentionally not committed.
 
-## Controls post-processing settings
+## Controls post-processing: Settings and paths
 
 For controls post-processing and annotation, set these in `preprocessing.env`:
 
@@ -51,12 +48,6 @@ Recommended `VARIANT_QC_R_SCRIPT` value:
 - `src/pipelines/6_controls_variant_table_qc_no_pon.R`
 
 The corresponding index (`.tbi` or `.csi`) must also be present.
-
-For controls post-processing, `gnomAD_exome` and `gnomAD_genome` should remain excluded from
-the active datasource tree to avoid requester-pays access requirements.
-Archived copies are kept under:
-
-- `resources/backup/funcotator_excluded_datasources/`
 
 ## Variant QC toggle
 
@@ -161,8 +152,3 @@ Recommended values:
 - `WITH_PON_VARIANT_QC_RESULTS_ROOT="results/mutect2_cjd_dilutions_with_pon/variant_qc"`
 - `WITH_PON_VARIANT_QC_R_SCRIPT="src/pipelines/12_cjd_dilutions_variant_table_qc_with_pon.R"`
 - `MANUAL_POP_FREQ_TSV="resources/annotations/manual_population_freq.tsv"`
-
-Note:
-
-- Stage 12 always disables the final AAF filter for the `dilutions` group.
-- `ENABLE_AAF_FILTER` and `AAF_THRESHOLD` remain configurable for the `cjd` group.
