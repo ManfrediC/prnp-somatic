@@ -1,11 +1,17 @@
 SHELL := /bin/bash
 .ONESHELL:
 REQUIRED_CONDA_ENV ?= prnp-somatic
+CONDA_BIN ?= conda
 
 .SHELLFLAGS := -eu -o pipefail -c
 
-.PHONY: help versions toolchain_lock check_conda qc_validate qc_metrics clean_qc print_qc_paths verify_resources preprocessing_preflight preprocessing_dry preprocessing_run
+.PHONY: help versions toolchain_lock check_conda \
+	ddpcr snv junctions all check \
+	qc_validate qc_metrics clean_qc print_qc_paths verify_resources preprocessing_preflight preprocessing_dry preprocessing_run
 
+# -------------------------------------------------------------------
+# Canonical paths for QC helper targets
+# -------------------------------------------------------------------
 # -------------------------------------------------------------------
 # Paths inside the repo (adjust only if you move directories)
 # -------------------------------------------------------------------
@@ -27,6 +33,9 @@ QC_VALIDATE_LOG := $(QC_DIR)/validate_manifest.log
 QC_METRICS_TSV  := $(QC_DIR)/sequencing_metrics_per_sample.tsv
 QC_METRICS_ERR  := $(QC_DIR)/compute_sequencing_metrics.stderr.log
 
+# -------------------------------------------------------------------
+# Toolchain reporting helpers
+# -------------------------------------------------------------------
 versions:
 	@set -eu
 	@echo "== Tool versions =="
@@ -70,9 +79,13 @@ versions:
 toolchain_lock:
 	@set -eu
 	@mkdir -p doc
+	# Persist a single, greppable snapshot of the current toolchain.
 	@$(MAKE) -s versions > doc/tool_versions.lock.txt
 	@echo "Wrote: doc/tool_versions.lock.txt"
 
+# -------------------------------------------------------------------
+# Conda guardrail (non-base env required; optional exact name check)
+# -------------------------------------------------------------------
 check_conda:
 	@set -eu
 	@if [ -z "$$CONDA_PREFIX" ] || [ "$$CONDA_DEFAULT_ENV" = "base" ]; then \
@@ -85,10 +98,18 @@ check_conda:
 	  echo "ERROR: active Conda environment is '$$CONDA_DEFAULT_ENV', expected '$$REQUIRED_CONDA_ENV'."; \
 	  echo "Run: conda activate $$REQUIRED_CONDA_ENV"; \
 	  exit 1; \
-	fi
+		fi
 
+# -------------------------------------------------------------------
+# Main workflow entrypoints
+# -------------------------------------------------------------------
 help:
 	@echo "Targets (run one step at a time):"
+	@echo "  make ddpcr                     Run ddPCR workflow (requires env: prnp-somatic)"
+	@echo "  make snv                       Run SNV Stage-12 wrapper (requires env: prnp-somatic)"
+	@echo "  make junctions                 Run junction workflow (requires env: prnp-junctions)"
+	@echo "  make all                       Run ddpcr + snv + junctions via conda run"
+	@echo "  make check                     Run resource/output integrity checks"
 	@echo "  make versions                  Show key tool versions (fast)"
 	@echo "  make qc_validate                Run validate_manifest.sh"
 	@echo "  make qc_metrics                 Run compute_sequencing_metrics.py -> TSV"
@@ -100,8 +121,40 @@ help:
 	@echo ""
 	@echo "Examples:"
 	@echo "  make versions"
+	@echo "  make ddpcr"
+	@echo "  make junctions"
 	@echo "  make qc_metrics QC_RUN=2026-02-14_test"
 
+ddpcr: REQUIRED_CONDA_ENV=prnp-somatic
+ddpcr: check_conda
+	@bash src/ddPCR/run_ddpcr.sh
+
+snv: REQUIRED_CONDA_ENV=prnp-somatic
+snv: check_conda
+	@bash src/pipelines/run_cjd_dilutions_variant_qc_with_pon.sh
+
+junctions: REQUIRED_CONDA_ENV=prnp-junctions
+junctions: check_conda
+	@TMPDIR=/tmp TEMP=/tmp TMP=/tmp bash src/junctions/run_junctions.sh
+
+all:
+	# Run each workflow in its expected environment without requiring manual activation.
+	@command -v "$(CONDA_BIN)" >/dev/null 2>&1 || { echo "ERROR: conda not found in PATH."; exit 1; }
+	@echo "== [1/3] ddPCR (env: prnp-somatic) =="
+	@"$(CONDA_BIN)" run -n prnp-somatic bash src/ddPCR/run_ddpcr.sh
+	@echo "== [2/3] SNV Stage-12 wrapper (env: prnp-somatic) =="
+	@"$(CONDA_BIN)" run -n prnp-somatic bash src/pipelines/run_cjd_dilutions_variant_qc_with_pon.sh
+	@echo "== [3/3] Junctions (env: prnp-junctions) =="
+	@"$(CONDA_BIN)" run -n prnp-junctions bash -lc 'TMPDIR=/tmp TEMP=/tmp TMP=/tmp bash src/junctions/run_junctions.sh'
+
+check: REQUIRED_CONDA_ENV=prnp-somatic
+check: check_conda verify_resources
+	# Validate tracked final-output checksums after resource integrity checks.
+	@bash bin/verify_output_checksums.sh --mode check
+
+# -------------------------------------------------------------------
+# QC helpers (authoritative manifest + metrics checks)
+# -------------------------------------------------------------------
 qc_validate: check_conda
 	mkdir -p "$(QC_DIR)"
 	echo "== validate_manifest ==" | tee "$(QC_VALIDATE_LOG)"
@@ -121,6 +174,7 @@ qc_metrics: qc_validate
 	@echo "OK: wrote $$(( $$(wc -l < "$(QC_METRICS_TSV)") - 1 )) rows (excluding header)"
 
 clean_qc:
+	# Remove only one QC run folder selected by QC_RUN.
 	rm -rf "$(QC_DIR)"
 	@echo "Removed: $(QC_DIR)"
 
@@ -134,6 +188,9 @@ print_qc_paths:
 verify_resources:
 	cd resources && sha256sum -c SHA256SUMS.txt
 
+# -------------------------------------------------------------------
+# Preprocessing wrappers (same scripts used in src/pipelines)
+# -------------------------------------------------------------------
 preprocessing_preflight: check_conda
 	@src/pipelines/preflight_preprocessing.sh
 
