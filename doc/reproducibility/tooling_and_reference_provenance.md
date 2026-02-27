@@ -58,20 +58,6 @@ Scope: `src/ddPCR`, `src/junctions`, `src/pipelines`
 The following resource paths are required by active workflows but are intentionally not tracked in git.
 Place them at the exact repo-relative paths shown below.
 
-### Junction workflow (`src/junctions`)
-
-- `resources/hg38.fa`
-  - Obtain: download GRCh38 FASTA from UCSC (`https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/latest/hg38.fa.gz`), then decompress to `resources/hg38.fa`.
-- `resources/Homo_sapiens.GRCh38.110.gtf.gz`
-  - Obtain: download Ensembl release 110 GTF (`https://ftp.ensembl.org/pub/release-110/gtf/homo_sapiens/Homo_sapiens.GRCh38.110.gtf.gz`) to `resources/`.
-- Runtime-generated sidecars for `resources/junctions/prnp_junctions.fa`:
-  - `resources/junctions/prnp_junctions.fa.amb`
-  - `resources/junctions/prnp_junctions.fa.ann`
-  - `resources/junctions/prnp_junctions.fa.bwt`
-  - `resources/junctions/prnp_junctions.fa.pac`
-  - `resources/junctions/prnp_junctions.fa.sa`
-  - Obtain: generated automatically by `src/junctions/03_process_bam.sh` via `bwa index` (do not download manually).
-
 ### SNV pipeline workflow (`src/pipelines`)
 
 - `resources/chr2_chr4_chr20.fasta`
@@ -105,6 +91,20 @@ Place them at the exact repo-relative paths shown below.
 - Funcotator datasource tree
   - Required path: `resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
   - Obtain: download and unpack the corresponding Funcotator datasources so that this exact directory exists.
+
+### Junction workflow (`src/junctions`)
+
+- `resources/hg38.fa`
+  - Obtain: download GRCh38 FASTA from UCSC (`https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/latest/hg38.fa.gz`), then decompress to `resources/hg38.fa`.
+- `resources/Homo_sapiens.GRCh38.110.gtf.gz`
+  - Obtain: download Ensembl release 110 GTF (`https://ftp.ensembl.org/pub/release-110/gtf/homo_sapiens/Homo_sapiens.GRCh38.110.gtf.gz`) to `resources/`.
+- Runtime-generated sidecars for `resources/junctions/prnp_junctions.fa`:
+  - `resources/junctions/prnp_junctions.fa.amb`
+  - `resources/junctions/prnp_junctions.fa.ann`
+  - `resources/junctions/prnp_junctions.fa.bwt`
+  - `resources/junctions/prnp_junctions.fa.pac`
+  - `resources/junctions/prnp_junctions.fa.sa`
+  - Obtain: generated automatically by `src/junctions/03_process_bam.sh` via `bwa index` (do not download manually).
 
 ## Notes
 
