@@ -155,14 +155,39 @@ Detailed workflow docs:
 - `src/pipelines/README.md`
 - `manuscript/README.md`
 
-Optional Makefile helper targets:
+### 10. Makefile commands (optional wrappers)
 
-- `make versions` (quick local tool-version check)
-- `make toolchain_lock` (writes `doc/tool_versions.lock.txt`)
-- `make qc_metrics` (manifest + sequencing metrics helper)
+Show all available commands:
+
+```bash
+make help
+```
+
+Run main workflows:
+
+- `make ddpcr` (requires active env: `prnp-somatic`)
+- `make snv` (requires active env: `prnp-somatic`)
+- `make junctions` (requires active env: `prnp-junctions`)
+- `make all` (runs ddPCR + SNV + junctions via `conda run`; no manual env switching required)
+
+Run integrity checks:
+
+- `make check` (requires active env: `prnp-somatic`; runs resource checks + final output checksum check)
 - `make verify_resources` (checks `resources/SHA256SUMS.txt`)
 
-Helper-target implementation details are in the repository root `Makefile`.
+Toolchain and QC helpers:
+
+- `make versions` (quick local tool-version report)
+- `make toolchain_lock` (writes `doc/tool_versions.lock.txt`)
+- `make qc_validate` (validate manifest inputs)
+- `make qc_metrics` (compute sequencing metrics TSV under `results/qc/<QC_RUN>/`)
+- `make clean_qc QC_RUN=<label>` (remove one QC run directory)
+- `make print_qc_paths` (print resolved QC file paths)
+- `make preprocessing_preflight` (wrapper for `src/pipelines/preflight_preprocessing.sh`)
+- `make preprocessing_dry` (wrapper for `DRY_RUN=1 src/pipelines/preprocessing.sh`)
+- `make preprocessing_run` (wrapper for `DRY_RUN=0 src/pipelines/preprocessing.sh`)
+
+Target implementations are in the repository root `Makefile`.
 
 ## Raw Data Placement (Git-Ignored)
 
