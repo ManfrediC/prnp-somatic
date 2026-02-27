@@ -1,7 +1,23 @@
 # prnp-somatic
 
-PRNP somatic variant analysis:
-FASTQ -> BAM (GATK best practices) -> Mutect2 -> QC -> result tables/figures.
+This repository contains the reproducible analysis workflows used in the PRNP somatic project:
+
+- NGS somatic SNV detection (`src/pipelines`): FASTQ preprocessing, Mutect2 calling, post-processing, QC, and final variant tables.
+- ddPCR SNV quantification (`src/ddPCR`): processing of raw droplet exports into long-format and participant-level result tables.
+- PRNP exon-exon junction analysis (`src/junctions`): junction-reference construction, read realignment, and junction-count quantification.
+- Manuscript artifact generation (`manuscript`): scripts that build figures/tables from outputs in `results/`.
+
+The Reproduction Guide below details required inputs, environment setup and expected outputs.
+
+## Repository structure
+- `bin/` command-line entrypoints / wrappers
+- `src/` reusable code (Python/R)
+- `config/` configuration templates
+- `resources/` small static artefacts tracked in git (BEDs, schemas). Larger resources must be downloaded manually
+- `authoritative_files/` manifests and sequencing-metrics validation utilities
+- `results/` outputs *not tracked* (date-stamped runs)
+- `env/` container/environment definitions
+- `doc/` notes and documentation
 
 ## Reproduction Guide
 
@@ -25,6 +41,10 @@ This document lists:
 - required reference resources and their source/provenance
 - required CLI/R tools and version context
 - environment-specific package notes (including junction and ddPCR dependencies)
+
+Funcotator resource acquisition, layout and datasource details are documented in:
+
+- `resources/README.md`
 
 ### 3. Prepare input data in expected locations
 
@@ -140,23 +160,7 @@ Makefile helper targets are documented in:
 
 - `doc/MAKEFILE.md`
 
-### Funcotator resources
-
-Resource acquisition, layout, and Funcotator datasource details are documented in:
-
-- `resources/README.md`
-
-## Repository structure
-- `bin/` command-line entrypoints / wrappers
-- `src/` reusable code (Python/R)
-- `config/` configuration templates
-- `resources/` small static artefacts tracked in git (BEDs, schemas). Larger resources must be downloaded manually
-- `authoritative_files/` manifests and sequencing-metrics validation utilities
-- `results/` outputs *not tracked* (date-stamped runs)
-- `env/` container/environment definitions
-- `doc/` notes and documentation
-
-## Raw Data Placement (Ignored)
+## Raw Data Placement (Git-Ignored)
 
 For the workflow families in current reproducibility scope:
 
@@ -172,4 +176,4 @@ Generated runtime index sidecars are also ignored (for example `resources/juncti
 - Analyses were performed using the `Conda` environment defined in `env/environment.yml`.
 
 ## Data availability
-Raw data files can be obtained for academic purposes upon reasonable request to the repository owner.
+Raw data can be obtained for academic purposes upon reasonable request to the repository owner.
