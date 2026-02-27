@@ -57,3 +57,32 @@ Scope: `src/ddPCR`, `src/junctions`, `src/pipelines` (Stage-12 publication path)
 
 - Source URIs above were verified on `2026-02-25`; when original download logs were unavailable, the local file timestamp is recorded as the retrieval/import date proxy.
 - `tidyverse` and `openxlsx` are currently installed in base conda R (not in `prnp-somatic` env).
+
+## Baseline environment and snapshot commands
+
+- Repository baseline environment definition: `env/environment.yml`
+- Exact resolved baseline lockfile: `env/environment.lock.yml`
+- Quick local version check (after `conda activate prnp-somatic`): `make versions`
+- Snapshot command: `make toolchain_lock` (writes `doc/tool_versions.lock.txt`)
+
+## Additional baseline tool context (from Conda lock workflow)
+
+These tools are part of the broader baseline toolchain context used in this repository and may be versioned via the Conda lockfile:
+
+- `bcftools`
+- `bgzip`
+- `FastQC`
+- `MultiQC`
+- `OpenJDK`
+- `pip`
+
+## System tool context (not pinned; OS-dependent)
+
+Common system utilities used by scripts and wrappers include:
+
+- `bash`
+- `make`
+- `rsync`
+- `grep`
+- `sed`
+- `gawk`
