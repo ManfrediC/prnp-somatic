@@ -108,4 +108,4 @@ Place them at the exact repo-relative paths shown below.
 
 ## Notes
 
-- `tidyverse` and `openxlsx` are currently installed in base conda R (not in `prnp-somatic` env) for compatibility reasons.
+- ddPCR R dependencies are installed in the dedicated `prnp-somatic-ddpcr` environment (see `env/ddpcr.environment.yml`).

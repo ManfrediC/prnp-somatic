@@ -16,7 +16,7 @@ CLI_DRY_RUN="${DRY_RUN-}"
 CLI_JAVA_MEM_GB="${JAVA_MEM_GB-}"
 
 # -----------------------
-# Repo root discovery (works from anywhere)
+# Repo root discovery
 # -----------------------
 find_repo_root() {
   local start d

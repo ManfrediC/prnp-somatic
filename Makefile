@@ -105,7 +105,7 @@ check_conda:
 # -------------------------------------------------------------------
 help:
 	@echo "Targets (run one step at a time):"
-	@echo "  make ddpcr                     Run ddPCR workflow (requires env: prnp-somatic)"
+	@echo "  make ddpcr                     Run ddPCR workflow (requires env: prnp-somatic-ddpcr)"
 	@echo "  make snv                       Run SNV Stage-12 wrapper (requires env: prnp-somatic)"
 	@echo "  make junctions                 Run junction workflow (requires env: prnp-junctions)"
 	@echo "  make all                       Run ddpcr + snv + junctions via conda run"
@@ -125,7 +125,7 @@ help:
 	@echo "  make junctions"
 	@echo "  make qc_metrics QC_RUN=2026-02-14_test"
 
-ddpcr: REQUIRED_CONDA_ENV=prnp-somatic
+ddpcr: REQUIRED_CONDA_ENV=prnp-somatic-ddpcr
 ddpcr: check_conda
 	@bash src/ddPCR/run_ddpcr.sh
 
@@ -140,8 +140,8 @@ junctions: check_conda
 all:
 	# Run each workflow in its expected environment without requiring manual activation.
 	@command -v "$(CONDA_BIN)" >/dev/null 2>&1 || { echo "ERROR: conda not found in PATH."; exit 1; }
-	@echo "== [1/3] ddPCR (env: prnp-somatic) =="
-	@"$(CONDA_BIN)" run -n prnp-somatic bash src/ddPCR/run_ddpcr.sh
+	@echo "== [1/3] ddPCR (env: prnp-somatic-ddpcr) =="
+	@"$(CONDA_BIN)" run -n prnp-somatic-ddpcr bash src/ddPCR/run_ddpcr.sh
 	@echo "== [2/3] SNV Stage-12 wrapper (env: prnp-somatic) =="
 	@"$(CONDA_BIN)" run -n prnp-somatic bash src/pipelines/run_cjd_dilutions_variant_qc_with_pon.sh
 	@echo "== [3/3] Junctions (env: prnp-junctions) =="

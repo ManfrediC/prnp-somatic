@@ -43,7 +43,7 @@ Rscript src/junctions/04_count_prnp_junctions.R
 - `results/junctions/junction_align/`
 - `results/junctions/junction_counts/`
 
-Runtime-generated BWA index sidecars for the FASTA are created in `resources/junctions/` (`.amb`, `.ann`, `.bwt`, `.pac`, `.sa`) and should stay untracked.
+Runtime-generated BWA index files for the FASTA are created in `resources/junctions/` (`.amb`, `.ann`, `.bwt`, `.pac`, `.sa`) and should stay untracked.
 
 Final expected count outputs:
 
