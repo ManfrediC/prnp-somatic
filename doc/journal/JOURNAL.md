@@ -2069,8 +2069,33 @@ Junction blocker status (updated):
 
 ## 27.02.2026
 
-- Added finalization reminder for inventory refresh:
-  - before final reproducibility freeze, rerun `python3 bin/make_inventory.py`
-  - review/stage updated `doc/inventory.tsv` with the final docs/scripts commit
-- Added explicit finalization checklist:
-  - `doc/reproducibility/finalization_checklist.md`
+- Ran repository-wide sanity checks for publication readiness:
+  - `make help`
+  - `make -n all`
+  - `make verify_resources`
+  - `bash bin/verify_output_checksums.sh --mode check`
+  - shell syntax checks (`bash -n`) across non-legacy shell scripts
+  - Python compile checks for non-legacy scripts
+  - R parse checks for active non-legacy/non-archival scripts
+- Sanity-check outcomes:
+  - resource checks passed (`make verify_resources`)
+  - shell/Python/active R script checks passed
+  - final output checksum check failed for ddPCR because rerun outputs changed:
+    - `results/ddPCR/SNV_data_final.xlsx`
+    - `results/ddPCR/SNV_pooled_participant.xlsx`
+  - one archival manuscript script parse issue remains in `manuscript/figures/ddpcr_fractional_abundance/old_versions/other_graphs.R` (outside active workflow path)
+- Executed finalisation reminder task:
+  - reran `python3 bin/make_inventory.py`
+  - refreshed `doc/inventory.tsv` (23 rows written)
+
+## 27.02.2026 (edits completed today)
+
+- ddPCR environment and documentation:
+  - added `env/ddpcr.environment.yml` for dedicated reviewer setup
+  - updated environment instructions in `README.md`, `env/README.md`, and `src/ddPCR/README.md`
+  - updated provenance note in `doc/reproducibility/tooling_and_reference_provenance.md` to reflect dedicated `prnp-somatic-ddpcr` usage
+  - created `prnp-somatic-ddpcr` conda env and validated package availability (`readr`, `tidyverse`, `openxlsx`, `magrittr`, `binom`, `dplyr`, `stringr`, `tidyr`, `tibble`, `purrr`)
+  - reran ddPCR workflow (`src/ddPCR/run_ddpcr.sh`) successfully and regenerated ddPCR outputs
+- Added annotations to pipeline scripts
+- Conducted review of all repo directories, edited documentation, removed obsolete files
+- Edited Makefile to make it the entry point for all parts of the pipeline
