@@ -1,14 +1,10 @@
 SHELL := /bin/bash
 .ONESHELL:
-
-# Modular targets
-include mk/versions.mk
-include mk/toolchain.mk
-include mk/conda.mk
+REQUIRED_CONDA_ENV ?= prnp-somatic
 
 .SHELLFLAGS := -eu -o pipefail -c
 
-.PHONY: help versions qc_validate qc_metrics clean_qc print_qc_paths verify_resources preprocessing_preflight preprocessing_dry preprocessing_run
+.PHONY: help versions toolchain_lock check_conda qc_validate qc_metrics clean_qc print_qc_paths verify_resources preprocessing_preflight preprocessing_dry preprocessing_run
 
 # -------------------------------------------------------------------
 # Paths inside the repo (adjust only if you move directories)
@@ -30,6 +26,66 @@ QC_DIR      := $(RESULTS_DIR)/qc/$(QC_RUN)
 QC_VALIDATE_LOG := $(QC_DIR)/validate_manifest.log
 QC_METRICS_TSV  := $(QC_DIR)/sequencing_metrics_per_sample.tsv
 QC_METRICS_ERR  := $(QC_DIR)/compute_sequencing_metrics.stderr.log
+
+versions:
+	@set -eu
+	@echo "== Tool versions =="
+	@echo "captured_utc: $$(date -u +%FT%TZ)"
+	@echo "git_commit: $$(git rev-parse --short HEAD 2>/dev/null || echo NA)"
+	@echo ""
+	@echo "-- OS --"
+	@uname -a || true
+	@echo ""
+	@echo "-- Core --"
+	@command -v bash >/dev/null 2>&1 && bash --version 2>/dev/null | sed -n '1p' || echo "bash: NOT FOUND"
+	@command -v make >/dev/null 2>&1 && make --version 2>/dev/null | sed -n '1p' || echo "make: NOT FOUND"
+	@command -v rsync >/dev/null 2>&1 && rsync --version 2>/dev/null | sed -n '1p' || echo "rsync: NOT FOUND"
+	@command -v grep >/dev/null 2>&1 && grep --version 2>/dev/null | sed -n '1p' || echo "grep: NOT FOUND"
+	@command -v sed  >/dev/null 2>&1 && sed  --version 2>/dev/null | sed -n '1p' || echo "sed: NOT FOUND"
+	@command -v awk  >/dev/null 2>&1 && awk  --version 2>/dev/null | sed -n '1p' || echo "awk: NOT FOUND"
+	@echo ""
+	@echo "-- HTS / alignment --"
+	@command -v bwa >/dev/null 2>&1 && { bwa 2>&1 | awk -F': ' '/^Version:/{print "bwa " $$2; found=1} END{if(!found) print "bwa (version not detected)"}' || true; } || echo "bwa: NOT FOUND"
+	@command -v samtools >/dev/null 2>&1 && samtools --version 2>/dev/null | sed -n '1,2p' || echo "samtools: NOT FOUND"
+	@command -v bcftools >/dev/null 2>&1 && bcftools --version 2>/dev/null | sed -n '1,2p' || echo "bcftools: NOT FOUND"
+	@command -v bgzip >/dev/null 2>&1 && bgzip --version 2>/dev/null | sed -n '1p' || echo "bgzip: NOT FOUND"
+	@command -v tabix >/dev/null 2>&1 && tabix --version 2>/dev/null | sed -n '1p' || echo "tabix: NOT FOUND"
+	@command -v bedtools >/dev/null 2>&1 && bedtools --version 2>/dev/null | sed -n '1p' || echo "bedtools: NOT FOUND"
+	@echo ""
+	@echo "-- Java / GATK --"
+	@command -v java >/dev/null 2>&1 && java -version 2>&1 | sed -n '1,3p' || echo "java: NOT FOUND"
+	@command -v gatk >/dev/null 2>&1 && gatk --version 2>/dev/null || echo "gatk: NOT FOUND"
+	@echo ""
+	@echo "-- Python --"
+	@command -v python3 >/dev/null 2>&1 && python3 --version 2>/dev/null || echo "python3: NOT FOUND"
+	@command -v pip3 >/dev/null 2>&1 && pip3 --version 2>/dev/null || echo "pip3: NOT FOUND"
+	@echo ""
+	@echo "-- QC helpers (optional) --"
+	@command -v fastqc >/dev/null 2>&1 && fastqc --version 2>/dev/null || echo "fastqc: NOT FOUND"
+	@command -v multiqc >/dev/null 2>&1 && multiqc --version 2>/dev/null || echo "multiqc: NOT FOUND"
+	@echo ""
+	@echo "-- R (optional) --"
+	@command -v R >/dev/null 2>&1 && R --version 2>/dev/null | sed -n '1,2p' || echo "R: NOT FOUND"
+
+toolchain_lock:
+	@set -eu
+	@mkdir -p doc
+	@$(MAKE) -s versions > doc/tool_versions.lock.txt
+	@echo "Wrote: doc/tool_versions.lock.txt"
+
+check_conda:
+	@set -eu
+	@if [ -z "$$CONDA_PREFIX" ] || [ "$$CONDA_DEFAULT_ENV" = "base" ]; then \
+	  echo "ERROR: a non-base Conda environment is required."; \
+	  echo "Create one from env specs in env/ (see env/README.md)."; \
+	  echo "Then activate it before running this target."; \
+	  exit 1; \
+	fi
+	@if [ -n "$${REQUIRED_CONDA_ENV:-}" ] && [ "$$CONDA_DEFAULT_ENV" != "$$REQUIRED_CONDA_ENV" ]; then \
+	  echo "ERROR: active Conda environment is '$$CONDA_DEFAULT_ENV', expected '$$REQUIRED_CONDA_ENV'."; \
+	  echo "Run: conda activate $$REQUIRED_CONDA_ENV"; \
+	  exit 1; \
+	fi
 
 help:
 	@echo "Targets (run one step at a time):"

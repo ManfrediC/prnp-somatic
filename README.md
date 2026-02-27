@@ -162,9 +162,7 @@ Optional Makefile helper targets:
 - `make qc_metrics` (manifest + sequencing metrics helper)
 - `make verify_resources` (checks `resources/SHA256SUMS.txt`)
 
-Implementation details for modular `make` fragments are documented in:
-
-- `mk/README.md`
+Helper-target implementation details are in the repository root `Makefile`.
 
 ## Raw Data Placement (Git-Ignored)
 
