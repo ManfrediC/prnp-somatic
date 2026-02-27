@@ -65,7 +65,6 @@ resources/backup/funcotator_excluded_datasources/
 !resources/*.interval_list
 !resources/*.dict
 !resources/*.fai
-!resources/dataset.tsv
 # Junction reference runtime index sidecars
 resources/junctions/*.fa.amb
 resources/junctions/*.fa.ann
@@ -81,6 +80,7 @@ data/vcf/
 results/*
 # Allow placeholders to remain tracked
 !results/.gitkeep
+!results/README.md
 !data/.gitkeep
 # Logs
 v*.log
@@ -89,7 +89,8 @@ nohup.out
 # Raw FASTQ data (large; keep out of git)
 /fastq/
 # Pipeline run outputs (large; keep out of git)
-/runs/
+/runs/*
+!/runs/README.md
 /run/
 config/preprocessing.env
 config/junctions.env
