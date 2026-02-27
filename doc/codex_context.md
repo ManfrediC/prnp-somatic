@@ -87,7 +87,7 @@ Do not introduce undocumented toolchain dependencies.
   - User-editable configuration and examples.
   - `preprocessing.env` / `preprocessing.env.example` define pipeline environment variables.
   - `preprocessing_samples.tsv` defines sample metadata / input mapping.
-  - `config.local.yaml` is local and should not be treated as canonical.
+  - `junctions.env` / `junctions.env.example` define exon-junction workflow variables.
 
 - `data/`
   - Documentation or placeholders for non-public / external datasets.

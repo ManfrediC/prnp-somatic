@@ -12,7 +12,8 @@ Typical examples:
 ## Large resources (NOT stored in Git)
 
 The following are required for some pipelines but are too large to commit directly to Git.
-Obtain them separately and place them in a local, user-specific path (configured via `config.local.yaml`)
+Obtain them separately and place them in a local, user-specific path (configured via
+the active env config files under `config/`, for example `preprocessing.env` and `junctions.env`)
 or use Git LFS if you explicitly choose to version them.
 
 ### Reference FASTA
@@ -63,7 +64,7 @@ Example (not prescriptive):
   - large VCFs + indices
   - large GTFs
 
-Point your `config.local.yaml` to these local paths.
+Point your `config/*.env` values to these local paths.
 
 ## Checksums
 

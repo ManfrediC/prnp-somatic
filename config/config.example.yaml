@@ -10,9 +10,6 @@
 # Minimal variables used by current QC target:
 #   LEGACY_AUTH_DIR, MANIFEST_TSV, SCHEMA_TSV, MANIFEST_QC_TSV
 
-# Where the legacy "authoritative_files" scripts live inside the repo
-LEGACY_AUTH_DIR := src/legacy/ubuntu/authoritative_files
-
 # Input definition files (override as needed)
 MANIFEST_TSV    := $(LEGACY_AUTH_DIR)/manifest.tsv
 SCHEMA_TSV      := $(LEGACY_AUTH_DIR)/sequencing_metrics_per_sample.schema.tsv
