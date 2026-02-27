@@ -5,6 +5,22 @@ authors:
   - family-names: "Carta"
     given-names: "Manfredi"
 repository-code: "https://github.com/ManfrediC/prnp-somatic"
-licence: "TODO"
+licence: "MIT"
 version: "0.0.0"
 date-released: "2026-02-07"
+
+# When preprint is available, replace placeholders below:
+# doi: "10.1101/XXXX.XX.XX.XXXXXX"
+# identifiers:
+#   - type: doi
+#     value: "10.1101/XXXX.XX.XX.XXXXXX"
+# preferred-citation:
+#   type: article
+#   title: "PREPRINT TITLE"
+#   authors:
+#     - family-names: "Carta"
+#       given-names: "Manfredi"
+#   journal: "bioRxiv"
+#   year: 2026
+#   doi: "10.1101/XXXX.XX.XX.XXXXXX"
+#   url: "https://doi.org/10.1101/XXXX.XX.XX.XXXXXX"
