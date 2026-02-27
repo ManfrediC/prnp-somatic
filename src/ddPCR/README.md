@@ -51,6 +51,17 @@ Written to `results/ddPCR/`:
 - `SNV_pooled_participant.xlsx`
 - `p0_fallback.csv`
 
+### Output File Meanings
+
+- `SNV_data_final.xlsx`:
+  - main long-format analysis table produced by the ddPCR workflow (sample/assay-level SNV results used for downstream interpretation).
+
+- `SNV_pooled_participant.xlsx`:
+  - participant-level pooled summary derived from the long-format table (aggregates replicate/sample-level rows into one consolidated participant view where applicable).
+
+- `p0_fallback.csv`:
+  - fallback blank-rate (`p0`) values used when a plate lacks usable blank controls, supporting LoB/LoBFA-based background classification.
+
 These expected output paths are also listed in:
 
 - `doc/reproducibility/final_outputs_manifest.tsv`

@@ -1,7 +1,7 @@
 # Makefile Usage
 
 This repository includes a root `Makefile` for QC and preprocessing utilities.
-Run all commands from the repository root (`/add/prnp-somatic`).
+Run all commands from the repository root (your cloned `prnp-somatic` directory).
 
 ## Prerequisites
 
