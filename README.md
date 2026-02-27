@@ -20,6 +20,14 @@ The Reproduction Guide below details required inputs, environment setup and expe
 - `doc/` notes and documentation
 - `manuscript/` manuscript artefact generation
 
+## Root files
+- `README.md`: top-level project overview and run guide
+- `Makefile`: convenience wrappers for running workflows and checks
+- `CITATION.cff`: citation metadata for this repository
+- `LICENCE`: repository software licence (MIT)
+- `.gitignore`: rules for untracked raw data, run outputs and generated artefacts
+- `.gitattributes`: git text/binary handling rules for selected tracked files
+
 ## Reproduction Guide
 
 Run all commands from the repository root (your cloned `prnp-somatic` directory).
@@ -163,6 +171,8 @@ Detailed workflow docs:
 - `manuscript/README.md`
 
 ### 11. Makefile commands (optional wrappers)
+
+As an alternative to executing the pipelines individually, it's possible to run each part of the project using `Makefile`.
 
 Show all available commands:
 

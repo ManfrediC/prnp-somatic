@@ -2099,3 +2099,17 @@ Junction blocker status (updated):
 - Added annotations to pipeline scripts
 - Conducted review of all repo directories, edited documentation, removed obsolete files
 - Edited Makefile to make it the entry point for all parts of the pipeline
+
+## 27.02.2026 (to do: manuscript refactor)
+
+- Refactor manuscript figure/table layout to descriptive per-item `.tex` files with wrapper-based assembly.
+- Split wrappers into `main` (only items cited in main text) and `supplement` (additional items).
+- Resolve unclear/extra figure inclusions currently present in the combined figures wrapper:
+  - pooled ddPCR figure currently included but not clearly referenced in main text flow
+  - verify whether this should be in `supplement` wrapper only
+- Resolve unclear/extra table inclusions currently present in the combined tables wrapper:
+  - patient cohort overview table included in combined wrapper but not cited as `Table 1/2/3` in main text flow
+  - ddPCR sample count/results-by-region summary tables included in combined wrapper with unclear mapping to in-text table numbering
+  - move non-cited/secondary tables to `supplement` wrapper after mapping review
+- Build an explicit mapping file between docx in-text references and descriptive `.tex` table/figure filenames before final wrapper freeze.
+- Confirm final supplementary numbering (`Figure S*` / `Table S*`) after the next draft update of `Carta_PRNP.docx`.
