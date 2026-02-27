@@ -11,13 +11,14 @@ The Reproduction Guide below details required inputs, environment setup and expe
 
 ## Repository structure
 - `bin/` command-line entrypoints / wrappers
-- `src/` reusable code (Python/R)
+- `src/` reusable code (Shell/Python/R)
 - `config/` configuration templates
 - `resources/` small static artefacts tracked in git (BEDs, schemas). Larger resources must be downloaded manually
 - `authoritative_files/` manifests and sequencing-metrics validation utilities
 - `results/` outputs *not tracked* (date-stamped runs)
 - `env/` container/environment definitions
 - `doc/` notes and documentation
+- `manuscript/` manuscript artefact generation
 
 ## Reproduction Guide
 

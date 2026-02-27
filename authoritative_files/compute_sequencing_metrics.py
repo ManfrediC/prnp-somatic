@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+"""
+Generate per-sample sequencing QC metrics from the authoritative manifest.
+
+Input:
+- authoritative_files/manifest.tsv (or PRNP_MANIFEST)
+- resources BED/FASTA paths (or PRNP_* env overrides)
+
+Output:
+- tab-delimited rows to stdout in schema-defined column order
+"""
 from __future__ import annotations
 
 import csv
@@ -11,11 +21,13 @@ from typing import Dict, List, Optional, Tuple
 
 # ---- inputs (repo-relative defaults; overridable via env vars) ----
 HERE = Path(__file__).resolve()
+
 def find_repo_root(start: Path) -> Path:
+    # Walk upward until we find the repository markers.
     for p in [start] + list(start.parents):
         if (p / "Makefile").exists() and (p / "README.md").exists():
             return p
-    # fallback to script dir ancestry
+    # Defensive fallback for unusual execution contexts.
     return start.parents[4]
 
 REPO_ROOT = find_repo_root(HERE.parent)
@@ -60,6 +72,7 @@ def run(cmd: List[str]) -> str:
 
 
 def parse_hex_flag(s: str) -> int:
+    # Accept either hex (e.g. 0xF04) or decimal flag notation.
     s = s.strip()
     if s.lower().startswith("0x"):
         return int(s, 16)
@@ -67,6 +80,7 @@ def parse_hex_flag(s: str) -> int:
 
 
 def bed_total_bases(bed_path: Path) -> int:
+    # Sum span lengths across BED intervals.
     total = 0
     with bed_path.open() as f:
         for line in f:
@@ -90,11 +104,11 @@ def load_output_columns(schema_path: Path) -> List[str]:
     if not lines:
         raise RuntimeError(f"Schema/header file is empty: {schema_path}")
 
-    # Case A: single line and it looks like the output header
+    # Case A: locked one-line header (current repo usage).
     if len(lines) == 1 and "\t" in lines[0] and "sample_id" in lines[0]:
         return lines[0].split("\t")
 
-    # Case B: tabular schema; first row is schema header, first column is column_name
+    # Case B: schema table where first column defines output column names.
     reader = csv.reader(lines, delimiter="\t")
     header = next(reader)
     if not header or header[0] not in ("column_name", "name"):
@@ -153,8 +167,7 @@ def parse_picard_markdup_metrics(metrics_path: Path) -> Tuple[Optional[float], O
 
     lines = metrics_path.read_text().splitlines()
 
-    # Find the table that includes PERCENT_DUPLICATION
-    # Typical Picard structure: header lines, then a row header line with fields.
+    # Picard files contain multiple blocks; parse the MarkDuplicates metric row by header names.
     for i, ln in enumerate(lines):
         if ln.startswith("LIBRARY") and "PERCENT_DUPLICATION" in ln and "ESTIMATED_LIBRARY_SIZE" in ln:
             headers = ln.split("\t")
@@ -178,6 +191,7 @@ def parse_picard_markdup_metrics(metrics_path: Path) -> Tuple[Optional[float], O
 
 
 def samtools_view_count(bam: Path, extra_args: List[str]) -> int:
+    # Thin wrapper to keep count calls uniform and typed.
     out = run(["samtools", "view", "-c"] + extra_args + [str(bam)])
     return int(out)
 
@@ -188,7 +202,7 @@ def depth_stats_from_bed(bam: Path, bed: Path, bases_total: int, min_mapq: int, 
     """
     excl_int = parse_hex_flag(exclude_flags_hex)
 
-    # NOTE: -Q = minimum mapping quality
+    # NOTE: samtools depth -Q applies minimum MAPQ; -G excludes reads by SAM flag.
 
     cmd = [
         "samtools", "depth",
@@ -207,7 +221,8 @@ def depth_stats_from_bed(bam: Path, bed: Path, bases_total: int, min_mapq: int, 
             continue
         depths.append(int(parts[2]))
 
-    # If samtools doesn't emit all positions for some reason, pad with zeros (defensive).
+    # Pad with zeros if samtools emits fewer positions than BED span.
+    # This keeps denominator stable at exact BED span size.
     if bases_total > len(depths):
         depths.extend([0] * (bases_total - len(depths)))
 
@@ -228,10 +243,11 @@ def depth_stats_from_bed(bam: Path, bed: Path, bases_total: int, min_mapq: int, 
     else:
         median = (depths[mid - 1] + depths[mid]) / 2.0
 
-    # 20th percentile depth (i.e. depth at which 80% of bases are >= that depth)
+    # 20th percentile depth (depth where ~80% of bases are at least this deep).
     p20_index = int(0.20 * (bases_total - 1))
     p20 = float(depths[p20_index])
 
+    # Fold-80 base penalty approximation: mean_depth / depth_at_20th_percentile.
     fold80 = "NA"
     if mean > 0 and p20 > 0:
         fold80 = mean / p20
@@ -266,15 +282,16 @@ def fmt_int(x: object) -> str:
 
 
 def main() -> None:
+    # 1) Resolve output schema and fixed BED span sizes.
     out_cols = load_output_columns(SCHEMA_HEADER_FILE)
 
     target_bases_total = bed_total_bases(TARGETS_BED)
     coding_bases_total = bed_total_bases(CODING_BED)
 
-    # Emit header
+    # Header is locked to schema order for stable downstream consumption.
     sys.stdout.write("\t".join(out_cols) + "\n")
 
-    # Read manifest
+    # 2) Read manifest and emit one metrics row per sample.
     with MANIFEST.open() as f:
         reader = csv.DictReader(f, delimiter="\t")
         required = {"sample_id", "group", "batch", "input_dir"}
@@ -289,14 +306,16 @@ def main() -> None:
 
             bam_path, bam_style = discover_bam(sample_id, input_dir)
 
-            # read counts (samtools view uses -q for MAPQ; depth uses -Q)
+            # Read-level counts from samtools view.
+            # Exclusion flags define what "primary mapped" means for this report.
             reads_total = samtools_view_count(bam_path, [])
             reads_mapped = samtools_view_count(bam_path, ["-F", "0x4"])
             reads_primary_mapped = samtools_view_count(bam_path, ["-F", EXCLUDE_FLAGS_COMMON_HEX])
             reads_qc_fail = samtools_view_count(bam_path, ["-f", "0x200"])
             reads_duplicate = samtools_view_count(bam_path, ["-f", "0x400", "-F", EXCLUDE_FLAGS_COMMON_HEX])
 
-            # On-target reads (primary mapped; no duplicate removal here)
+            # On-target read count against targets BED.
+            # Duplicates are intentionally retained here; depth metrics apply stricter filtering.
             on_target_reads = samtools_view_count(
                 bam_path,
                 ["-F", EXCLUDE_FLAGS_COMMON_HEX, "-L", str(TARGETS_BED)]
@@ -308,7 +327,8 @@ def main() -> None:
                 on_target_fraction = on_target_reads / reads_primary_mapped
                 on_target_percent = on_target_fraction * 100.0
 
-            # Depth stats (exclude duplicates via EXCLUDE_FLAGS_UNIQUE_HEX)
+            # Depth stats use stricter exclusion flags (includes duplicate removal).
+            # These values drive target/coding coverage summaries.
             targ = depth_stats_from_bed(
                 bam=bam_path, bed=TARGETS_BED, bases_total=target_bases_total,
                 min_mapq=MIN_MAPQ, exclude_flags_hex=EXCLUDE_FLAGS_UNIQUE_HEX
@@ -318,7 +338,7 @@ def main() -> None:
                 min_mapq=MIN_MAPQ, exclude_flags_hex=EXCLUDE_FLAGS_UNIQUE_HEX
             )
 
-            # Picard metrics (if present)
+            # 3) Optional Picard duplicate metrics.
             pic_path = picard_metrics_path_for(sample_id, input_dir, bam_style)
             pct_dup, est_lib = (None, None)
             if pic_path is not None:
@@ -327,7 +347,7 @@ def main() -> None:
             st = bam_path.stat()
             bam_mtime_iso = dt.datetime.fromtimestamp(st.st_mtime).isoformat(timespec="seconds")
 
-            # Build output row dict (strings only)
+            # 4) Build one output row (all values serialized as strings).
             out: Dict[str, str] = {
                 "sample_id": sample_id,
                 "group": group,
@@ -382,7 +402,7 @@ def main() -> None:
                 "pipeline_run_id": os.environ.get("PIPELINE_RUN_ID", "NA"),
             }
 
-            # Emit row in locked column order
+            # 5) Emit row in schema order for deterministic downstream parsing.
             sys.stdout.write("\t".join(out.get(c, "NA") for c in out_cols) + "\n")
 
 
