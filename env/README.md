@@ -13,6 +13,9 @@ This directory contains Conda environment specifications used by the reproducibl
 - `junctions.environment.yml`:
   - dedicated `prnp-junctions` environment specification for the exon-junction workflow (`src/junctions`).
 
+- `ddpcr.environment.yml`:
+  - dedicated `prnp-somatic-ddpcr` environment specification for the ddPCR workflow (`src/ddPCR`).
+
 ## Usage
 
 Run from repository root.
@@ -36,6 +39,13 @@ Create junction workflow environment:
 ```bash
 conda env create -f env/junctions.environment.yml
 conda activate prnp-junctions
+```
+
+Create ddPCR workflow environment:
+
+```bash
+conda env create -f env/ddpcr.environment.yml
+conda activate prnp-somatic-ddpcr
 ```
 
 ## Notes

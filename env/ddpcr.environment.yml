@@ -1,0 +1,15 @@
+name: prnp-somatic-ddpcr
+channels:
+  - conda-forge
+dependencies:
+  - r-base=4.4
+  - r-readr
+  - r-tidyverse
+  - r-openxlsx
+  - r-magrittr
+  - r-binom
+  - r-dplyr
+  - r-stringr
+  - r-tidyr
+  - r-tibble
+  - r-purrr

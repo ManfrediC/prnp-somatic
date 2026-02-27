@@ -234,7 +234,7 @@ blank_pooled <- blanks %>%
             .groups = "drop") %>%
   mutate(p0_upper = binom.confint(x_blank, n_blank, methods = "exact")$upper)
 
-# 3) Assay-wide fallback p0 (in case some plate lacks blanks)
+# 3) Assay-wide fallback p0
 assay_fallback <- blank_pooled %>%
   group_by(assay) %>%
   summarise(x_blank = sum(x_blank), n_blank = sum(n_blank), .groups = "drop") %>%
@@ -362,7 +362,7 @@ pooled_participant_assay <- merged.new %>%
     .groups = "drop"
   )
 
-# drop 14-2 E200K as it's heterozygous
+# drop 14-2 E200K as this sample was found to be heterozygous mutant E200K
 pooled_participant_assay <- pooled_participant_assay %>%
   filter(!(code == "14-2" & assay == "E200K"))
 

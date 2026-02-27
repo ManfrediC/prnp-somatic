@@ -1,6 +1,6 @@
 # prnp-somatic
 
-This repository contains the reproducible analysis workflows used in the PRNP somatic project:
+This repository contains the reproducible analysis workflows used in the *PRNP* somatic project:
 
 - NGS somatic SNV detection (`src/pipelines`): FASTQ preprocessing, Mutect2 calling, post-processing, QC, and final variant tables.
 - ddPCR SNV quantification (`src/ddPCR`): processing of raw droplet exports into long-format and participant-level result tables.
@@ -58,16 +58,23 @@ Required inputs must be placed as follows:
 
 See `README` files in the respective directories for details on the required files.
 
-### 4. Create environment for ddPCR + somatic SNV pipeline scripts
+### 4. Create environment for ddPCR scripts
+
+```bash
+conda env create -f env/ddpcr.environment.yml
+conda activate prnp-somatic-ddpcr
+```
+
+### 5. Create environment for somatic SNV pipeline scripts
 
 ```bash
 conda --no-plugins create -n prnp-somatic -c conda-forge -c bioconda -y \
-  r-base=4.4 r-tidyverse r-openxlsx r-readr r-magrittr r-binom \
-  r-dplyr r-stringr r-tidyr r-tibble
+  python=3.10 pip samtools=1.20 bcftools=1.20 htslib=1.20 \
+  bedtools=2.31.1 fastqc=0.12.1 multiqc=1.33 openjdk=17 gatk4=4.5.0.0
 conda activate prnp-somatic
 ```
 
-### 5. Run ddPCR workflow
+### 6. Run ddPCR workflow
 
 ```bash
 bash src/ddPCR/run_ddpcr.sh
@@ -78,7 +85,7 @@ Expected outputs:
 - `results/ddPCR/SNV_data_final.xlsx`
 - `results/ddPCR/SNV_pooled_participant.xlsx`
 
-### 6. Run SNV detection pipeline (`src/pipelines`)
+### 7. Run SNV detection pipeline (`src/pipelines`)
 
 Set up pipeline configuration first:
 
@@ -115,7 +122,7 @@ Expected outputs include:
 - `results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/*`
 - `results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/*`
 
-### 7. Create environment for junction workflow
+### 8. Create environment for junction workflow
 
 ```bash
 conda --no-plugins create -n prnp-junctions -c conda-forge -c bioconda -y \
@@ -126,7 +133,7 @@ conda --no-plugins create -n prnp-junctions -c conda-forge -c bioconda -y \
 conda activate prnp-junctions
 ```
 
-### 8. Run junction workflow
+### 9. Run junction workflow
 
 ```bash
 TMPDIR=/tmp TEMP=/tmp TMP=/tmp bash src/junctions/run_junctions.sh
@@ -137,7 +144,7 @@ Expected outputs:
 - `results/junctions/junction_counts/prnp_junction_counts.tsv`
 - `results/junctions/junction_counts/prnp_junction_summary.tsv`
 
-### 9. Verify final outputs
+### 10. Verify final outputs
 
 ```bash
 bash bin/verify_output_checksums.sh --mode check
@@ -155,7 +162,7 @@ Detailed workflow docs:
 - `src/pipelines/README.md`
 - `manuscript/README.md`
 
-### 10. Makefile commands (optional wrappers)
+### 11. Makefile commands (optional wrappers)
 
 Show all available commands:
 
@@ -165,10 +172,10 @@ make help
 
 Run main workflows:
 
-- `make ddpcr` (requires active env: `prnp-somatic`)
+- `make ddpcr` (requires active env: `prnp-somatic-ddpcr`)
 - `make snv` (requires active env: `prnp-somatic`)
 - `make junctions` (requires active env: `prnp-junctions`)
-- `make all` (runs ddPCR + SNV + junctions via `conda run`; no manual env switching required)
+- `make all` (runs ddPCR + SNV + junctions via `conda run`; expects envs `prnp-somatic-ddpcr`, `prnp-somatic`, and `prnp-junctions`)
 
 Run integrity checks:
 

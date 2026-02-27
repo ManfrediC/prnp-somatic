@@ -1,15 +1,10 @@
 # ddPCR reproducible script
 
-This folder contains a portable version of the legacy ddPCR dataframe workflow.
+This folder contains the *PRNP* somatic mutations ddPCR dataframe workflow.
 
 ## Script
 
 - `create_snv_dataframe.R`
-
-This script is intentionally kept close to the legacy structure and annotations, with minimal changes for reproducibility:
-- no hardcoded Windows `setwd(...)` paths,
-- repo-relative input/output paths,
-- metadata input renamed to `sample_details.xlsx`.
 
 ## Inputs
 
@@ -29,17 +24,14 @@ bash src/ddPCR/run_ddpcr.sh
 Environment setup example:
 
 ```bash
-conda --no-plugins create -n prnp-somatic-ddpcr -c conda-forge -y \
-  r-base=4.3 r-readr r-tidyverse r-openxlsx r-magrittr r-binom
+conda env create -f env/ddpcr.environment.yml
 conda activate prnp-somatic-ddpcr
 ```
-
-This repository does not provide or version-control the R tools themselves.
 
 Optional Docker path (if Docker daemon is available):
 
 ```bash
-docker run --rm -v "$(pwd)":/work -w /work rocker/tidyverse:4.3.3 bash -lc \
+docker run --rm -v "$(pwd)":/work -w /work rocker/tidyverse:4.4.3 bash -lc \
   "Rscript -e 'options(repos=c(CRAN=\"https://cloud.r-project.org\")); install.packages(c(\"openxlsx\",\"binom\"))' && bash src/ddPCR/run_ddpcr.sh"
 ```
 

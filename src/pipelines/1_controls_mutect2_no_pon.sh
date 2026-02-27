@@ -29,7 +29,7 @@ THREADS="${THREADS:-8}"
 JAVA_MEM_GB="${JAVA_MEM_GB:-8}"
 
 # -----------------------
-# Repo root discovery (works from anywhere)
+# Repo root discovery
 # -----------------------
 find_repo_root() {
   local start d
@@ -72,7 +72,7 @@ OUT_ROOT="${OUT_ROOT:-$MUTECT2_CONTROLS_OUT_ROOT}"
 REF_FASTA="${REF_FASTA:-resources/chr2_chr4_chr20.fasta}"
 INTERVALS="${INTERVALS:-resources/capture_targets.interval_list}"
 
-# Paper text says “resource bundle”; Mutect2 tumour-only typically uses gnomAD AF-only.
+# Paper text says ï¿½resource bundleï¿½; Mutect2 tumour-only typically uses gnomAD AF-only.
 # If you haven't added it to resources yet, set GNOMAD_VCF in your env.
 GNOMAD_VCF="${GNOMAD_VCF:-resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz}"
 
@@ -93,7 +93,7 @@ run() {
 }
 
 # -----------------------
-# Tool + file checks (keep minimal)
+# Tool + file checks
 # -----------------------
 have gatk     || die "gatk not in PATH (did you activate conda?)"
 have samtools || die "samtools not in PATH (did you activate conda?)"
@@ -141,6 +141,7 @@ for bam in "${bams[@]}"; do
     continue
   fi
 
+  # Mutect2
   run gatk --java-options "-Xmx${JAVA_MEM_GB}g" Mutect2 \
     -R "$REF_FASTA" \
     -I "$bam" \
