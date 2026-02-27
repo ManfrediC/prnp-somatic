@@ -53,6 +53,59 @@ Scope: `src/ddPCR`, `src/junctions`, `src/pipelines`
 | dbSNP resource | `resources/dbsnp_146.hg38.vcf.gz` | Present | Source URI: `gs://genomics-public-data/resources/broad/hg38/v0/dbsnp_146.hg38.vcf.gz`; local file date: `2023-09-03` |
 | Mills/1000G indels resource | `resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz` | Present | Source URI: `gs://genomics-public-data/resources/broad/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz`; local file date: `2023-09-03` |
 
+## Untracked resource files and how to obtain them
+
+The following resource paths are required by active workflows but are intentionally not tracked in git.
+Place them at the exact repo-relative paths shown below.
+
+### Junction workflow (`src/junctions`)
+
+- `resources/hg38.fa`
+  - Obtain: download GRCh38 FASTA from UCSC (`https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/latest/hg38.fa.gz`), then decompress to `resources/hg38.fa`.
+- `resources/Homo_sapiens.GRCh38.110.gtf.gz`
+  - Obtain: download Ensembl release 110 GTF (`https://ftp.ensembl.org/pub/release-110/gtf/homo_sapiens/Homo_sapiens.GRCh38.110.gtf.gz`) to `resources/`.
+- Runtime-generated sidecars for `resources/junctions/prnp_junctions.fa`:
+  - `resources/junctions/prnp_junctions.fa.amb`
+  - `resources/junctions/prnp_junctions.fa.ann`
+  - `resources/junctions/prnp_junctions.fa.bwt`
+  - `resources/junctions/prnp_junctions.fa.pac`
+  - `resources/junctions/prnp_junctions.fa.sa`
+  - Obtain: generated automatically by `src/junctions/03_process_bam.sh` via `bwa index` (do not download manually).
+
+### SNV pipeline workflow (`src/pipelines`)
+
+- `resources/chr2_chr4_chr20.fasta`
+  - This is a subset of hg38 containing only chromosomes 2, 4 and 20 (which contain TTN, TET2 and PRNP, respectively). The subset was used to decrease computation time in the somatic mutation pipeline.
+  - Obtain: derive from hg38 by extracting `chr2`, `chr4`, `chr20` from `resources/hg38.fa` (e.g. with `samtools faidx`)
+  - Reconstruction (from repository root):
+    - `samtools faidx resources/hg38.fa chr2 chr4 chr20 > resources/chr2_chr4_chr20.fasta`
+    - `samtools faidx resources/chr2_chr4_chr20.fasta`
+    - `gatk CreateSequenceDictionary -R resources/chr2_chr4_chr20.fasta -O resources/chr2_chr4_chr20.dict`
+    - `bwa index resources/chr2_chr4_chr20.fasta`
+  - Required sidecars expected by scripts:
+    - `resources/chr2_chr4_chr20.fasta.fai`
+    - `resources/chr2_chr4_chr20.dict`
+    - `resources/chr2_chr4_chr20.fasta.amb`
+    - `resources/chr2_chr4_chr20.fasta.ann`
+    - `resources/chr2_chr4_chr20.fasta.bwt`
+    - `resources/chr2_chr4_chr20.fasta.pac`
+    - `resources/chr2_chr4_chr20.fasta.sa`
+- `resources/dbsnp_146.hg38.vcf.gz` and index
+  - Obtain from: `gs://genomics-public-data/resources/broad/hg38/v0/dbsnp_146.hg38.vcf.gz`
+  - Required index: `resources/dbsnp_146.hg38.vcf.gz.tbi`
+- `resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz` and index
+  - Obtain from: `gs://genomics-public-data/resources/broad/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz`
+  - Required index: `resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz.tbi`
+- `resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz` and index
+  - Obtain from: `gs://gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf.gz`
+  - Required index: `resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz.tbi` (or `.csi`)
+- `resources/somatic-hg38_1000g_pon.hg38.vcf.gz` and index (optional, only if using provided PoN resource file)
+  - Obtain from: `gs://gatk-best-practices/somatic-hg38/1000g_pon.hg38.vcf.gz`
+  - Required index: `resources/somatic-hg38_1000g_pon.hg38.vcf.gz.tbi` (or `.csi`)
+- Funcotator datasource tree
+  - Required path: `resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
+  - Obtain: download and unpack the corresponding Funcotator datasources so that this exact directory exists.
+
 ## Notes
 
 - `tidyverse` and `openxlsx` are currently installed in base conda R (not in `prnp-somatic` env) for compatibility reasons.

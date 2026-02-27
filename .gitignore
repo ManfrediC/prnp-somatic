@@ -5,14 +5,12 @@ Thumbs.db
 *.swo
 .vscode/
 .idea/
-
 # Python
 __pycache__/
 *.pyc
 .venv/
 .venv*/
 .env
-
 # R
 .Rhistory
 .RData
@@ -23,7 +21,6 @@ __pycache__/
 *.Rproj
 .Rlibs/
 .so
-
 # Large bioinformatics artefacts (never commit)
 *.fastq
 *.fastq.gz
@@ -46,7 +43,6 @@ __pycache__/
 *.zip
 *.tar
 *.tar.gz
-
 # Large reference resources (do not commit)
 resources/*.fa
 resources/*.fa.gz
@@ -57,31 +53,25 @@ resources/*.vcf.gz
 resources/*.vcf.gz.tbi
 resources/*.vcf.idx
 resources/*.gtf.gz
-
 # If you keep indexes with big VCFs, ignore those too
 resources/*.tbi
 resources/*.idx
 resources/funcotator_data_somatic/
 resources/backup/funcotator_excluded_datasources/
-
 # Keep small, hand-authored resource descriptors
 !resources/README.md
-!resources/RESOURCES.md
 !resources/backup/README.md
 !resources/*.bed
 !resources/*.interval_list
 !resources/*.dict
 !resources/*.fai
 !resources/dataset.tsv
-!resources/.gitkeep
-
 # Junction reference runtime index sidecars
 resources/junctions/*.fa.amb
 resources/junctions/*.fa.ann
 resources/junctions/*.fa.bwt
 resources/junctions/*.fa.pac
 resources/junctions/*.fa.sa
-
 # Data + results policy (keep templates only)
 data/raw/
 data/fastq/
@@ -89,24 +79,19 @@ data/bam/
 data/cram/
 data/vcf/
 results/*
-
 # Allow placeholders to remain tracked
 !results/.gitkeep
 !data/.gitkeep
-
 # Logs
 v*.log
 *.log.*
 nohup.out
-
 # Raw FASTQ data (large; keep out of git)
 /fastq/
-
 # Pipeline run outputs (large; keep out of git)
 /runs/
 /run/
 config/preprocessing.env
 config/junctions.env
-
 # Personal journal notes
 doc/journal/
