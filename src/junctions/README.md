@@ -1,14 +1,7 @@
 # PRNP Exon-Exon Junction Scripts
 
-This directory contains the reproducible versions of the legacy exon-exon junction scripts.
-
-Legacy scripts were moved from:
-
-- `prnp-junctions/src/`
-
-Legacy data/resources/results remain in:
-
-- `prnp-junctions/`
+This directory contains the reproducible exon-exon junction workflow scripts used in this repository.
+Paths are repo-relative and resolve from repository root.
 
 ## Scripts
 
