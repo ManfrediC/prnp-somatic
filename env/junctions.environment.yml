@@ -1,0 +1,15 @@
+name: prnp-junctions
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - r-base=4.4
+  - bioconductor-genomicfeatures
+  - bioconductor-txdbmaker
+  - bioconductor-genomicranges
+  - bioconductor-genomeinfodb
+  - bioconductor-rsamtools
+  - bioconductor-biostrings
+  - bioconductor-rtracklayer
+  - bioconductor-genomicalignments
+  - r-dplyr

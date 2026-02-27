@@ -1,11 +1,11 @@
 # Tooling and Reference Provenance
 
 Checked on: 2026-02-25
-Scope: `src/ddPCR`, `src/junctions`, `src/pipelines` (Stage-12 publication path)
+Scope: `src/ddPCR`, `src/junctions`, `src/pipelines`
 
 ## Required CLI tools and versions
 
-- `Rscript`: `Rscript (R) version 4.3.3 (2024-02-29)`
+- `Rscript`: `Rscript (R) version 4.4`
 - `bwa`: `Program: bwa (alignment via Burrows-Wheeler transformation) Version: 0.7.17-r1188`
 - `samtools`: `samtools 1.19.2`
 - `bedtools`: `bedtools v2.30.0`
@@ -55,34 +55,4 @@ Scope: `src/ddPCR`, `src/junctions`, `src/pipelines` (Stage-12 publication path)
 
 ## Notes
 
-- Source URIs above were verified on `2026-02-25`; when original download logs were unavailable, the local file timestamp is recorded as the retrieval/import date proxy.
-- `tidyverse` and `openxlsx` are currently installed in base conda R (not in `prnp-somatic` env).
-
-## Baseline environment and snapshot commands
-
-- Repository baseline environment definition: `env/environment.yml`
-- Exact resolved baseline lockfile: `env/environment.lock.yml`
-- Quick local version check (after `conda activate prnp-somatic`): `make versions`
-- Snapshot command: `make toolchain_lock` (writes `doc/tool_versions.lock.txt`)
-
-## Additional baseline tool context (from Conda lock workflow)
-
-These tools are part of the broader baseline toolchain context used in this repository and may be versioned via the Conda lockfile:
-
-- `bcftools`
-- `bgzip`
-- `FastQC`
-- `MultiQC`
-- `OpenJDK`
-- `pip`
-
-## System tool context (not pinned; OS-dependent)
-
-Common system utilities used by scripts and wrappers include:
-
-- `bash`
-- `make`
-- `rsync`
-- `grep`
-- `sed`
-- `gawk`
+- `tidyverse` and `openxlsx` are currently installed in base conda R (not in `prnp-somatic` env) for compatibility reasons.
