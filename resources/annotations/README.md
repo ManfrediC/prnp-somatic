@@ -4,7 +4,7 @@ This directory stores small, versioned annotation helper tables used by downstre
 
 - `manual_population_freq.tsv`
   - Manually curated population frequencies used by the controls no-PoN QC step.
-  - Values were transcribed from the historical Windows analysis code and journal notes.
+  - Frequencies are derived from dbSNP.
   - The table includes both `dbsnp_id`-based and `variant_id`-based lookups.
 
 ## Notes

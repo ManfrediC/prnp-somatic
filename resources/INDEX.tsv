@@ -1,0 +1,28 @@
+path	workflow	type	required	tracked_in_git	notes
+resources/TruSeq3-PE.fa	pipelines	reference	yes	yes	Adapter file used by preprocessing
+resources/capture_targets.interval_list	pipelines	reference	yes	yes	Mutect2 interval input
+resources/targets.bed	pipelines	reference	yes	yes	Capture target BED
+resources/prnp_coding.bed	pipelines	annotation	yes	yes	PRNP coding region BED
+resources/annotations/manual_population_freq.tsv	pipelines	annotation	yes	yes	Manual population frequency table
+resources/chr2_chr4_chr20.fasta	pipelines	reference	yes	yes	Canonical pipeline reference FASTA path
+resources/chr2_chr4_chr20.dict	pipelines	reference	yes	yes	Picard/GATK dictionary for subset FASTA
+resources/chr2_chr4_chr20.fasta.fai	pipelines	reference	yes	yes	FASTA index for subset FASTA
+resources/dbsnp_146.hg38.vcf.gz	pipelines	annotation	yes	yes	dbSNP known-sites/resource VCF
+resources/dbsnp_146.hg38.vcf.gz.tbi	pipelines	annotation	yes	yes	Index for dbSNP VCF
+resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz	pipelines	annotation	yes	yes	Mills/1000G indels resource
+resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz.tbi	pipelines	annotation	yes	yes	Index for Mills/1000G VCF
+resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz	pipelines	annotation	yes	yes	Mutect2 germline resource and annotate input
+resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz.tbi	pipelines	annotation	yes	yes	Index for gnomAD AF-only resource
+resources/somatic-hg38_1000g_pon.hg38.vcf.gz	pipelines	annotation	optional	yes	PoN resource if using provided PoN file
+resources/somatic-hg38_1000g_pon.hg38.vcf.gz.tbi	pipelines	annotation	optional	yes	Index for PoN VCF
+resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38	pipelines	annotation	yes	no	Funcotator datasource root expected by scripts
+resources/Homo_sapiens.GRCh38.110.gtf.gz	junctions	reference	yes	yes	GTF used by junction scripts
+resources/hg38.fa	junctions	reference	yes	yes	Canonical junction reference FASTA path
+resources/hg38.dict	junctions	reference	optional	yes	Reference dictionary sidecar
+resources/hg38.fa.fai	junctions	reference	optional	yes	Reference index sidecar
+resources/junctions/prnp_junctions.fa	junctions	reference	yes	yes	Generated/committed junction FASTA
+resources/junctions/PRNP.pad1kb.hg38.bed	junctions	reference	yes	yes	Generated/committed padded PRNP BED
+resources/junctions/prnp_junctions.fa.{amb,ann,bwt,pac,sa}	junctions	runtime-index	no	no	BWA sidecars generated at runtime and ignored
+resources/SHA256SUMS.txt	both	manifest	yes	yes	Checksum manifest used by make verify_resources
+resources/README.md	both	documentation	yes	yes	Primary resources guide
+resources/INDEX.tsv	both	documentation	yes	yes	Canonical resource inventory table
