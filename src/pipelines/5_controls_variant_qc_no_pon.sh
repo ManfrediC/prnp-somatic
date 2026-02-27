@@ -9,6 +9,7 @@ set -euo pipefail
 shopt -s nullglob
 
 # Keep caller-provided values so ENV_FILE does not silently override them.
+# Precedence: explicit CLI env vars > values from ENV_FILE > script defaults.
 CLI_DRY_RUN="${DRY_RUN-}"
 CLI_JAVA_MEM_GB="${JAVA_MEM_GB-}"
 CLI_ENABLE_AAF_FILTER="${ENABLE_AAF_FILTER-}"
@@ -40,6 +41,7 @@ cd "$REPO_ROOT"
 ENV_FILE_DEFAULT="$REPO_ROOT/config/preprocessing.env"
 ENV_FILE="${ENV_FILE:-$ENV_FILE_DEFAULT}"
 if [[ -f "$ENV_FILE" ]]; then
+  # ENV_FILE is optional: this script also runs with defaults only.
   # shellcheck disable=SC1090
   source "$ENV_FILE"
 fi
@@ -149,6 +151,7 @@ fi
 samples=()
 for vcf in "${vcfs[@]}"; do
   [[ -f "$vcf" ]] || continue
+  # Stage 2/3 iterate over this list; deriving once keeps sample ordering stable.
   samples+=( "$(sample_from_vcf "$vcf")" )
 done
 [[ "${#samples[@]}" -gt 0 ]] || die "No valid sample names could be derived from VCF filenames"
@@ -173,6 +176,7 @@ echo "MIN_MEAN_MQ:                      $MIN_MEAN_MQ"
 echo "MAX_POP_FREQ:                     $MAX_POP_FREQ"
 echo "MAX_BINOM_P:                      $MAX_BINOM_P"
 echo
+# Configuration echo above acts as a run manifest for troubleshooting and provenance.
 
 # ------------------------------------------------------------
 # Stage 1: Select PASS variants
@@ -231,6 +235,7 @@ for sample in "${samples[@]}"; do
 done
 
 if [[ "$DRY_RUN" == "0" ]]; then
+  # Fail early if any sample table is missing before invoking R integration.
   missing_tables=()
   for sample in "${samples[@]}"; do
     [[ -s "$VARIANT_QC_TABLE_DIR/${sample}.noPoN.tsv" ]] || missing_tables+=( "$sample" )
@@ -243,6 +248,7 @@ fi
 # ------------------------------------------------------------
 echo "=== Stage 3: R QC integration ==="
 # Keep QC logic centralised in the R script so criteria changes happen in one place.
+# This stage merges table + readcount metrics and emits final filtered summaries.
 run Rscript "$VARIANT_QC_R_SCRIPT" \
   --variant-dir "$VARIANT_QC_TABLE_DIR" \
   --metrics-dir "$VARIANT_QC_READCOUNT_METRICS_DIR" \
@@ -259,6 +265,7 @@ run Rscript "$VARIANT_QC_R_SCRIPT" \
   --max-binom-p "$MAX_BINOM_P"
 
 if [[ "$DRY_RUN" == "0" ]]; then
+  # Final contract: these three artefacts are required by downstream review steps.
   [[ -s "$VARIANT_QC_OUTPUT_DIR/summary_combined_variants.tsv" ]] || die "Missing summary output: $VARIANT_QC_OUTPUT_DIR/summary_combined_variants.tsv"
   [[ -s "$VARIANT_QC_OUTPUT_DIR/filtered_variants.tsv" ]] || die "Missing filtered output: $VARIANT_QC_OUTPUT_DIR/filtered_variants.tsv"
   [[ -s "$VARIANT_QC_OUTPUT_DIR/filter_counts.tsv" ]] || die "Missing filter-count output: $VARIANT_QC_OUTPUT_DIR/filter_counts.tsv"

@@ -28,6 +28,7 @@ suppressPackageStartupMessages({
 
 parse_cli_args <- function(args) {
   # Lightweight --key value parser to keep runtime dependencies minimal.
+  # This script intentionally avoids extra CLI packages for portability in conda.
   out <- list()
   i <- 1L
   while (i <= length(args)) {
@@ -49,6 +50,7 @@ parse_cli_args <- function(args) {
 }
 
 get_arg <- function(parsed, name, default = NULL, required = FALSE) {
+  # Centralised argument retrieval keeps default handling consistent.
   if (!is.null(parsed[[name]])) {
     return(parsed[[name]])
   }
@@ -59,6 +61,7 @@ get_arg <- function(parsed, name, default = NULL, required = FALSE) {
 }
 
 parse_bool <- function(x, name) {
+  # Accept common truthy/falsy forms used in shell wrappers.
   x_low <- tolower(x)
   if (x_low %in% c("1", "true", "yes", "y")) return(TRUE)
   if (x_low %in% c("0", "false", "no", "n")) return(FALSE)
@@ -66,6 +69,7 @@ parse_bool <- function(x, name) {
 }
 
 parse_num <- function(x, name) {
+  # Hard-fail on non-numeric input so thresholds are never silently coerced.
   out <- suppressWarnings(as.numeric(x))
   if (is.na(out)) {
     fail(paste0("Invalid numeric value for ", name, ": ", x))
@@ -113,6 +117,7 @@ max_binom_p <- parse_num(get_arg(parsed, "max-binom-p", "1e-6"), "max-binom-p")
 if (!dir.exists(variant_dir)) fail(paste0("Variant table directory does not exist: ", variant_dir))
 if (!dir.exists(metrics_dir)) fail(paste0("Readcount metrics directory does not exist: ", metrics_dir))
 if (!file.exists(manual_freq_path)) fail(paste0("Manual frequency TSV does not exist: ", manual_freq_path))
+# Create output directory lazily so callers can provide a fresh run location.
 if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 # ----------------------------------------------------
@@ -138,6 +143,7 @@ for (file in file_list) {
   temp_table <- read_tsv(file, col_types = cols(.default = col_character()), show_col_types = FALSE)
 
   # rename columns to GT, DP and AD, removing the sample ID from the colname
+  # VariantsToTable prefixes FORMAT fields with sample IDs; strip them for stable schemas.
   temp_table <- temp_table %>%
     rename_with(.fn = ~ str_remove(., "^.*\\."), .cols = ends_with(c(".GT", ".DP", ".AD", ".F1R2", ".F2R1", ".SB")))
 
@@ -169,6 +175,7 @@ missing_cols <- setdiff(required_cols, colnames(summary_table))
 if (length(missing_cols) > 0) {
   fail(paste0("Variant table is missing required column(s): ", paste(missing_cols, collapse = ", ")))
 }
+# GNOMAD_AF may be absent in some upstream tables; keep downstream logic robust.
 if (!("GNOMAD_AF" %in% colnames(summary_table))) {
   summary_table$GNOMAD_AF <- NA_character_
 }
@@ -183,6 +190,7 @@ summary_table$DP <- as.numeric(summary_table$DP)
 summary_table$POS <- as.numeric(summary_table$POS)
 summary_table$REF_count <- as.numeric(summary_table$REF_count)
 summary_table$ALT_count <- as.numeric(summary_table$ALT_count)
+# AAF is the observed alternate-allele fraction used by optional final filtering.
 summary_table$AAF <- summary_table$ALT_count / summary_table$DP
 
 # ----------------------------------------------------
@@ -191,6 +199,7 @@ summary_table$AAF <- summary_table$ALT_count / summary_table$DP
 # The parsing below intentionally follows the historical createTable workflow.
 
 # Funcotator can include one entry per ALT; keep first entry for parsing.
+# This matches the historical single-ALT interpretation in legacy outputs.
 funcotation_primary <- strsplit(coalesce(summary_table$FUNCOTATION, ""), ",", fixed = TRUE)
 funcotation_primary <- vapply(funcotation_primary, function(x) if (length(x) == 0) "" else x[[1]], character(1))
 funcotation_primary <- str_replace_all(funcotation_primary, "^\\[|\\]$", "")
@@ -201,6 +210,7 @@ summary_table <- summary_table %>%
   mutate(gene = word(FUNCOTATION_PRIMARY, 1, sep = fixed("|")))
 
 # remove all rows that are not PRNP, TTN or TET2
+# Restrict scope to project genes to mirror manuscript-focused processing.
 summary_table <- summary_table %>%
   filter(gene %in% c("PRNP", "TTN", "TET2"))
 
@@ -290,6 +300,7 @@ manual_freq <- read_tsv(
 manual_by_dbsnp <- manual_freq %>%
   filter(!is.na(dbsnp_id), dbsnp_id != "") %>%
   select(dbsnp_id, population_frequency_gnomAD_manual_dbsnp = population_frequency) %>%
+  # Keep one row per key to prevent join-induced row multiplication.
   distinct(dbsnp_id, .keep_all = TRUE)
 
 manual_by_variant <- manual_freq %>%
@@ -308,6 +319,7 @@ summary_table <- summary_table %>%
   )
 
 summary_table$GNOMAD_AF_table <- first_numeric_from_list(summary_table$GNOMAD_AF)
+# GNOMAD_AF is sometimes comma-separated for multi-allelic records; first value is used.
 
 # Final population frequency used for filtering: prefer whichever frequency is higher if both exist.
 summary_table <- summary_table %>%
@@ -355,6 +367,7 @@ for (i in seq_along(metric_files)) {
   temp <- temp %>%
     rename(ALT = BASE) %>%
     mutate(sample_name = sample_name) %>%
+    # Keep only observed ALT entries; zero-count rows do not add QC evidence.
     filter(COUNT != 0) %>%
     mutate(
       POS = as.numeric(POS),
@@ -371,6 +384,7 @@ summary_table$sample_name <- sub("\\.noPoN$", "", summary_table$sample)
 summary_table$sample_name <- sub("\\.func\\.af$", "", summary_table$sample_name)
 summary_table$REF <- toupper(summary_table$REF)
 summary_table$ALT <- toupper(summary_table$ALT)
+# sample_name normalisation keeps joins stable across legacy/new filename stems.
 
 summary_table <- summary_table %>%
   left_join(sample_basecount, by = c("sample_name", "CHROM", "POS", "REF", "ALT"))
@@ -417,6 +431,7 @@ if (enable_aaf_filter) {
 }
 
 # inspect rows that were filtered out
+# Anti-join preserves traceability for review of excluded candidate variants.
 filtered_out <- anti_join(
   summary_table,
   filtered_final,
@@ -428,6 +443,7 @@ filtered_out <- anti_join(
 # -----------------------------------------------------
 summary_split <- summary_table %>%
   separate(SB, into = c("SB_refF", "SB_refR", "SB_altF", "SB_altR"), sep = ",", convert = TRUE, fill = "right", extra = "drop")
+# This branch intentionally re-runs each step to provide transparent per-filter deltas.
 
 n0 <- nrow(summary_split)
 
@@ -489,6 +505,7 @@ settings <- tibble(
 )
 
 # primary outputs
+# Reproducible outputs consumed by downstream QC review and manuscript scripts.
 write_tsv(summary_table, file.path(output_dir, "summary_combined_variants.tsv"), na = "")
 write_tsv(filtered_final, file.path(output_dir, "filtered_variants.tsv"), na = "")
 write_tsv(filtered_final %>% filter(gene == "PRNP"), file.path(output_dir, "filtered_prnp_variants.tsv"), na = "")
@@ -497,6 +514,7 @@ write_tsv(filter_counts, file.path(output_dir, "filter_counts.tsv"), na = "")
 write_tsv(settings, file.path(output_dir, "run_settings.tsv"), na = "")
 
 # legacy-style convenience outputs
+# Kept for continuity with existing downstream expectations and manual checks.
 write_tsv(filtered_final, file.path(output_dir, "final_noPoN_variants.tsv"), na = "")
 write_tsv(summary_table %>% filter(gene == "PRNP"), file.path(output_dir, "noPoN_PRNP_PASS.tsv"), na = "")
 write_tsv(summary_table %>% filter(gene == "TET2"), file.path(output_dir, "noPoN_TET2_PASS.tsv"), na = "")

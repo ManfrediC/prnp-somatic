@@ -9,6 +9,7 @@ set -euo pipefail
 shopt -s nullglob
 
 # Keep caller-provided values so ENV_FILE does not silently override them.
+# Precedence: explicit CLI env vars > values from ENV_FILE > script defaults.
 CLI_DRY_RUN="${DRY_RUN-}"
 CLI_JAVA_MEM_GB="${JAVA_MEM_GB-}"
 CLI_ENABLE_AAF_FILTER="${ENABLE_AAF_FILTER-}"
@@ -41,6 +42,7 @@ cd "$REPO_ROOT"
 ENV_FILE_DEFAULT="$REPO_ROOT/config/preprocessing.env"
 ENV_FILE="${ENV_FILE:-$ENV_FILE_DEFAULT}"
 if [[ -f "$ENV_FILE" ]]; then
+  # Optional: this stage can run from defaults when no env file is present.
   # shellcheck disable=SC1090
   source "$ENV_FILE"
 fi
@@ -67,6 +69,7 @@ MAX_BINOM_P="${MAX_BINOM_P:-1e-6}"
 # -----------------------
 MUTECT2_WITH_PON_OUT_ROOT="${MUTECT2_WITH_PON_OUT_ROOT:-runs/mutect2_cjd_dilutions_with_pon}"
 if [[ "$MUTECT2_WITH_PON_OUT_ROOT" == run/* ]]; then
+  # Backward compatibility for historical singular "run/" prefixes.
   MUTECT2_WITH_PON_OUT_ROOT="runs/${MUTECT2_WITH_PON_OUT_ROOT#run/}"
 fi
 
@@ -78,6 +81,7 @@ fi
 WITH_PON_VARIANT_QC_GROUPS="${CLI_WITH_PON_VARIANT_QC_GROUPS:-${WITH_PON_VARIANT_QC_GROUPS:-${WITH_PON_GROUPS:-cjd dilutions}}}"
 WITH_PON_VARIANT_QC_VCF_SUBDIR="${WITH_PON_VARIANT_QC_VCF_SUBDIR:-annot_with_gnomad}"
 WITH_PON_VARIANT_QC_METRICS_SUBDIR="${WITH_PON_VARIANT_QC_METRICS_SUBDIR:-readcount_qc/metrics}"
+# Defaults above match the outputs of upstream stages 9-11.
 
 WITH_PON_VARIANT_QC_RESULTS_ROOT="${WITH_PON_VARIANT_QC_RESULTS_ROOT:-results/mutect2_cjd_dilutions_with_pon/variant_qc}"
 WITH_PON_VARIANT_QC_R_SCRIPT="${WITH_PON_VARIANT_QC_R_SCRIPT:-src/pipelines/12_cjd_dilutions_variant_table_qc_with_pon.R}"
@@ -110,6 +114,7 @@ die() { echo "ERROR: $*" >&2; exit 1; }
 run() {
   echo "+ $*"
   if [[ "$DRY_RUN" == "1" ]]; then
+    # DRY_RUN prints commands only for safe inspection.
     return 0
   fi
   "$@"
@@ -123,6 +128,7 @@ sample_from_vcf() {
   if [[ "$sample" == "$base" ]]; then
     sample="${base%.vcf.gz}"
   fi
+  # One stable sample stem keeps Stage 1/2/3 filenames aligned.
   echo "$sample"
 }
 
@@ -139,6 +145,7 @@ have Rscript || die "Rscript not in PATH"
 
 read -r -a groups <<< "$WITH_PON_VARIANT_QC_GROUPS"
 [[ "${#groups[@]}" -gt 0 ]] || die "WITH_PON_VARIANT_QC_GROUPS is empty"
+# Group list controls independent cjd and dilutions branches.
 
 echo "== CJD+dilutions variant extraction + QC (with PoN) =="
 echo "Repo root:                         $REPO_ROOT"
@@ -160,6 +167,8 @@ echo "MAX_BINOM_P:                       $MAX_BINOM_P"
 echo
 
 # Common fields
+# INFO fields: site-level annotations from VCF records.
+# FORMAT fields: sample-level depth/strand evidence used in downstream QC rules.
 INFO_FIELDS=(
   CHROM POS REF ALT FILTER QUAL MQ QD AF GNOMAD_AF FS
   BaseQualityRankSumTest MappingQualityRankSumTest AS_SB_TABLE STRANDQ FUNCOTATION
@@ -200,6 +209,7 @@ for group in "${groups[@]}"; do
   samples=()
   for vcf in "${vcfs[@]}"; do
     [[ -f "$vcf" ]] || continue
+    # Derive once so Stage 2 completeness checks run over a stable sample set.
     samples+=( "$(sample_from_vcf "$vcf")" )
   done
   [[ "${#samples[@]}" -gt 0 ]] || die "No valid sample names could be derived for group '$group'"
@@ -213,6 +223,7 @@ for group in "${groups[@]}"; do
     sample="$(sample_from_vcf "$vcf")"
     out="$SELECT_DIR/${sample}.PASS.vcf.gz"
     [[ -s "$out" ]] && { echo "[Stage1][$group] SKIP $sample"; continue; }
+    # Keep stage resumable: existing PASS VCFs are not regenerated.
     run gatk --java-options "-Xmx${JAVA_MEM_GB}g" SelectVariants \
       -V "$vcf" \
       --exclude-filtered \
@@ -227,6 +238,7 @@ for group in "${groups[@]}"; do
   for sample in "${samples[@]}"; do
     pass_vcf="$SELECT_DIR/${sample}.PASS.vcf.gz"
     out_tsv="$TABLE_DIR/${sample}.withPoN.tsv"
+    # .withPoN suffix distinguishes these tables from no-PoN controls.
 
     if [[ ! -s "$pass_vcf" && "$DRY_RUN" != "1" ]]; then
       die "Missing PASS VCF for $sample: $pass_vcf"
@@ -255,6 +267,7 @@ for group in "${groups[@]}"; do
   # Dilution runs are used to derive the AAF threshold, so do not apply it here.
   group_enable_aaf_filter="$ENABLE_AAF_FILTER"
   if [[ "$group" == "dilutions" ]]; then
+    # Force-disable AAF filtering for dilution calibration branch.
     group_enable_aaf_filter="0"
   fi
   echo "[Stage3][$group] enable_aaf_filter=$group_enable_aaf_filter (global default: $ENABLE_AAF_FILTER)"
@@ -275,6 +288,7 @@ for group in "${groups[@]}"; do
     --max-binom-p "$MAX_BINOM_P"
 
   if [[ "$DRY_RUN" == "0" ]]; then
+    # Final per-group contract required by downstream reporting/manuscript steps.
     [[ -s "$OUTPUT_DIR/summary_combined_variants.tsv" ]] || die "Missing summary output: $OUTPUT_DIR/summary_combined_variants.tsv"
     [[ -s "$OUTPUT_DIR/filtered_variants.tsv" ]] || die "Missing filtered output: $OUTPUT_DIR/filtered_variants.tsv"
     [[ -s "$OUTPUT_DIR/filter_counts.tsv" ]] || die "Missing filter-count output: $OUTPUT_DIR/filter_counts.tsv"

@@ -8,6 +8,7 @@ set -euo pipefail
 shopt -s nullglob
 
 # Keep caller-provided values so ENV_FILE does not silently override them.
+# Precedence: explicit CLI env vars > values from ENV_FILE > script defaults.
 CLI_DRY_RUN="${DRY_RUN-}"
 CLI_THREADS="${THREADS-}"
 CLI_JAVA_MEM_GB="${JAVA_MEM_GB-}"
@@ -38,6 +39,7 @@ cd "$REPO_ROOT"
 ENV_FILE_DEFAULT="$REPO_ROOT/config/preprocessing.env"
 ENV_FILE="${ENV_FILE:-$ENV_FILE_DEFAULT}"
 if [[ -f "$ENV_FILE" ]]; then
+  # Optional: script remains runnable with defaults when no env file is present.
   # shellcheck disable=SC1090
   source "$ENV_FILE"
 fi
@@ -54,6 +56,7 @@ JAVA_MEM_GB="${CLI_JAVA_MEM_GB:-${JAVA_MEM_GB:-8}}"
 # -----------------------
 MUTECT2_WITH_PON_OUT_ROOT="${MUTECT2_WITH_PON_OUT_ROOT:-runs/mutect2_cjd_dilutions_with_pon}"
 if [[ "$MUTECT2_WITH_PON_OUT_ROOT" == run/* ]]; then
+  # Backward compatibility for historical singular "run/" paths.
   MUTECT2_WITH_PON_OUT_ROOT="runs/${MUTECT2_WITH_PON_OUT_ROOT#run/}"
 fi
 
@@ -68,6 +71,7 @@ DILUTION_SAMPLES="${DILUTION_SAMPLES:-NA100_undil NA100_1to10 NA99A1_undil A100_
 
 to_abs() {
   local p="$1"
+  # Accept both absolute and repo-relative overrides from ENV/CLI.
   if [[ "$p" = /* ]]; then
     echo "$p"
   else
@@ -98,6 +102,7 @@ die() { echo "ERROR: $*" >&2; exit 1; }
 run() {
   echo "+ $*"
   if [[ "$DRY_RUN" == "1" ]]; then
+    # DRY_RUN prints commands only, so reviewers can inspect execution plans.
     return 0
   fi
   "$@"
@@ -105,6 +110,7 @@ run() {
 
 has_vcf_index() {
   local vcf="$1"
+  # Accept common index sidecars produced by GATK/htslib tooling.
   [[ -s "${vcf}.tbi" || -s "${vcf}.csi" || -s "${vcf}.idx" ]]
 }
 
@@ -122,6 +128,7 @@ have samtools || die "samtools not in PATH (did you activate conda?)"
 
 [[ -s "${GNOMAD_VCF}.tbi" || -s "${GNOMAD_VCF}.csi" ]] || die "Missing index for GNOMAD_VCF: ${GNOMAD_VCF}.tbi/.csi"
 if ! has_vcf_index "$PON_VCF"; then
+  # Build PoN index on demand to avoid manual pre-indexing requirements.
   run gatk IndexFeatureFile -I "$PON_VCF"
 fi
 has_vcf_index "$PON_VCF" || die "Missing index for PON_VCF after indexing attempt: $PON_VCF(.tbi/.csi/.idx)"
@@ -131,6 +138,7 @@ cjd_bams=( "$FINAL_BAM_DIR"/CJD*.bam )
 
 read -r -a dilutions <<< "$DILUTION_SAMPLES"
 [[ "${#dilutions[@]}" -gt 0 ]] || die "DILUTION_SAMPLES is empty"
+# Explicit sample order keeps logs and output processing deterministic.
 
 dil_bams=()
 for sample in "${dilutions[@]}"; do
@@ -160,8 +168,10 @@ run_mutect() {
   local sample out_vcf out_f1r2
 
   sample="$(basename "$bam" .bam)"
+  # Sample name is derived from BAM stem and reused across all output artefacts.
 
   if [[ ! -s "${bam}.bai" ]]; then
+    # Build BAM index lazily so reruns do not spend time re-indexing existing files.
     run samtools index -@ "$THREADS" "$bam"
   fi
 
@@ -184,6 +194,7 @@ run_mutect() {
     --f1r2-tar-gz "$out_f1r2" \
     --intervals "$INTERVALS" \
     -O "$out_vcf"
+  # Mutect2 writes compressed VCF directly; downstream stages consume *.raw.vcf.gz.
 }
 
 echo "=== CJD samples ==="
@@ -198,6 +209,7 @@ for bam in "${dil_bams[@]}"; do
 done
 
 if [[ "$DRY_RUN" == "0" ]]; then
+  # Final cross-group completeness check: every declared BAM must yield one raw VCF.
   missing=()
   for bam in "${cjd_bams[@]}" "${dil_bams[@]}"; do
     sample="$(basename "$bam" .bam)"

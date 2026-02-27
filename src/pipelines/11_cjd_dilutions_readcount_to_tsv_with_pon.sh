@@ -7,6 +7,7 @@ set -euo pipefail
 shopt -s nullglob
 
 # Keep caller-provided values so ENV_FILE does not silently override them.
+# Precedence: explicit CLI env vars > values from ENV_FILE > script defaults.
 CLI_DRY_RUN="${DRY_RUN-}"
 
 # -----------------------
@@ -35,6 +36,7 @@ cd "$REPO_ROOT"
 ENV_FILE_DEFAULT="$REPO_ROOT/config/preprocessing.env"
 ENV_FILE="${ENV_FILE:-$ENV_FILE_DEFAULT}"
 if [[ -f "$ENV_FILE" ]]; then
+  # Optional: script remains runnable with defaults when no env file is present.
   # shellcheck disable=SC1090
   source "$ENV_FILE"
 fi
@@ -49,6 +51,7 @@ DRY_RUN="${CLI_DRY_RUN:-${DRY_RUN:-0}}"
 # -----------------------
 MUTECT2_WITH_PON_OUT_ROOT="${MUTECT2_WITH_PON_OUT_ROOT:-runs/mutect2_cjd_dilutions_with_pon}"
 if [[ "$MUTECT2_WITH_PON_OUT_ROOT" == run/* ]]; then
+  # Backward compatibility for historical singular "run/" prefixes.
   MUTECT2_WITH_PON_OUT_ROOT="runs/${MUTECT2_WITH_PON_OUT_ROOT#run/}"
 fi
 
@@ -59,6 +62,7 @@ fi
 
 WITH_PON_READCOUNT_GROUPS="${WITH_PON_READCOUNT_GROUPS:-${WITH_PON_GROUPS:-cjd dilutions}}"
 READCOUNT_TO_TSV_PY="${READCOUNT_TO_TSV_PY:-src/pipelines/4_readcount_to_tsv.py}"
+# Reuse the same parser as controls workflow to keep metrics schema identical.
 
 
 to_abs() {
@@ -83,6 +87,7 @@ die() { echo "ERROR: $*" >&2; exit 1; }
 run() {
   echo "+ $*"
   if [[ "$DRY_RUN" == "1" ]]; then
+    # DRY_RUN prints commands only so reviewers can inspect execution plans.
     return 0
   fi
   "$@"
@@ -97,6 +102,7 @@ have python3 || die "python3 not in PATH"
 
 read -r -a groups <<< "$WITH_PON_READCOUNT_GROUPS"
 [[ "${#groups[@]}" -gt 0 ]] || die "WITH_PON_READCOUNT_GROUPS is empty"
+# Group list drives independent cjd/dilutions conversions.
 
 echo "== CJD+dilutions readcount parsing (with PoN) =="
 echo "Repo root:        $REPO_ROOT"
@@ -117,9 +123,11 @@ for group in "${groups[@]}"; do
   readcount_files=( "$READCOUNTS_DIR"/*.txt )
   [[ "${#readcount_files[@]}" -gt 0 ]] || die "No readcount files found for group '$group' in: $READCOUNTS_DIR"
 
+  # The parser converts one *.txt input into one *_metrics.tsv output per sample.
   run python3 "$READCOUNT_TO_TSV_PY" --input-dir "$READCOUNTS_DIR" --output-dir "$METRICS_DIR"
 
   if [[ "$DRY_RUN" == "0" ]]; then
+    # Final per-group contract: each readcount file must have a non-empty metrics TSV.
     missing=()
     for txt in "${readcount_files[@]}"; do
       sample="$(basename "$txt" .txt)"
