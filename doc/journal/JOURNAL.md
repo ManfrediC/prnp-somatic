@@ -2066,3 +2066,11 @@ Junction blocker status (updated):
 - Package installation status:
   - `tidyverse` and `openxlsx` remain unavailable inside `prnp-somatic` env after repeated solver attempts
   - global fallback succeeded in conda base environment; `Rscript` now resolves both packages (`tidyverse=TRUE`, `openxlsx=TRUE`)
+
+## 27.02.2026
+
+- Added finalization reminder for inventory refresh:
+  - before final reproducibility freeze, rerun `python3 bin/make_inventory.py`
+  - review/stage updated `doc/inventory.tsv` with the final docs/scripts commit
+- Added explicit finalization checklist:
+  - `doc/reproducibility/finalization_checklist.md`
