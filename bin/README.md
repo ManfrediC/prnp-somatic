@@ -9,6 +9,42 @@ This directory contains small maintenance utilities used for reproducibility che
 
 ## Script Guide
 
+### `archive_large_files.sh`
+
+Purpose:
+
+- inventory large files that are good archive candidates
+- compress archive-worthy files in place to reclaim disk space
+- restore archived files back to their original names when a workflow needs them
+
+Default scope:
+
+- scans `runs`, `results`, `resources`, and `fastq`
+- targets uncompressed large-file extensions: `bam`, `bai`, `sam`, `fa`, `fasta`, `fna`, `gtf`, `vcf`, `tsv`
+- skips files that are already compressed, such as `*.fastq.gz`, `*.vcf.gz`, `*.tar.gz`, `*.cram`
+
+Usage:
+
+```bash
+bash bin/archive_large_files.sh inventory
+bash bin/archive_large_files.sh compress --dirs runs,results --exts bam,bai,sam
+bash bin/archive_large_files.sh restore --dirs runs,results
+```
+
+Notes:
+
+- default minimum size is `100 MiB`
+- default archive format is `xz` because it typically shrinks BAMs and text references better than plain gzip
+- restore operates on `*.xz` and `*.gz` files in the selected directories
+- use `--dry-run` first to review what would change
+
+Suggested use in this repository:
+
+- archive intermediate BAMs under `runs/preprocessing`
+- archive final BAMs under `results/final_bam` only if you do not need them immediately
+- archive large uncompressed references under `resources/` when they are not in active use
+- do not expect meaningful savings from files already ending in `.gz`
+
 ### `verify_output_checksums.sh`
 
 Purpose:

@@ -2113,3 +2113,40 @@ Junction blocker status (updated):
   - move non-cited/secondary tables to `supplement` wrapper after mapping review
 - Build an explicit mapping file between docx in-text references and descriptive `.tex` table/figure filenames before final wrapper freeze.
 - Confirm final supplementary numbering (`Figure S*` / `Table S*`) after the next draft update of `Carta_PRNP.docx`.
+
+## 27.02.2026 (manuscript refactor completed)
+
+- Refactored manuscript figure/table assembly to descriptive per-item `.tex` files under:
+  - `manuscript/figures/main/`
+  - `manuscript/figures/supplement/`
+  - `manuscript/tables/main/`
+  - `manuscript/tables/supplement/`
+- Added wrapper files:
+  - `manuscript/figures/all_figures_main.tex`
+  - `manuscript/figures/all_figures_supplement.tex`
+  - `manuscript/tables/all_tables_main.tex`
+  - `manuscript/tables/all_tables_supplement.tex`
+- Created explicit DOCX-to-TeX mapping file:
+  - `manuscript/config/figure_table_crosswalk.tsv`
+- Added manuscript sync helper:
+  - `manuscript/scripts/sync_docx_to_tex.sh`
+  - regenerates `manuscript/tex/Carta_PRNP.tex` from `manuscript/Carta_PRNP.docx`
+  - injects main figure/table wrappers into the generated TeX
+- Preserved all original manuscript assets under `manuscript/legacy/`.
+- Integrated newly restored legacy manuscript PDFs as fallbacks in the descriptive figure wrappers so main/supplement wrappers now resolve to real assets where present.
+- Converted supplementary table entrypoints to compile-ready snippets instead of `\input` of standalone documents, so supplement wrappers remain structurally valid.
+- Updated manuscript documentation:
+  - `manuscript/README.md`
+  - `manuscript/config/README.md`
+  - `manuscript/scripts/README.md`
+- Ran an extensive manuscript-structure audit:
+  - confirmed `Figure 1-7` and `Table 1-3` mentions in the DOCX match the crosswalk
+  - confirmed all wrapper `\input{}` targets exist
+  - confirmed repo-relative paths only (no machine-specific absolute paths in the refactor files)
+  - confirmed legacy manuscript material remains present after refactor
+- Attempted local `pdflatex` validation inside the `prnp-somatic` conda environment.
+  - `texlive-core` from conda installed but failed at runtime due missing TeX format/bootstrap pieces (`pdflatex.fmt` / `mktexlsr.pl`)
+  - removed `texlive-core` again from `prnp-somatic` to avoid leaving a broken TeX install behind
+- Conclusion for manuscript builds:
+  - manuscript build portability for reviewers is not required
+  - best path is a user-managed local TeX installation outside the repo/environment
