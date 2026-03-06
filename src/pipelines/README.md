@@ -153,7 +153,9 @@ Writes:
 - `results/mutect2_controls_no_pon/variant_qc/summary_combined_variants.tsv`
 - `results/mutect2_controls_no_pon/variant_qc/filtered_variants.tsv`
 - `results/mutect2_controls_no_pon/variant_qc/filtered_prnp_variants.tsv`
+- `results/mutect2_controls_no_pon/variant_qc/filtered_out_variants.tsv`
 - `results/mutect2_controls_no_pon/variant_qc/filter_counts.tsv`
+- `results/mutect2_controls_no_pon/variant_qc/run_settings.tsv`
 
 ### Controls PoN creation
 
@@ -188,7 +190,6 @@ Writes (within each group: `cjd`, `dilutions`):
 - `runs/mutect2_cjd_dilutions_with_pon/<group>/norm/`
 - `runs/mutect2_cjd_dilutions_with_pon/<group>/annot/`
 - `runs/mutect2_cjd_dilutions_with_pon/<group>/annot_with_gnomad/`
-- `runs/mutect2_cjd_dilutions_with_pon/logs/stage9_postprocess_with_pon.log`
 
 ### CJD + Dilution Readcount Collection With PoN
 
@@ -200,7 +201,6 @@ Writes (within each group: `cjd`, `dilutions`):
 - `runs/mutect2_cjd_dilutions_with_pon/<group>/readcount_qc/bam_work/`
 - `runs/mutect2_cjd_dilutions_with_pon/<group>/readcount_qc/bam_nodup/`
 - `runs/mutect2_cjd_dilutions_with_pon/<group>/readcount_qc/readcounts/`
-- `runs/mutect2_cjd_dilutions_with_pon/logs/stage10_readcount_qc_with_pon.log`
 
 ### CJD + Dilution Readcount Parsing With PoN
 
@@ -209,7 +209,6 @@ Writes (within each group: `cjd`, `dilutions`):
 Writes (within each group: `cjd`, `dilutions`):
 
 - `runs/mutect2_cjd_dilutions_with_pon/<group>/readcount_qc/metrics/`
-- `runs/mutect2_cjd_dilutions_with_pon/logs/stage11_readcount_to_tsv_with_pon.log`
 
 ### CJD + Dilution Variant Table + QC With PoN
 
@@ -223,8 +222,10 @@ Writes:
 - `results/mutect2_cjd_dilutions_with_pon/variant_qc/<group>/summary_combined_variants.tsv`
 - `results/mutect2_cjd_dilutions_with_pon/variant_qc/<group>/filtered_variants.tsv`
 - `results/mutect2_cjd_dilutions_with_pon/variant_qc/<group>/filtered_prnp_variants.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/<group>/filtered_out_variants.tsv`
 - `results/mutect2_cjd_dilutions_with_pon/variant_qc/<group>/filter_counts.tsv`
-- `runs/mutect2_cjd_dilutions_with_pon/logs/stage12_variant_qc_with_pon.log`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/<group>/run_settings.tsv`
+- `results/mutect2_cjd_dilutions_with_pon/variant_qc/<group>/final_withPoN_variants.tsv`
 
 Behaviour note:
 
@@ -295,8 +296,7 @@ Expected contents under that directory include source folders such as:
 These are separate from the reference FASTA (`REF_FASTA`).
 
 Note: `gnomAD_exome` and `gnomAD_genome` are intentionally excluded from the active
-datasource tree to avoid requester-pays bucket access during Funcotator. Archived copies are in
-`resources/backup/funcotator_excluded_datasources/`.
+datasource tree to avoid requester-pays bucket access during Funcotator.
 
 ### gnomAD AF resource required
 

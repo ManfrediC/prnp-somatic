@@ -1,17 +1,21 @@
 # Tooling and Reference Provenance
 
-Checked on: 2026-02-25
+Checked on: 2026-03-06
 Scope: `src/ddPCR`, `src/junctions`, `src/pipelines`
 
 ## Required CLI tools and versions
 
-- `Rscript`: `Rscript (R) version 4.4`
-- `bwa`: `Program: bwa (alignment via Burrows-Wheeler transformation) Version: 0.7.17-r1188`
-- `samtools`: `samtools 1.19.2`
-- `bedtools`: `bedtools v2.30.0`
-- `gatk`: `The Genome Analysis Toolkit (GATK) v4.5.0.0`
-- `tabix`: `tabix (htslib) 1.19.1`
-- `python3`: `Python 3.11.6`
+Verified from dedicated reproducibility environments:
+
+- `prnp-somatic` (SNV pipeline):
+  - `python3`: `Python 3.10.14`
+  - `bwa`: `0.7.17-r1188`
+  - `samtools`: `samtools 1.20`
+  - `bedtools`: `bedtools v2.31.1`
+  - `tabix`: `tabix (htslib) 1.20`
+  - `gatk`: `The Genome Analysis Toolkit (GATK) v4.5.0.0`
+- `prnp-junctions` / `prnp-somatic-ddpcr` (R workflows):
+  - `Rscript`: `Rscript (R) version 4.4.3`
 
 ## Required R packages and versions
 
