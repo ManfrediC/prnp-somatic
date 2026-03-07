@@ -98,4 +98,4 @@ config/junctions.env
 doc/journal/
 
 # Manuscript workspace (temporarily excluded from version control)
-manuscript/
+/manuscript/
