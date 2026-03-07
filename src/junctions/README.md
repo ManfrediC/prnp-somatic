@@ -9,6 +9,7 @@ Paths are repo-relative and resolve from repository root.
 - `02_make_prnp_bed.R`
 - `03_process_bam.sh`
 - `04_count_prnp_junctions.R`
+- `05_make_prnp_junction_results_table.R`
 
 ## Inputs
 
@@ -27,6 +28,8 @@ conda activate prnp-junctions
 TMPDIR=/tmp TEMP=/tmp TMP=/tmp bash src/junctions/run_junctions.sh
 ```
 
+`run_junctions.sh` executes steps 1-4; run step 5 separately to build the final QC results table.
+
 Stepwise commands:
 
 ```bash
@@ -34,6 +37,7 @@ Rscript src/junctions/01_build_prnp_junction_fasta.R
 Rscript src/junctions/02_make_prnp_bed.R
 bash src/junctions/03_process_bam.sh
 Rscript src/junctions/04_count_prnp_junctions.R
+Rscript src/junctions/05_make_prnp_junction_results_table.R
 ```
 
 ## Outputs
@@ -49,6 +53,10 @@ Final expected count outputs:
 
 - `results/junctions/junction_counts/prnp_junction_counts.tsv`
 - `results/junctions/junction_counts/prnp_junction_summary.tsv`
+
+Final expected results-table output:
+
+- `results/junctions/junction_counts/prnp_junction_qc_table.tsv`
 
 These expected output paths are also listed in:
 
@@ -66,6 +74,8 @@ You can override defaults via environment variables:
 - `PRNP_JUNCTION_GTF`
 - `PRNP_JUNCTION_ALIGN_DIR`
 - `PRNP_JUNCTION_COUNT_DIR`
+- `PRNP_JUNCTION_COUNTS_FILE`
+- `PRNP_JUNCTION_QC_TABLE`
 
 Example:
 

@@ -71,16 +71,15 @@ resources/junctions/*.fa.ann
 resources/junctions/*.fa.bwt
 resources/junctions/*.fa.pac
 resources/junctions/*.fa.sa
-# Data + results policy (keep templates only)
+# Data policy (large inputs remain untracked)
 data/raw/
 data/fastq/
 data/bam/
 data/cram/
 data/vcf/
-results/*
+# Results are tracked by default; large artefacts are still ignored by the
+# global patterns above (e.g. *.bam, *.bai, *.cram, *.vcf, *.fastq, *.pdf, *.png).
 # Allow placeholders to remain tracked
-!results/.gitkeep
-!results/README.md
 !data/.gitkeep
 # Logs
 v*.log

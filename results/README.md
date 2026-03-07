@@ -23,6 +23,10 @@ Only placeholders and selected manifests are kept in version control.
   - `results/junctions/junction_counts/prnp_junction_counts.tsv`
   - `results/junctions/junction_counts/prnp_junction_summary.tsv`
 
+- Sequencing QC metrics workflow:
+  - `results/qc/<QC_RUN>/sequencing_metrics_per_sample.tsv` (current Makefile path via `make qc_metrics`)
+  - producing script: `authoritative_files/compute_sequencing_metrics.py`
+
 ## Notes
 
 - Outputs in this directory are derived artefacts and may be deleted/rebuilt.

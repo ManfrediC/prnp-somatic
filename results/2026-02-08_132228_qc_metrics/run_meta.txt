@@ -1,0 +1,4 @@
+run_id: 2026-02-08_132228
+run_dir: results/2026-02-08_132228_qc_metrics
+date_utc: 2026-02-08T13:22:28Z
+git_commit: c1ca1cca686210c2454d9f4967d2039d1e43b297
