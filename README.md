@@ -224,4 +224,4 @@ Generated runtime index sidecars are also ignored (for example `resources/juncti
 - Analyses were performed using the `Conda` environment defined in `env/environment.yml`.
 
 ## Data availability
-Raw data can be obtained for academic purposes upon reasonable request to the repository owner.
+Data can be obtained for academic purposes upon reasonable request to the repository owner.
