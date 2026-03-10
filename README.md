@@ -66,6 +66,8 @@ Required inputs must be placed as follows:
 
 See `README` files in the respective directories for details on the required files.
 
+Raw data can be obtained from `[link to be provided]`.
+
 ### 4. Create environment for ddPCR scripts
 
 ```bash
