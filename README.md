@@ -210,7 +210,7 @@ Target implementations are in the repository root `Makefile`.
 
 ## Raw Data Placement (Git-Ignored)
 
-For the workflow families in current reproducibility scope:
+Raw data are sequencing pipeline outputs are gitignored, to account for GitHub storage constraints.
 
 - ddPCR raw exports: `ddPCR/*.csv` (ignored via `ddPCR/.gitignore`)
 - ddPCR metadata sheet: `ddPCR/sample_details.xlsx` (ignored via `ddPCR/.gitignore`)
