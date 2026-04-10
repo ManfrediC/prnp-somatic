@@ -2168,7 +2168,18 @@ Junction blocker status (updated):
   - RT-QuiC reference + replicates in figure
 
 - Christos
-  - 
+  - did the fast edits
+  - R-square and other complex edits remain to be done
 
 
-  To do: ask Adriano whether Erik Minikel should be included.
+  To do:
+  
+  Christos
+  - email: 
+    - agree that doi in his comment on the intro should not be cited, add the Korean (?) study with many E200K mutations
+    - address switched samples (A117V spike-ins)
+  - R-square for ddPCR (comment by Christos)
+  - IGV screenshot (see how to do this)
+
+  Aag
+  - ask Adriano whether Erik Minikel should be included.
