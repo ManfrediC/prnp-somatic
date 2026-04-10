@@ -2150,3 +2150,30 @@ Junction blocker status (updated):
 - Conclusion for manuscript builds:
   - manuscript build portability for reviewers is not required
   - best path is a user-managed local TeX installation outside the repo/environment
+
+## 10.04.2026
+
+- Rehomed active ddPCR LoD assets from legacy manuscript storage into the non-legacy figure workspace:
+  - `manuscript/figures/ddpcr_lod/D178N_LOD.csv`
+  - `manuscript/figures/ddpcr_lod/E200K_LOD.csv`
+  - `manuscript/figures/ddpcr_lod/P102L_LOD.csv`
+  - matching LoD figure PDFs
+  - `manuscript/figures/ddpcr_lod/e200k_old/Manfredi_E200K_LOD.csv`
+- Updated active manuscript scripts to use the non-legacy LoD paths:
+  - `manuscript/tables/lod_calculations/lod_table.R`
+  - `manuscript/tables/lod_calculations/lob_table.R`
+  - `manuscript/figures/ddpcr_lod/ddpcr_lod_plots_e200k.R`
+  - `manuscript/figures/ddpcr_lod/e200k_old/manfredi_e200k_lod.R`
+  - `manuscript/figures/ddpcr_lod/e200k_old/ddpcr_lod_plots.R`
+- Added ddPCR LoD observed-versus-expected VAF fit script:
+  - `manuscript/tables/lod_calculations/lod_r_squared.R`
+- Regenerated fit outputs:
+  - `manuscript/tables/lod_calculations/LoD_vaf_r_squared_input.csv`
+  - `manuscript/tables/lod_calculations/LoD_vaf_r_squared_summary.csv`
+- Verified script execution with `Rscript manuscript/tables/lod_calculations/lod_r_squared.R`.
+- Fit summary from dilution points only:
+  - `D178N`: `R^2 = 0.988577`
+  - `E200K`: `R^2 = 0.999045`
+  - `P102L`: `R^2 = 0.999737`
+  - combined across all three assays: `R^2 = 0.963004`
+- Updated manuscript documentation in `manuscript/README.md` to describe the LoD calculations workspace and the new `lod_r_squared.R` entrypoint.
