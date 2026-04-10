@@ -2150,3 +2150,25 @@ Junction blocker status (updated):
 - Conclusion for manuscript builds:
   - manuscript build portability for reviewers is not required
   - best path is a user-managed local TeX installation outside the repo/environment
+
+## 10.04.2026
+
+### Implement reviewer comments
+
+- Annie
+  - name adjustment
+
+- Simone
+  - clarified guanidine thiocyanate molarity in Methods and figure
+  - minor edits, e.g. Tris-Cl -> Tris-HCl
+
+- Hasier
+  - affiliations
+  - comment on A117V choice for sequencing spike-in
+  - RT-QuiC reference + replicates in figure
+
+- Christos
+  - 
+
+
+  To do: ask Adriano whether Erik Minikel should be included.
