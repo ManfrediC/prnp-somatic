@@ -66,6 +66,8 @@ Required inputs must be placed as follows:
 
 See `README` files in the respective directories for details on the required files.
 
+Raw data can be obtained from `[link to be provided]`.
+
 ### 4. Create environment for ddPCR scripts
 
 ```bash
@@ -208,7 +210,7 @@ Target implementations are in the repository root `Makefile`.
 
 ## Raw Data Placement (Git-Ignored)
 
-For the workflow families in current reproducibility scope:
+Raw data are sequencing pipeline outputs are gitignored, to account for GitHub storage constraints.
 
 - ddPCR raw exports: `ddPCR/*.csv` (ignored via `ddPCR/.gitignore`)
 - ddPCR metadata sheet: `ddPCR/sample_details.xlsx` (ignored via `ddPCR/.gitignore`)
@@ -222,4 +224,4 @@ Generated runtime index sidecars are also ignored (for example `resources/juncti
 - Analyses were performed using the `Conda` environment defined in `env/environment.yml`.
 
 ## Data availability
-Raw data can be obtained for academic purposes upon reasonable request to the repository owner.
+Data can be obtained for academic purposes upon reasonable request to the repository owner.
