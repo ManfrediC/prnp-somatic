@@ -27,6 +27,13 @@ Only placeholders and selected manifests are kept in version control.
   - `results/qc/<QC_RUN>/sequencing_metrics_per_sample.tsv` (current Makefile path via `make qc_metrics`)
   - producing script: `authoritative_files/compute_sequencing_metrics.py`
 
+- DNA quality proxy workflow:
+  - `results/dna_quality/<RUN_ID>/file_inventory.tsv`
+  - `results/dna_quality/<RUN_ID>/library_qc.tsv`
+  - `results/dna_quality/<RUN_ID>/sample_quality_master.tsv`
+  - `results/dna_quality/<RUN_ID>/dna_quality_scorecard.tsv`
+  - producing script: `src/dna_quality/run_dna_quality_analysis.ps1`
+
 ## Notes
 
 - Outputs in this directory are derived artefacts and may be deleted/rebuilt.

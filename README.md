@@ -4,6 +4,7 @@ This repository contains the reproducible analysis workflows used in the *PRNP* 
 
 - NGS somatic SNV detection (`src/pipelines`): FASTQ preprocessing, Mutect2 calling, post-processing, QC, and final variant tables.
 - ddPCR SNV quantification (`src/ddPCR`): processing of raw droplet exports into long-format and participant-level result tables.
+- DNA quality proxy analysis (`src/dna_quality`): Tapestation library QC, ddPCR quantity records, and sequencing QC harmonisation.
 - PRNP exon-exon junction analysis (`src/junctions`): junction-reference construction, read realignment, and junction-count quantification.
 - Manuscript artifact generation (`manuscript`): scripts that build figures/tables from outputs in `results/`.
 
@@ -205,6 +206,10 @@ Toolchain and QC helpers:
 - `make preprocessing_preflight` (wrapper for `src/pipelines/preflight_preprocessing.sh`)
 - `make preprocessing_dry` (wrapper for `DRY_RUN=1 src/pipelines/preprocessing.sh`)
 - `make preprocessing_run` (wrapper for `DRY_RUN=0 src/pipelines/preprocessing.sh`)
+
+DNA quality helper:
+
+- `powershell -NoProfile -ExecutionPolicy Bypass -File src/dna_quality/run_dna_quality_analysis.ps1 -OutputRun latest`
 
 Target implementations are in the repository root `Makefile`.
 
