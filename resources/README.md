@@ -8,6 +8,7 @@ Use `resources/INDEX.tsv` as the canonical inventory of resource files, workflow
 
 - Keep script paths stable under `resources/`.
 - Treat files in `resources/junctions/` (`prnp_junctions.fa`, `PRNP.pad1kb.hg38.bed`) as committed reference artefacts for the junction workflow.
+- Treat `resources/prnp_orr.hg38.bed` as the committed canonical ORR interval for repeat-analysis workflows.
 - Treat BWA index sidecars for `resources/junctions/prnp_junctions.fa` (`.amb`, `.ann`, `.bwt`, `.pac`, `.sa`) as runtime-generated files.
 - Configure pipeline scripts via `config/preprocessing.env` and `config/junctions.env` when local overrides are needed.
 
@@ -18,6 +19,7 @@ Use `resources/INDEX.tsv` as the canonical inventory of resource files, workflow
 - SNV pipeline Mills indels: `resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz`
 - SNV pipeline gnomAD AF-only: `resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz`
 - SNV pipeline manual annotation table: `resources/annotations/manual_population_freq.tsv`
+- Repeat workflow ORR BED: `resources/prnp_orr.hg38.bed`
 - SNV pipeline Funcotator datasource root: `resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
 - Junction workflow GTF: `resources/Homo_sapiens.GRCh38.110.gtf.gz`
 - Junction workflow reference FASTA: `resources/hg38.fa`
