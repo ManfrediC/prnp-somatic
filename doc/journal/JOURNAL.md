@@ -2151,39 +2151,6 @@ Junction blocker status (updated):
   - manuscript build portability for reviewers is not required
   - best path is a user-managed local TeX installation outside the repo/environment
 
-## 10.04.2026
-
-### Implement reviewer comments
-
-- Annie
-  - name adjustment
-
-- Simone
-  - clarified guanidine thiocyanate molarity in Methods and figure
-  - minor edits, e.g. Tris-Cl -> Tris-HCl
-
-- Hasier
-  - affiliations
-  - comment on A117V choice for sequencing spike-in
-  - RT-QuiC reference + replicates in figure
-
-- Christos
-  - did the fast edits
-  - R-square and other complex edits remain to be done
-
-
-  To do:
-  
-  Christos
-  - email: 
-    - agree that doi in his comment on the intro should not be cited, add the Korean (?) study with many E200K mutations
-    - address switched samples (A117V spike-ins)
-  - R-square for ddPCR (comment by Christos)
-  - IGV screenshot (see how to do this)
-
-  Aag
-  - ask Adriano whether Erik Minikel should be included.
-
 ## 15.04.2026
 
 ### DNA quality proxy analysis: implementation, data integration and manuscript-ready draft
@@ -2322,3 +2289,50 @@ Junction blocker status (updated):
 - If this analysis is promoted into the paper, the language should remain careful:
   - the available evidence is strongest for sequencing-readiness assessment
   - it is weaker for direct claims about original extracted genomic DNA integrity
+
+
+## 10.04.2026 and 17.04.2026
+
+### Implement reviewer comments
+
+- Annie
+  - name adjustment
+
+- Simone
+  - clarified guanidine thiocyanate molarity in Methods and figure
+  - minor edits, e.g. Tris-Cl -> Tris-HCl
+
+- Hasier
+  - affiliations
+  - comment on A117V choice for sequencing spike-in
+  - RT-QuiC reference + replicates in figure
+  - sample provenance
+
+- Christos
+  - did the fast edits
+  - R-square for ddPCR added to results and table 2
+  - other complex edits remain to be done
+
+- Piero
+  - added sample info to Latex patient table
+  - sample provenance
+
+- Jokin
+  - added extra discussion points
+    1. selective clonal depletion
+    2. comparison with Murley
+    3. slight emphasis on methodological contribution of decomp/extr protocol
+
+  To do:
+  
+  Christos
+  - email: 
+    - agree that doi in his comment on the intro should not be cited, add the Korean (?) study with many E200K mutations
+    - address switched samples (A117V spike-ins)
+  - IGV screenshot (see how to do this)
+
+  Piero/Sabina
+  - add reference to their published thalamic case (see email)
+
+  Aag
+  - ask Adriano whether Erik Minikel should be included.
