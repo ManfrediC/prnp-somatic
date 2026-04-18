@@ -88,6 +88,10 @@ results/repeats/raw/
 results/repeats/review/
 results/repeats/logs/
 results/repeats/old_runs/
+# Manual mosaic review keeps cohort-level summary TSVs in git, but the detailed
+# per-read/per-sample review artefacts are regenerated locally when needed.
+results/repeats/manual/
+results/repeats/manual_cohort/*/samples/
 # Logs
 v*.log
 *.log.*

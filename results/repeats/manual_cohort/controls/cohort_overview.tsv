@@ -1,0 +1,2 @@
+cohort_label	cohort	sample_count	priority_counts	samples_with_exact_nonreference_reads	samples_with_synthetic_high_or_medium_nonreference_reads
+controls	controls	6	background:3,low:3	3	2
