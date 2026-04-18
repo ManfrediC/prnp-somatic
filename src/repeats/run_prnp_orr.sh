@@ -95,6 +95,8 @@ RUN_TARGETS=(
 # ---------------------------------------------------------------------------
 
 require_cmd() {
+  # Stop immediately when a core dependency is missing so long runs do not fail
+  # only after partial work has already been written.
   if ! command -v "$1" >/dev/null 2>&1; then
     echo "Required command not found: $1" >&2
     exit 1
@@ -104,6 +106,8 @@ require_cmd() {
 require_cmd_with_hint() {
   local cmd_name="$1"
   local hint="$2"
+  # Provide an actionable installation/activation hint for optional tools that
+  # may live outside the main repeat environment.
   if ! command -v "$cmd_name" >/dev/null 2>&1; then
     echo "Required command not found: $cmd_name" >&2
     echo "$hint" >&2
@@ -113,6 +117,7 @@ require_cmd_with_hint() {
 
 find_conda_env_prefix() {
   local env_name="$1"
+  # Resolve the on-disk prefix once so later path construction stays simple.
   conda env list | awk -v env_name="$env_name" '
     $1 == env_name { print $NF; found=1; exit }
     END { if (!found) exit 1 }
@@ -120,11 +125,13 @@ find_conda_env_prefix() {
 }
 
 config_file_loaded() {
+  # Keep the provenance table explicit about whether local overrides were used.
   [[ -f "$CONFIG_FILE" ]]
 }
 
 capture_expansionhunter_version() {
   local version_output
+  # Normalize the tool-reported version string into one stable provenance value.
   version_output="$(ExpansionHunter --version 2>&1 || true)"
   printf '%s\n' "$version_output" \
     | grep -Eo 'ExpansionHunter v[0-9]+(\.[0-9]+)+' \
@@ -135,6 +142,8 @@ capture_expansionhunter_version() {
 capture_reviewer_version() {
   local version_output package_version
 
+  # Prefer the executable's own version output, but fall back to conda package
+  # metadata when REViewer is being resolved from a separate environment.
   version_output="$("${REVIEWER_CMD[@]}" --version 2>&1 || true)"
   package_version="$(
     printf '%s\n' "$version_output" \
@@ -163,6 +172,8 @@ capture_reviewer_version() {
 
 capture_gangstr_version() {
   local version_output
+  # GangSTR reports a simple first-line version string, which is enough for
+  # reproducibility tracking in run_settings.tsv.
   version_output="$("${GANGSTR_CMD[@]}" --version 2>&1 || true)"
   printf '%s\n' "$version_output" | head -n 1 || true
 }
@@ -221,6 +232,8 @@ estimate_bam_insert_stats() {
 }
 
 require_file() {
+  # Centralize file-existence checks so missing references fail with a uniform
+  # error message before any expensive analysis starts.
   if [[ ! -f "$1" ]]; then
     echo "Required file not found: $1" >&2
     exit 1

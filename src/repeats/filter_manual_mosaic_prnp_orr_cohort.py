@@ -96,11 +96,15 @@ def parse_args() -> argparse.Namespace:
 # ---------------------------------------------------------------------------
 
 def read_tsv(path: Path) -> list[dict[str, str]]:
+    # The filter works entirely from TSV exports so it stays easy to rerun and
+    # audit without reopening BAM-level evidence.
     with path.open(newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle, delimiter="\t"))
 
 
 def write_tsv(path: Path, rows: list[dict[str, str]], fieldnames: list[str]) -> None:
+    # Create the destination directory automatically so new filter labels can be
+    # written into a clean output tree.
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, delimiter="\t", fieldnames=fieldnames)
@@ -110,11 +114,14 @@ def write_tsv(path: Path, rows: list[dict[str, str]], fieldnames: list[str]) -> 
 
 
 def parse_int(row: dict[str, str], field: str) -> int:
+    # Treat blank fields as zero so threshold comparisons stay explicit and do
+    # not need repetitive missing-value handling.
     value = row.get(field, "")
     return int(value) if value else 0
 
 
 def encode_counter(counter: Counter[str]) -> str:
+    # Keep overview counters compact while preserving the underlying labels.
     if not counter:
         return ""
     return ",".join(f"{label}:{counter[label]}" for label in sorted(counter))
@@ -247,6 +254,9 @@ def build_overview(rows: list[dict[str, str]]) -> dict[str, str]:
 def main() -> int:
     args = parse_args()
     rows = read_tsv(args.input_summary)
+
+    # Parse the background metric list once up front so both threshold loading
+    # and row annotation share the exact same metric set.
     background_metrics = [
         metric.strip()
         for metric in args.background_metrics.split(",")
@@ -254,6 +264,8 @@ def main() -> int:
     ]
     background_maxima = load_background_maxima(args.background_summary, background_metrics)
 
+    # Annotate every row, then keep a candidate-only subset as a convenience
+    # view rather than baking selection into the raw summary table.
     annotated_rows = [
         annotate_row(
             row=row,

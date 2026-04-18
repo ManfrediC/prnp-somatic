@@ -18,6 +18,10 @@ COUNT_PATTERN = re.compile(r"\(([-0-9]+),\s*([0-9]+)\)")
 REFERENCE_MIDDLE_REPEAT_COUNT = 2
 
 
+# ---------------------------------------------------------------------------
+# Argument parsing
+# ---------------------------------------------------------------------------
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
@@ -30,6 +34,10 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+# ---------------------------------------------------------------------------
+# Histogram parsing helpers
+# ---------------------------------------------------------------------------
+
 def parse_count_histogram(raw: str) -> dict[int, int]:
     # ExpansionHunter stores histograms as strings like "(1, 14), (2, 8503)".
     # Convert those into repeat_count -> read_count dictionaries.
@@ -37,16 +45,21 @@ def parse_count_histogram(raw: str) -> dict[int, int]:
 
 
 def encode_count_histogram(counts: dict[int, int]) -> str:
+    # Keep the histogram human-readable in TSV form so cohort tables can be
+    # sorted numerically while still preserving the raw support profile.
     if not counts:
         return ""
     return ",".join(f"{repeat_count}:{counts[repeat_count]}" for repeat_count in sorted(counts))
 
 
 def sum_matching(counts: dict[int, int], predicate) -> int:
+    # Reuse one small helper for contraction-like and expansion-like tallies so
+    # the read-class summaries stay consistent across support types.
     return sum(read_count for repeat_count, read_count in counts.items() if predicate(repeat_count))
 
 
 def max_supported_repeat(counts: dict[int, int], predicate) -> tuple[str, str]:
+    # Surface the strongest non-reference repeat count for quick manual triage.
     supported = [(repeat_count, read_count) for repeat_count, read_count in counts.items() if predicate(repeat_count)]
     if not supported:
         return "", ""
@@ -54,7 +67,13 @@ def max_supported_repeat(counts: dict[int, int], predicate) -> tuple[str, str]:
     return str(repeat_count), str(read_count)
 
 
+# ---------------------------------------------------------------------------
+# TSV and per-sample summarization helpers
+# ---------------------------------------------------------------------------
+
 def read_sample_rows(path: Path) -> list[dict[str, str]]:
+    # sample_calls.tsv is the authoritative list of successfully summarized EH
+    # runs, so this helper simply reuses it as the cohort input.
     with path.open(newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle, delimiter="\t"))
 
@@ -62,11 +81,16 @@ def read_sample_rows(path: Path) -> list[dict[str, str]]:
 def build_row(sample_row: dict[str, str]) -> dict[str, str]:
     sample_id = sample_row["sample_id"]
     json_path = Path(sample_row["json_path"])
+    # The JSON carries the per-read histograms that are not easy to recover
+    # from the compact cohort TSVs alone.
     with json_path.open(encoding="utf-8") as handle:
         payload = json.load(handle)
 
     variant = payload["LocusResults"]["PRNP_ORR"]["Variants"]["PRNP_ORR_MIDDLE_R2_BLOCK"]
 
+    # ExpansionHunter exposes separate spanning, flanking, and in-repeat
+    # support tracks. Keep all three because weak non-reference tails may only
+    # be visible in one track.
     spanning_counts = parse_count_histogram(variant["CountsOfSpanningReads"])
     flanking_counts = parse_count_histogram(variant["CountsOfFlankingReads"])
     inrepeat_counts = parse_count_histogram(variant["CountsOfInrepeatReads"])
@@ -106,6 +130,8 @@ def build_row(sample_row: dict[str, str]) -> dict[str, str]:
     )
 
     def fraction(numerator: int, denominator: int) -> str:
+        # Preserve fractions as fixed-width strings so downstream sorting stays
+        # stable and blank values still distinguish zero coverage from 0.0.
         return f"{(numerator / denominator):.8f}" if denominator else ""
 
     return {
@@ -140,6 +166,8 @@ def build_row(sample_row: dict[str, str]) -> dict[str, str]:
 
 
 def write_rows(path: Path, rows: list[dict[str, str]], fieldnames: list[str]) -> None:
+    # Always materialize the parent directory so ad hoc exports can target a
+    # fresh results location without extra setup.
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, delimiter="\t", fieldnames=fieldnames)
@@ -148,8 +176,15 @@ def write_rows(path: Path, rows: list[dict[str, str]], fieldnames: list[str]) ->
             writer.writerow({field: row.get(field, "") for field in fieldnames})
 
 
+# ---------------------------------------------------------------------------
+# Main CLI flow
+# ---------------------------------------------------------------------------
+
 def main() -> int:
     args = parse_args()
+
+    # Use sample_calls.tsv as the cohort manifest so the inspection stays
+    # aligned with the exact set of successfully summarized EH samples.
     sample_rows = read_sample_rows(args.sample_calls)
 
     # Sort by expansion-like spanning support first because those reads are the
@@ -163,6 +198,8 @@ def main() -> int:
         ),
     )
 
+    # Keep the schema fixed because downstream manual review tables rely on
+    # these exact column names.
     fieldnames = [
         "sample_id",
         "group",

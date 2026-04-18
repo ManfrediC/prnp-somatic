@@ -12,6 +12,10 @@ from pathlib import Path
 PAIR_PATTERN = re.compile(r"(-?\d+)\s*[:=,]\s*(-?\d+)")
 
 
+# ---------------------------------------------------------------------------
+# Argument parsing and manifest loading
+# ---------------------------------------------------------------------------
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Summarize GangSTR VCF outputs for the PRNP ORR screen."
@@ -25,11 +29,18 @@ def parse_args() -> argparse.Namespace:
 
 
 def read_manifest(path: Path) -> list[dict[str, str]]:
+    # The shell runner writes the authoritative per-run cohort manifest, so the
+    # GangSTR summarizer reuses it rather than rediscovering samples itself.
     with path.open(newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle, delimiter="\t"))
 
 
+# ---------------------------------------------------------------------------
+# Small field-parsing helpers
+# ---------------------------------------------------------------------------
+
 def parse_info_field(field: str) -> dict[str, str]:
+    # GangSTR INFO annotations are semicolon-delimited key=value pairs.
     info = {}
     for item in field.split(";"):
         if "=" in item:
@@ -39,12 +50,14 @@ def parse_info_field(field: str) -> dict[str, str]:
 
 
 def split_allele_values(raw: str) -> list[str]:
+    # Normalize per-allele fields that may be delimited by '/', '|', or ','.
     if raw in {"", "."}:
         return []
     return [part for part in re.split(r"[/|,]", raw) if part != ""]
 
 
 def parse_repeat_counts(raw: str) -> list[int]:
+    # Keep only integer allele counts and silently drop placeholders.
     counts = []
     for token in split_allele_values(raw):
         try:
@@ -55,6 +68,8 @@ def parse_repeat_counts(raw: str) -> list[int]:
 
 
 def parse_confidence_intervals(raw: str) -> list[tuple[int, int] | None]:
+    # Confidence intervals are stored per allele as "start-end". Malformed
+    # tokens are treated as missing and later contribute to uncertainty.
     intervals: list[tuple[int, int] | None] = []
     for token in split_allele_values(raw):
         match = re.fullmatch(r"(-?\d+)-(-?\d+)", token)
@@ -66,6 +81,8 @@ def parse_confidence_intervals(raw: str) -> list[tuple[int, int] | None]:
 
 
 def parse_read_summary(raw: str) -> dict[int, int]:
+    # ENCLREADS and FLNKREADS are compact histograms encoded as repeat,count
+    # pairs; decode them into repeat_count -> read_count dictionaries.
     if raw in {"", "."}:
         return {}
     summary: dict[int, int] = {}
@@ -81,16 +98,19 @@ def parse_read_summary(raw: str) -> dict[int, int]:
 
 
 def encode_histogram(counts: dict[int, int]) -> str:
+    # Preserve the histogram in a sortable TSV-friendly encoding.
     if not counts:
         return ""
     return ",".join(f"{repeat_count}:{counts[repeat_count]}" for repeat_count in sorted(counts))
 
 
 def sum_matching(counts: dict[int, int], predicate) -> int:
+    # Reuse the same tally logic for enclosing and flanking support summaries.
     return sum(read_count for repeat_count, read_count in counts.items() if predicate(repeat_count))
 
 
 def max_supported_repeat(counts: dict[int, int], predicate) -> tuple[str, str]:
+    # Surface the strongest non-reference repeat count for quick cohort review.
     supported = [
         (repeat_count, read_count)
         for repeat_count, read_count in counts.items()
@@ -102,7 +122,13 @@ def max_supported_repeat(counts: dict[int, int], predicate) -> tuple[str, str]:
     return str(repeat_count), str(read_count)
 
 
+# ---------------------------------------------------------------------------
+# Per-sample VCF parsing
+# ---------------------------------------------------------------------------
+
 def parse_sample_vcf(vcf_path: Path) -> dict[str, str]:
+    # Surface missing or malformed VCFs explicitly so downstream tables can
+    # distinguish failed runs from genuine reference-like calls.
     if not vcf_path.exists():
         return {"vcf_status": "missing"}
 
@@ -120,6 +146,8 @@ def parse_sample_vcf(vcf_path: Path) -> dict[str, str]:
                 continue
             if line.startswith("#"):
                 continue
+            # The repeat catalog contains a single PRNP locus, so the first
+            # data record is the only one we expect to summarize per sample.
             cols = line.split("\t")
             if len(cols) < 10:
                 record_data["vcf_status"] = "malformed"
@@ -143,6 +171,8 @@ def parse_sample_vcf(vcf_path: Path) -> dict[str, str]:
             record_data["vcf_status"] = "no_records"
             return record_data
 
+    # Keep only the INFO and FORMAT fields that are useful for cohort triage
+    # and downstream manual-review tables.
     info = parse_info_field(record_data["info_raw"])
     record_data["info_END"] = info.get("END", "")
     record_data["info_PERIOD"] = info.get("PERIOD", "")
@@ -157,11 +187,17 @@ def parse_sample_vcf(vcf_path: Path) -> dict[str, str]:
     return record_data
 
 
+# ---------------------------------------------------------------------------
+# Interpretation helpers
+# ---------------------------------------------------------------------------
+
 def classify_sample(
     record: dict[str, str],
     reference_total_repeats: int,
     variable_repeat_offset: int,
 ) -> dict[str, str]:
+    # GangSTR reports counts for the variable middle repeat block. Convert
+    # those to total ORR repeat counts by adding the fixed-repeat offset.
     repcn = parse_repeat_counts(record.get("REPCN", ""))
     repci = parse_confidence_intervals(record.get("REPCI", ""))
     total_counts = [count + variable_repeat_offset for count in repcn]
@@ -174,6 +210,8 @@ def classify_sample(
     elif len(repcn) != 2:
         interpretation = "failed_qc"
     else:
+        # Treat any non-exact confidence interval as weaker evidence so the
+        # default classification stays conservative for exploratory screening.
         has_wide_ci = False
         if len(repci) == len(repcn):
             for count, interval in zip(repcn, repci):
@@ -196,6 +234,8 @@ def classify_sample(
         else:
             interpretation = "reference"
 
+    # Emit both compact list-like summaries and fixed per-allele columns so the
+    # downstream cohort tables can be filtered without reparsing strings.
     row = {
         "gangstr_interpretation": interpretation,
         "gangstr_review_required": "yes" if interpretation not in {"reference", "disabled"} else "no",
@@ -223,6 +263,8 @@ def classify_sample(
 
 
 def build_disabled_row(sample_id: str, group: str) -> dict[str, str]:
+    # Keep the output schema identical even when GangSTR is disabled so later
+    # merge steps do not need special-case logic.
     return {
         "sample_id": sample_id,
         "group": group,
@@ -269,7 +311,13 @@ def build_disabled_row(sample_id: str, group: str) -> dict[str, str]:
     }
 
 
+# ---------------------------------------------------------------------------
+# Output helpers and main CLI flow
+# ---------------------------------------------------------------------------
+
 def write_tsv(path: Path, rows: list[dict[str, str]], fieldnames: list[str]) -> None:
+    # Always create the parent directory so this summarizer can be rerun into a
+    # clean results tree after partial workflow resets.
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, delimiter="\t", fieldnames=fieldnames)
@@ -292,6 +340,8 @@ def main() -> int:
             output_rows.append(build_disabled_row(sample_id, group))
             continue
 
+        # Parse the one-locus GangSTR VCF, classify the genotype summary, and
+        # then retain the read-support histograms for manual triage.
         vcf_path = raw_root / sample_id / f"{sample_id}.vcf"
         record = parse_sample_vcf(vcf_path)
         classified = classify_sample(
@@ -305,6 +355,8 @@ def main() -> int:
         enclosing_total = sum(enclosing_counts.values())
         flanking_total = sum(flanking_counts.values())
         reference_middle_repeat_count = args.reference_total_repeats - args.variable_repeat_offset
+        # Non-reference read support is summarized relative to the expected
+        # reference middle-repeat count, not the total ORR repeat count.
         enclosing_nonreference = sum_matching(
             enclosing_counts, lambda repeat_count: repeat_count != reference_middle_repeat_count
         )
@@ -360,6 +412,8 @@ def main() -> int:
             row["gangstr_review_required"] = "yes"
         output_rows.append(row)
 
+    # Keep the schema explicit because summarize_somatic_screen.py depends on
+    # these exact column names.
     fieldnames = [
         "sample_id",
         "group",

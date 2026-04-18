@@ -144,10 +144,13 @@ def parse_args() -> argparse.Namespace:
 # ---------------------------------------------------------------------------
 
 def reverse_complement(sequence: str) -> str:
+    # Synthetic rescoring compares both orientations, so keep reverse-complement
+    # handling in one shared helper.
     return sequence.translate(str.maketrans("ACGTNacgtn", "TGCANtgcan"))[::-1]
 
 
 def read_bed_interval(path: Path) -> tuple[str, int, int, str]:
+    # The workflow expects a single PRNP ORR interval in the BED file.
     with path.open(encoding="utf-8") as handle:
         for line in handle:
             if not line.strip() or line.startswith("#"):
@@ -162,11 +165,14 @@ def read_bed_interval(path: Path) -> tuple[str, int, int, str]:
 
 
 def read_tsv_rows(path: Path) -> list[dict[str, str]]:
+    # Optional cohort context tables are plain TSVs, so keep loading simple.
     with path.open(newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle, delimiter="\t"))
 
 
 def write_tsv(path: Path, rows: list[dict[str, str]], fieldnames: list[str]) -> None:
+    # Create the output directory on demand so one-sample reruns can target a
+    # clean prefix without precreating parent folders.
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, delimiter="\t", fieldnames=fieldnames)
@@ -176,10 +182,14 @@ def write_tsv(path: Path, rows: list[dict[str, str]], fieldnames: list[str]) -> 
 
 
 def architecture_to_sequence(architecture: str) -> str:
+    # Convert panel architecture labels into literal ORR sequence strings once
+    # so later scoring can compare reads directly against sequence.
     return "".join(BLOCKS[token] for token in architecture.split("-"))
 
 
 def load_panel(path: Path) -> list[dict[str, str]]:
+    # Enrich the panel rows with concrete sequence and length-shift fields so
+    # downstream scoring never has to recalculate them per read.
     rows = read_tsv_rows(path)
     for row in rows:
         row["sequence"] = architecture_to_sequence(row["architecture"])
@@ -188,6 +198,8 @@ def load_panel(path: Path) -> list[dict[str, str]]:
 
 
 def build_panel_buckets(panel_rows: list[dict[str, str]]) -> dict[int, list[dict[str, str]]]:
+    # Bucket panel alleles by net length shift so Hamming comparisons only
+    # occur between architectures with the same overall size.
     buckets: dict[int, list[dict[str, str]]] = defaultdict(list)
     for row in panel_rows:
         buckets[int(row["delta_bp"])].append(row)
@@ -213,29 +225,35 @@ def build_synthetic_contigs(
 
 
 def infer_sample_id(args: argparse.Namespace) -> str:
+    # Fall back to the BAM basename for quick ad hoc local runs.
     if args.sample_id:
         return args.sample_id
     return args.bam.stem
 
 
 def normalize_qpos(read: pysam.AlignedSegment, qpos: int) -> int:
+    # Normalize query coordinates to the forward orientation so anchor logic
+    # can treat plus and minus reads the same way.
     if not read.is_reverse:
         return qpos
     return read.query_length - 1 - qpos
 
 
 def normalized_query_sequence(read: pysam.AlignedSegment) -> str:
+    # Return sequence in the same orientation used by normalized query indices.
     sequence = read.query_sequence or ""
     return reverse_complement(sequence) if read.is_reverse else sequence
 
 
 def hamming_distance(left: str, right: str) -> int:
+    # Hamming scoring is only used after matching sequences by length.
     if len(left) != len(right):
         raise ValueError("Hamming distance requires equal-length sequences.")
     return sum(1 for lhs, rhs in zip(left, right) if lhs != rhs)
 
 
 def overlaps(start_a: int, end_a: int, start_b: int, end_b: int) -> bool:
+    # Shared interval helper for nearby-indel and nearby-softclip checks.
     return start_a < end_b and start_b < end_a
 
 
@@ -565,6 +583,8 @@ def synthetic_remap_read(
 
 
 def load_sample_context(path: Path | None) -> dict[str, dict[str, str]]:
+    # Optional sample-level context tables are keyed once here so the main loop
+    # can enrich its summary row without repeated file reads.
     if path is None or not path.exists():
         return {}
     return {row["sample_id"]: row for row in read_tsv_rows(path)}
@@ -765,6 +785,8 @@ def summarize_rows(
         "gangstr_total_repeat_counts": "",
     }
 
+    # Propagate high-level caller context into the manual-review summary so the
+    # cohort wrapper can compare evidence layers without another join step.
     if sample_calls_row is not None:
         summary["eh_interpretation"] = sample_calls_row.get("interpretation", "")
         summary["eh_total_repeat_counts"] = sample_calls_row.get("total_repeat_counts", "")
@@ -818,6 +840,8 @@ def main() -> int:
         )
     synthetic_contigs = build_synthetic_contigs(panel_rows, left_flank, right_flank)
 
+    # Load optional cohort-level context so the one-sample summary can carry
+    # EH and GangSTR labels alongside the BAM-derived manual evidence.
     sample_calls = load_sample_context(args.sample_calls_tsv)
     gangstr_calls = load_sample_context(args.gangstr_calls_tsv)
     sample_calls_row = sample_calls.get(sample_id)
@@ -855,6 +879,9 @@ def main() -> int:
 
             panel_info: dict[str, str] = {}
             if anchor_info["anchor_tier"] == "two_sided_exact":
+                # Only exact two-sided reads are panel-scored. Partial anchors
+                # stay in the table, but they are too ambiguous for direct
+                # sequence-to-allele Hamming comparisons.
                 delta_bp, _, _ = classify_bam_signal(
                     str(anchor_info["anchor_tier"]),
                     str(anchor_info["middle_sequence"]),
@@ -866,6 +893,8 @@ def main() -> int:
                 )
 
             synthetic_info: dict[str, str] = {}
+            # Synthetic rescoring is gated separately so we can prioritize only
+            # the reads most likely to clarify a possible mosaic signal.
             synthetic_attempt, synthetic_reason = should_attempt_synthetic_remap(
                 synthetic_remap_mode=args.synthetic_remap_mode,
                 anchor_tier=str(anchor_info["anchor_tier"]),
@@ -904,6 +933,8 @@ def main() -> int:
         gangstr_row=gangstr_row,
     )
 
+    # Keep the output schemas explicit so cohort aggregation and ad hoc review
+    # notebooks can rely on stable column names.
     read_fieldnames = [
         "sample_id",
         "read_name",

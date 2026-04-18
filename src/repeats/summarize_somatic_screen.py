@@ -8,6 +8,10 @@ import csv
 from pathlib import Path
 
 
+# ---------------------------------------------------------------------------
+# Argument parsing
+# ---------------------------------------------------------------------------
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Build a merged PRNP ORR somatic screening table."
@@ -16,12 +20,20 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+# ---------------------------------------------------------------------------
+# Small TSV helpers
+# ---------------------------------------------------------------------------
+
 def read_tsv(path: Path) -> list[dict[str, str]]:
+    # All repeat workflow tables are plain TSVs, so a tiny shared reader keeps
+    # the merge step dependency-light and easy to audit.
     with path.open(newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle, delimiter="\t"))
 
 
 def write_tsv(path: Path, rows: list[dict[str, str]], fieldnames: list[str]) -> None:
+    # Create the target directory on demand so this summary can be rebuilt into
+    # a clean results tree after partial reruns.
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, delimiter="\t", fieldnames=fieldnames)
@@ -30,8 +42,15 @@ def write_tsv(path: Path, rows: list[dict[str, str]], fieldnames: list[str]) -> 
             writer.writerow({field: row.get(field, "") for field in fieldnames})
 
 
+# ---------------------------------------------------------------------------
+# Main merge flow
+# ---------------------------------------------------------------------------
+
 def main() -> int:
     args = parse_args()
+
+    # Key every source table by sample ID so the final somatic screen row can
+    # place orthogonal evidence side by side without repeated joins later.
     sample_calls_rows = {
         row["sample_id"]: row for row in read_tsv(args.results_root / "sample_calls.tsv")
     }
@@ -48,6 +67,8 @@ def main() -> int:
 
     output_rows: list[dict[str, str]] = []
     for sample_id, sample_call in sample_calls_rows.items():
+        # Pull together the high-level EH call, reviewer status, subclonal EH
+        # support, and GangSTR signal into one compact review row per sample.
         sample_review = sample_review_rows[sample_id]
         subclonal = subclonal_rows[sample_id]
         gangstr = gangstr_rows[sample_id]
@@ -87,6 +108,8 @@ def main() -> int:
             }
         )
 
+    # Keep the export schema explicit so manual review notes and downstream
+    # figure/table scripts can rely on stable column order and names.
     fieldnames = [
         "sample_id",
         "group",

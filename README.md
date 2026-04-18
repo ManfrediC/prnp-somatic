@@ -150,11 +150,27 @@ conda activate prnp-repeats
 conda env create -f env/reviewer.environment.yml
 ```
 
-### 10. Run repeat workflow
+### 10. Run repeat workflow (`src/repeats`)
+
+Set up repeat configuration first:
 
 ```bash
+cp config/repeats.env.example config/repeats.env
+```
+
+Then edit `config/repeats.env` for local paths/settings as documented in
+`config/README.md`.
+
+Main cohort run:
+
+```bash
+conda activate prnp-repeats
 bash src/repeats/run_prnp_orr.sh
 ```
+
+If you are rerunning into an existing `results/repeats/` directory, set
+`ARCHIVE_EXISTING_RUN=1` in `config/repeats.env` first so the current live run
+is archived instead of mixed with new outputs.
 
 Expected outputs:
 
@@ -170,6 +186,7 @@ Expected outputs:
 Optional one-sample manual mosaic review:
 
 ```bash
+conda activate prnp-repeats
 python src/repeats/manual_mosaic_prnp_orr.py \
   --bam results/final_bam/CJD1.bam \
   --reference-fasta resources/chr2_chr4_chr20.fasta \
@@ -184,6 +201,7 @@ This writes `results/repeats/manual/CJD1.reads.tsv` and
 For control-first cohort calibration:
 
 ```bash
+conda activate prnp-repeats
 make repeats_manual_controls
 make repeats_manual_cjd
 ```
@@ -195,6 +213,7 @@ These write cohort summaries plus per-sample review TSVs under
 To apply the default background-aware post-processing filter to the CJD cohort:
 
 ```bash
+conda activate prnp-repeats
 make repeats_manual_filter_cjd
 ```
 

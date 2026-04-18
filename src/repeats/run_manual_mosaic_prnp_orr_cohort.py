@@ -124,11 +124,15 @@ def parse_args() -> argparse.Namespace:
 # ---------------------------------------------------------------------------
 
 def read_tsv(path: Path) -> list[dict[str, str]]:
+    # The cohort wrapper only needs plain TSV parsing, so keep the helper small
+    # and dependency-free.
     with path.open(newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle, delimiter="\t"))
 
 
 def write_tsv(path: Path, rows: list[dict[str, str]], fieldnames: list[str]) -> None:
+    # Create the target directory on demand so ad hoc cohort labels can be
+    # written into a fresh output tree without extra setup.
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, delimiter="\t", fieldnames=fieldnames)
@@ -138,6 +142,8 @@ def write_tsv(path: Path, rows: list[dict[str, str]], fieldnames: list[str]) -> 
 
 
 def cohort_label(args: argparse.Namespace) -> str:
+    # Preserve an explicit output label whenever the caller provides one so
+    # repeated tuning runs can coexist under the same results root.
     if args.cohort_label:
         return args.cohort_label
     if args.sample_id:
@@ -146,6 +152,8 @@ def cohort_label(args: argparse.Namespace) -> str:
 
 
 def sample_group(sample_id: str) -> str:
+    # Derive the group directly from the sample ID prefix to avoid depending on
+    # an additional manifest for quick manual follow-up runs.
     if sample_id.startswith("Ctrl"):
         return "control"
     if sample_id.startswith("CJD"):
@@ -175,6 +183,7 @@ def discover_bams(args: argparse.Namespace) -> list[tuple[str, Path]]:
 
 
 def encode_counter(counter: Counter[str]) -> str:
+    # Keep cohort-level count summaries compact but still human-readable.
     if not counter:
         return ""
     return ",".join(f"{label}:{counter[label]}" for label in sorted(counter))
@@ -340,6 +349,8 @@ def main() -> int:
     if not selected_bams:
         raise FileNotFoundError("No BAMs matched the requested cohort selection.")
 
+    # Keep one subdirectory per cohort label so repeated exploratory runs do not
+    # overwrite each other unless the caller explicitly reuses a label.
     label = cohort_label(args)
     cohort_root = args.output_root / label
     samples_root = cohort_root / "samples"
@@ -392,6 +403,8 @@ def main() -> int:
             )
         )
 
+    # Keep the sortable cohort summary in manual-review order so the most
+    # interesting samples surface first in spreadsheet-style inspection.
     aggregated_rows.sort(
         key=lambda row: (
             # High-priority rows float to the top, then stronger synthetic or
@@ -408,6 +421,8 @@ def main() -> int:
     cohort_summary_path = cohort_root / "cohort_summary.tsv"
     cohort_overview_path = cohort_root / "cohort_overview.tsv"
 
+    # Keep the schemas explicit because the downstream filter consumes these
+    # exact columns without additional metadata files.
     fieldnames = [
         "sample_id",
         "group",
