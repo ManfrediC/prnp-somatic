@@ -1,33 +1,33 @@
 sample_id	group	vcf_path	vcf_status	chrom	pos	filter	GT	DP	Q	REPCN	REPCI	RC	ENCLREADS	FLNKREADS	RU	REF	allele1_middle_repeat_count	allele2_middle_repeat_count	allele1_middle_repeat_ci	allele2_middle_repeat_ci	allele1_total_repeat_count	allele2_total_repeat_count	allele1_delta_vs_reference	allele2_delta_vs_reference	middle_repeat_counts	total_repeat_counts	delta_vs_reference	gangstr_interpretation	enclosing_counts	enclosing_total_reads	enclosing_nonreference_reads	enclosing_nonreference_fraction	top_enclosing_nonreference_repeat_count	top_enclosing_nonreference_read_count	flanking_counts	flanking_total_reads	flanking_nonreference_reads	flanking_nonreference_fraction	top_flanking_nonreference_repeat_count	top_flanking_nonreference_read_count	gangstr_review_required
-CJD1	cjd		disabled																									disabled		0	0					0	0				no
-CJD11	cjd		disabled																									disabled		0	0					0	0				no
-CJD12	cjd		disabled																									disabled		0	0					0	0				no
-CJD13	cjd		disabled																									disabled		0	0					0	0				no
-CJD14	cjd		disabled																									disabled		0	0					0	0				no
-CJD15	cjd		disabled																									disabled		0	0					0	0				no
-CJD18	cjd		disabled																									disabled		0	0					0	0				no
-CJD19	cjd		disabled																									disabled		0	0					0	0				no
-CJD2	cjd		disabled																									disabled		0	0					0	0				no
-CJD21	cjd		disabled																									disabled		0	0					0	0				no
-CJD22	cjd		disabled																									disabled		0	0					0	0				no
-CJD23	cjd		disabled																									disabled		0	0					0	0				no
-CJD24	cjd		disabled																									disabled		0	0					0	0				no
-CJD25	cjd		disabled																									disabled		0	0					0	0				no
-CJD26	cjd		disabled																									disabled		0	0					0	0				no
-CJD27	cjd		disabled																									disabled		0	0					0	0				no
-CJD28	cjd		disabled																									disabled		0	0					0	0				no
-CJD29	cjd		disabled																									disabled		0	0					0	0				no
-CJD3	cjd		disabled																									disabled		0	0					0	0				no
-CJD30	cjd		disabled																									disabled		0	0					0	0				no
-CJD31	cjd		disabled																									disabled		0	0					0	0				no
-CJD4	cjd		disabled																									disabled		0	0					0	0				no
-CJD5	cjd		disabled																									disabled		0	0					0	0				no
-CJD6	cjd		disabled																									disabled		0	0					0	0				no
-CJD7	cjd		disabled																									disabled		0	0					0	0				no
-CJD8	cjd		disabled																									disabled		0	0					0	0				no
-Ctrl1	control		disabled																									disabled		0	0					0	0				no
-Ctrl2	control		disabled																									disabled		0	0					0	0				no
-Ctrl3	control		disabled																									disabled		0	0					0	0				no
-Ctrl4	control		disabled																									disabled		0	0					0	0				no
-Ctrl5	control		disabled																									disabled		0	0					0	0				no
-Ctrl7	control		disabled																									disabled		0	0					0	0				no
+CJD1	cjd	results/repeats/raw/gangstr/CJD1/CJD1.vcf	ok	chr20	4699398	.	0/0	6697	1	2,2	2-2,2-2	6163,534,0,0	2,6163	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:6163	6163	0	0.00000000				0	0				no
+CJD11	cjd	results/repeats/raw/gangstr/CJD11/CJD11.vcf	ok	chr20	4699398	.	0/0	3587	1	2,2	2-2,2-2	3480,107,0,0	2,3480	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:3480	3480	0	0.00000000				0	0				no
+CJD12	cjd	results/repeats/raw/gangstr/CJD12/CJD12.vcf	ok	chr20	4699398	.	0/0	522	1	2,2	2-2,2-2	447,75,0,0	2,447	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:447	447	0	0.00000000				0	0				no
+CJD13	cjd	results/repeats/raw/gangstr/CJD13/CJD13.vcf	ok	chr20	4699398	.	0/0	6196	1	2,2	2-2,2-2	5484,712,0,0	2,5484	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:5484	5484	0	0.00000000				0	0				no
+CJD14	cjd	results/repeats/raw/gangstr/CJD14/CJD14.vcf	ok	chr20	4699398	.	0/0	30	1	2,2	2-2,2-2	27,3,0,0	2,27	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:27	27	0	0.00000000				0	0				no
+CJD15	cjd	results/repeats/raw/gangstr/CJD15/CJD15.vcf	ok	chr20	4699398	.	0/0	48	1	2,2	2-2,2-2	45,3,0,0	2,45	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:45	45	0	0.00000000				0	0				no
+CJD18	cjd	results/repeats/raw/gangstr/CJD18/CJD18.vcf	ok	chr20	4699398	.	0/0	47	1	2,2	2-2,2-2	45,2,0,0	2,45	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:45	45	0	0.00000000				0	0				no
+CJD19	cjd	results/repeats/raw/gangstr/CJD19/CJD19.vcf	ok	chr20	4699398	.	0/0	369	1	2,2	2-2,2-2	333,36,0,0	2,333	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:333	333	0	0.00000000				0	0				no
+CJD2	cjd	results/repeats/raw/gangstr/CJD2/CJD2.vcf	ok	chr20	4699398	.	0/0	7249	1	2,2	2-2,2-2	6366,882,0,0	2,6366	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:6366	6366	0	0.00000000				0	0				no
+CJD21	cjd	results/repeats/raw/gangstr/CJD21/CJD21.vcf	ok	chr20	4699398	.	0/0	2447	1	2,2	2-2,2-2	2145,302,0,0	2,2145	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:2145	2145	0	0.00000000				0	0				no
+CJD22	cjd	results/repeats/raw/gangstr/CJD22/CJD22.vcf	ok	chr20	4699398	.	0/0	16690	1	2,2	2-2,2-2	13868,2822,0,0	2,13868	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:13868	13868	0	0.00000000				0	0				no
+CJD23	cjd	results/repeats/raw/gangstr/CJD23/CJD23.vcf	ok	chr20	4699398	.	0/0	8669	1	2,2	2-2,2-2	8341,328,0,0	2,8341	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:8341	8341	0	0.00000000				0	0				no
+CJD24	cjd	results/repeats/raw/gangstr/CJD24/CJD24.vcf	ok	chr20	4699398	.	0/0	268	1	2,2	2-2,2-2	249,19,0,0	2,249	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:249	249	0	0.00000000				0	0				no
+CJD25	cjd	results/repeats/raw/gangstr/CJD25/CJD25.vcf	ok	chr20	4699398	.	0/0	42067	1	2,2	2-2,2-2	39240,2826,0,0	2,39240	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:39240	39240	0	0.00000000				0	0				no
+CJD26	cjd	results/repeats/raw/gangstr/CJD26/CJD26.vcf	ok	chr20	4699398	.	0/0	227	1	2,2	2-2,2-2	208,19,0,0	2,208	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:208	208	0	0.00000000				0	0				no
+CJD27	cjd	results/repeats/raw/gangstr/CJD27/CJD27.vcf	ok	chr20	4699398	.	0/0	19429	1	2,2	2-2,2-2	18538,890,0,0	2,18538	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:18538	18538	0	0.00000000				0	0				no
+CJD28	cjd	results/repeats/raw/gangstr/CJD28/CJD28.vcf	ok	chr20	4699398	.	0/0	186	1	2,2	2-2,2-2	173,13,0,0	2,173	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:173	173	0	0.00000000				0	0				no
+CJD29	cjd	results/repeats/raw/gangstr/CJD29/CJD29.vcf	ok	chr20	4699398	.	0/0	661	1	2,2	2-2,2-2	613,48,0,0	2,613	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:613	613	0	0.00000000				0	0				no
+CJD3	cjd	results/repeats/raw/gangstr/CJD3/CJD3.vcf	ok	chr20	4699398	.	0/0	4300	1	2,2	2-2,2-2	4256,44,0,0	2,4256	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:4256	4256	0	0.00000000				0	0				no
+CJD30	cjd	results/repeats/raw/gangstr/CJD30/CJD30.vcf	ok	chr20	4699398	.	0/0	301	1	2,2	2-2,2-2	284,17,0,0	2,284	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:284	284	0	0.00000000				0	0				no
+CJD31	cjd	results/repeats/raw/gangstr/CJD31/CJD31.vcf	ok	chr20	4699398	.	0/0	67	1	2,2	2-2,2-2	60,7,0,0	2,60	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:60	60	0	0.00000000				0	0				no
+CJD4	cjd	results/repeats/raw/gangstr/CJD4/CJD4.vcf	ok	chr20	4699398	.	0/0	3635	1	2,2	2-2,2-2	3598,37,0,0	2,3598	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:3598	3598	0	0.00000000				0	0				no
+CJD5	cjd	results/repeats/raw/gangstr/CJD5/CJD5.vcf	ok	chr20	4699398	.	0/0	118	1	2,2	2-2,2-2	111,7,0,0	2,111	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:111	111	0	0.00000000				0	0				no
+CJD6	cjd	results/repeats/raw/gangstr/CJD6/CJD6.vcf	ok	chr20	4699398	.	0/0	17775	1	2,2	2-2,2-2	17217,558,0,0	1,2|2,17215	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	1:2,2:17215	17217	2	0.00011616	1	2		0	0				yes
+CJD7	cjd	results/repeats/raw/gangstr/CJD7/CJD7.vcf	ok	chr20	4699398	.	0/0	2378	1	2,2	2-2,2-2	2295,83,0,0	2,2295	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:2295	2295	0	0.00000000				0	0				no
+CJD8	cjd	results/repeats/raw/gangstr/CJD8/CJD8.vcf	ok	chr20	4699398	.	0/0	183	1	2,2	2-2,2-2	171,12,0,0	2,171	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:171	171	0	0.00000000				0	0				no
+Ctrl1	control	results/repeats/raw/gangstr/Ctrl1/Ctrl1.vcf	ok	chr20	4699398	.	0/0	12398	1	2,2	2-2,2-2	11598,799,0,0	2,11598	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:11598	11598	0	0.00000000				0	0				no
+Ctrl2	control	results/repeats/raw/gangstr/Ctrl2/Ctrl2.vcf	ok	chr20	4699398	.	0/0	1498	1	2,2	2-2,2-2	1379,119,0,0	2,1379	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:1379	1379	0	0.00000000				0	0				no
+Ctrl3	control	results/repeats/raw/gangstr/Ctrl3/Ctrl3.vcf	ok	chr20	4699398	.	0/0	5480	1	2,2	2-2,2-2	4869,611,0,0	2,4869	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:4869	4869	0	0.00000000				0	0				no
+Ctrl4	control	results/repeats/raw/gangstr/Ctrl4/Ctrl4.vcf	ok	chr20	4699398	.	0/0	236	1	2,2	2-2,2-2	209,27,0,0	2,209	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:209	209	0	0.00000000				0	0				no
+Ctrl5	control	results/repeats/raw/gangstr/Ctrl5/Ctrl5.vcf	ok	chr20	4699398	.	0/0	4238	1	2,2	2-2,2-2	3903,335,0,0	1,2|2,3901	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	1:2,2:3901	3903	2	0.00051243	1	2		0	0				yes
+Ctrl7	control	results/repeats/raw/gangstr/Ctrl7/Ctrl7.vcf	ok	chr20	4699398	.	0/0	220	1	2,2	2-2,2-2	206,14,0,0	2,206	NULL	cctcatggtggtggctgggggcag	2	2	2	2-2	2-2	5	5	0	0	2,2	5,5	0,0	reference	2:206	206	0	0.00000000				0	0				no

@@ -33,6 +33,12 @@ REVIEWER_BIN="${REVIEWER_BIN:-}"
 RUN_GANGSTR="${RUN_GANGSTR:-0}"
 GANGSTR_BIN="${GANGSTR_BIN:-}"
 GANGSTR_REGIONS_BED="${GANGSTR_REGIONS_BED:-resources/repeats/prnp_orr.gangstr.bed}"
+# These may be set explicitly, but empty defaults mean "estimate from each BAM"
+# so GangSTR stays usable across cohorts with different library properties.
+GANGSTR_READLENGTH="${GANGSTR_READLENGTH:-}"
+GANGSTR_INSERTMEAN="${GANGSTR_INSERTMEAN:-}"
+GANGSTR_INSERTSDEV="${GANGSTR_INSERTSDEV:-}"
+GANGSTR_MAX_PROC_READ="${GANGSTR_MAX_PROC_READ:-1000000}"
 PRNP_TOTAL_REFERENCE_REPEATS="${PRNP_TOTAL_REFERENCE_REPEATS:-5}"
 PRNP_VARIABLE_REPEAT_OFFSET="${PRNP_VARIABLE_REPEAT_OFFSET:-3}"
 REPEAT_THREADS="${REPEAT_THREADS:-4}"
@@ -159,6 +165,59 @@ capture_gangstr_version() {
   local version_output
   version_output="$("${GANGSTR_CMD[@]}" --version 2>&1 || true)"
   printf '%s\n' "$version_output" | head -n 1 || true
+}
+
+# GangSTR wants explicit library-size parameters. When the user does not supply
+# them, estimate read length from a small prefix of alignments so reruns remain
+# reproducible without hard-coding values for every sequencing batch.
+estimate_bam_read_length() {
+  local bam_path="$1"
+  local status
+  set +o pipefail
+  samtools view "$bam_path" \
+    | awk '
+        NR <= 2000 && length($10) > 0 { sum += length($10); count += 1 }
+        NR >= 2000 { exit }
+        END {
+          if (count == 0) exit 1
+          printf "%.0f\n", sum / count
+        }
+      '
+  status=$?
+  set -o pipefail
+  return "$status"
+}
+
+# Likewise estimate insert-size mean/SD from a bounded sample of proper pairs.
+# The intent is not to build a perfect library model, only to provide stable
+# sample-specific defaults that are much closer than a generic hard-coded value.
+estimate_bam_insert_stats() {
+  local bam_path="$1"
+  local status
+  set +o pipefail
+  samtools view -f 67 -F 3852 "$bam_path" \
+    | awk '
+        {
+          template_length = $9
+          if (template_length < 0) template_length = -template_length
+          if (template_length > 0 && template_length < 2000) {
+            count += 1
+            sum += template_length
+            sumsq += template_length * template_length
+            if (count >= 50000) exit
+          }
+        }
+        END {
+          if (count < 100) exit 1
+          mean = sum / count
+          variance = (sumsq / count) - (mean * mean)
+          if (variance < 1) variance = 1
+          printf "%.6f\t%.6f\n", mean, sqrt(variance)
+        }
+      '
+  status=$?
+  set -o pipefail
+  return "$status"
 }
 
 require_file() {
@@ -535,6 +594,10 @@ MANIFEST_TMP=""
   echo -e "run_gangstr\t$RUN_GANGSTR"
   echo -e "gangstr_bin\t${GANGSTR_BIN:-GangSTR}"
   echo -e "gangstr_regions_bed\t$GANGSTR_REGIONS_BED"
+  echo -e "gangstr_readlength\t${GANGSTR_READLENGTH:-auto_from_bam}"
+  echo -e "gangstr_insertmean\t${GANGSTR_INSERTMEAN:-auto_from_bam}"
+  echo -e "gangstr_insertsdev\t${GANGSTR_INSERTSDEV:-auto_from_bam}"
+  echo -e "gangstr_max_proc_read\t$GANGSTR_MAX_PROC_READ"
   echo -e "force\t$FORCE"
   echo -e "archive_existing_run\t$ARCHIVE_EXISTING_RUN"
   echo -e "archive_run_label\t${ARCHIVE_RUN_LABEL:-not_set}"
@@ -647,6 +710,17 @@ while IFS=$'\t' read -r SAMPLE_ID GROUP BAM BAI ORR_READS <&3; do
     GANGSTR_PREFIX="${SAMPLE_GANGSTR_DIR}/${SAMPLE_ID}"
     GANGSTR_VCF="${GANGSTR_PREFIX}.vcf"
 
+    # Resolve the GangSTR library parameters once per sample. This lets the
+    # shell workflow remain cohort-agnostic while still recording what was used
+    # into run_settings.tsv for provenance.
+    gangstr_readlength="${GANGSTR_READLENGTH:-$(estimate_bam_read_length "$BAM")}"
+    if [[ -n "$GANGSTR_INSERTMEAN" && -n "$GANGSTR_INSERTSDEV" ]]; then
+      gangstr_insertmean="$GANGSTR_INSERTMEAN"
+      gangstr_insertsdev="$GANGSTR_INSERTSDEV"
+    else
+      read -r gangstr_insertmean gangstr_insertsdev < <(estimate_bam_insert_stats "$BAM")
+    fi
+
     if [[ "$FORCE" != "1" && -f "$GANGSTR_VCF" ]]; then
       echo "Skipping GangSTR for $SAMPLE_ID (outputs exist)."
     else
@@ -658,6 +732,10 @@ while IFS=$'\t' read -r SAMPLE_ID GROUP BAM BAI ORR_READS <&3; do
         --out "$GANGSTR_PREFIX" \
         --targeted \
         --nonuniform \
+        --readlength "$gangstr_readlength" \
+        --insertmean "$gangstr_insertmean" \
+        --insertsdev "$gangstr_insertsdev" \
+        --max-proc-read "$GANGSTR_MAX_PROC_READ" \
         </dev/null \
         >"${LOG_ROOT}/${SAMPLE_ID}.gangstr.stdout.log" \
         2>"${LOG_ROOT}/${SAMPLE_ID}.gangstr.stderr.log"

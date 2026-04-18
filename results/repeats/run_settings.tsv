@@ -1,5 +1,5 @@
 key	value
-created_utc	2026-04-17T23:04:30Z
+created_utc	2026-04-18T11:50:11Z
 config_file	/add/prnp-somatic/config/repeats.env
 config_file_loaded	no
 bam_dir	results/final_bam
@@ -14,9 +14,15 @@ orr_min_reads	10
 run_reviewer	1
 reviewer_conda_env	prnp-reviewer
 reviewer_bin	/home/mcarta/miniconda3/envs/prnp-reviewer/bin/REViewer
+run_gangstr	1
+gangstr_bin	GangSTR
+gangstr_regions_bed	resources/repeats/prnp_orr.gangstr.bed
+gangstr_readlength	auto_from_bam
+gangstr_insertmean	auto_from_bam
+gangstr_insertsdev	auto_from_bam
 force	0
-archive_existing_run	0
-archive_run_label	not_set
+archive_existing_run	1
+archive_run_label	gangstr_insert_fix_rerun_2026-04-18
 old_runs_root	results/repeats/old_runs
 expected_sample_count	32
 prnp_total_reference_repeats	5
@@ -24,5 +30,7 @@ prnp_variable_repeat_offset	3
 sample_count	32
 expansionhunter_version	ExpansionHunter v5.0.0
 reviewer_version	REViewer v0.2.7
+gangstr_version	2.5.0
 samtools_version	samtools 1.22.1
 python_version	Python 3.10.20
+gangstr_max_proc_read	1000000
