@@ -1,0 +1,2 @@
+sample_count	filter_pass_counts	filter_fail_reason_counts
+26	no:26	below_min_signal:17,does_not_exceed_background:23,fails_bidirectional_support:13,fails_unique_start_sites:4,too_many_one_sided_suspicious_reads:5
