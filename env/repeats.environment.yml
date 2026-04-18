@@ -1,0 +1,16 @@
+name: prnp-repeats
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.10
+  - expansionhunter=5.0.0
+  - samtools=1.22
+  - bcftools=1.22
+  - bedtools=2.31.1
+  - jq=1.7
+  - pandas=2.2
+  - pysam
+  - pyyaml=6
+  - numpy
+  - matplotlib-base

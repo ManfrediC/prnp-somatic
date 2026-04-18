@@ -6,7 +6,7 @@ CONDA_BIN ?= conda
 .SHELLFLAGS := -eu -o pipefail -c
 
 .PHONY: help versions toolchain_lock check_conda \
-	ddpcr snv junctions all check \
+	ddpcr snv repeats junctions all check \
 	qc_validate qc_metrics clean_qc print_qc_paths verify_resources preprocessing_preflight preprocessing_dry preprocessing_run
 
 # -------------------------------------------------------------------
@@ -107,6 +107,7 @@ help:
 	@echo "Targets (run one step at a time):"
 	@echo "  make ddpcr                     Run ddPCR workflow (requires env: prnp-somatic-ddpcr)"
 	@echo "  make snv                       Run SNV Stage-12 wrapper (requires env: prnp-somatic)"
+	@echo "  make repeats                   Run PRNP ORR repeat workflow (requires env: prnp-repeats)"
 	@echo "  make junctions                 Run junction workflow (requires env: prnp-junctions)"
 	@echo "  make all                       Run ddpcr + snv + junctions via conda run"
 	@echo "  make check                     Run resource/output integrity checks"
@@ -132,6 +133,10 @@ ddpcr: check_conda
 snv: REQUIRED_CONDA_ENV=prnp-somatic
 snv: check_conda
 	@bash src/pipelines/run_cjd_dilutions_variant_qc_with_pon.sh
+
+repeats: REQUIRED_CONDA_ENV=prnp-repeats
+repeats: check_conda
+	@bash src/repeats/run_prnp_orr.sh
 
 junctions: REQUIRED_CONDA_ENV=prnp-junctions
 junctions: check_conda

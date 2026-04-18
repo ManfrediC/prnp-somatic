@@ -16,6 +16,12 @@ This directory contains Conda environment specifications used by the reproducibl
 - `ddpcr.environment.yml`:
   - dedicated `prnp-somatic-ddpcr` environment specification for the ddPCR workflow (`src/ddPCR`).
 
+- `repeats.environment.yml`:
+  - dedicated `prnp-repeats` environment specification for ExpansionHunter and cohort summarization in the PRNP ORR workflow (`src/repeats`).
+
+- `reviewer.environment.yml`:
+  - dedicated `prnp-reviewer` environment specification for REViewer in the PRNP ORR workflow (`src/repeats`).
+
 ## Usage
 
 Run from repository root.
@@ -46,6 +52,19 @@ Create ddPCR workflow environment:
 ```bash
 conda env create -f env/ddpcr.environment.yml
 conda activate prnp-somatic-ddpcr
+```
+
+Create repeat workflow environment:
+
+```bash
+conda env create -f env/repeats.environment.yml
+conda activate prnp-repeats
+```
+
+Create REViewer environment:
+
+```bash
+conda env create -f env/reviewer.environment.yml
 ```
 
 ## Notes

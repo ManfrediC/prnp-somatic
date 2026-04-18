@@ -23,6 +23,14 @@ Only placeholders and selected manifests are kept in version control.
   - `results/junctions/junction_counts/prnp_junction_counts.tsv`
   - `results/junctions/junction_counts/prnp_junction_summary.tsv`
 
+- Repeat workflow (`bash src/repeats/run_prnp_orr.sh`):
+  - `results/repeats/sample_calls.tsv`
+  - `results/repeats/sample_review.tsv`
+  - `results/repeats/candidate_calls.tsv`
+  - `results/repeats/cohort_summary.tsv`
+  - `results/repeats/raw/expansionhunter/*`
+  - archived superseded runs under `results/repeats/old_runs/*`
+
 - Sequencing QC metrics workflow:
   - `results/qc/<QC_RUN>/sequencing_metrics_per_sample.tsv` (current Makefile path via `make qc_metrics`)
   - producing script: `authoritative_files/compute_sequencing_metrics.py`

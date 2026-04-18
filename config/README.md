@@ -4,6 +4,7 @@ Committed:
 - `preprocessing_samples.tsv` - sample manifest for preprocessing (`batch_id`, `sample_id`, `r1`, `r2`)
 - `preprocessing.env.example` - template for local configuration
 - `junctions.env.example` - template for exon-exon junction workflow configuration
+- `repeats.env.example` - template for PRNP ORR repeat workflow configuration
 
 Not committed (local machine only):
 - `preprocessing.env` - local paths and settings (ignored by `.gitignore`)
@@ -46,6 +47,51 @@ Recommended `VARIANT_QC_OUTPUT_DIR` value:
 Recommended `VARIANT_QC_R_SCRIPT` value:
 
 - `src/pipelines/6_controls_variant_table_qc_no_pon.R`
+
+## Repeat workflow settings
+
+For `src/repeats/run_prnp_orr.sh`, these are the main override variables:
+
+- `REPEAT_BAM_DIR`
+- `REPEAT_RESULTS_ROOT`
+- `REPEAT_REF_FASTA`
+- `PRNP_ORR_BED`
+- `PRNP_EH_CATALOG`
+- `REVIEWER_CONDA_ENV`
+- `PRNP_TOTAL_REFERENCE_REPEATS`
+- `PRNP_VARIABLE_REPEAT_OFFSET`
+- `REPEAT_THREADS`
+- `ORR_MIN_READS`
+- `RUN_REVIEWER`
+- `FORCE`
+- `ARCHIVE_EXISTING_RUN`
+- `ARCHIVE_RUN_LABEL`
+- `EXPECTED_SAMPLE_COUNT`
+
+Recommended values:
+
+- `REPEAT_BAM_DIR="results/final_bam"`
+- `REPEAT_RESULTS_ROOT="results/repeats"`
+- `REPEAT_REF_FASTA="resources/chr2_chr4_chr20.fasta"`
+- `PRNP_ORR_BED="resources/prnp_orr.hg38.bed"`
+- `PRNP_EH_CATALOG="resources/repeats/prnp_orr.expansionhunter.json"`
+- `REVIEWER_CONDA_ENV="prnp-reviewer"`
+- `PRNP_TOTAL_REFERENCE_REPEATS=5`
+- `PRNP_VARIABLE_REPEAT_OFFSET=3`
+- `REPEAT_THREADS=4`
+- `ORR_MIN_READS=10`
+- `RUN_REVIEWER=1`
+- `FORCE=0`
+- `ARCHIVE_EXISTING_RUN=0`
+- `ARCHIVE_RUN_LABEL=""`
+- `EXPECTED_SAMPLE_COUNT=32`
+
+Clean rerun behavior:
+
+- if prior outputs are present in `results/repeats`, the workflow now stops by default instead of mixing runs
+- set `ARCHIVE_EXISTING_RUN=1` to move the current live run outputs into `results/repeats/old_runs/<timestamp>/` before starting a fresh rerun
+- optionally set `ARCHIVE_RUN_LABEL` to control the archive directory name
+- `EXPECTED_SAMPLE_COUNT=32` enforces the current cohort size and helps catch partial manifests or missing BAMs before the long run proceeds
 
 The corresponding index (`.tbi` or `.csi`) must also be present.
 

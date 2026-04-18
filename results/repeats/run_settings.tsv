@@ -1,0 +1,28 @@
+key	value
+created_utc	2026-04-17T23:04:30Z
+config_file	/add/prnp-somatic/config/repeats.env
+config_file_loaded	no
+bam_dir	results/final_bam
+results_root	results/repeats
+reference_fasta	resources/chr2_chr4_chr20.fasta
+prnp_orr_bed	resources/prnp_orr.hg38.bed
+prnp_orr_bed_sha256	4d15e84b9be7b8a1ef6e54fa39ec99accd5f1476ba188a20a54fb545494df297
+eh_catalog	resources/repeats/prnp_orr.expansionhunter.json
+eh_catalog_sha256	67c75b1fccd1c90c10e7fdc2c3d09153f067aa3560c46058bb010ece8b62f942
+repeat_threads	4
+orr_min_reads	10
+run_reviewer	1
+reviewer_conda_env	prnp-reviewer
+reviewer_bin	/home/mcarta/miniconda3/envs/prnp-reviewer/bin/REViewer
+force	0
+archive_existing_run	0
+archive_run_label	not_set
+old_runs_root	results/repeats/old_runs
+expected_sample_count	32
+prnp_total_reference_repeats	5
+prnp_variable_repeat_offset	3
+sample_count	32
+expansionhunter_version	ExpansionHunter v5.0.0
+reviewer_version	REViewer v0.2.7
+samtools_version	samtools 1.22.1
+python_version	Python 3.10.20

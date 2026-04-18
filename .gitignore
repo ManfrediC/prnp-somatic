@@ -5,6 +5,7 @@ Thumbs.db
 *.swo
 .vscode/
 .idea/
+.codex/
 # Python
 __pycache__/
 *.pyc
@@ -81,6 +82,12 @@ data/vcf/
 # global patterns above (e.g. *.bam, *.bai, *.cram, *.vcf, *.fastq, *.pdf, *.png).
 # Allow placeholders to remain tracked
 !data/.gitkeep
+# Repeat workflow keeps summary TSVs in git, but raw caller outputs, reviewer
+# artifacts, logs, and archived runs stay local because they are very large.
+results/repeats/raw/
+results/repeats/review/
+results/repeats/logs/
+results/repeats/old_runs/
 # Logs
 v*.log
 *.log.*
@@ -93,8 +100,9 @@ nohup.out
 /run/
 config/preprocessing.env
 config/junctions.env
-# Personal journal notes
+# Personal journal notes and plans
 doc/journal/
+doc/plans/
 
 # Manuscript workspace (temporarily excluded from version control)
 /manuscript/

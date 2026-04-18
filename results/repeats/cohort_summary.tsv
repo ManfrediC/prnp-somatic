@@ -1,0 +1,11 @@
+group	interpretation	count	total_group_samples	fraction
+cjd	reference	26	26	1.000000
+cjd	candidate_OPRI	0	26	0.000000
+cjd	candidate_OPRD	0	26	0.000000
+cjd	uncertain	0	26	0.000000
+cjd	failed_qc	0	26	0.000000
+control	reference	6	6	1.000000
+control	candidate_OPRI	0	6	0.000000
+control	candidate_OPRD	0	6	0.000000
+control	uncertain	0	6	0.000000
+control	failed_qc	0	6	0.000000

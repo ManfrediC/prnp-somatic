@@ -5,6 +5,7 @@ This repository contains the reproducible analysis workflows used in the *PRNP* 
 - NGS somatic SNV detection (`src/pipelines`): FASTQ preprocessing, Mutect2 calling, post-processing, QC, and final variant tables.
 - ddPCR SNV quantification (`src/ddPCR`): processing of raw droplet exports into long-format and participant-level result tables.
 - PRNP exon-exon junction analysis (`src/junctions`): junction-reference construction, read realignment, and junction-count quantification.
+- PRNP octapeptide repeat region analysis (`src/repeats`): repeat-aware screening of OPRI/OPRD candidates from existing BAMs.
 - Manuscript artifact generation (`manuscript`): scripts that build figures/tables from outputs in `results/`.
 
 The Reproduction Guide below details required inputs, environment setup and expected outputs.
@@ -141,7 +142,28 @@ conda --no-plugins create -n prnp-junctions -c conda-forge -c bioconda -y \
 conda activate prnp-junctions
 ```
 
-### 9. Run junction workflow
+### 9. Create environment for repeat workflow
+
+```bash
+conda env create -f env/repeats.environment.yml
+conda activate prnp-repeats
+conda env create -f env/reviewer.environment.yml
+```
+
+### 10. Run repeat workflow
+
+```bash
+bash src/repeats/run_prnp_orr.sh
+```
+
+Expected outputs:
+
+- `results/repeats/sample_calls.tsv`
+- `results/repeats/sample_review.tsv`
+- `results/repeats/candidate_calls.tsv`
+- `results/repeats/cohort_summary.tsv`
+
+### 11. Run junction workflow
 
 ```bash
 TMPDIR=/tmp TEMP=/tmp TMP=/tmp bash src/junctions/run_junctions.sh
@@ -152,7 +174,7 @@ Expected outputs:
 - `results/junctions/junction_counts/prnp_junction_counts.tsv`
 - `results/junctions/junction_counts/prnp_junction_summary.tsv`
 
-### 10. Verify final outputs
+### 12. Verify final outputs
 
 ```bash
 bash bin/verify_output_checksums.sh --mode check
@@ -184,6 +206,7 @@ Run main workflows:
 
 - `make ddpcr` (requires active env: `prnp-somatic-ddpcr`)
 - `make snv` (requires active env: `prnp-somatic`)
+- `make repeats` (requires active env: `prnp-repeats`)
 - `make junctions` (requires active env: `prnp-junctions`)
 - `make all` (runs ddPCR + SNV + junctions via `conda run`; expects envs `prnp-somatic-ddpcr`, `prnp-somatic`, and `prnp-junctions`)
 
