@@ -4,6 +4,7 @@ resources/capture_targets.interval_list	pipelines	reference	yes	yes	Mutect2 inte
 resources/targets.bed	pipelines	reference	yes	yes	Capture target BED
 resources/prnp_coding.bed	pipelines	annotation	yes	yes	PRNP coding region BED
 resources/prnp_orr.hg38.bed	repeats	reference	yes	yes	Committed PRNP octapeptide repeat region BED for repeat analysis
+resources/repeats/prnp_orr.gangstr.bed	repeats	reference	optional	yes	GangSTR target BED for the mutable PRNP ORR repeat block
 resources/annotations/manual_population_freq.tsv	pipelines	annotation	yes	yes	Manual population frequency table
 resources/chr2_chr4_chr20.fasta	pipelines	reference	yes	yes	Canonical pipeline reference FASTA path
 resources/chr2_chr4_chr20.dict	pipelines	reference	yes	yes	Picard/GATK dictionary for subset FASTA

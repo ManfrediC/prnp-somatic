@@ -20,6 +20,7 @@ Use `resources/INDEX.tsv` as the canonical inventory of resource files, workflow
 - SNV pipeline gnomAD AF-only: `resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz`
 - SNV pipeline manual annotation table: `resources/annotations/manual_population_freq.tsv`
 - Repeat workflow ORR BED: `resources/prnp_orr.hg38.bed`
+- Repeat workflow GangSTR BED: `resources/repeats/prnp_orr.gangstr.bed`
 - SNV pipeline Funcotator datasource root: `resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
 - Junction workflow GTF: `resources/Homo_sapiens.GRCh38.110.gtf.gz`
 - Junction workflow reference FASTA: `resources/hg38.fa`

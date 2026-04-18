@@ -58,6 +58,9 @@ For `src/repeats/run_prnp_orr.sh`, these are the main override variables:
 - `PRNP_ORR_BED`
 - `PRNP_EH_CATALOG`
 - `REVIEWER_CONDA_ENV`
+- `RUN_GANGSTR`
+- `GANGSTR_BIN`
+- `GANGSTR_REGIONS_BED`
 - `PRNP_TOTAL_REFERENCE_REPEATS`
 - `PRNP_VARIABLE_REPEAT_OFFSET`
 - `REPEAT_THREADS`
@@ -76,6 +79,9 @@ Recommended values:
 - `PRNP_ORR_BED="resources/prnp_orr.hg38.bed"`
 - `PRNP_EH_CATALOG="resources/repeats/prnp_orr.expansionhunter.json"`
 - `REVIEWER_CONDA_ENV="prnp-reviewer"`
+- `RUN_GANGSTR=0`
+- `GANGSTR_BIN=""`
+- `GANGSTR_REGIONS_BED="resources/repeats/prnp_orr.gangstr.bed"`
 - `PRNP_TOTAL_REFERENCE_REPEATS=5`
 - `PRNP_VARIABLE_REPEAT_OFFSET=3`
 - `REPEAT_THREADS=4`
@@ -85,6 +91,11 @@ Recommended values:
 - `ARCHIVE_EXISTING_RUN=0`
 - `ARCHIVE_RUN_LABEL=""`
 - `EXPECTED_SAMPLE_COUNT=32`
+
+GangSTR notes:
+
+- when `RUN_GANGSTR=1`, the workflow runs GangSTR in `--targeted --nonuniform` mode as an orthogonal local STR genotyper for the PRNP ORR mutable repeat block
+- leave `GANGSTR_BIN=""` to use `GangSTR` from the active `prnp-repeats` environment, or set an explicit binary path if it is installed elsewhere
 
 Clean rerun behavior:
 

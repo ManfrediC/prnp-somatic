@@ -28,7 +28,11 @@ Only placeholders and selected manifests are kept in version control.
   - `results/repeats/sample_review.tsv`
   - `results/repeats/candidate_calls.tsv`
   - `results/repeats/cohort_summary.tsv`
+  - `results/repeats/subclonal_read_support.tsv`
+  - `results/repeats/gangstr_calls.tsv`
+  - `results/repeats/somatic_screen.tsv`
   - `results/repeats/raw/expansionhunter/*`
+  - `results/repeats/raw/gangstr/*` (only when `RUN_GANGSTR=1`)
   - archived superseded runs under `results/repeats/old_runs/*`
 
 - Sequencing QC metrics workflow:

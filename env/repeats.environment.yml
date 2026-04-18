@@ -5,6 +5,7 @@ channels:
 dependencies:
   - python=3.10
   - expansionhunter=5.0.0
+  - gangstr=2.5.0
   - samtools=1.22
   - bcftools=1.22
   - bedtools=2.31.1

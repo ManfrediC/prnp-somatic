@@ -2177,3 +2177,150 @@ Junction blocker status (updated):
   - `P102L`: `R^2 = 0.999737`
   - combined across all three assays: `R^2 = 0.963004`
 - Updated manuscript documentation in `manuscript/README.md` to describe the LoD calculations workspace and the new `lod_r_squared.R` entrypoint.
+
+## 18.04.2026
+
+### PRNP ORR repeat analysis workflow
+
+- Set up a dedicated PRNP octapeptide repeat region (ORR) workflow for screening OPRI/OPRD from the existing short-read BAM cohort in `results/final_bam`.
+- Added a committed ORR locus definition and repeat catalog:
+  - `resources/prnp_orr.hg38.bed`
+  - `resources/repeats/prnp_orr.expansionhunter.json`
+- Corrected the ORR interval to the repeat-aware locus used by the workflow:
+  - `chr20:4699371-4699493`
+- Refreshed `resources/SHA256SUMS.txt` after the ORR BED update.
+
+### Workflow implementation
+
+- Added the main runner:
+  - `src/repeats/run_prnp_orr.sh`
+- Added Python helpers for cohort summarisation and low-level read-support inspection:
+  - `src/repeats/summarize_prnp_orr.py`
+  - `src/repeats/inspect_prnp_orr_subclonal.py`
+- Added repeat-specific configuration/environment files:
+  - `config/repeats.env.example`
+  - `env/repeats.environment.yml`
+  - `env/reviewer.environment.yml`
+- Added repeat workflow documentation:
+  - `src/repeats/README.md`
+  - updated top-level `README.md`
+  - updated `config/README.md`, `env/README.md`, `results/README.md`
+  - added `make repeats` target to the `Makefile`
+- The workflow design includes guardrails that were missing from earlier ad hoc runs:
+  - live outputs under `results/repeats` are treated as a single coherent run
+  - reruns stop by default instead of mixing files from multiple runs
+  - optional archival of prior live outputs to `results/repeats/old_runs/`
+  - final verification requires complete manifest coverage, per-sample caller outputs, reviewer outputs, and summary tables for the full cohort before reporting success
+
+### Run settings and cohort processed
+
+- Ran the ORR workflow successfully on the current cohort of 32 BAMs:
+  - 26 CJD samples
+  - 6 controls
+- Recorded run provenance in `results/repeats/run_settings.tsv`.
+- Important run settings from the successful run:
+  - `ExpansionHunter v5.0.0`
+  - `REViewer v0.2.7`
+  - `samtools 1.22.1`
+  - `Python 3.10.20`
+  - `REPEAT_THREADS=4`
+  - `ORR_MIN_READS=10`
+  - `EXPECTED_SAMPLE_COUNT=32`
+  - `PRNP_TOTAL_REFERENCE_REPEATS=5`
+  - `PRNP_VARIABLE_REPEAT_OFFSET=3`
+
+### Main outputs generated
+
+- Generated committed cohort outputs under `results/repeats/`:
+  - `sample_manifest.tsv`
+  - `sample_calls.tsv`
+  - `sample_review.tsv`
+  - `candidate_calls.tsv`
+  - `cohort_summary.tsv`
+  - `run_settings.tsv`
+  - `subclonal_read_support.tsv`
+- Generated per-sample repeat-caller/reviewer artifacts under:
+  - `results/repeats/raw/expansionhunter/`
+  - `results/repeats/review/reviewer/`
+  - `results/repeats/logs/`
+
+### Main findings from the current BAM cohort
+
+- ExpansionHunter classified all 32/32 samples as reference-like at the PRNP ORR locus.
+- Cohort summary:
+  - CJD: 26 reference, 0 candidate OPRI, 0 candidate OPRD, 0 uncertain, 0 failed QC
+  - controls: 6 reference, 0 candidate OPRI, 0 candidate OPRD, 0 uncertain, 0 failed QC
+- Therefore, there is currently no clear germline-like non-reference OPRI/OPRD signal in this dataset.
+
+### Low-level / putative somatic signal review
+
+- I added `subclonal_read_support.tsv` to inspect the ExpansionHunter JSON histograms for weak non-reference tails that are not strong enough to change the diploid genotype call.
+- Important conclusion:
+  - low-level expansion-like and contraction-like reads are present in many samples at extremely low fractions, but they are generally far below the range that would support a convincing somatic call from the current data alone
+- Examples from the current output:
+  - `CJD25`: 20 expansion-like spanning reads out of 56,626 spanning reads (`0.035%`)
+  - `CJD4`: 10 expansion-like spanning reads out of 5,307 spanning reads (`0.188%`)
+  - `CJD6`: 9 expansion-like spanning reads out of 24,517 spanning reads (`0.037%`)
+  - `CJD22`: 7 expansion-like spanning reads out of 18,758 spanning reads (`0.037%`)
+  - `CJD27`: 7 expansion-like spanning reads out of 26,645 spanning reads (`0.026%`)
+- Some low-depth samples show larger apparent fractions, but these are driven by very small read counts and are not interpretable as convincing mosaicism:
+  - `CJD31`: 1 expansion-like spanning read out of 81 (`1.2%`)
+  - `CJD28`: 1 expansion-like spanning read out of 243 (`0.4%`)
+  - `CJD30`: 1 expansion-like spanning read out of 400 (`0.25%`)
+- These patterns look more like repeat-region noise / sparse off-reference tails than a clear somatic subclone at 10% or 1%.
+
+### Manual review and visualization
+
+- Generated `REViewer` SVGs, metrics, and phasing tables for all samples to support manual review.
+- Manual review logic for this locus:
+  - start from `subclonal_read_support.tsv`
+  - open the matching `REViewer` SVG
+  - then inspect the original BAM in IGV at `chr20:4699371-4699493` with short flanks
+- Important practical observation:
+  - the BAMs are standard ~151 bp Illumina reads, while the variable PRNP repeat unit is 24 bp
+  - for these data, somatic OPRI/OPRD is better thought of as a minority repeat-length allele within ordinary short reads, not a large above-read-length expansion problem
+- In raw BAM inspection, simple 1 bp indel noise is common across the repeat region, so isolated small indels are not persuasive.
+- A genuinely interesting pattern would be:
+  - multiple reads with the same approximate repeat-sized event
+  - present on both strands if possible
+  - supported by multiple start sites / read families
+  - not restricted to read ends
+- I specifically checked `CJD25` because it had the strongest expansion-like spanning support in the summary table.
+  - found exact `24D` CIGAR reads in the ORR region
+  - however, only 2 such reads were observed among about 173,898 locus-overlapping reads
+  - this is far below a plausible 1% or 10% somatic signal and currently looks more consistent with alignment / repeat noise than real mosaic OPRD
+
+### Published tool review for possible somatic ORR follow-up
+
+- I reviewed candidate published tools in `doc/plans/somatic_ORR_ideas.md` with the current BAM cohort in mind.
+- Main conclusion:
+  - no published tool appears to be specifically validated for detecting somatic PRNP OPRI/OPRD at 1-10% VAF from short-read Illumina BAMs
+- Current best use of tools for this project:
+  - keep `ExpansionHunter + REViewer` as the baseline repeat-aware screen and visualization stack
+  - `TRcaller` could not be used cleanly in this repo/workflow and was not kept as a supported path
+  - `GangSTR` was chosen instead as the orthogonal local repeat-genotyper pilot
+  - `HipSTR` remains only a secondary optional comparator, not the main next step
+- Tools that do not currently look like top priorities for the present BAM-only question:
+  - `exSTRa`
+  - `STRetch`
+  - `ExpansionHunter Denovo`
+  - `RePlow` (would need technical replicates)
+  - `SoloDel`
+  - `INDELseek`
+- Overall interpretation:
+  - the current short-read cohort is suitable for an initial feasibility screen and manual inspection
+  - it is not yet sufficient to claim confident detection of low-level somatic OPRI/OPRD
+
+### Next steps
+
+- If we continue with the current BAM cohort, the most useful next bioinformatics step would be a focused benchmark comparing:
+  - current `ExpansionHunter + REViewer`
+  - `GangSTR`
+  - optional `HipSTR`
+- For manual review, prioritise samples with the strongest current low-level tails:
+  - `CJD25`
+  - `CJD4`
+  - `CJD6`
+  - `CJD22`
+  - `CJD27`
+- If the scientific goal becomes robust 1-10% somatic detection rather than exploratory screening, the most likely requirement will be a future targeted ultra-deep assay with explicit validation rather than relying on the present BAMs alone.

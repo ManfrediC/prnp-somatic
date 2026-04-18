@@ -30,6 +30,9 @@ PRNP_ORR_BED="${PRNP_ORR_BED:-resources/prnp_orr.hg38.bed}"
 PRNP_EH_CATALOG="${PRNP_EH_CATALOG:-resources/repeats/prnp_orr.expansionhunter.json}"
 REVIEWER_CONDA_ENV="${REVIEWER_CONDA_ENV:-}"
 REVIEWER_BIN="${REVIEWER_BIN:-}"
+RUN_GANGSTR="${RUN_GANGSTR:-0}"
+GANGSTR_BIN="${GANGSTR_BIN:-}"
+GANGSTR_REGIONS_BED="${GANGSTR_REGIONS_BED:-resources/repeats/prnp_orr.gangstr.bed}"
 PRNP_TOTAL_REFERENCE_REPEATS="${PRNP_TOTAL_REFERENCE_REPEATS:-5}"
 PRNP_VARIABLE_REPEAT_OFFSET="${PRNP_VARIABLE_REPEAT_OFFSET:-3}"
 REPEAT_THREADS="${REPEAT_THREADS:-4}"
@@ -45,6 +48,7 @@ EXPECTED_SAMPLE_COUNT="${EXPECTED_SAMPLE_COUNT:-32}"
 # ---------------------------------------------------------------------------
 
 RAW_ROOT="${REPEAT_RESULTS_ROOT}/raw/expansionhunter"
+GANGSTR_RAW_ROOT="${REPEAT_RESULTS_ROOT}/raw/gangstr"
 REVIEW_ROOT="${REPEAT_RESULTS_ROOT}/review/reviewer"
 LOG_ROOT="${REPEAT_RESULTS_ROOT}/logs"
 MANIFEST_TSV="${REPEAT_RESULTS_ROOT}/sample_manifest.tsv"
@@ -54,7 +58,13 @@ SAMPLE_CALLS_TSV="${REPEAT_RESULTS_ROOT}/sample_calls.tsv"
 SAMPLE_REVIEW_TSV="${REPEAT_RESULTS_ROOT}/sample_review.tsv"
 CANDIDATE_CALLS_TSV="${REPEAT_RESULTS_ROOT}/candidate_calls.tsv"
 COHORT_SUMMARY_TSV="${REPEAT_RESULTS_ROOT}/cohort_summary.tsv"
+SUBCLONAL_SUPPORT_TSV="${REPEAT_RESULTS_ROOT}/subclonal_read_support.tsv"
+GANGSTR_CALLS_TSV="${REPEAT_RESULTS_ROOT}/gangstr_calls.tsv"
+SOMATIC_SCREEN_TSV="${REPEAT_RESULTS_ROOT}/somatic_screen.tsv"
 SUMMARY_PY="${SCRIPT_DIR}/summarize_prnp_orr.py"
+SUBCLONAL_PY="${SCRIPT_DIR}/inspect_prnp_orr_subclonal.py"
+GANGSTR_SUMMARY_PY="${SCRIPT_DIR}/summarize_gangstr.py"
+SOMATIC_SCREEN_PY="${SCRIPT_DIR}/summarize_somatic_screen.py"
 MANIFEST_TMP=""
 RUN_TARGETS=(
   # These are the files/directories that define the current live repeat run.
@@ -65,7 +75,11 @@ RUN_TARGETS=(
   "$SAMPLE_REVIEW_TSV"
   "$CANDIDATE_CALLS_TSV"
   "$COHORT_SUMMARY_TSV"
+  "$SUBCLONAL_SUPPORT_TSV"
+  "$GANGSTR_CALLS_TSV"
+  "$SOMATIC_SCREEN_TSV"
   "$RAW_ROOT"
+  "$GANGSTR_RAW_ROOT"
   "$REVIEW_ROOT"
   "$LOG_ROOT"
 )
@@ -141,6 +155,12 @@ capture_reviewer_version() {
   printf '%s\n' "unknown"
 }
 
+capture_gangstr_version() {
+  local version_output
+  version_output="$("${GANGSTR_CMD[@]}" --version 2>&1 || true)"
+  printf '%s\n' "$version_output" | head -n 1 || true
+}
+
 require_file() {
   if [[ ! -f "$1" ]]; then
     echo "Required file not found: $1" >&2
@@ -208,8 +228,10 @@ verify_latest_run() {
   local manifest_path="$1"
   local expected_count="$2"
   local manifest_unique_count sample_calls_count sample_review_count
+  local subclonal_count gangstr_count somatic_screen_count
   local sample_id group bam bai orr_reads sample_raw_dir sample_review_dir
   local eh_prefix eh_vcf eh_json eh_realigned_bam review_prefix review_svg
+  local gangstr_prefix gangstr_vcf
   local review_metrics review_phasing
   local failures=()
 
@@ -237,6 +259,8 @@ verify_latest_run() {
     eh_vcf="${eh_prefix}.vcf"
     eh_json="${eh_prefix}.json"
     eh_realigned_bam="${eh_prefix}_realigned.bam"
+    gangstr_prefix="${GANGSTR_RAW_ROOT}/${sample_id}/${sample_id}"
+    gangstr_vcf="${gangstr_prefix}.vcf"
     review_prefix="${sample_review_dir}/${sample_id}.PRNP_ORR"
     review_svg="${review_prefix}.PRNP_ORR.svg"
     review_metrics="${review_prefix}.metrics.tsv"
@@ -262,6 +286,9 @@ verify_latest_run() {
         failures+=("Missing REViewer phasing table for ${sample_id}: ${review_phasing}")
       fi
     fi
+    if [[ "$RUN_GANGSTR" == "1" && ! -f "$gangstr_vcf" ]]; then
+      failures+=("Missing GangSTR VCF for ${sample_id}: ${gangstr_vcf}")
+    fi
   done <"$manifest_path"
 
   # The top-level summary files are what downstream interpretation will consume,
@@ -271,7 +298,10 @@ verify_latest_run() {
     "$SAMPLE_CALLS_TSV" \
     "$SAMPLE_REVIEW_TSV" \
     "$CANDIDATE_CALLS_TSV" \
-    "$COHORT_SUMMARY_TSV"; do
+    "$COHORT_SUMMARY_TSV" \
+    "$SUBCLONAL_SUPPORT_TSV" \
+    "$GANGSTR_CALLS_TSV" \
+    "$SOMATIC_SCREEN_TSV"; do
     if [[ ! -f "$target" ]]; then
       failures+=("Missing summary output: ${target}")
     fi
@@ -297,6 +327,39 @@ verify_latest_run() {
     if [[ "$sample_review_count" -ne "$manifest_unique_count" ]]; then
       failures+=(
         "sample_review.tsv contains ${sample_review_count} unique samples but manifest expects ${manifest_unique_count}."
+      )
+    fi
+  fi
+
+  if [[ -f "$SUBCLONAL_SUPPORT_TSV" ]]; then
+    subclonal_count="$(
+      tail -n +2 "$SUBCLONAL_SUPPORT_TSV" | cut -f1 | LC_ALL=C sort -u | wc -l | awk '{print $1}'
+    )"
+    if [[ "$subclonal_count" -ne "$manifest_unique_count" ]]; then
+      failures+=(
+        "subclonal_read_support.tsv contains ${subclonal_count} unique samples but manifest expects ${manifest_unique_count}."
+      )
+    fi
+  fi
+
+  if [[ -f "$GANGSTR_CALLS_TSV" ]]; then
+    gangstr_count="$(
+      tail -n +2 "$GANGSTR_CALLS_TSV" | cut -f1 | LC_ALL=C sort -u | wc -l | awk '{print $1}'
+    )"
+    if [[ "$gangstr_count" -ne "$manifest_unique_count" ]]; then
+      failures+=(
+        "gangstr_calls.tsv contains ${gangstr_count} unique samples but manifest expects ${manifest_unique_count}."
+      )
+    fi
+  fi
+
+  if [[ -f "$SOMATIC_SCREEN_TSV" ]]; then
+    somatic_screen_count="$(
+      tail -n +2 "$SOMATIC_SCREEN_TSV" | cut -f1 | LC_ALL=C sort -u | wc -l | awk '{print $1}'
+    )"
+    if [[ "$somatic_screen_count" -ne "$manifest_unique_count" ]]; then
+      failures+=(
+        "somatic_screen.tsv contains ${somatic_screen_count} unique samples but manifest expects ${manifest_unique_count}."
       )
     fi
   fi
@@ -353,10 +416,26 @@ require_file "${REPEAT_REF_FASTA}.fai"
 require_file "$PRNP_ORR_BED"
 require_file "$PRNP_EH_CATALOG"
 require_file "$SUMMARY_PY"
+require_file "$SUBCLONAL_PY"
+require_file "$GANGSTR_SUMMARY_PY"
+require_file "$SOMATIC_SCREEN_PY"
 
 if [[ ! -d "$REPEAT_BAM_DIR" ]]; then
   echo "Repeat BAM directory not found: $REPEAT_BAM_DIR" >&2
   exit 1
+fi
+
+GANGSTR_CMD=(GangSTR)
+if [[ "$RUN_GANGSTR" == "1" ]]; then
+  if [[ -n "$GANGSTR_BIN" ]]; then
+    require_file "$GANGSTR_BIN"
+    GANGSTR_CMD=("$GANGSTR_BIN")
+  else
+    require_cmd_with_hint \
+      GangSTR \
+      "Update the repeat environment first: conda env update -f env/repeats.environment.yml"
+  fi
+  require_file "$GANGSTR_REGIONS_BED"
 fi
 
 # ---------------------------------------------------------------------------
@@ -366,6 +445,9 @@ fi
 mkdir -p "$REPEAT_RESULTS_ROOT"
 archive_existing_run
 mkdir -p "$RAW_ROOT" "$REVIEW_ROOT" "$LOG_ROOT"
+if [[ "$RUN_GANGSTR" == "1" ]]; then
+  mkdir -p "$GANGSTR_RAW_ROOT"
+fi
 
 # ---------------------------------------------------------------------------
 # Discover the cohort BAMs that belong to this repeat run
@@ -450,6 +532,9 @@ MANIFEST_TMP=""
   echo -e "run_reviewer\t$RUN_REVIEWER"
   echo -e "reviewer_conda_env\t$REVIEWER_CONDA_ENV"
   echo -e "reviewer_bin\t$REVIEWER_BIN"
+  echo -e "run_gangstr\t$RUN_GANGSTR"
+  echo -e "gangstr_bin\t${GANGSTR_BIN:-GangSTR}"
+  echo -e "gangstr_regions_bed\t$GANGSTR_REGIONS_BED"
   echo -e "force\t$FORCE"
   echo -e "archive_existing_run\t$ARCHIVE_EXISTING_RUN"
   echo -e "archive_run_label\t${ARCHIVE_RUN_LABEL:-not_set}"
@@ -461,6 +546,9 @@ MANIFEST_TMP=""
   echo -e "expansionhunter_version\t$(capture_expansionhunter_version || echo unknown)"
   if [[ "$RUN_REVIEWER" == "1" ]]; then
     echo -e "reviewer_version\t$(capture_reviewer_version)"
+  fi
+  if [[ "$RUN_GANGSTR" == "1" ]]; then
+    echo -e "gangstr_version\t$(capture_gangstr_version)"
   fi
   echo -e "samtools_version\t$(samtools --version | head -n 1)"
   echo -e "python_version\t$(python --version 2>&1)"
@@ -552,6 +640,29 @@ while IFS=$'\t' read -r SAMPLE_ID GROUP BAM BAI ORR_READS <&3; do
         2>"${LOG_ROOT}/${SAMPLE_ID}.reviewer.stderr.log"
     fi
   fi
+
+  if [[ "$RUN_GANGSTR" == "1" ]]; then
+    SAMPLE_GANGSTR_DIR="${GANGSTR_RAW_ROOT}/${SAMPLE_ID}"
+    mkdir -p "$SAMPLE_GANGSTR_DIR"
+    GANGSTR_PREFIX="${SAMPLE_GANGSTR_DIR}/${SAMPLE_ID}"
+    GANGSTR_VCF="${GANGSTR_PREFIX}.vcf"
+
+    if [[ "$FORCE" != "1" && -f "$GANGSTR_VCF" ]]; then
+      echo "Skipping GangSTR for $SAMPLE_ID (outputs exist)."
+    else
+      echo "Running GangSTR for $SAMPLE_ID"
+      "${GANGSTR_CMD[@]}" \
+        --bam "$BAM" \
+        --ref "$REPEAT_REF_FASTA" \
+        --regions "$GANGSTR_REGIONS_BED" \
+        --out "$GANGSTR_PREFIX" \
+        --targeted \
+        --nonuniform \
+        </dev/null \
+        >"${LOG_ROOT}/${SAMPLE_ID}.gangstr.stdout.log" \
+        2>"${LOG_ROOT}/${SAMPLE_ID}.gangstr.stderr.log"
+    fi
+  fi
 done 3<"$MANIFEST_TSV"
 
 # ---------------------------------------------------------------------------
@@ -564,6 +675,20 @@ python "$SUMMARY_PY" \
   --reference-total-repeats "$PRNP_TOTAL_REFERENCE_REPEATS" \
   --variable-repeat-offset "$PRNP_VARIABLE_REPEAT_OFFSET" \
   --reviewer-enabled "$RUN_REVIEWER"
+
+python "$SUBCLONAL_PY" \
+  --sample-calls "$SAMPLE_CALLS_TSV" \
+  --output "$SUBCLONAL_SUPPORT_TSV"
+
+python "$GANGSTR_SUMMARY_PY" \
+  --manifest "$MANIFEST_TSV" \
+  --results-root "$REPEAT_RESULTS_ROOT" \
+  --reference-total-repeats "$PRNP_TOTAL_REFERENCE_REPEATS" \
+  --variable-repeat-offset "$PRNP_VARIABLE_REPEAT_OFFSET" \
+  --gangstr-enabled "$RUN_GANGSTR"
+
+python "$SOMATIC_SCREEN_PY" \
+  --results-root "$REPEAT_RESULTS_ROOT"
 
 verify_latest_run "$MANIFEST_TSV" "$SAMPLE_COUNT"
 

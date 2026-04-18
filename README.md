@@ -162,6 +162,9 @@ Expected outputs:
 - `results/repeats/sample_review.tsv`
 - `results/repeats/candidate_calls.tsv`
 - `results/repeats/cohort_summary.tsv`
+- `results/repeats/subclonal_read_support.tsv`
+- `results/repeats/gangstr_calls.tsv`
+- `results/repeats/somatic_screen.tsv`
 
 ### 11. Run junction workflow
 
