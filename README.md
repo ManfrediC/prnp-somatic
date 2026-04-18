@@ -165,6 +165,44 @@ Expected outputs:
 - `results/repeats/subclonal_read_support.tsv`
 - `results/repeats/gangstr_calls.tsv`
 - `results/repeats/somatic_screen.tsv`
+- `results/repeats/run_settings.tsv`
+
+Optional one-sample manual mosaic review:
+
+```bash
+python src/repeats/manual_mosaic_prnp_orr.py \
+  --bam results/final_bam/CJD1.bam \
+  --reference-fasta resources/chr2_chr4_chr20.fasta \
+  --output-prefix results/repeats/manual/CJD1 \
+  --sample-calls-tsv results/repeats/sample_calls.tsv \
+  --gangstr-calls-tsv results/repeats/gangstr_calls.tsv
+```
+
+This writes `results/repeats/manual/CJD1.reads.tsv` and
+`results/repeats/manual/CJD1.summary.tsv`.
+
+For control-first cohort calibration:
+
+```bash
+make repeats_manual_controls
+make repeats_manual_cjd
+```
+
+These write cohort summaries plus per-sample review TSVs under
+`results/repeats/manual_cohort/controls/` and
+`results/repeats/manual_cohort/cjd/`.
+
+To apply the default background-aware post-processing filter to the CJD cohort:
+
+```bash
+make repeats_manual_filter_cjd
+```
+
+This writes:
+
+- `results/repeats/manual_cohort/cjd/filtered/default.annotated.tsv`
+- `results/repeats/manual_cohort/cjd/filtered/default.candidates.tsv`
+- `results/repeats/manual_cohort/cjd/filtered/default.overview.tsv`
 
 ### 11. Run junction workflow
 
@@ -210,6 +248,9 @@ Run main workflows:
 - `make ddpcr` (requires active env: `prnp-somatic-ddpcr`)
 - `make snv` (requires active env: `prnp-somatic`)
 - `make repeats` (requires active env: `prnp-repeats`)
+- `make repeats_manual_controls` (requires active env: `prnp-repeats`)
+- `make repeats_manual_cjd` (requires active env: `prnp-repeats`)
+- `make repeats_manual_filter_cjd` (requires active env: `prnp-repeats`)
 - `make junctions` (requires active env: `prnp-junctions`)
 - `make all` (runs ddPCR + SNV + junctions via `conda run`; expects envs `prnp-somatic-ddpcr`, `prnp-somatic`, and `prnp-junctions`)
 

@@ -108,6 +108,9 @@ help:
 	@echo "  make ddpcr                     Run ddPCR workflow (requires env: prnp-somatic-ddpcr)"
 	@echo "  make snv                       Run SNV Stage-12 wrapper (requires env: prnp-somatic)"
 	@echo "  make repeats                   Run PRNP ORR repeat workflow (requires env: prnp-repeats)"
+	@echo "  make repeats_manual_controls   Run manual PRNP ORR mosaic review on controls"
+	@echo "  make repeats_manual_cjd        Run manual PRNP ORR mosaic review on CJD samples"
+	@echo "  make repeats_manual_filter_cjd Filter CJD manual review summary against controls"
 	@echo "  make junctions                 Run junction workflow (requires env: prnp-junctions)"
 	@echo "  make all                       Run ddpcr + snv + junctions via conda run"
 	@echo "  make check                     Run resource/output integrity checks"
@@ -137,6 +140,22 @@ snv: check_conda
 repeats: REQUIRED_CONDA_ENV=prnp-repeats
 repeats: check_conda
 	@bash src/repeats/run_prnp_orr.sh
+
+repeats_manual_controls: REQUIRED_CONDA_ENV=prnp-repeats
+repeats_manual_controls: check_conda
+	@python src/repeats/run_manual_mosaic_prnp_orr_cohort.py --cohort controls
+
+repeats_manual_cjd: REQUIRED_CONDA_ENV=prnp-repeats
+repeats_manual_cjd: check_conda
+	@python src/repeats/run_manual_mosaic_prnp_orr_cohort.py --cohort cjd
+
+repeats_manual_filter_cjd: REQUIRED_CONDA_ENV=prnp-repeats
+repeats_manual_filter_cjd: check_conda
+	@python src/repeats/filter_manual_mosaic_prnp_orr_cohort.py \
+		--input-summary results/repeats/manual_cohort/cjd/cohort_summary.tsv \
+		--background-summary results/repeats/manual_cohort/controls/cohort_summary.tsv \
+		--require-background-exceedance \
+		--output-prefix results/repeats/manual_cohort/cjd/filtered/default
 
 junctions: REQUIRED_CONDA_ENV=prnp-junctions
 junctions: check_conda

@@ -9,6 +9,7 @@ Committed:
 Not committed (local machine only):
 - `preprocessing.env` - local paths and settings (ignored by `.gitignore`)
 - `junctions.env` - local paths and settings for `src/junctions/*` scripts
+- `repeats.env` - local paths and runtime settings for `src/repeats/*`
 
 Rationale: `preprocessing.env` may include machine-specific paths and runtime settings; large data directories (`fastq/`, `runs/`, `results/final_bam/`) are intentionally not committed.
 
@@ -61,6 +62,10 @@ For `src/repeats/run_prnp_orr.sh`, these are the main override variables:
 - `RUN_GANGSTR`
 - `GANGSTR_BIN`
 - `GANGSTR_REGIONS_BED`
+- `GANGSTR_READLENGTH`
+- `GANGSTR_INSERTMEAN`
+- `GANGSTR_INSERTSDEV`
+- `GANGSTR_MAX_PROC_READ`
 - `PRNP_TOTAL_REFERENCE_REPEATS`
 - `PRNP_VARIABLE_REPEAT_OFFSET`
 - `REPEAT_THREADS`
@@ -82,6 +87,10 @@ Recommended values:
 - `RUN_GANGSTR=0`
 - `GANGSTR_BIN=""`
 - `GANGSTR_REGIONS_BED="resources/repeats/prnp_orr.gangstr.bed"`
+- `GANGSTR_READLENGTH=""`
+- `GANGSTR_INSERTMEAN=""`
+- `GANGSTR_INSERTSDEV=""`
+- `GANGSTR_MAX_PROC_READ=1000000`
 - `PRNP_TOTAL_REFERENCE_REPEATS=5`
 - `PRNP_VARIABLE_REPEAT_OFFSET=3`
 - `REPEAT_THREADS=4`
@@ -96,6 +105,8 @@ GangSTR notes:
 
 - when `RUN_GANGSTR=1`, the workflow runs GangSTR in `--targeted --nonuniform` mode as an orthogonal local STR genotyper for the PRNP ORR mutable repeat block
 - leave `GANGSTR_BIN=""` to use `GangSTR` from the active `prnp-repeats` environment, or set an explicit binary path if it is installed elsewhere
+- leave `GANGSTR_READLENGTH`, `GANGSTR_INSERTMEAN`, and `GANGSTR_INSERTSDEV` empty to auto-estimate them from each BAM at runtime, or set explicit values if you need to override that behavior
+- `GANGSTR_MAX_PROC_READ` is passed through to GangSTR to cap how many reads it evaluates per sample
 
 Clean rerun behavior:
 
@@ -103,6 +114,21 @@ Clean rerun behavior:
 - set `ARCHIVE_EXISTING_RUN=1` to move the current live run outputs into `results/repeats/old_runs/<timestamp>/` before starting a fresh rerun
 - optionally set `ARCHIVE_RUN_LABEL` to control the archive directory name
 - `EXPECTED_SAMPLE_COUNT=32` enforces the current cohort size and helps catch partial manifests or missing BAMs before the long run proceeds
+
+Manual mosaic review helpers:
+
+- `src/repeats/manual_mosaic_prnp_orr.py`
+- `src/repeats/run_manual_mosaic_prnp_orr_cohort.py`
+- `src/repeats/filter_manual_mosaic_prnp_orr_cohort.py`
+
+These do not read `config/repeats.env`; they take their thresholds and paths from
+CLI arguments. By default they reuse:
+
+- `results/final_bam`
+- `resources/chr2_chr4_chr20.fasta`
+- `resources/repeats/prnp_orr_manual_panel.tsv`
+- `results/repeats/sample_calls.tsv`
+- `results/repeats/gangstr_calls.tsv`
 
 The corresponding index (`.tbi` or `.csi`) must also be present.
 

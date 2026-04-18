@@ -9,6 +9,12 @@ workflows in this repository.
   ExpansionHunter variant catalog for the PRNP octapeptide repeat region.
 - `prnp_orr.gangstr.bed`
   GangSTR target-locus BED for the mutable middle PRNP ORR repeat block.
+- `prnp_orr_manual_panel.tsv`
+  Local synthetic allele panel for manual PRNP ORR mosaic review. This
+  includes exact published human block architectures where available, plus
+  clearly labeled representative copy-number models for published 1-OPRI and
+  3-OPRI cases whose exact block order was not accessible in browsable primary
+  text.
 
 ## Notes
 
@@ -18,3 +24,9 @@ workflows in this repository.
   OPRD candidates from the existing BAMs in `results/final_bam`.
 - The GangSTR BED targets only the mutable `R2` block, which is `2` reference
   copies of the canonical `24 bp` repeat motif in the hg38 PRNP ORR sequence.
+- `prnp_orr_manual_panel.tsv` is consumed by
+  `src/repeats/manual_mosaic_prnp_orr.py` and
+  `src/repeats/run_manual_mosaic_prnp_orr_cohort.py`.
+- The manual panel `evidence_tier` column distinguishes exact published human
+  architectures from explicit representative copy-number models used only for
+  conservative synthetic rescoring.

@@ -2324,3 +2324,112 @@ Junction blocker status (updated):
   - `CJD22`
   - `CJD27`
 - If the scientific goal becomes robust 1-10% somatic detection rather than exploratory screening, the most likely requirement will be a future targeted ultra-deep assay with explicit validation rather than relying on the present BAMs alone.
+
+## 19.04.2026
+
+### PRNP ORR workflow follow-up
+
+- Extended the main repeat runner `src/repeats/run_prnp_orr.sh` so GangSTR can
+  use either user-supplied library parameters or sample-specific estimates
+  derived from each BAM:
+  - `GANGSTR_READLENGTH`
+  - `GANGSTR_INSERTMEAN`
+  - `GANGSTR_INSERTSDEV`
+  - `GANGSTR_MAX_PROC_READ`
+- Recorded these GangSTR settings in `results/repeats/run_settings.tsv` so the
+  live repeat output now captures the exact orthogonal-caller configuration used
+  for the current run.
+
+### GangSTR rerun and orthogonal screen result
+
+- Reran the live PRNP ORR workflow with GangSTR enabled and with archival of the
+  previous live output before rerun.
+- Generated populated GangSTR summary outputs in:
+  - `results/repeats/gangstr_calls.tsv`
+  - `results/repeats/somatic_screen.tsv`
+- Main orthogonal result:
+  - GangSTR remained `reference` for all 32/32 samples at the PRNP ORR locus.
+  - Only two samples showed any enclosing-read deviation from the reference
+    repeat count:
+    - `CJD6`: 2 enclosing reads with non-reference repeat count
+    - `Ctrl5`: 2 enclosing reads with non-reference repeat count
+- Interpretation:
+  - these very sparse GangSTR deviations are not CJD-specific and currently look
+    more like weak repeat-region background than convincing somatic OPRI/OPRD.
+
+### Manual mosaic review tooling
+
+- Added a one-sample conservative manual review helper:
+  - `src/repeats/manual_mosaic_prnp_orr.py`
+- Added a cohort wrapper that runs the one-sample helper across controls and/or
+  CJD samples and writes sortable cohort-level summaries:
+  - `src/repeats/run_manual_mosaic_prnp_orr_cohort.py`
+- Added a committed synthetic allele panel for manual rescoring:
+  - `resources/repeats/prnp_orr_manual_panel.tsv`
+- The manual helper design is intentionally conservative:
+  - only primary mapped reads are kept
+  - high-confidence block-level interpretation requires two-sided anchoring
+  - one-sided indel / soft-clip reads are retained as weak evidence only
+  - synthetic rescoring is local and auditable, not a full-BAM remap
+
+### Manual cohort calibration results
+
+- Ran the manual mosaic cohort helper on the full repeat cohort:
+  - controls: `results/repeats/manual_cohort/controls/`
+  - CJD: `results/repeats/manual_cohort/cjd/`
+- Control cohort overview:
+  - 6 samples total
+  - priority counts: `background:3, low:3`
+  - 3 samples with exact nonreference reads
+  - 2 samples with synthetic high/medium-confidence nonreference support
+- CJD cohort overview:
+  - 26 samples total
+  - priority counts: `background:12, low:14`
+  - 13 samples with exact nonreference reads
+  - 1 sample with synthetic high/medium-confidence nonreference support
+- Important pattern from the raw cohort summaries:
+  - the top CJD outliers (`CJD6`, `CJD25`, `CJD27`) do exceed controls on raw
+    exact-read count, but they remain single-strand deletion-dominated signals
+    rather than persuasive mosaic OPRI/OPRD candidates.
+  - recurrent exact nonreference events are mostly `D1` with occasional `D24`,
+    matching the same general artifact class seen in controls.
+
+### Transparent post-processing filter
+
+- Added an auditable post-processing filter layer:
+  - `src/repeats/filter_manual_mosaic_prnp_orr_cohort.py`
+- This filter keeps the raw cohort summary unchanged and writes:
+  - `default.annotated.tsv`
+  - `default.candidates.tsv`
+  - `default.overview.tsv`
+  under `results/repeats/manual_cohort/cjd/filtered/`
+- Ran the default control-aware filter against the current CJD cohort using the
+  controls as background maxima.
+- Result:
+  - `26/26` CJD samples failed the default filter
+  - `results/repeats/manual_cohort/cjd/filtered/default.candidates.tsv` is
+    header-only
+- Main fail reasons in the overview table:
+  - `below_min_signal:17`
+  - `does_not_exceed_background:23`
+  - `fails_bidirectional_support:13`
+  - `fails_unique_start_sites:4`
+  - `too_many_one_sided_suspicious_reads:5`
+- Overall interpretation:
+  - after explicit control-aware filtering, there are still no convincing
+    somatic OPRI/OPRD candidates in the current short-read CJD cohort.
+
+### Documentation and maintainability
+
+- Updated the repeat-workflow READMEs so the current workflow now documents:
+  - the GangSTR auto-parameter settings
+  - the manual one-sample review helper
+  - the control/CJD cohort wrapper
+  - the post-processing filter step
+  - the new `make` targets for these repeat tasks
+- Added explanatory comments to the repeat scripts in the same sectioned style
+  already used by the main repeat summarizers, especially around:
+  - read anchoring and CIGAR interpretation
+  - panel scoring and synthetic rescoring
+  - cohort aggregation and priority ranking
+  - filter pass/fail logic

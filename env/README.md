@@ -17,7 +17,7 @@ This directory contains Conda environment specifications used by the reproducibl
   - dedicated `prnp-somatic-ddpcr` environment specification for the ddPCR workflow (`src/ddPCR`).
 
 - `repeats.environment.yml`:
-  - dedicated `prnp-repeats` environment specification for ExpansionHunter, GangSTR, and cohort summarization in the PRNP ORR workflow (`src/repeats`).
+  - dedicated `prnp-repeats` environment specification for ExpansionHunter, GangSTR, manual mosaic review, cohort summarization, and cohort filtering in the PRNP ORR workflow (`src/repeats`).
 
 - `reviewer.environment.yml`:
   - dedicated `prnp-reviewer` environment specification for REViewer in the PRNP ORR workflow (`src/repeats`).

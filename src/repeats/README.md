@@ -63,6 +63,103 @@ bash src/repeats/run_prnp_orr.sh
 - `results/repeats/logs/`
 - `results/repeats/old_runs/`
 
+## Manual Mosaic Review
+
+For one-sample manual review of possible low-level somatic OPRI/OPRD evidence
+from the existing alignment, use:
+
+```bash
+conda activate prnp-repeats
+python src/repeats/manual_mosaic_prnp_orr.py \
+  --bam results/final_bam/CJD1.bam \
+  --reference-fasta resources/chr2_chr4_chr20.fasta \
+  --output-prefix results/repeats/manual/CJD1 \
+  --sample-calls-tsv results/repeats/sample_calls.tsv \
+  --gangstr-calls-tsv results/repeats/gangstr_calls.tsv
+```
+
+This writes:
+
+- `results/repeats/manual/<sample>.reads.tsv`
+- `results/repeats/manual/<sample>.summary.tsv`
+
+The helper stays conservative:
+
+- only primary, mapped reads are inspected
+- two-sided anchor support is required for high-confidence block-level calls
+- one-sided reads are retained as lower-confidence manual-review evidence
+- the synthetic panel is a local rescoring step over extracted PRNP ORR
+  sequences, not a full BAM remap
+- by default, only exact two-sided reads with non-reference length or nearby
+  indel/soft-clip evidence are remapped to synthetic contigs; set
+  `--synthetic-remap-mode all_two_sided_exact` for a broader comparison pass
+
+Panel definitions live in `resources/repeats/prnp_orr_manual_panel.tsv`.
+Where a browsable primary source gave an exact human block-level architecture,
+the panel marks it as `published_exact`; where only the published copy number
+was available, the panel uses an explicit `representative_copy_number` model.
+
+For control-first cohort calibration:
+
+```bash
+conda activate prnp-repeats
+python src/repeats/run_manual_mosaic_prnp_orr_cohort.py --cohort controls
+python src/repeats/run_manual_mosaic_prnp_orr_cohort.py --cohort cjd
+```
+
+This writes:
+
+- `results/repeats/manual_cohort/controls/cohort_summary.tsv`
+- `results/repeats/manual_cohort/controls/cohort_overview.tsv`
+- `results/repeats/manual_cohort/controls/samples/<sample>.reads.tsv`
+- `results/repeats/manual_cohort/controls/samples/<sample>.summary.tsv`
+- `results/repeats/manual_cohort/cjd/cohort_summary.tsv`
+- `results/repeats/manual_cohort/cjd/cohort_overview.tsv`
+- `results/repeats/manual_cohort/cjd/samples/<sample>.reads.tsv`
+- `results/repeats/manual_cohort/cjd/samples/<sample>.summary.tsv`
+
+The cohort summary adds sortable per-sample metrics such as:
+
+- exact two-sided nonreference-read count
+- plus/minus strand split and unique start-site count
+- top recurring indel pattern among exact nonreference reads
+- synthetic-remap nonreference count
+- manual review priority (`background`, `low`, `medium`, `high`)
+
+To apply a transparent post-processing filter to the CJD cohort after the
+control background is available:
+
+```bash
+conda activate prnp-repeats
+python src/repeats/filter_manual_mosaic_prnp_orr_cohort.py \
+  --input-summary results/repeats/manual_cohort/cjd/cohort_summary.tsv \
+  --background-summary results/repeats/manual_cohort/controls/cohort_summary.tsv \
+  --require-background-exceedance \
+  --output-prefix results/repeats/manual_cohort/cjd/filtered/default
+```
+
+This keeps the raw cohort summary unchanged and writes:
+
+- `results/repeats/manual_cohort/cjd/filtered/default.annotated.tsv`
+- `results/repeats/manual_cohort/cjd/filtered/default.candidates.tsv`
+- `results/repeats/manual_cohort/cjd/filtered/default.overview.tsv`
+
+The default filter is intentionally explicit and auditable:
+
+- minimum signal from exact or synthetic nonreference reads
+- bidirectional support for exact nonreference reads
+- minimum unique start-site count for exact nonreference reads
+- cap on one-sided indel/soft-clip burden
+- optional requirement that a CJD sample exceed control maxima on selected metrics
+
+Convenience wrappers are available from repository root:
+
+```bash
+make repeats_manual_controls
+make repeats_manual_cjd
+make repeats_manual_filter_cjd
+```
+
 ## Guardrails
 
 - Existing live outputs are never mixed into a new run.

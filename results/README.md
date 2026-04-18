@@ -31,9 +31,13 @@ Only placeholders and selected manifests are kept in version control.
   - `results/repeats/subclonal_read_support.tsv`
   - `results/repeats/gangstr_calls.tsv`
   - `results/repeats/somatic_screen.tsv`
+  - `results/repeats/run_settings.tsv`
   - `results/repeats/raw/expansionhunter/*`
   - `results/repeats/raw/gangstr/*` (only when `RUN_GANGSTR=1`)
   - archived superseded runs under `results/repeats/old_runs/*`
+  - optional one-sample manual review outputs under `results/repeats/manual/*`
+  - optional control/CJD cohort calibration outputs under `results/repeats/manual_cohort/*`
+  - optional filtered CJD manual-review outputs under `results/repeats/manual_cohort/cjd/filtered/*`
 
 - Sequencing QC metrics workflow:
   - `results/qc/<QC_RUN>/sequencing_metrics_per_sample.tsv` (current Makefile path via `make qc_metrics`)
