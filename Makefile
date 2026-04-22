@@ -2,6 +2,11 @@ SHELL := /bin/bash
 .ONESHELL:
 REQUIRED_CONDA_ENV ?= prnp-somatic
 CONDA_BIN ?= conda
+PYTHON := $(shell if command -v python3 >/dev/null 2>&1; then echo python3; elif command -v python >/dev/null 2>&1; then echo python; fi)
+
+ifeq ($(strip $(PYTHON)),)
+  $(error Neither python3 nor python is available on PATH. Install a Python interpreter and retry.)
+endif
 
 .SHELLFLAGS := -eu -o pipefail -c
 
@@ -139,19 +144,19 @@ snv: check_conda
 
 repeats: REQUIRED_CONDA_ENV=prnp-repeats
 repeats: check_conda
-	@bash src/repeats/run_prnp_orr.sh
+	@bash src/repeats/01_run_prnp_orr.sh
 
 repeats_manual_controls: REQUIRED_CONDA_ENV=prnp-repeats
 repeats_manual_controls: check_conda
-	@python src/repeats/run_manual_mosaic_prnp_orr_cohort.py --cohort controls
+	@$(PYTHON) src/repeats/07_run_manual_mosaic_prnp_orr_cohort.py --cohort controls
 
 repeats_manual_cjd: REQUIRED_CONDA_ENV=prnp-repeats
 repeats_manual_cjd: check_conda
-	@python src/repeats/run_manual_mosaic_prnp_orr_cohort.py --cohort cjd
+	@$(PYTHON) src/repeats/07_run_manual_mosaic_prnp_orr_cohort.py --cohort cjd
 
 repeats_manual_filter_cjd: REQUIRED_CONDA_ENV=prnp-repeats
 repeats_manual_filter_cjd: check_conda
-	@python src/repeats/filter_manual_mosaic_prnp_orr_cohort.py \
+	@$(PYTHON) src/repeats/08_filter_manual_mosaic_prnp_orr_cohort.py \
 		--input-summary results/repeats/manual_cohort/cjd/cohort_summary.tsv \
 		--background-summary results/repeats/manual_cohort/controls/cohort_summary.tsv \
 		--require-background-exceedance \
@@ -190,7 +195,7 @@ qc_metrics: qc_validate
 	echo "== compute_sequencing_metrics =="
 	echo "TSV: $(QC_METRICS_TSV)"
 	echo "STDERR: $(QC_METRICS_ERR)"
-	python "$(METRICS_SCRIPT)" \
+	$(PYTHON) "$(METRICS_SCRIPT)" \
 	  > "$(QC_METRICS_TSV)" \
 	  2> >(tee "$(QC_METRICS_ERR)" >&2)
 	test -s "$(QC_METRICS_TSV)"

@@ -19,7 +19,7 @@ From repository root:
 
 ```bash
 conda activate prnp-repeats
-bash src/repeats/run_prnp_orr.sh
+bash src/repeats/01_run_prnp_orr.sh
 ```
 
 If `REViewer` is installed in its own environment, set
@@ -35,7 +35,7 @@ Optional local overrides:
 
 ```bash
 cp config/repeats.env.example config/repeats.env
-bash src/repeats/run_prnp_orr.sh
+bash src/repeats/01_run_prnp_orr.sh
 ```
 
 For a clean rerun that archives the current live outputs first:
@@ -43,7 +43,7 @@ For a clean rerun that archives the current live outputs first:
 ```bash
 cp config/repeats.env.example config/repeats.env
 printf 'ARCHIVE_EXISTING_RUN=1\nARCHIVE_RUN_LABEL="pre_rerun_2026-04-18"\n' >> config/repeats.env
-bash src/repeats/run_prnp_orr.sh
+bash src/repeats/01_run_prnp_orr.sh
 ```
 
 ## Outputs
@@ -89,7 +89,7 @@ from the existing alignment, use:
 
 ```bash
 conda activate prnp-repeats
-python src/repeats/manual_mosaic_prnp_orr.py \
+python3 src/repeats/06_manual_mosaic_prnp_orr.py \
   --bam results/final_bam/CJD1.bam \
   --reference-fasta resources/chr2_chr4_chr20.fasta \
   --output-prefix results/repeats/manual/CJD1 \
@@ -122,8 +122,8 @@ For control-first cohort calibration:
 
 ```bash
 conda activate prnp-repeats
-python src/repeats/run_manual_mosaic_prnp_orr_cohort.py --cohort controls
-python src/repeats/run_manual_mosaic_prnp_orr_cohort.py --cohort cjd
+python3 src/repeats/07_run_manual_mosaic_prnp_orr_cohort.py --cohort controls
+python3 src/repeats/07_run_manual_mosaic_prnp_orr_cohort.py --cohort cjd
 ```
 
 This writes:
@@ -150,7 +150,7 @@ control background is available:
 
 ```bash
 conda activate prnp-repeats
-python src/repeats/filter_manual_mosaic_prnp_orr_cohort.py \
+python3 src/repeats/08_filter_manual_mosaic_prnp_orr_cohort.py \
   --input-summary results/repeats/manual_cohort/cjd/cohort_summary.tsv \
   --background-summary results/repeats/manual_cohort/controls/cohort_summary.tsv \
   --require-background-exceedance \

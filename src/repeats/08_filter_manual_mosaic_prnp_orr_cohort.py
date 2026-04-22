@@ -24,7 +24,7 @@ def parse_args() -> argparse.Namespace:
         "--input-summary",
         required=True,
         type=Path,
-        help="Input cohort_summary.tsv from run_manual_mosaic_prnp_orr_cohort.py.",
+        help="Input cohort_summary.tsv from 07_run_manual_mosaic_prnp_orr_cohort.py.",
     )
     parser.add_argument(
         "--output-prefix",

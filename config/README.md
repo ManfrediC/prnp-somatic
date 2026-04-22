@@ -51,7 +51,7 @@ Recommended `VARIANT_QC_R_SCRIPT` value:
 
 ## Repeat workflow settings
 
-For `src/repeats/run_prnp_orr.sh`, these are the main override variables:
+For `src/repeats/01_run_prnp_orr.sh`, these are the main override variables:
 
 - `REPEAT_BAM_DIR`
 - `REPEAT_RESULTS_ROOT`
@@ -117,9 +117,9 @@ Clean rerun behavior:
 
 Manual mosaic review helpers:
 
-- `src/repeats/manual_mosaic_prnp_orr.py`
-- `src/repeats/run_manual_mosaic_prnp_orr_cohort.py`
-- `src/repeats/filter_manual_mosaic_prnp_orr_cohort.py`
+- `src/repeats/06_manual_mosaic_prnp_orr.py`
+- `src/repeats/07_run_manual_mosaic_prnp_orr_cohort.py`
+- `src/repeats/08_filter_manual_mosaic_prnp_orr_cohort.py`
 
 These do not read `config/repeats.env`; they take their thresholds and paths from
 CLI arguments. By default they reuse:

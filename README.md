@@ -168,7 +168,7 @@ Main cohort run:
 
 ```bash
 conda activate prnp-repeats
-bash src/repeats/run_prnp_orr.sh
+bash src/repeats/01_run_prnp_orr.sh
 ```
 
 If you are rerunning into an existing `results/repeats/` directory, set
@@ -190,7 +190,7 @@ Optional one-sample manual mosaic review:
 
 ```bash
 conda activate prnp-repeats
-python src/repeats/manual_mosaic_prnp_orr.py \
+python3 src/repeats/06_manual_mosaic_prnp_orr.py \
   --bam results/final_bam/CJD1.bam \
   --reference-fasta resources/chr2_chr4_chr20.fasta \
   --output-prefix results/repeats/manual/CJD1 \

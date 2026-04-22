@@ -36,7 +36,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--manual-script",
-        default=Path("src/repeats/manual_mosaic_prnp_orr.py"),
+        default=Path("src/repeats/06_manual_mosaic_prnp_orr.py"),
         type=Path,
         help="One-sample manual review script to execute.",
     )

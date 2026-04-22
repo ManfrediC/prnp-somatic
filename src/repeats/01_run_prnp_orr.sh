@@ -48,6 +48,14 @@ FORCE="${FORCE:-0}"
 ARCHIVE_EXISTING_RUN="${ARCHIVE_EXISTING_RUN:-0}"
 ARCHIVE_RUN_LABEL="${ARCHIVE_RUN_LABEL:-}"
 EXPECTED_SAMPLE_COUNT="${EXPECTED_SAMPLE_COUNT:-32}"
+REPEAT_BAM_DIR="$(normalize_path_setting "$REPEAT_BAM_DIR")"
+REPEAT_RESULTS_ROOT="$(normalize_path_setting "$REPEAT_RESULTS_ROOT")"
+REPEAT_REF_FASTA="$(normalize_path_setting "$REPEAT_REF_FASTA")"
+PRNP_ORR_BED="$(normalize_path_setting "$PRNP_ORR_BED")"
+PRNP_EH_CATALOG="$(normalize_path_setting "$PRNP_EH_CATALOG")"
+REVIEWER_BIN="$(normalize_path_setting "$REVIEWER_BIN")"
+GANGSTR_BIN="$(normalize_path_setting "$GANGSTR_BIN")"
+GANGSTR_REGIONS_BED="$(normalize_path_setting "$GANGSTR_REGIONS_BED")"
 
 # ---------------------------------------------------------------------------
 # Derived live-output paths
@@ -67,10 +75,10 @@ COHORT_SUMMARY_TSV="${REPEAT_RESULTS_ROOT}/cohort_summary.tsv"
 SUBCLONAL_SUPPORT_TSV="${REPEAT_RESULTS_ROOT}/subclonal_read_support.tsv"
 GANGSTR_CALLS_TSV="${REPEAT_RESULTS_ROOT}/gangstr_calls.tsv"
 SOMATIC_SCREEN_TSV="${REPEAT_RESULTS_ROOT}/somatic_screen.tsv"
-SUMMARY_PY="${SCRIPT_DIR}/summarize_prnp_orr.py"
-SUBCLONAL_PY="${SCRIPT_DIR}/inspect_prnp_orr_subclonal.py"
-GANGSTR_SUMMARY_PY="${SCRIPT_DIR}/summarize_gangstr.py"
-SOMATIC_SCREEN_PY="${SCRIPT_DIR}/summarize_somatic_screen.py"
+SUMMARY_PY="${SCRIPT_DIR}/03_summarize_prnp_orr.py"
+SUBCLONAL_PY="${SCRIPT_DIR}/02_inspect_prnp_orr_subclonal.py"
+GANGSTR_SUMMARY_PY="${SCRIPT_DIR}/04_summarize_gangstr.py"
+SOMATIC_SCREEN_PY="${SCRIPT_DIR}/05_summarize_somatic_screen.py"
 MANIFEST_TMP=""
 RUN_TARGETS=(
   # These are the files/directories that define the current live repeat run.
@@ -113,6 +121,43 @@ require_cmd_with_hint() {
     echo "$hint" >&2
     exit 1
   fi
+}
+
+resolve_python_cmd() {
+  # Prefer python3 in WSL and modern Linux environments, while still
+  # supporting environments where only `python` exists.
+  if command -v python3 >/dev/null 2>&1; then
+    echo python3
+    return 0
+  fi
+  if command -v python >/dev/null 2>&1; then
+    echo python
+    return 0
+  fi
+  return 1
+}
+
+normalize_path_setting() {
+  # Support Windows-style absolute paths when the workflow is launched from WSL.
+  local value="$1"
+  local normalized
+
+  if [[ -z "$value" ]]; then
+    echo ""
+    return 0
+  fi
+
+  # Quick pass for common Windows drive-letter paths like C:\path\to\file.
+  if [[ "$value" =~ ^[A-Za-z]:\\\\ ]]; then
+    if command -v wslpath >/dev/null 2>&1; then
+      normalized="$(wslpath -u "$value")"
+      echo "$normalized"
+      return 0
+    fi
+  fi
+
+  # Replace backslashes for any remaining Windows-style path separators.
+  echo "${value//\\\\/\/}"
 }
 
 find_conda_env_prefix() {
@@ -454,7 +499,11 @@ require_cmd samtools
 require_cmd_with_hint \
   ExpansionHunter \
   "Activate the repeat caller environment first: conda activate prnp-repeats"
-require_cmd python
+PYTHON_CMD="$(resolve_python_cmd)"
+if [[ -z "${PYTHON_CMD:-}" ]]; then
+  echo "Required command not found: python or python3" >&2
+  exit 1
+fi
 REVIEWER_CMD=(REViewer)
 if [[ "$RUN_REVIEWER" == "1" ]]; then
   # REViewer may live either in the active environment, a dedicated path, or a
@@ -627,7 +676,7 @@ MANIFEST_TMP=""
     echo -e "gangstr_version\t$(capture_gangstr_version)"
   fi
   echo -e "samtools_version\t$(samtools --version | head -n 1)"
-  echo -e "python_version\t$(python --version 2>&1)"
+  echo -e "python_version\t$(${PYTHON_CMD} --version 2>&1)"
 } >"$RUN_SETTINGS_TSV"
 
 # ---------------------------------------------------------------------------
@@ -760,25 +809,25 @@ done 3<"$MANIFEST_TSV"
 # Build cohort summary tables and verify the final live run
 # ---------------------------------------------------------------------------
 
-python "$SUMMARY_PY" \
+"$PYTHON_CMD" "$SUMMARY_PY" \
   --manifest "$MANIFEST_TSV" \
   --results-root "$REPEAT_RESULTS_ROOT" \
   --reference-total-repeats "$PRNP_TOTAL_REFERENCE_REPEATS" \
   --variable-repeat-offset "$PRNP_VARIABLE_REPEAT_OFFSET" \
   --reviewer-enabled "$RUN_REVIEWER"
 
-python "$SUBCLONAL_PY" \
+"$PYTHON_CMD" "$SUBCLONAL_PY" \
   --sample-calls "$SAMPLE_CALLS_TSV" \
   --output "$SUBCLONAL_SUPPORT_TSV"
 
-python "$GANGSTR_SUMMARY_PY" \
+"$PYTHON_CMD" "$GANGSTR_SUMMARY_PY" \
   --manifest "$MANIFEST_TSV" \
   --results-root "$REPEAT_RESULTS_ROOT" \
   --reference-total-repeats "$PRNP_TOTAL_REFERENCE_REPEATS" \
   --variable-repeat-offset "$PRNP_VARIABLE_REPEAT_OFFSET" \
   --gangstr-enabled "$RUN_GANGSTR"
 
-python "$SOMATIC_SCREEN_PY" \
+"$PYTHON_CMD" "$SOMATIC_SCREEN_PY" \
   --results-root "$REPEAT_RESULTS_ROOT"
 
 verify_latest_run "$MANIFEST_TSV" "$SAMPLE_COUNT"

@@ -412,7 +412,7 @@ def main() -> int:
             row["gangstr_review_required"] = "yes"
         output_rows.append(row)
 
-    # Keep the schema explicit because summarize_somatic_screen.py depends on
+    # Keep the schema explicit because 05_summarize_somatic_screen.py depends on
     # these exact column names.
     fieldnames = [
         "sample_id",
