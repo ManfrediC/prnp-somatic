@@ -2178,6 +2178,191 @@ Junction blocker status (updated):
   - combined across all three assays: `R^2 = 0.963004`
 - Updated manuscript documentation in `manuscript/README.md` to describe the LoD calculations workspace and the new `lod_r_squared.R` entrypoint.
 
+## 10.04.2026 and 17.04.2026
+
+### Implement reviewer comments
+
+- Annie
+  - name adjustment
+
+- Simone
+  - clarified guanidine thiocyanate molarity in Methods and figure
+  - minor edits, e.g. Tris-Cl -> Tris-HCl
+
+- Hasier
+  - affiliations
+  - comment on A117V choice for sequencing spike-in
+  - RT-QuiC reference + replicates in figure
+  - sample provenance
+
+- Christos
+  - did the fast edits
+  - R-square for ddPCR added to results and table 2
+  - other complex edits remain to be done
+
+- Piero
+  - added sample info to Latex patient table
+  - sample provenance
+
+- Jokin
+  - added extra discussion points
+    1. selective clonal depletion
+    2. comparison with Murley
+    3. slight emphasis on methodological contribution of decomp/extr protocol
+
+  To do:
+  
+  Christos
+  - email: 
+    - agree that doi in his comment on the intro should not be cited, add the Korean (?) study with many E200K mutations
+    - address switched samples (A117V spike-ins)
+  - IGV screenshot (see how to do this)
+
+  Piero/Sabina
+  - add reference to their published thalamic case (see email)
+
+  Aag
+  - ask Adriano whether Erik Minikel should be included.
+
+## 15.04.2026
+
+### DNA quality proxy analysis: implementation, data integration and manuscript-ready draft
+
+- Added a new Windows PowerShell workflow for DNA-quality proxy analysis:
+  - `src/dna_quality/run_dna_quality_analysis.ps1`
+- Purpose of this workflow:
+  - inventory all useful DNA-quality-related files across the external SureSelect, ddPCR and Samples directories
+  - parse Agilent Tapestation D1000 / High Sensitivity D1000 outputs into analysis-ready tables
+  - use ddPCR-era cleanup / quantity spreadsheets as upstream DNA-quantity context
+  - join these QC layers to the repository sequencing metrics tables
+  - produce manuscript-oriented descriptive summaries
+
+### External data review and source selection
+
+- Reviewed the external SureSelect sequencing experiment directory in detail.
+- Confirmed that the primary fragment-quality data are located in:
+  - `...SureSelect-sequencing\Experiments`
+- Confirmed useful file classes there:
+  - Tapestation PDFs
+  - native `.D1000` files
+  - native `.HSD1000` files
+  - CSV sidecars for at least one D1000 run
+  - prep / sample-submission Excel workbooks
+- Reviewed the ddPCR experiment directory for additional DNA-quality-related information.
+- Confirmed that ddPCR does not appear to contain additional native Tapestation raw files, but does contain useful upstream quantity / cleanup evidence:
+  - `summary table patients ddPCR*.xlsx`
+  - Qubit workbooks
+  - cleanup-related workbooks
+  - `Covaris and Tapestation Mirka.docx` as SOP / contextual documentation
+- Reviewed the `Samples` directory and confirmed there were no additional Tapestation raw files there.
+- Identified useful sample-manifest workbooks in `Samples` for cross-referencing codes and sample metadata.
+
+### Parsing and harmonisation strategy
+
+- Implemented the agreed parser hierarchy:
+  - prefer Tapestation CSV sidecars when available
+  - otherwise parse the paired PDF report
+  - keep native `.D1000/.HSD1000` files as provenance for now
+- During implementation, verified that the native `.D1000/.HSD1000` files are ZIP-style containers containing XML/metadata assets, but did not yet decode them directly in this v1 workflow.
+- Implemented a generic XLSX reader in PowerShell using OpenXML ZIP/XML internals so that external metadata spreadsheets could be parsed without relying on Python or Excel COM automation.
+- Implemented run-aware alias matching to resolve sample identities across:
+  - inline Tapestation sample labels such as `CJD12_B1`
+  - barcode / well labels such as `A01`
+  - pathology-code-style identifiers such as `13-21`
+  - repo sample IDs such as `CJD1`
+- Added an override template for future manual corrections:
+  - `config/dna_quality_sample_alias_overrides.tsv`
+
+### Outputs and result tables
+
+- Added output scaffolding and documentation for this workflow:
+  - `results/dna_quality/.gitignore`
+  - `results/dna_quality/README.md`
+  - `doc/dna_quality/README.md`
+- Ran the workflow successfully with:
+  - `powershell -NoProfile -ExecutionPolicy Bypass -File src\dna_quality\run_dna_quality_analysis.ps1 -OutputRun latest`
+- Current derived outputs written to:
+  - `results/dna_quality/latest/`
+- Generated files:
+  - `file_inventory.tsv`
+  - `library_qc.tsv`
+  - `prep_metadata.tsv`
+  - `input_dna_quantity.tsv`
+  - `sample_aliases.tsv`
+  - `sample_quality_master.tsv`
+  - `dna_quality_scorecard.tsv`
+  - `analysis_summary.tsv`
+  - `report.md`
+
+### Scope of the current run
+
+- SureSelect files inventoried: 26
+- ddPCR files inventoried: 9
+- sample-manifest files inventoried: 4
+- library-QC rows parsed: 71
+- prep-metadata rows extracted: 1414
+- library-QC rows matched to sample IDs: all parsed rows
+- samples with scorecards: 32
+
+### Statistical framing and interpretation
+
+- I explicitly treated this as a descriptive and exploratory QC analysis rather than a confirmatory DNA-integrity study.
+- Reason:
+  - most available QC files represent library quality / sequencing readiness rather than direct genomic DNA integrity
+  - D1000 and HSD1000 runs are not on the same concentration scale
+  - samples often have repeated observations across pre-capture, post-capture and submission stages
+  - sequencing performance appears to be batch-structured
+- Implemented a per-sample heuristic library-QC score and a downstream sequencing outcome band:
+  - `high`
+  - `moderate`
+  - `low`
+- Current outcome separation in the derived scorecards:
+  - `high`: 5 samples
+  - `moderate`: 10 samples
+  - `low`: 17 samples
+- Main interpretation from the current descriptive summaries:
+  - sequencing outcomes separate very strongly on downstream QC metrics, as expected
+  - fragment-size and TapeStation summary metrics alone do not explain the poor-performing samples cleanly
+  - strong final library traces were therefore not sufficient to guarantee strong sequencing performance in this cohort
+  - likely explanations include batch-level effects, capture performance, library complexity, and other technical factors not directly captured by the available files
+
+### Manuscript-facing writing
+
+- Wrote a separate methods/results draft outside the manuscript tree:
+  - `doc/dna_quality/methods_results_draft.md`
+- This draft contains:
+  - methods text for data sources, parsing, harmonisation, derived variables and statistical framing
+  - results text based on the actual generated outputs
+  - a cautious interpretation that emphasises sequencing-readiness proxy rather than direct intrinsic DNA integrity
+- Kept this separate from `manuscript/` for now, as requested.
+
+### Repository documentation updates
+
+- Updated root `README.md` to mention the DNA-quality helper workflow.
+- Updated `results/README.md` to document the new DNA-quality outputs.
+
+### Technical issues encountered and resolved
+
+- Large one-shot file edits exceeded the Windows command-length limit, so the implementation had to be split into smaller patches.
+- PowerShell `Set-StrictMode` exposed multiple parser/runtime issues that were fixed iteratively:
+  - property access on irregular CSV headers containing `µ`
+  - XML/OpenXML cell parsing edge cases
+  - array/count handling under strict mode
+  - generic object property access when writing TSV outputs
+  - alias collisions where the same barcode was reused across different runs
+- The workflow is now stable end-to-end on the current dataset.
+
+### Remaining limitations / next steps
+
+- Native `.D1000/.HSD1000` decoding is still inventory-only in v1; direct extraction from the container internals could be added later if needed.
+- The current results are descriptive; the next statistical layer should probably include:
+  - Spearman correlations between submission-QC metrics and sequencing depth / on-target fraction
+  - batch-adjusted models
+  - figures showing per-stage QC distributions and per-sample scorecards
+- If this analysis is promoted into the paper, the language should remain careful:
+  - the available evidence is strongest for sequencing-readiness assessment
+  - it is weaker for direct claims about original extracted genomic DNA integrity
+
 ## 18.04.2026
 
 ### PRNP ORR repeat analysis workflow

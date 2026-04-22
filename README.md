@@ -4,6 +4,7 @@ This repository contains the reproducible analysis workflows used in the *PRNP* 
 
 - NGS somatic SNV detection (`src/pipelines`): FASTQ preprocessing, Mutect2 calling, post-processing, QC, and final variant tables.
 - ddPCR SNV quantification (`src/ddPCR`): processing of raw droplet exports into long-format and participant-level result tables.
+- DNA quality proxy analysis (`src/dna_quality`): Tapestation library QC, ddPCR quantity records, and sequencing QC harmonisation.
 - PRNP exon-exon junction analysis (`src/junctions`): junction-reference construction, read realignment, and junction-count quantification.
 - PRNP octapeptide repeat region analysis (`src/repeats`): repeat-aware screening of OPRI/OPRD candidates from existing BAMs.
 - Manuscript artifact generation (`manuscript`): scripts that build figures/tables from outputs in `results/`.
@@ -66,6 +67,8 @@ Required inputs must be placed as follows:
 - resources for GATK workflow: `resources`
 
 See `README` files in the respective directories for details on the required files.
+
+Raw data can be obtained from `[link to be provided]`.
 
 ### 4. Create environment for ddPCR scripts
 
@@ -290,11 +293,15 @@ Toolchain and QC helpers:
 - `make preprocessing_dry` (wrapper for `DRY_RUN=1 src/pipelines/preprocessing.sh`)
 - `make preprocessing_run` (wrapper for `DRY_RUN=0 src/pipelines/preprocessing.sh`)
 
+DNA quality helper:
+
+- `powershell -NoProfile -ExecutionPolicy Bypass -File src/dna_quality/run_dna_quality_analysis.ps1 -OutputRun latest`
+
 Target implementations are in the repository root `Makefile`.
 
 ## Raw Data Placement (Git-Ignored)
 
-For the workflow families in current reproducibility scope:
+Raw data are sequencing pipeline outputs are gitignored, to account for GitHub storage constraints.
 
 - ddPCR raw exports: `ddPCR/*.csv` (ignored via `ddPCR/.gitignore`)
 - ddPCR metadata sheet: `ddPCR/sample_details.xlsx` (ignored via `ddPCR/.gitignore`)
@@ -308,4 +315,4 @@ Generated runtime index sidecars are also ignored (for example `resources/juncti
 - Analyses were performed using the `Conda` environment defined in `env/environment.yml`.
 
 ## Data availability
-Raw data can be obtained for academic purposes upon reasonable request to the repository owner.
+Data can be obtained for academic purposes upon reasonable request to the repository owner.
