@@ -63,6 +63,25 @@ bash src/repeats/run_prnp_orr.sh
 - `results/repeats/logs/`
 - `results/repeats/old_runs/`
 
+For cross-machine work, the repository keeps the text-based repeat artefacts in
+git:
+
+- `results/repeats/raw/expansionhunter/**/*.json`
+- `results/repeats/raw/expansionhunter/**/*.vcf`
+- `results/repeats/raw/gangstr/**/*.vcf`
+- `results/repeats/raw/gangstr/**/*.samplestats.tab`
+- `results/repeats/review/reviewer/**/*.metrics.tsv`
+- `results/repeats/review/reviewer/**/*.phasing.tsv`
+- `results/repeats/logs/*.log`
+- `results/repeats/manual/*.tsv`
+- `results/repeats/manual_cohort/*/samples/*.tsv`
+
+The heavy artefacts stay local:
+
+- `results/repeats/raw/**/` realigned BAMs and indexes
+- `results/repeats/review/reviewer/**/*.svg`
+- `results/repeats/old_runs/`
+
 ## Manual Mosaic Review
 
 For one-sample manual review of possible low-level somatic OPRI/OPRD evidence

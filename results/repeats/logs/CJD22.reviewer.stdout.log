@@ -1,0 +1,15 @@
+[2026-04-18 13:53:36.770] [info] Loading specification of locus PRNP_ORR
+[2026-04-18 13:53:41.271] [info] Extracted 209280 frags
+[2026-04-18 13:53:41.271] [info] Calculating fragment length
+[2026-04-18 13:53:41.393] [info] Fragment length is estimated to be 266
+[2026-04-18 13:53:41.393] [info] Extracting genotype paths
+[2026-04-18 13:53:41.393] [info] Phasing
+[2026-04-18 13:53:43.549] [info] Found 2 paths defining diplotype
+[2026-04-18 13:53:43.549] [info] Projecting reads onto haplotype paths
+[2026-04-18 13:53:44.826] [info] Projected 209280 read pairs
+[2026-04-18 13:53:44.827] [info] Generating fragment alignments
+[2026-04-18 13:53:45.101] [info] Generated 209280 fragment alignments
+[2026-04-18 13:53:45.101] [info] Assigning fragment origins
+[2026-04-18 13:53:45.206] [info] Found assignments for 209280 frags
+[2026-04-18 13:53:45.206] [info] Generating metrics
+[2026-04-18 13:53:45.367] [info] Generating plot blueprint

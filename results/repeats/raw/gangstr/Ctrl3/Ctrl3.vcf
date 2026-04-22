@@ -1,0 +1,28 @@
+##fileformat=VCFv4.1
+##command=GangSTR-2.5.0 --bam results/final_bam/Ctrl3.bam --ref resources/chr2_chr4_chr20.fasta --regions resources/repeats/prnp_orr.gangstr.bed --out results/repeats/raw/gangstr/Ctrl3/Ctrl3 --targeted --nonuniform --readlength 133 --insertmean 145.217060 --insertsdev 111.364723 --max-proc-read 1000000
+##contig=<ID=chr2,length=242193529>
+##contig=<ID=chr20,length=64444167>
+##contig=<ID=chr4,length=190214555>
+##INFO=<ID=END,Number=1,Type=Integer,Description="End position of variant">
+##INFO=<ID=RU,Number=1,Type=String,Description="Repeat motif">
+##INFO=<ID=PERIOD,Number=1,Type=Integer,Description="Repeat period (length of motif)">
+##INFO=<ID=REF,Number=1,Type=Float,Description="Reference copy number">
+##INFO=<ID=GRID,Number=2,Type=Integer,Description="Range of optimization grid">
+##INFO=<ID=EXPTHRESH,Number=1,Type=Integer,Description="Threshold for calling expansions">
+##INFO=<ID=STUTTERUP,Number=1,Type=Float,Description="Stutter model - up prob">
+##INFO=<ID=STUTTERDOWN,Number=1,Type=Float,Description="Stutter model - down prob">
+##INFO=<ID=STUTTERP,Number=1,Type=Float,Description="Stutter model - p">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">
+##FORMAT=<ID=Q,Number=1,Type=Float,Description="Quality Score (posterior probability)">
+##FORMAT=<ID=REPCN,Number=2,Type=Integer,Description="Genotype given in number of copies of the repeat motif">
+##FORMAT=<ID=REPCI,Number=1,Type=String,Description="Confidence intervals">
+##FORMAT=<ID=RC,Number=1,Type=String,Description="Number of reads in each class (enclosing, spanning, FRR, bounding)">
+##FORMAT=<ID=ENCLREADS,Number=1,Type=String,Description="Summary of reads in enclosing class. Keys are number of copies and values show number of reads with that many copies.">
+##FORMAT=<ID=FLNKREADS,Number=1,Type=String,Description="Summary of reads in flanking class. Keys are number of copies and values show number of reads with that many copies.">
+##FORMAT=<ID=ML,Number=1,Type=Float,Description="Maximum likelihood">
+##FORMAT=<ID=INS,Number=2,Type=Float,Description="Insert size mean and stddev">
+##FORMAT=<ID=STDERR,Number=2,Type=Float,Description="Bootstrap standard error of each allele">
+##FORMAT=<ID=QEXP,Number=3,Type=Float,Description="Prob. of no expansion, 1 expanded allele, both expanded alleles">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	Ctrl3
+chr20	4699398	.	cctcatggtggtggctgggggcagcctcatggtggtggctgggggcag	.	.	.	END=4699445;RU=cctcatggtggtggctgggggcag;PERIOD=24;REF=2;GRID=1,5;STUTTERUP=0.05;STUTTERDOWN=0.05;STUTTERP=0.9;EXPTHRESH=-1	GT:DP:Q:REPCN:REPCI:RC:ENCLREADS:FLNKREADS:ML:INS:STDERR:QEXP	0/0:5480:1:2,2:2-2,2-2:4869,611,0,0:2,4869:NULL:28024.6:145.217,111.365:0,0:-1,-1,-1

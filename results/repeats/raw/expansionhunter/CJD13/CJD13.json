@@ -1,0 +1,29 @@
+{
+  "LocusResults": {
+    "PRNP_ORR": {
+      "AlleleCount": 2,
+      "Coverage": 16214.851505711318,
+      "FragmentLength": 245,
+      "LocusId": "PRNP_ORR",
+      "ReadLength": 149,
+      "Variants": {
+        "PRNP_ORR_MIDDLE_R2_BLOCK": {
+          "CountsOfFlankingReads": "(1, 4548), (2, 4731), (3, 22), (4, 2), (5, 1)",
+          "CountsOfInrepeatReads": "(2, 1)",
+          "CountsOfSpanningReads": "(1, 6), (2, 7640), (3, 5)",
+          "Genotype": "2/2",
+          "GenotypeConfidenceInterval": "2-2/2-2",
+          "ReferenceRegion": "chr20:4699371-4699493",
+          "RepeatUnit": "CCTCATGGTGGTGGCTGGGGGCAG",
+          "VariantId": "PRNP_ORR_MIDDLE_R2_BLOCK",
+          "VariantSubtype": "Repeat",
+          "VariantType": "Repeat"
+        }
+      }
+    }
+  },
+  "SampleParameters": {
+    "SampleId": "CJD13",
+    "Sex": "Female"
+  }
+}

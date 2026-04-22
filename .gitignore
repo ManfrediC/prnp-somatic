@@ -82,16 +82,32 @@ data/vcf/
 # global patterns above (e.g. *.bam, *.bai, *.cram, *.vcf, *.fastq, *.pdf, *.png).
 # Allow placeholders to remain tracked
 !data/.gitkeep
-# Repeat workflow keeps summary TSVs in git, but raw caller outputs, reviewer
-# artifacts, logs, and archived runs stay local because they are very large.
-results/repeats/raw/
-results/repeats/review/
-results/repeats/logs/
+# Repeat workflow keeps text artefacts in git for cross-machine review, but
+# heavyweight realigned BAMs, REViewer SVGs, and archived runs stay local.
+results/repeats/raw/*
+!results/repeats/raw/expansionhunter/
+!results/repeats/raw/expansionhunter/**/
+!results/repeats/raw/expansionhunter/**/*.json
+!results/repeats/raw/expansionhunter/**/*.vcf
+!results/repeats/raw/gangstr/
+!results/repeats/raw/gangstr/**/
+!results/repeats/raw/gangstr/**/*.vcf
+!results/repeats/raw/gangstr/**/*.tab
+results/repeats/review/*
+!results/repeats/review/reviewer/
+!results/repeats/review/reviewer/**/
+results/repeats/review/reviewer/**/*.svg
+!results/repeats/review/reviewer/**/*.metrics.tsv
+!results/repeats/review/reviewer/**/*.phasing.tsv
+results/repeats/logs/*
+!results/repeats/logs/*.log
 results/repeats/old_runs/
-# Manual mosaic review keeps cohort-level summary TSVs in git, but the detailed
-# per-read/per-sample review artefacts are regenerated locally when needed.
-results/repeats/manual/
-results/repeats/manual_cohort/*/samples/
+# Manual mosaic review keeps TSV artefacts in git, but archived runs above stay
+# local because they are much larger and easy to regenerate.
+results/repeats/manual/*
+!results/repeats/manual/*.tsv
+results/repeats/manual_cohort/*/samples/*
+!results/repeats/manual_cohort/*/samples/*.tsv
 # Logs
 v*.log
 *.log.*
