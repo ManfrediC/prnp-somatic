@@ -295,7 +295,7 @@ Toolchain and QC helpers:
 
 DNA quality helper:
 
-- `powershell -NoProfile -ExecutionPolicy Bypass -File src/dna_quality/run_dna_quality_analysis.ps1 -OutputRun latest`
+- `bash src/dna_quality/01_run_dna_quality_analysis.sh --output-run latest`
 
 Target implementations are in the repository root `Makefile`.
 
@@ -312,7 +312,7 @@ Raw data are sequencing pipeline outputs are gitignored, to account for GitHub s
 Generated runtime index sidecars are also ignored (for example `resources/junctions/*.fa.{amb,ann,bwt,pac,sa}`).
 
 ## Conda environment
-- Analyses were performed using the `Conda` environment defined in `env/environment.yml`.
+- Analyses were performed using the `Conda` environments defined in `env/environment.yml`.
 
 ## Data availability
 Data can be obtained for academic purposes upon reasonable request to the repository owner.

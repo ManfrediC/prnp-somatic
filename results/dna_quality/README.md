@@ -4,8 +4,8 @@ Derived outputs from the DNA-quality proxy workflow are written under `results/d
 
 Current development command:
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File src\dna_quality\run_dna_quality_analysis.ps1 -OutputRun latest
+```bash
+bash src/dna_quality/01_run_dna_quality_analysis.sh --output-run latest
 ```
 
 Key outputs:
@@ -20,4 +20,4 @@ Key outputs:
 - `analysis_summary.tsv`
 - `report.md`
 
-The `latest/` directory is convenient for iteration. For archival reruns, use a timestamped `-OutputRun`.
+The `latest/` directory is convenient for iteration. For archival reruns, use a timestamped `--output-run`.
