@@ -1,8 +1,8 @@
 allele_id	event_type	delta_repeats	evidence_tier	architecture	source_label	source_url	notes
 reference	reference	0	published_exact	R1-R2-R2-R3-R4	Goldfarb 1991; Jansen 2011	https://pubmed.ncbi.nlm.nih.gov/1683708/	Canonical human PRNP ORR allele.
-oprd_1_r2_deleted	oprd	-1	published_exact	R1-R2-R3-R4	Mead 2005	https://pmc.ncbi.nlm.nih.gov/articles/PMC1361719/	Single R2 deletion observed in human population resequencing.
+oprd_1_r2_deleted	oprd	-1	published_exact	R1-R2-R3-R4	Soldevila 2006	https://pmc.ncbi.nlm.nih.gov/articles/PMC1361719/	Single R2 deletion observed in human population resequencing.
 oprd_2_r2_r3_deleted	oprd	-2	hgvs_exact	R1-R2-R4	Beck 2001; Capellari 2002	https://pubmed.ncbi.nlm.nih.gov/11468331/	Pathogenic c.202_249del48 maps to deletion of the second R2 plus R3 from the reference R1-R2-R2-R3-R4 architecture.
-oprd_2_r3_r4_deleted	oprd	-2	published_exact	R1-R2-R2	Mead 2005	https://pmc.ncbi.nlm.nih.gov/articles/PMC1361719/	R3-R4 deletion (region C) observed in human resequencing.
+oprd_2_r3_r4_deleted	oprd	-2	published_exact	R1-R2-R2	Soldevila 2006	https://pmc.ncbi.nlm.nih.gov/articles/PMC1361719/	R3-R4 deletion (region C) observed in human resequencing.
 opri_1_r2_representative	opri	1	representative_copy_number	R1-R2-R2-R2-R3-R4	Pietrini 2003 copy-number cases	https://pmc.ncbi.nlm.nih.gov/articles/PMC7057106/	Representative single-R2 insertion model for published 1-OPRI cases where an exact block-level architecture was not accessible in browsable primary text.
 opri_2_r2_r2	opri	2	published_exact	R1-R2-R2-R2-R2-R3-R4	Brennecke 2021	https://pmc.ncbi.nlm.nih.gov/articles/PMC8473248/	Published exact 2-OPRI architecture.
 opri_2_r2_r3	opri	2	published_exact	R1-R2-R2-R3-R2-R3-R4	Brennecke 2021	https://pmc.ncbi.nlm.nih.gov/articles/PMC8473248/	Published exact 2-OPRI architecture.
