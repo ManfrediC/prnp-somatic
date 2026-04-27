@@ -38,6 +38,16 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         help="Optional background cohort_summary.tsv, typically the controls.",
     )
+    # Default filter criteria used in the manuscript methods:
+    # (i) at least two exact two-sided nonreference reads OR at least two
+    #     high/medium-confidence synthetic nonreference reads;
+    # (ii) if exact nonreference reads are present, at least one plus-strand and
+    #      one minus-strand exact nonreference read;
+    # (iii) if exact nonreference reads are present, at least two unique exact
+    #       nonreference read start sites;
+    # (iv) no more than 25 one-sided ORR-proximal indel/soft-clip reads;
+    # (v) when requested, exceed the control maximum for at least one selected
+    #     background metric.
     parser.add_argument(
         "--min-exact-nonreference-reads",
         default=2,
@@ -168,6 +178,8 @@ def annotate_row(
     # Keep the filter logic fully explicit. Each rule gets its own pass/fail
     # column so the post-processed table remains a transparent overlay on top of
     # the raw cohort summary instead of replacing it.
+    # The input columns are created by 07_run_manual_mosaic_prnp_orr_cohort.py
+    # from the per-read manual review TSVs.
     exact_nonref = parse_int(row, "exact_nonreference_reads")
     synthetic_nonref = parse_int(row, "synthetic_high_or_medium_nonreference_reads")
     plus_reads = parse_int(row, "exact_nonreference_plus_reads")
@@ -175,13 +187,16 @@ def annotate_row(
     unique_sites = parse_int(row, "exact_nonreference_unique_start_sites")
     one_sided_suspicious = parse_int(row, "one_sided_indel_or_softclip_reads")
 
+    # Criterion (i): minimum nonreference signal from either exact spanning
+    # reads or synthetic high/medium-confidence read assignments.
     signal_by_exact = exact_nonref >= args.min_exact_nonreference_reads
     signal_by_synthetic = synthetic_nonref >= args.min_synthetic_nonreference_reads
     has_min_signal = signal_by_exact or signal_by_synthetic
 
-    # Exact-read evidence is expected to be bidirectional and supported by more
-    # than one start site. Synthetic-only signal can still pass the early gate,
-    # but exact-read artefacts remain heavily constrained.
+    # Criteria (ii) and (iii): exact-read evidence, when present, must be
+    # bidirectional and supported by at least two unique start sites. Synthetic-
+    # only signal can still pass these gates because there are no exact reads to
+    # test for strand balance or start-site recurrence.
     passes_bidirectional = (
         exact_nonref == 0
         or (
@@ -190,8 +205,13 @@ def annotate_row(
         )
     )
     passes_unique_sites = exact_nonref == 0 or unique_sites >= args.min_unique_start_sites
+
+    # Criterion (iv): exclude samples dominated by one-sided local alignment
+    # instability near the ORR.
     passes_one_sided_cap = one_sided_suspicious <= args.max_one_sided_suspicious_reads
 
+    # Criterion (v): in the CJD-vs-control run, require the sample to exceed the
+    # control maximum for at least one selected metric.
     exceeds_background, exceeded_background_metrics = background_exceedance_flags(
         row=row,
         maxima=background_maxima,

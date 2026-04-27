@@ -224,18 +224,26 @@ def summarize_sample(
     sample_summary = read_tsv(summary_path)[0]
     reads = read_tsv(reads_path)
 
+    # Exact nonreference reads are the reads used for filter criteria (i), (ii),
+    # and (iii): they span both ORR boundaries exactly and have a nonreference
+    # ORR length signal in the original BAM alignment.
     exact_nonref_rows = [
         row
         for row in reads
         if row["anchor_tier"] == "two_sided_exact"
         and row["bam_signal"] in {"expansion_like", "contraction_like", "complex_length"}
     ]
+    # Panel-scored reads are retained as an audit trail for direct ORR sequence
+    # matching, but the final post-processing filter uses the synthetic count
+    # below rather than this panel count.
     panel_nonref_rows = [
         row
         for row in reads
         if row["best_event_type"] in {"opri", "oprd"}
         and row["panel_confidence"] in {"high", "medium"}
     ]
+    # Synthetic nonreference reads are the second route through criterion (i):
+    # high/medium-confidence assignments to synthetic OPRI/OPRD alleles.
     synthetic_nonref_rows = [
         row
         for row in reads
@@ -249,9 +257,14 @@ def summarize_sample(
         and row["synthetic_remap_confidence"] in {"high", "medium"}
     ]
 
+    # These exact-read summaries feed criteria (ii) and (iii): bidirectional
+    # support and at least two unique exact-read start sites.
     plus_reads = sum(1 for row in exact_nonref_rows if row["strand"] == "+")
     minus_reads = sum(1 for row in exact_nonref_rows if row["strand"] == "-")
     unique_starts = len({row["reference_start_1based"] for row in exact_nonref_rows})
+
+    # These counters are descriptive audit fields, helping reviewers see whether
+    # a sample is driven by a repeated indel pattern or a specific length shift.
     unique_indel_ops = Counter(row["indel_ops"] for row in exact_nonref_rows if row["indel_ops"])
     delta_bp_counts = Counter(row["delta_bp_vs_reference"] for row in exact_nonref_rows if row["delta_bp_vs_reference"])
     synthetic_best_alleles = Counter(
