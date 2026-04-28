@@ -143,6 +143,9 @@ nohup.out
 # Raw FASTQ data (large; keep out of git)
 /fastq/
 
+# Raw DNA quality data (large; keep out of git)
+/DNA_quality/
+
 # Pipeline run outputs (large; keep out of git)
 /runs/*
 !/runs/README.md
