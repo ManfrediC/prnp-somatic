@@ -2729,3 +2729,83 @@ Junction blocker status (updated):
 
 - Committed the WSL DNA-quality refactor as:
   - `806478a` `Refactor DNA quality workflow for WSL`
+
+## 29.04.2026
+
+### DNA-quality raw data consolidation
+
+- Moved the DNA-quality raw input files into the repository-local
+  `DNA_quality/` tree so the analysis no longer depends on scattered external
+  Windows paths.
+- Added `DNA_quality/` to `.gitignore` so the raw Agilent/native files stay
+  local and untracked.
+- Kept the TapeStation files organized by assay/run under:
+  - `DNA_quality/sureselect/tapestation/<run_id>/`
+- Kept related SureSelect, ddPCR, and sample metadata under:
+  - `DNA_quality/sureselect/metadata/`
+  - `DNA_quality/ddpcr/`
+  - `DNA_quality/samples/`
+- Updated the DNA-quality builder defaults and documentation to use these
+  repository-local raw-data roots.
+
+### Agilent TapeStation export cleanup
+
+- Re-exported the Agilent `.D1000` and `.HSD1000` runs into structured sidecar
+  files:
+  - XML
+  - sample-table CSV
+  - compact peak-table CSV
+  - compact region-table CSV where available
+  - electropherogram CSV
+  - PDF reports
+  - PNG electropherogram/report images
+- Moved the older PDF/CSV exports out of the active raw-data folders into:
+  - `legacy/sureselect/tapestation/<run_id>/original export/`
+- Added `legacy/` to `.gitignore` so these archived exports also remain local
+  and untracked.
+- Flattened Agilent software-created subdirectories so each run directory now
+  contains its exported sidecar files directly.
+- Removed one misplaced duplicate electropherogram CSV from the
+  `2023-01-30_cjd16_part1_hsd1000` folder.
+
+### What the new exports contain
+
+- XML files contain the richest structured run data:
+  - native filename and assay
+  - run dates
+  - ScreenTape and instrument metadata
+  - sample-level concentrations, alerts, and observations
+  - peak calls
+  - configured region summaries where present
+- CSV files now provide the most suitable machine-readable analysis inputs:
+  - sample-level concentration tables
+  - peak tables
+  - region tables
+  - electropherogram trace-intensity tables, one file per native run with one
+    column per sample/well
+- PDF files remain useful as human-readable audit reports, but should not be
+  the primary analysis source now that structured XML/CSV exports are present.
+- No DIN/DNA integrity number values were found in the usable exported data.
+
+### Checks
+
+- Confirmed that every active `*_sampleTable.csv` now has a matching
+  `*_Electropherogram.csv`.
+- Confirmed the electropherogram headers match the non-ladder sample wells in
+  the corresponding sample tables:
+  - 8 sample tables
+  - 8 matching electropherogram CSVs
+  - 72 expected sample/well trace columns
+  - 0 missing electropherogram files
+  - 0 mismatched sample columns
+  - 0 extra electropherogram files
+
+### To do
+
+- Refactor the DNA-quality analysis around the new structured XML and CSV
+  exports, especially the sample tables, peak tables, region tables, and
+  electropherogram CSVs.
+- Retire the old PDF-oriented parsing path except possibly as a legacy fallback
+  for archived historical exports.
+- Make sure the active workflow does not mix the archived `legacy/` exports
+  with the new structured Agilent exports.

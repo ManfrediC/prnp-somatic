@@ -23,20 +23,32 @@ import xml.etree.ElementTree as ET
 
 
 # ---------------------------------------------------------------------------
-# Default external roots and output schemas
+# Default raw-data roots and output schemas
 # ---------------------------------------------------------------------------
 
-DEFAULT_SURESELECT_ROOT = (
-    "/mnt/c/Users/Manfredi/USZ/Neuropathologie - Carta Manfredi/"
-    "CJD PRNP/Experiments/SureSelect-sequencing/Experiments"
-)
-DEFAULT_DDPCR_ROOT = (
-    "/mnt/c/Users/Manfredi/USZ/Neuropathologie - Carta Manfredi/"
-    "CJD PRNP/Experiments/ddPCR"
-)
-DEFAULT_SAMPLES_ROOT = (
-    "/mnt/c/Users/Manfredi/USZ/Neuropathologie - Carta Manfredi/"
-    "CJD PRNP/Samples"
+DEFAULT_SURESELECT_ROOT = "DNA_quality/sureselect"
+DEFAULT_DDPCR_ROOT = "DNA_quality/ddpcr"
+DEFAULT_SAMPLES_ROOT = "DNA_quality/samples"
+
+RAW_CATEGORY_DIRECTORIES = {
+    "manifests",
+    "metadata",
+    "original export",
+    "protocols",
+    "quantity_metadata",
+    "tapestation",
+}
+
+TAPESTATION_CSV_SUFFIXES = {
+    "sample_table": ("_sampletable.csv", "_sample_table.csv"),
+    "peak_table": ("_compactpeaktable.csv", "_peak_table.csv"),
+    "region_table": ("_compactregiontable.csv", "_region_table.csv"),
+}
+
+DDPCR_METADATA_PATTERN = (
+    r"Covaris and Tapestation|covaris_tapestation|"
+    r"summary table patients ddPCR|patient_summary_ddpcr|"
+    r"qubit|clean DNA|clean_dna|qPCR - samples|qpcr_samples"
 )
 
 
@@ -222,6 +234,15 @@ def normalize_cli_path(value: str) -> str:
     return text
 
 
+# Resolve CLI paths relative to the repository root so default raw-data paths
+# work no matter where the Python entrypoint is launched from.
+def resolve_cli_path(value: str, repo_root: Path) -> Path:
+    path = Path(normalize_cli_path(value))
+    if not path.is_absolute():
+        path = repo_root / path
+    return path.resolve()
+
+
 # Collapse repeated whitespace and non-breaking spaces so joins and regexes
 # behave consistently across spreadsheets, CSVs, and PDF text.
 def normalize_whitespace(value: object) -> str:
@@ -341,6 +362,12 @@ def get_run_overlap_score(left: str, right: str) -> int:
 # descriptive summaries.
 def get_stage_for_path(path: Path) -> str:
     text = str(path).lower()
+    if "pre_capture" in text:
+        return "pre_capture"
+    if "post_capture" in text:
+        return "post_capture"
+    if "submission_qc" in text:
+        return "submission_qc"
     if "1st qc" in text or "first day" in text:
         return "pre_capture"
     if "post-capture" in text:
@@ -352,14 +379,15 @@ def get_stage_for_path(path: Path) -> str:
     return "unknown"
 
 
-# Build a stable run identifier from the file's location under the external
-# source root, falling back to the filename when needed.
+# Build a stable run identifier from the file's location under the source root,
+# falling back to the filename when needed.
 def get_run_id(path: Path, root: Path) -> str:
     parent = path.parent
     try:
         relative = parent.relative_to(root)
-        if str(relative) != ".":
-            return re.sub(r"[^A-Za-z0-9]+", "_", str(relative)).strip("_")
+        parts = [part for part in relative.parts if part.lower() not in RAW_CATEGORY_DIRECTORIES]
+        if parts:
+            return re.sub(r"[^A-Za-z0-9]+", "_", "_".join(parts)).strip("_")
     except ValueError:
         pass
     return re.sub(r"[^A-Za-z0-9]+", "_", path.stem).strip("_")
@@ -567,6 +595,17 @@ def find_first(globbed: list[Path]) -> Path | None:
     return sorted(globbed, key=lambda item: str(item))[0] if globbed else None
 
 
+# Identify both legacy Tapestation CSV exports and renamed repo-local copies.
+def is_tapestation_csv(path: Path, role: str) -> bool:
+    name = path.name.lower()
+    return any(name.endswith(suffix) for suffix in TAPESTATION_CSV_SUFFIXES[role])
+
+
+# Return a Tapestation CSV by semantic role from one run directory.
+def find_tapestation_csv(directory: Path, role: str) -> Path | None:
+    return find_first([path for path in directory.glob("*.csv") if is_tapestation_csv(path, role)])
+
+
 # Capture the paired native Tapestation file for provenance reporting.
 def get_run_native_pair(files: list[Path]) -> str:
     for file_path in sorted(files, key=lambda item: str(item)):
@@ -575,13 +614,21 @@ def get_run_native_pair(files: list[Path]) -> str:
     return ""
 
 
+# Locate a native Tapestation file from a run directory or its archive folder.
+def get_run_native_pair_for_directory(directory: Path) -> str:
+    files = [path for path in directory.iterdir() if path.is_file()]
+    if directory.name.lower() == "original export":
+        files.extend(path for path in directory.parent.iterdir() if path.is_file())
+    return get_run_native_pair(files)
+
+
 # Parse one Tapestation CSV bundle into row-level library QC observations.
 def parse_tapestation_csv_bundle(directory: Path, run_id: str, stage: str) -> list[dict[str, object]]:
-    sample_csv = find_first(list(directory.glob("*_sampleTable.csv")))
-    peak_csv = find_first(list(directory.glob("*_compactPeakTable.csv")))
-    region_csv = find_first(list(directory.glob("*_compactRegionTable.csv")))
+    sample_csv = find_tapestation_csv(directory, "sample_table")
+    peak_csv = find_tapestation_csv(directory, "peak_table")
+    region_csv = find_tapestation_csv(directory, "region_table")
     pdf_pair = find_first(list(directory.glob("*.pdf")))
-    native_pair = get_run_native_pair([path for path in directory.iterdir() if path.is_file()])
+    native_pair = get_run_native_pair_for_directory(directory)
     if sample_csv is None:
         return []
 
@@ -726,7 +773,7 @@ def parse_tapestation_pdf(
     instrument = "HSD1000" if any("High Sensitivity D1000" in line for line in lines) else "D1000"
     conc_unit = "pg/ul" if instrument == "HSD1000" else "ng/ul"
     molarity_unit = "pmol/l" if instrument == "HSD1000" else "nmol/l"
-    native_pair = get_run_native_pair([item for item in path.parent.iterdir() if item.is_file()])
+    native_pair = get_run_native_pair_for_directory(path.parent)
     rows: list[dict[str, object]] = []
     current: dict[str, object] | None = None
     section = ""
@@ -918,7 +965,9 @@ def get_metadata_rows(
                     sample_id = candidate
                     break
             if not sample_id:
-                for value in row.values():
+                for key, value in row.items():
+                    if key in {"source_path", "sheet_name", "row_index"}:
+                        continue
                     candidate = get_sample_id_hint(value)
                     if candidate:
                         sample_id = candidate
@@ -1104,7 +1153,7 @@ def path_matches(path: Path, pattern: str) -> bool:
     return re.search(pattern, path.name, flags=re.IGNORECASE) is not None
 
 
-# Walk one external root and return the files that belong to this workflow.
+# Walk one source root and return the files that belong to this workflow.
 def list_files(root: Path, predicate) -> list[Path]:
     if not root.exists():
         raise FileNotFoundError(f"Required input root does not exist: {root}")
@@ -1175,7 +1224,7 @@ def write_report(
         "- `library_qc_heuristic_score` is a transparent helper score, not a validated assay threshold.",
         "",
         "## Outputs",
-        "- `file_inventory.tsv`: all useful external files discovered for this analysis.",
+        "- `file_inventory.tsv`: all useful raw input files discovered for this analysis.",
         "- `library_qc.tsv`: per-run Tapestation-derived QC rows.",
         "- `prep_metadata.tsv`: extracted supporting metadata from SureSelect, ddPCR, and Samples spreadsheets.",
         "- `input_dna_quantity.tsv`: subset of metadata rows with upstream quantity-related values.",
@@ -1201,13 +1250,13 @@ def main() -> int:
     # consistent across WSL and native Windows contexts.
     output_run = args.output_run or dt.datetime.now().strftime("%Y-%m-%d_%H%M%S")
     repo_root = Path(normalize_cli_path(args.repo_root)).resolve()
-    sureselect_root = Path(normalize_cli_path(args.sureselect_root)).resolve()
-    ddpcr_root = Path(normalize_cli_path(args.ddpcr_root)).resolve()
-    samples_root = Path(normalize_cli_path(args.samples_root)).resolve()
+    sureselect_root = resolve_cli_path(args.sureselect_root, repo_root)
+    ddpcr_root = resolve_cli_path(args.ddpcr_root, repo_root)
+    samples_root = resolve_cli_path(args.samples_root, repo_root)
     output_dir = repo_root / "results" / "dna_quality" / output_run
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Inventory the three external source families that feed the harmonised QC
+    # Inventory the three raw source families that feed the harmonised QC
     # tables: SureSelect runs, ddPCR quantity workbooks, and sample manifests.
     sureselect_files = list_files(
         sureselect_root,
@@ -1215,7 +1264,7 @@ def main() -> int:
     )
     sureselect_xlsx = [path for path in sureselect_files if path.suffix.lower() == ".xlsx"]
     csv_bundle_directories = sorted(
-        {path.parent for path in sureselect_files if path.name.endswith("_sampleTable.csv")},
+        {path.parent for path in sureselect_files if is_tapestation_csv(path, "sample_table")},
         key=str,
     )
     csv_bundle_directory_set = {str(path) for path in csv_bundle_directories}
@@ -1228,19 +1277,17 @@ def main() -> int:
     ddpcr_files = list_files(
         ddpcr_root,
         lambda path: path.suffix.lower() in {".xlsx", ".docx"}
-        and path_matches(
-            path,
-            r"Covaris and Tapestation|summary table patients ddPCR|qubit|clean DNA|qPCR - samples",
-        ),
+        and path_matches(path, DDPCR_METADATA_PATTERN),
     )
     ddpcr_xlsx = [path for path in ddpcr_files if path.suffix.lower() == ".xlsx"]
     sample_files = list_files(samples_root, lambda path: path.suffix.lower() == ".xlsx")
 
-    # Record one provenance row per discovered external file before any parsing
+    # Record one provenance row per discovered raw file before any parsing
     # decisions are applied.
     file_inventory: list[dict[str, object]] = []
     for file_path in sureselect_files:
         suffix = file_path.suffix.lower()
+        name_lower = file_path.name.lower()
         file_inventory.append(
             {
                 "source_family": "sureselect",
@@ -1248,19 +1295,19 @@ def main() -> int:
                 "stage": get_stage_for_path(file_path),
                 "instrument": (
                     "HSD1000"
-                    if suffix == ".hsd1000"
+                    if suffix == ".hsd1000" or "hsd1000" in name_lower
                     else "D1000"
-                    if suffix == ".d1000" or "D1000" in file_path.name
+                    if suffix == ".d1000" or "d1000" in name_lower
                     else ""
                 ),
                 "file_type": file_path.suffix.lstrip("."),
                 "parser_role": (
                     "sample_table"
-                    if file_path.name.endswith("_sampleTable.csv")
+                    if is_tapestation_csv(file_path, "sample_table")
                     else "peak_table"
-                    if file_path.name.endswith("_compactPeakTable.csv")
+                    if is_tapestation_csv(file_path, "peak_table")
                     else "region_table"
-                    if file_path.name.endswith("_compactRegionTable.csv")
+                    if is_tapestation_csv(file_path, "region_table")
                     else "report"
                     if suffix == ".pdf"
                     else "native"

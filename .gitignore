@@ -99,6 +99,8 @@ data/fastq/
 data/bam/
 data/cram/
 data/vcf/
+DNA_quality/
+legacy/
 
 # Results are tracked by default; large artefacts are still ignored by the
 # global patterns above (e.g. *.bam, *.bai, *.cram, *.vcf, *.fastq, *.pdf, *.png).

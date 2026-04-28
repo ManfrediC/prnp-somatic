@@ -8,6 +8,12 @@ Current development command:
 bash src/dna_quality/01_run_dna_quality_analysis.sh --output-run latest
 ```
 
+Default raw inputs are read from the gitignored repo-local `DNA_quality/` tree:
+
+- `DNA_quality/sureselect`
+- `DNA_quality/ddpcr`
+- `DNA_quality/samples`
+
 Key outputs:
 
 - `file_inventory.tsv`
