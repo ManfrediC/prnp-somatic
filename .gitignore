@@ -1,8 +1,15 @@
+# root
+AGENTS.md
+
 # env
 env/ssh.auth.env
 
 # plans and notes
 doc/repeat_notes
+doc/dna_quality
+
+# journal
+doc/journal
 
 # OS/editor cruft
 .DS_Store
@@ -12,12 +19,14 @@ Thumbs.db
 .vscode/
 .idea/
 .codex/
+
 # Python
 __pycache__/
 *.pyc
 .venv/
 .venv*/
 .env
+
 # R
 .Rhistory
 .RData
@@ -28,6 +37,7 @@ __pycache__/
 *.Rproj
 .Rlibs/
 .so
+
 # Large bioinformatics artefacts (never commit)
 *.fastq
 *.fastq.gz
@@ -50,6 +60,7 @@ __pycache__/
 *.zip
 *.tar
 *.tar.gz
+
 # Large reference resources (do not commit)
 resources/*.fa
 resources/*.fa.gz
@@ -60,11 +71,13 @@ resources/*.vcf.gz
 resources/*.vcf.gz.tbi
 resources/*.vcf.idx
 resources/*.gtf.gz
+
 # If you keep indexes with big VCFs, ignore those too
 resources/*.tbi
 resources/*.idx
 resources/funcotator_data_somatic/
 resources/backup/funcotator_excluded_datasources/
+
 # Keep small, hand-authored resource descriptors
 !resources/README.md
 !resources/backup/README.md
@@ -72,22 +85,26 @@ resources/backup/funcotator_excluded_datasources/
 !resources/*.interval_list
 !resources/*.dict
 !resources/*.fai
+
 # Junction reference runtime index sidecars
 resources/junctions/*.fa.amb
 resources/junctions/*.fa.ann
 resources/junctions/*.fa.bwt
 resources/junctions/*.fa.pac
 resources/junctions/*.fa.sa
+
 # Data policy (large inputs remain untracked)
 data/raw/
 data/fastq/
 data/bam/
 data/cram/
 data/vcf/
+
 # Results are tracked by default; large artefacts are still ignored by the
 # global patterns above (e.g. *.bam, *.bai, *.cram, *.vcf, *.fastq, *.pdf, *.png).
 # Allow placeholders to remain tracked
 !data/.gitkeep
+
 # Repeat workflow keeps text artefacts in git for cross-machine review, but
 # heavyweight realigned BAMs, REViewer SVGs, and archived runs stay local.
 results/repeats/raw/*
@@ -108,24 +125,29 @@ results/repeats/review/reviewer/**/*.svg
 results/repeats/logs/*
 !results/repeats/logs/*.log
 results/repeats/old_runs/
+
 # Manual mosaic review keeps TSV artefacts in git, but archived runs above stay
 # local because they are much larger and easy to regenerate.
 results/repeats/manual/*
 !results/repeats/manual/*.tsv
 results/repeats/manual_cohort/*/samples/*
 !results/repeats/manual_cohort/*/samples/*.tsv
+
 # Logs
 v*.log
 *.log.*
 nohup.out
+
 # Raw FASTQ data (large; keep out of git)
 /fastq/
+
 # Pipeline run outputs (large; keep out of git)
 /runs/*
 !/runs/README.md
 /run/
 config/preprocessing.env
 config/junctions.env
+
 # Personal journal notes and plans
 doc/journal/
 doc/plans/

@@ -2618,3 +2618,114 @@ Junction blocker status (updated):
   - panel scoring and synthetic rescoring
   - cohort aggregation and priority ranking
   - filter pass/fail logic
+
+## 22.04.2026
+
+### Repeat workflow cleanup and supplement-table export
+
+- Renamed the repeat workflow scripts into a numbered sequence in
+  `src/repeats/`:
+  - `01_run_prnp_orr.sh`
+  - `02_inspect_prnp_orr_subclonal.py`
+  - `03_summarize_prnp_orr.py`
+  - `04_summarize_gangstr.py`
+  - `05_summarize_somatic_screen.py`
+  - `06_manual_mosaic_prnp_orr.py`
+  - `07_run_manual_mosaic_prnp_orr_cohort.py`
+  - `08_filter_manual_mosaic_prnp_orr_cohort.py`
+  - `09_make_repeat_supplement_table.R`
+- Updated the `Makefile` and repeat-related READMEs to use the new numbered
+  script names.
+- Added WSL-oriented cleanup for the main repeat runner:
+  - path-like settings are normalized so Windows-style paths can be passed into
+    `src/repeats/01_run_prnp_orr.sh` from WSL
+  - repeat targets now resolve a working Python interpreter more defensively
+    (`python3` preferred, `python` fallback)
+- Added a new R export script:
+  - `src/repeats/09_make_repeat_supplement_table.R`
+- This script builds a one-row-per-sample summary table from:
+  - `results/repeats/sample_manifest.tsv`
+  - `results/repeats/sample_calls.tsv`
+  - `results/repeats/gangstr_calls.tsv`
+  - `results/repeats/manual_cohort/*/cohort_summary.tsv`
+  - `results/repeats/manual_cohort/cjd/filtered/default.annotated.tsv`
+- Exported manuscript-facing outputs to:
+  - `results/repeats/summary/repeat_supplement_table.csv`
+  - `results/repeats/summary/repeat_supplement_table_publication.tsv`
+  - `results/repeats/summary/repeat_supplement_table_rows.tex`
+- The summary table keeps the most useful per-sample fields for supplement use:
+  - ORR-overlapping reads
+  - ExpansionHunter call plus `LC`, `ADSP`, `ADFL`, `ADIR`
+  - GangSTR call plus depth and enclosing nonreference reads
+  - manual exact nonreference reads
+  - manual synthetic nonreference reads
+  - one-sided indel / soft-clip reads
+  - control-aware background-filter outcome
+- Practical interpretation remains unchanged:
+  - primary callers stay reference across the sequenced cohort
+  - the remaining manual-review signal stays sparse and background-like rather
+    than supporting a convincing somatic ORR mutation
+- Ran a shell syntax sanity check on `src/repeats/01_run_prnp_orr.sh`:
+  - `bash -n` passed cleanly
+
+### DNA-quality workflow refactor for WSL
+
+- Replaced the Windows-only DNA-quality entrypoint with a WSL/Linux-oriented
+  numbered workflow in `src/dna_quality/`:
+  - `01_run_dna_quality_analysis.sh`
+  - `02_build_dna_quality_tables.py`
+- Kept the shell entrypoint minimal and moved the parsing / table-building
+  logic into Python rather than trying to force the existing workflow into
+  brittle pure shell.
+- The Python workflow preserves the same overall analysis structure:
+  - inventory SureSelect, ddPCR, and Samples source files
+  - parse Tapestation CSV bundles where present
+  - fall back to PDF text extraction for runs without CSV sidecars
+  - extract metadata from external `.xlsx` workbooks
+  - resolve sample aliases across prep sheets, manifests, and repo IDs
+  - join library-QC rows to `results/**/sequencing_metrics_per_sample.tsv`
+  - write the harmonised output tables under `results/dna_quality/<RUN_ID>/`
+
+### Naming, comments and documentation
+
+- Renamed the DNA-quality workflow files into the numbered style already used
+  elsewhere in the repository.
+- Updated the DNA-quality documentation and path references to use the new
+  numbered shell entrypoint:
+  - `README.md`
+  - `doc/dna_quality/README.md`
+  - `results/README.md`
+  - `results/dna_quality/README.md`
+- Added explanatory comments to the new shell/Python workflow in the same
+  sectioned style used by the repeat and junction helpers.
+- Wrote a concise workflow-and-verification note:
+  - `doc/dna_quality/workflow_and_verification.md`
+
+### Verification
+
+- Ran the renamed WSL entrypoint successfully:
+  - `bash src/dna_quality/01_run_dna_quality_analysis.sh --output-run wsl_verify_final`
+- Verified expected top-level run counts in `results/dna_quality/wsl_verify_final/report.md`:
+  - SureSelect files inventoried: `26`
+  - ddPCR files inventoried: `9`
+  - sample-manifest files inventoried: `4`
+  - library-QC rows parsed: `72`
+  - prep-metadata rows extracted: `1414`
+  - library-QC rows still unmatched to `sample_id`: `0`
+  - samples with scorecards: `32`
+- Verified expected outcome-band totals in
+  `results/dna_quality/wsl_verify_final/dna_quality_scorecard.tsv`:
+  - `high`: `5`
+  - `moderate`: `10`
+  - `low`: `17`
+- One known content difference remains relative to the older Windows-generated
+  artefacts:
+  - one HSD1000 PDF row for `CJD25` now yields region metrics in the WSL run
+    where the previous PowerShell-derived output had blanks
+  - this changes descriptive QC fields for that sample, but not its sequencing
+    outcome band
+
+### Commit
+
+- Committed the WSL DNA-quality refactor as:
+  - `806478a` `Refactor DNA quality workflow for WSL`
