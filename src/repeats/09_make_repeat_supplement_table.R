@@ -67,7 +67,7 @@ format_background_filter <- function(x) {
   dplyr::case_when(
     is.na(x) ~ "",
     x == "yes" ~ "Pass",
-    x == "no" ~ "no mutation found",
+    x == "no" ~ "No candidate",
     TRUE ~ x
   )
 }
@@ -191,7 +191,7 @@ supplement_table <- supplement_table %>%
     "Manual exact nonreference reads" = exact_nonreference_reads,
     "Manual synthetic nonreference reads" = synthetic_high_or_medium_nonreference_reads,
     "One-sided indel/soft-clip reads" = one_sided_indel_or_softclip_reads,
-    "background filter" = filter_pass
+    "Control-aware filter" = filter_pass
   )
 
 # Ensure the summary output directory exists.
@@ -217,7 +217,7 @@ publication_table <- supplement_table %>%
     `Manual exact nonreference reads`,
     `Manual synthetic nonreference reads`,
     `One-sided indel/soft-clip reads`,
-    `background filter`
+    `Control-aware filter`
   )
 write.table(
   publication_table,
