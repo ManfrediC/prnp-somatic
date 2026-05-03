@@ -11,7 +11,7 @@ Not committed (local machine only):
 - `junctions.env` - local paths and settings for `src/junctions/*` scripts
 - `repeats.env` - local paths and runtime settings for `src/repeats/*`
 
-Rationale: `preprocessing.env` may include machine-specific paths and runtime settings; large data directories (`fastq/`, `runs/`, `results/final_bam/`) are intentionally not committed.
+Rationale: `preprocessing.env` may include machine-specific paths and runtime settings; large data directories (`raw/fastq/`, `runs/`, `results/final_bam/`) are intentionally not committed.
 
 ## Controls post-processing: Settings and paths
 

@@ -59,7 +59,7 @@ fi
 # Defaults: if they are not explicitly set in the env, use the following
 ADAPTERS_FA="${ADAPTERS_FA:-resources/TruSeq3-PE.fa}"
 DBSNP_VCF="${DBSNP_VCF:-resources/dbsnp_146.hg38.vcf.gz}"
-FASTQ_DIR="${FASTQ_DIR:-fastq}"
+FASTQ_DIR="${FASTQ_DIR:-raw/fastq}"
 FINAL_BAM_DIR="${FINAL_BAM_DIR:-results/final_bam}"
 JAVA_MEM_GB="${JAVA_MEM_GB:-8}"
 MILLS_VCF="${MILLS_VCF:-resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz}"

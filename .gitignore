@@ -99,7 +99,6 @@ data/fastq/
 data/bam/
 data/cram/
 data/vcf/
-DNA_quality/
 legacy/
 
 # Results are tracked by default; large artefacts are still ignored by the
@@ -140,11 +139,11 @@ v*.log
 *.log.*
 nohup.out
 
-# Raw FASTQ data (large; keep out of git)
-/fastq/
-
-# Raw DNA quality data (large; keep out of git)
-/DNA_quality/
+# Raw input data (large; keep out of git)
+/raw/fastq/
+/raw/dna_quality/
+/raw/ddpcr/*.csv
+/raw/ddpcr/*.xlsx
 
 # Pipeline run outputs (large; keep out of git)
 /runs/*

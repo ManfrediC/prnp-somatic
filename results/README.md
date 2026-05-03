@@ -56,7 +56,6 @@ Only placeholders and selected manifests are kept in version control.
   - `results/dna_quality/<RUN_ID>/library_qc.tsv`
   - `results/dna_quality/<RUN_ID>/sample_quality_master.tsv`
   - `results/dna_quality/<RUN_ID>/dna_quality_scorecard.tsv`
-  - producing script: `src/dna_quality/01_run_dna_quality_analysis.sh`
 
 ## Notes
 

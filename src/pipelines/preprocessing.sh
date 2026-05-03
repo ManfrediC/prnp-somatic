@@ -24,7 +24,7 @@ source "$ENV_FILE"
 
 # Defaults (if not set in preprocessing.env)
 SAMPLES_TSV="${SAMPLES_TSV:-config/preprocessing_samples.tsv}"
-FASTQ_DIR="${FASTQ_DIR:-fastq}"
+FASTQ_DIR="${FASTQ_DIR:-raw/fastq}"
 RUNS_DIR="${RUNS_DIR:-runs/preprocessing}"
 FINAL_BAM_DIR="${FINAL_BAM_DIR:-results/final_bam}"
 THREADS="${THREADS:-8}"

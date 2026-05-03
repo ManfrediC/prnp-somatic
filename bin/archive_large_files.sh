@@ -16,7 +16,7 @@ Actions:
 Options:
   --root PATH           Repository root to scan (default: current directory)
   --dirs CSV            Comma-separated directories to scan
-                        (default: runs,results,resources,fastq)
+                        (default: runs,results,resources,raw/fastq)
   --exts CSV            Comma-separated extensions to target, without dots
                         (default: bam,bai,sam,fa,fasta,fna,gtf,vcf,tsv)
   --min-size-mb N       Minimum file size in MiB (default: 100)
@@ -42,7 +42,7 @@ require_cmd() {
 }
 
 ROOT="."
-DIRS_CSV="runs,results,resources,fastq"
+DIRS_CSV="runs,results,resources,raw/fastq"
 EXTS_CSV="bam,bai,sam,fa,fasta,fna,gtf,vcf,tsv"
 MIN_SIZE_MB=100
 FORMAT="xz"

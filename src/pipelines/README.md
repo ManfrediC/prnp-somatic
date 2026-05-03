@@ -74,7 +74,7 @@ These expected output paths are also listed in:
 
 - `config/preprocessing_samples.tsv` (committed)
 - `config/preprocessing.env` (gitignored)
-- `fastq/<batch_id>/...` (not committed)
+- `raw/fastq/<batch_id>/...` (not committed)
 - `resources/` references (committed)
 
 The `first_CJD_seq` block in `config/preprocessing_samples.tsv` should include:

@@ -22,5 +22,5 @@ MANIFEST_QC_TSV := $(LEGACY_AUTH_DIR)/manifest_qc.tsv
 # CODING_BED  := /home/<user>/databases/prnp_coding.bed
 #
 # Data roots (example)
-# RAW_DATA_DIR := /path/to/fastq
+# RAW_DATA_DIR := /path/to/raw/fastq
 # WORK_DATA_DIR := /path/to/working_area

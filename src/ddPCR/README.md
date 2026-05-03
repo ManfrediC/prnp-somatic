@@ -8,10 +8,10 @@ This folder contains the *PRNP* somatic mutations ddPCR dataframe workflow.
 
 ## Inputs
 
-Expected in the repository root:
+Expected under the repository root:
 
-- Raw ddPCR CSV files: `ddPCR/*.csv`
-- Sample metadata: `ddPCR/sample_details.xlsx`
+- Raw ddPCR CSV files: `raw/ddpcr/*.csv`
+- Sample metadata: `raw/ddpcr/sample_details.xlsx`
 
 ## Command
 

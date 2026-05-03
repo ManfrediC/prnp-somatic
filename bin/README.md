@@ -19,7 +19,7 @@ Purpose:
 
 Default scope:
 
-- scans `runs`, `results`, `resources`, and `fastq`
+- scans `runs`, `results`, `resources`, and `raw/fastq`
 - targets uncompressed large-file extensions: `bam`, `bai`, `sam`, `fa`, `fasta`, `fna`, `gtf`, `vcf`, `tsv`
 - skips files that are already compressed, such as `*.fastq.gz`, `*.vcf.gz`, `*.tar.gz`, `*.cram`
 

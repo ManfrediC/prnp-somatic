@@ -4,7 +4,6 @@ This repository contains the reproducible analysis workflows used in the *PRNP* 
 
 - NGS somatic SNV detection (`src/pipelines`): FASTQ preprocessing, Mutect2 calling, post-processing, QC, and final variant tables.
 - ddPCR SNV quantification (`src/ddPCR`): processing of raw droplet exports into long-format and participant-level result tables.
-- DNA quality proxy analysis (`src/dna_quality`): Tapestation library QC, ddPCR quantity records, and sequencing QC harmonisation.
 - PRNP exon-exon junction analysis (`src/junctions`): junction-reference construction, read realignment, and junction-count quantification.
 - PRNP octapeptide repeat region analysis (`src/repeats`): repeat-aware screening of OPRI/OPRD candidates from existing BAMs.
 - Manuscript artifact generation (`manuscript`): scripts that build figures/tables from outputs in `results/`.
@@ -61,9 +60,9 @@ Funcotator resource acquisition, layout and datasource details are documented in
 
 Required inputs must be placed as follows:
 
-- ddPCR raw files: `ddPCR/*.csv`
-- ddPCR sample metadata: `ddPCR/sample_details.xlsx`
-- raw FASTQ files: `fastq`
+- ddPCR raw files: `raw/ddpcr/*.csv`
+- ddPCR sample metadata: `raw/ddpcr/sample_details.xlsx`
+- raw FASTQ files: `raw/fastq`
 - resources for GATK workflow: `resources`
 
 See `README` files in the respective directories for details on the required files.
@@ -293,23 +292,15 @@ Toolchain and QC helpers:
 - `make preprocessing_dry` (wrapper for `DRY_RUN=1 src/pipelines/preprocessing.sh`)
 - `make preprocessing_run` (wrapper for `DRY_RUN=0 src/pipelines/preprocessing.sh`)
 
-DNA quality helper:
-
-- `bash src/dna_quality/01_run_dna_quality_analysis.sh --output-run latest`
-- Default raw input roots:
-  - `DNA_quality/sureselect`
-  - `DNA_quality/ddpcr`
-  - `DNA_quality/samples`
-
 Target implementations are in the repository root `Makefile`.
 
 ## Raw Data Placement (Git-Ignored)
 
-Raw data are sequencing pipeline outputs are gitignored, to account for GitHub storage constraints.
+Raw data and sequencing pipeline outputs are gitignored, to account for GitHub storage constraints.
 
-- DNA quality raw inputs: `DNA_quality/`
-- ddPCR raw exports: `ddPCR/*.csv` (ignored via `ddPCR/.gitignore`)
-- ddPCR metadata sheet: `ddPCR/sample_details.xlsx` (ignored via `ddPCR/.gitignore`)
+- DNA quality raw inputs: `raw/dna_quality/`
+- ddPCR raw exports: `raw/ddpcr/*.csv` (ignored via repo `.gitignore`)
+- ddPCR metadata sheet: `raw/ddpcr/sample_details.xlsx` (ignored via repo `.gitignore`)
 - junction BAM inputs: `results/final_bam/*.bam` (ignored via repo `.gitignore` patterns for BAM/results)
 - pipeline run intermediates: `runs/**` (ignored via repo `.gitignore`)
 - pipeline/junction outputs: `results/**` (ignored except tracked placeholders)

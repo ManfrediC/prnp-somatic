@@ -18,7 +18,7 @@ if (length(script_path) == 0) {
 script_dir <- dirname(normalizePath(script_path, winslash = "/", mustWork = TRUE))
 project_root <- normalizePath(file.path(script_dir, "..", ".."), winslash = "/", mustWork = TRUE)
 
-input_dir <- file.path(project_root, "ddPCR")
+input_dir <- file.path(project_root, "raw", "ddpcr")
 sample_details_path <- file.path(input_dir, "sample_details.xlsx")
 output_dir <- file.path(project_root, "results", "ddPCR")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
