@@ -1,10 +1,4 @@
 Sample	ORR overlapping reads	ExpansionHunter call	LC	ADSP	ADFL	ADIR	GangSTR call	GangSTR depth (DP)	GangSTR enclosing nonreference reads	Manual exact nonreference reads	Manual synthetic nonreference reads	One-sided indel/soft-clip reads	Control-aware filter
-Control1	53233	Reference	22511.0	16084/16084	18389/18389	1/1	Reference	12398	0	4	1	25	
-Control2	6510	Reference	4079.9	1857/1857	2124/2124	0/0	Reference	1498	0	0	0	3	
-Control3	23740	Reference	14900.4	6613/6613	8278/8278	0/0	Reference	5480	0	1	0	13	
-Control4	1103	Reference	547.3	301/301	394/394	0/0	Reference	236	0	0	0	1	
-Control5	18603	Reference	8508.2	5500/5500	6432/6432	0/0	Reference	4238	2	6	1	18	
-Control7	1048	Reference	551.6	304/304	365/365	0/0	Reference	220	0	0	0	0	
 CJD1	30554	Reference	20069.1	8503/8503	11258/11258	0/0	Reference	6697	0	4	0	21	No candidate
 CJD2	30750	Reference	18573.7	8926/8926	11170/11170	0/0	Reference	7249	0	1	0	12	No candidate
 CJD3	21678	Reference	14818.1	6159/6159	7496/7496	0/0	Reference	4300	0	2	0	18	No candidate
@@ -31,3 +25,9 @@ CJD28	983	Reference	578.5	242/242	368/368	0/0	Reference	186	0	1	0	1	No candidate
 CJD29	2973	Reference	1219.9	868/868	1037/1037	0/0	Reference	661	0	0	0	4	No candidate
 CJD30	1488	Reference	670.0	399/399	533/533	0/0	Reference	301	0	0	0	0	No candidate
 CJD31	350	Reference	161.3	79/79	138/138	0/0	Reference	67	0	0	0	0	No candidate
+Control1	53233	Reference	22511.0	16084/16084	18389/18389	1/1	Reference	12398	0	4	1	25	
+Control2	6510	Reference	4079.9	1857/1857	2124/2124	0/0	Reference	1498	0	0	0	3	
+Control3	23740	Reference	14900.4	6613/6613	8278/8278	0/0	Reference	5480	0	1	0	13	
+Control4	1103	Reference	547.3	301/301	394/394	0/0	Reference	236	0	0	0	1	
+Control5	18603	Reference	8508.2	5500/5500	6432/6432	0/0	Reference	4238	2	6	1	18	
+Control7	1048	Reference	551.6	304/304	365/365	0/0	Reference	220	0	0	0	0	

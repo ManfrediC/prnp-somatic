@@ -168,7 +168,11 @@ supplement_table <- supplement_table %>%
     gangstr_interpretation = format_call(gangstr_interpretation),
     filter_pass = format_background_filter(filter_pass),
     LC = format_one_decimal(LC),
-    sample_order_group = dplyr::if_else(group == "Control", 1L, 2L),
+    sample_order_group = dplyr::case_when(
+      group == "CJD" ~ 1L,
+      group == "Control" ~ 2L,
+      TRUE ~ 3L
+    ),
     sample_order_number = sample_number(sample_id)
   ) %>%
   dplyr::arrange(sample_order_group, sample_order_number, sample_id) %>%

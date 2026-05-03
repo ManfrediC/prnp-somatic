@@ -64,6 +64,11 @@ fmt_two_dp <- function(x) {
   ifelse(is.na(x), NA_character_, sprintf("%.2f", round(x, 2)))
 }
 
+## ---- helper: format internal sample IDs for manuscript display ----
+sample_display_name <- function(sample_names) {
+  sub("^Ctrl", "Control", sample_names)
+}
+
 ## ---- per-sample QC counting: flags, MAPQ and junction-overhang support ----
 qc_rows <- lapply(bam_files, function(bam_junc) {
   sample <- sub("\\.PRNP\\.toJunc\\.bam$", "", basename(bam_junc))
@@ -166,6 +171,8 @@ publication_table <- qc_table %>%
   ) %>%
   select(-Duplicates) # Duplicates are 0, due to Picard de-duplication
 
+publication_table$sample <- sample_display_name(publication_table$sample)
+
 pub_out_file <- sub("\\.tsv$", "_publication.tsv", OUT_FILE)
 if (identical(pub_out_file, OUT_FILE)) {
   pub_out_file <- paste0(OUT_FILE, "_publication.tsv")
@@ -186,7 +193,7 @@ cat("Wrote:\n  ", pub_out_file, "\n")
 latex_integerize <- function(df) {
   out <- df
   for (nm in names(out)) {
-    if (nm == "sample" || nm == "group") next
+    if (nm == "sample") next
     vals <- suppressWarnings(as.numeric(out[[nm]]))
     if (all(!is.na(vals))) {
       out[[nm]] <- as.character(as.integer(round(vals)))
@@ -203,13 +210,6 @@ latex_safe <- function(x) {
 }
 
 publication_latex_table <- publication_table
-publication_latex_table$group <- ifelse(
-  grepl("^CJD", publication_latex_table$sample),
-  "CJD",
-  ifelse(grepl("^Ctrl", publication_latex_table$sample), "Ctrl", "Other")
-)
-publication_latex_table <- publication_latex_table %>%
-  select(sample, group, everything())
 publication_latex_table <- latex_integerize(publication_latex_table)
 
 latex_rows <- apply(publication_latex_table, 1, function(row_vals) {
