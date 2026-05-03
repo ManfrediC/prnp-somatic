@@ -1,5 +1,7 @@
 # root
 AGENTS.md
+CONTINUITY.md
+MEMORY.md
 
 # env
 env/ssh.auth.env
@@ -10,6 +12,7 @@ doc/dna_quality
 
 # journal
 doc/journal
+doc/journal/JOURNAL.md
 
 # OS/editor cruft
 .DS_Store
