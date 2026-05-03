@@ -3,6 +3,7 @@ SHELL := /bin/bash
 REQUIRED_CONDA_ENV ?= prnp-somatic
 CONDA_BIN ?= conda
 PYTHON := $(shell if command -v python3 >/dev/null 2>&1; then echo python3; elif command -v python >/dev/null 2>&1; then echo python; fi)
+R_SCRIPT ?= Rscript
 
 ifeq ($(strip $(PYTHON)),)
   $(error Neither python3 nor python is available on PATH. Install a Python interpreter and retry.)
@@ -12,6 +13,7 @@ endif
 
 .PHONY: help versions toolchain_lock check_conda \
 	ddpcr snv repeats junctions all check \
+	dna_quality \
 	qc_validate qc_metrics clean_qc print_qc_paths verify_resources preprocessing_preflight preprocessing_dry preprocessing_run
 
 # -------------------------------------------------------------------
@@ -23,6 +25,7 @@ endif
 AUTH_DIR ?= authoritative_files
 VALIDATE_SCRIPT := $(AUTH_DIR)/validate_manifest.sh
 METRICS_SCRIPT  := $(AUTH_DIR)/compute_sequencing_metrics.py
+DNA_QUALITY_SCRIPT := src/dna_quality/build_sample_quality_evidence_table.R
 MANIFEST_TSV    := $(AUTH_DIR)/manifest.tsv
 MANIFEST_QC_TSV := $(AUTH_DIR)/manifest_qc.tsv
 
@@ -32,6 +35,7 @@ MANIFEST_QC_TSV := $(AUTH_DIR)/manifest_qc.tsv
 RESULTS_DIR       ?= results
 SEQUENCING_QC_DIR ?= $(RESULTS_DIR)/sequencing_qc
 QC_DIR            := $(SEQUENCING_QC_DIR)
+DNA_QUALITY_OUT   := $(RESULTS_DIR)/dna_quality/sample_quality_evidence_table.tsv
 
 QC_VALIDATE_LOG := $(QC_DIR)/validate_manifest.log
 QC_METRICS_TSV  := $(QC_DIR)/sequencing_metrics_per_sample.tsv
@@ -116,6 +120,7 @@ help:
 	@echo "  make repeats_manual_cjd        Run manual PRNP ORR mosaic review on CJD samples"
 	@echo "  make repeats_manual_filter_cjd Filter CJD manual review summary against controls"
 	@echo "  make junctions                 Run junction workflow (requires env: prnp-junctions)"
+	@echo "  make dna_quality               Build DNA-quality evidence table"
 	@echo "  make all                       Run ddpcr + snv + junctions via conda run"
 	@echo "  make check                     Run resource/output integrity checks"
 	@echo "  make versions                  Show key tool versions (fast)"
@@ -131,6 +136,7 @@ help:
 	@echo "  make versions"
 	@echo "  make ddpcr"
 	@echo "  make junctions"
+	@echo "  make dna_quality"
 	@echo "  make qc_metrics"
 
 ddpcr: REQUIRED_CONDA_ENV=prnp-somatic-ddpcr
@@ -200,6 +206,15 @@ qc_metrics: qc_validate
 	test -s "$(QC_METRICS_TSV)"
 	awk -F'\t' 'NR==1{n=NF; next} NF!=n{print "Column mismatch at line " NR ": " NF " vs " n; exit 1}' "$(QC_METRICS_TSV)"
 	@echo "OK: wrote $$(( $$(wc -l < "$(QC_METRICS_TSV)") - 1 )) rows (excluding header)"
+
+dna_quality:
+	mkdir -p "$$(dirname "$(DNA_QUALITY_OUT)")"
+	echo "== build DNA-quality evidence table =="
+	echo "TSV: $(DNA_QUALITY_OUT)"
+	$(R_SCRIPT) "$(DNA_QUALITY_SCRIPT)" \
+	  --output "$(DNA_QUALITY_OUT)"
+	test -s "$(DNA_QUALITY_OUT)"
+	@echo "OK: wrote $(DNA_QUALITY_OUT)"
 
 clean_qc:
 	# Remove the canonical sequencing QC output folder.
