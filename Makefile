@@ -27,12 +27,11 @@ MANIFEST_TSV    := $(AUTH_DIR)/manifest.tsv
 MANIFEST_QC_TSV := $(AUTH_DIR)/manifest_qc.tsv
 
 # -------------------------------------------------------------------
-# Outputs (choose a run label without editing the Makefile)
-#   make qc_metrics QC_RUN=2026-02-14_test
+# Outputs
 # -------------------------------------------------------------------
-RESULTS_DIR ?= results
-QC_RUN      ?= latest
-QC_DIR      := $(RESULTS_DIR)/qc/$(QC_RUN)
+RESULTS_DIR       ?= results
+SEQUENCING_QC_DIR ?= $(RESULTS_DIR)/sequencing_qc
+QC_DIR            := $(SEQUENCING_QC_DIR)
 
 QC_VALIDATE_LOG := $(QC_DIR)/validate_manifest.log
 QC_METRICS_TSV  := $(QC_DIR)/sequencing_metrics_per_sample.tsv
@@ -122,17 +121,17 @@ help:
 	@echo "  make versions                  Show key tool versions (fast)"
 	@echo "  make qc_validate                Run validate_manifest.sh"
 	@echo "  make qc_metrics                 Run compute_sequencing_metrics.py -> TSV"
-	@echo "  make clean_qc                   Remove results/qc/<QC_RUN>/"
+	@echo "  make clean_qc                   Remove results/sequencing_qc/"
 	@echo ""
 	@echo "Common options:"
-	@echo "  QC_RUN=latest                   Output subfolder label (default: latest)"
 	@echo "  RESULTS_DIR=results              Base results directory"
+	@echo "  SEQUENCING_QC_DIR=results/sequencing_qc"
 	@echo ""
 	@echo "Examples:"
 	@echo "  make versions"
 	@echo "  make ddpcr"
 	@echo "  make junctions"
-	@echo "  make qc_metrics QC_RUN=2026-02-14_test"
+	@echo "  make qc_metrics"
 
 ddpcr: REQUIRED_CONDA_ENV=prnp-somatic-ddpcr
 ddpcr: check_conda
@@ -203,7 +202,7 @@ qc_metrics: qc_validate
 	@echo "OK: wrote $$(( $$(wc -l < "$(QC_METRICS_TSV)") - 1 )) rows (excluding header)"
 
 clean_qc:
-	# Remove only one QC run folder selected by QC_RUN.
+	# Remove the canonical sequencing QC output folder.
 	rm -rf "$(QC_DIR)"
 	@echo "Removed: $(QC_DIR)"
 
@@ -213,6 +212,10 @@ print_qc_paths:
 	@echo "METRICS_SCRIPT=$(METRICS_SCRIPT)"
 	@echo "MANIFEST_TSV=$(MANIFEST_TSV)"
 	@echo "MANIFEST_QC_TSV=$(MANIFEST_QC_TSV)"
+	@echo "QC_DIR=$(QC_DIR)"
+	@echo "QC_VALIDATE_LOG=$(QC_VALIDATE_LOG)"
+	@echo "QC_METRICS_TSV=$(QC_METRICS_TSV)"
+	@echo "QC_METRICS_ERR=$(QC_METRICS_ERR)"
  
 verify_resources:
 	cd resources && sha256sum -c SHA256SUMS.txt

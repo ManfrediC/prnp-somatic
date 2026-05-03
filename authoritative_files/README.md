@@ -55,7 +55,7 @@ bash authoritative_files/validate_manifest.sh \
   authoritative_files/manifest_qc.tsv
 
 python3 authoritative_files/compute_sequencing_metrics.py \
-  > results/qc/latest/sequencing_metrics_per_sample.tsv
+  > results/sequencing_qc/sequencing_metrics_per_sample.tsv
 ```
 
 ## Notes

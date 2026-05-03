@@ -7,7 +7,9 @@ Input:
 - resources BED/FASTA paths (or PRNP_* env overrides)
 
 Output:
-- tab-delimited rows to stdout in schema-defined column order
+- tab-delimited rows to stdout in schema-defined column order.
+  The Makefile writes this stream to
+  results/sequencing_qc/sequencing_metrics_per_sample.tsv by default.
 """
 from __future__ import annotations
 

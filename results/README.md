@@ -48,7 +48,7 @@ Only placeholders and selected manifests are kept in version control.
     - archived superseded runs under `results/repeats/old_runs/*`
 
 - Sequencing QC metrics workflow:
-  - `results/qc/<QC_RUN>/sequencing_metrics_per_sample.tsv` (current Makefile path via `make qc_metrics`)
+  - `results/sequencing_qc/sequencing_metrics_per_sample.tsv` (current Makefile path via `make qc_metrics`)
   - producing script: `authoritative_files/compute_sequencing_metrics.py`
 
 - DNA quality proxy workflow:
