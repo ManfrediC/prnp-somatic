@@ -25,7 +25,7 @@ endif
 AUTH_DIR ?= authoritative_files
 VALIDATE_SCRIPT := $(AUTH_DIR)/validate_manifest.sh
 METRICS_SCRIPT  := $(AUTH_DIR)/compute_sequencing_metrics.py
-DNA_QUALITY_SCRIPT := src/dna_quality/build_sample_quality_evidence_table.R
+DNA_QUALITY_SCRIPT := src/dna_quality/build_dna_quality_evidence_table.R
 MANIFEST_TSV    := $(AUTH_DIR)/manifest.tsv
 MANIFEST_QC_TSV := $(AUTH_DIR)/manifest_qc.tsv
 
