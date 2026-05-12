@@ -23,6 +23,9 @@ curated_ddpcr_path <- file.path(project_root, "results", "ddPCR", "SNV_data_fina
 output_dir <- file.path(project_root, "results", "ddPCR", "haploid_genomes_surveyed")
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
+# The partition-count CSV is produced by create_snv_dataframe.R after all
+# existing ddPCR sample filtering and harmonisation. This script deliberately
+# consumes that intermediate rather than touching the raw exports again.
 if (!file.exists(partition_counts_path)) {
   stop("Missing partition-count input: ", partition_counts_path,
        "\nRun bash src/ddPCR/run_ddpcr.sh first.")
@@ -36,6 +39,9 @@ if (!file.exists(curated_ddpcr_path)) {
 # helpers
 # -------------------------------------
 
+# Poisson occupancy estimate from the fraction of droplets with no signal for
+# the target class being counted. This returns genome-equivalent molecules, not
+# observed positive droplets.
 poisson_from_negative_fraction <- function(negative_fraction, n_total) {
   case_when(
     is.na(negative_fraction) | is.na(n_total) ~ NA_real_,
@@ -46,10 +52,14 @@ poisson_from_negative_fraction <- function(negative_fraction, n_total) {
   )
 }
 
+# Convenience wrapper for rows where the negative count is available directly.
 poisson_from_negative_count <- function(n_negative, n_total) {
   poisson_from_negative_fraction(n_negative / n_total, n_total)
 }
 
+# Exact binomial interval for the negative-droplet fraction. The Poisson
+# transform is monotone decreasing, so upper negative-fraction bounds become
+# lower genome-count bounds, and vice versa.
 exact_negative_fraction_ci <- function(n_negative, n_total, conf.level = 0.95) {
   alpha <- 1 - conf.level
   n_negative <- as.numeric(n_negative)
@@ -79,6 +89,8 @@ exact_negative_fraction_ci <- function(n_negative, n_total, conf.level = 0.95) {
   tibble(lower = lower, upper = upper)
 }
 
+# Add REF, MUT, and total haploid genome-equivalent estimates to a table that
+# already has accepted droplets and the three corresponding negative counts.
 add_genome_estimates <- function(.data) {
   ref_ci <- exact_negative_fraction_ci(.data$n_ref_negative_droplets, .data$n_accepted_droplets)
   mut_ci <- exact_negative_fraction_ci(.data$n_mut_negative_droplets, .data$n_accepted_droplets)
@@ -91,10 +103,12 @@ add_genome_estimates <- function(.data) {
         n_accepted_droplets
       ),
       n_ref_genomes_poisson_low = poisson_from_negative_fraction(
+        # Upper negative-fraction CI bound maps to the lower genome estimate.
         ref_ci$upper,
         n_accepted_droplets
       ),
       n_ref_genomes_poisson_high = poisson_from_negative_fraction(
+        # Lower negative-fraction CI bound maps to the upper genome estimate.
         ref_ci$lower,
         n_accepted_droplets
       ),
@@ -103,6 +117,7 @@ add_genome_estimates <- function(.data) {
         n_accepted_droplets
       ),
       n_mut_genomes_poisson_low = poisson_from_negative_fraction(
+        # Same reversed-bound logic for the MUT-negative fraction.
         mut_ci$upper,
         n_accepted_droplets
       ),
@@ -111,6 +126,8 @@ add_genome_estimates <- function(.data) {
         n_accepted_droplets
       ),
       n_haploid_genomes_poisson = poisson_from_negative_count(
+        # Total genome equivalents are estimated from signal-negative droplets
+        # directly, not by summing rounded REF and MUT estimates.
         n_signal_negative_droplets,
         n_accepted_droplets
       ),
@@ -127,6 +144,9 @@ add_genome_estimates <- function(.data) {
     )
 }
 
+# Sum droplets first, then estimate genomes from the aggregate negative
+# fraction. Averaging or summing row-level estimates would give different
+# confidence intervals and would be harder to audit against the displayed row.
 summarise_counts <- function(.data, group_cols) {
   .data %>%
     group_by(across(all_of(group_cols))) %>%
@@ -149,6 +169,8 @@ summarise_counts <- function(.data, group_cols) {
     add_genome_estimates()
 }
 
+# Formatting helpers are kept here so the CSV outputs remain numeric while the
+# TeX table gets manuscript-friendly strings.
 format_int <- function(x) {
   format(round(x), big.mark = ",", scientific = FALSE, trim = TRUE)
 }
@@ -175,6 +197,8 @@ escape_latex <- function(x) {
 
 partition_counts <- readr::read_csv(partition_counts_path, show_col_types = FALSE)
 
+# Fail early if create_snv_dataframe.R stops emitting any field that the
+# downstream supplementary calculation depends on.
 required_partition_cols <- c(
   "participant", "group", "histotype", "code", "brain_region", "sample_id", "mutation",
   "n_wells", "n_accepted_droplets",
@@ -188,6 +212,9 @@ if (length(missing_partition_cols) > 0) {
   stop("Partition-count input is missing columns: ", paste(missing_partition_cols, collapse = ", "))
 }
 
+# These checks catch impossible droplet arithmetic before we join to
+# SNV_data_final.xlsx. They are deliberately about physical count constraints,
+# not manuscript interpretation.
 impossible_counts <- partition_counts %>%
   filter(
     n_accepted_droplets < 0 |
@@ -208,6 +235,8 @@ if (nrow(impossible_counts) > 0) {
 curated_ddpcr <- openxlsx::read.xlsx(curated_ddpcr_path) %>%
   as_tibble()
 
+# SNV_data_final.xlsx is validation-only here. The supplementary script should
+# not change its schema or use it as a second source of droplet truth.
 required_curated_cols <- c(
   "participant", "group", "histotype", "code", "brain_region", "mutation",
   "n_mut_droplets", "n_total_droplets"
@@ -220,6 +249,8 @@ if (length(missing_curated_cols) > 0) {
 
 key_cols <- c("code", "brain_region", "mutation")
 
+# Duplicate keys would make the full join ambiguous and could hide accidental
+# row multiplication, so stop before any totals are calculated.
 partition_duplicate_keys <- partition_counts %>%
   count(across(all_of(key_cols)), name = "n") %>%
   filter(n > 1)
@@ -232,6 +263,9 @@ if (nrow(partition_duplicate_keys) > 0 || nrow(curated_duplicate_keys) > 0) {
   stop("Duplicate validation keys detected in partition counts or SNV_data_final.")
 }
 
+# Validate the new denominator intermediate against the existing curated table
+# at the exact same grain. This protects the older ddPCR outputs from quiet
+# behavioural drift.
 validation <- partition_counts %>%
   select(all_of(key_cols), participant, group, histotype,
          n_accepted_droplets, n_mut_positive_droplets) %>%
@@ -266,6 +300,10 @@ if (nrow(validation_errors) > 0) {
 # sample-region and participant-level outputs
 # -------------------------------------
 
+# Sample-region output is the most detailed supplementary table: one row per
+# existing biological sample-region by mutation assay. The known heterozygous
+# E200K sample is retained because denominator depth, not somatic status, is
+# the target of this analysis.
 sample_region <- partition_counts %>%
   mutate(
     known_heterozygous_e200k = code == "14-2" & mutation == "E200K",
@@ -274,6 +312,8 @@ sample_region <- partition_counts %>%
   ) %>%
   add_genome_estimates()
 
+# Participant-pooled output collapses brain regions within each assay while
+# preserving the same Poisson-from-negative-fraction logic.
 participant_pooled <- summarise_counts(
   sample_region,
   c("participant", "group", "histotype", "code", "mutation", "known_heterozygous_e200k")
@@ -286,6 +326,9 @@ readr::write_csv(participant_pooled, file.path(output_dir, "participant_pooled_h
 # cohort-level TeX supplement table
 # -------------------------------------
 
+# The TeX table is the manuscript-facing summary. The CSVs above keep the
+# detailed rows, while this table reports CJD/control/all rows by mutation plus
+# clearly labelled all-assay rows.
 cohort_by_group_mutation <- sample_region %>%
   group_by(group, mutation) %>%
   summarise(
@@ -303,6 +346,9 @@ cohort_by_group_mutation <- sample_region %>%
     .groups = "drop"
   )
 
+# All-assay rows are assay-level genome-equivalent observations. They should
+# not be read as unique genomes, because the same DNA sample may be assayed for
+# multiple mutations.
 cohort_by_group_all <- sample_region %>%
   mutate(mutation = "all_assays") %>%
   group_by(group, mutation) %>%
@@ -321,6 +367,8 @@ cohort_by_group_all <- sample_region %>%
     .groups = "drop"
   )
 
+# Add mutation-specific totals across CJD and control groups for readers who
+# want the overall survey depth per assay.
 cohort_all_groups_mutation <- sample_region %>%
   mutate(group = "all") %>%
   group_by(group, mutation) %>%
@@ -339,6 +387,8 @@ cohort_all_groups_mutation <- sample_region %>%
     .groups = "drop"
   )
 
+# Final grand-total row, again at assay-observation level rather than unique
+# biological genomes.
 cohort_all_groups_all <- sample_region %>%
   mutate(group = "all", mutation = "all_assays") %>%
   group_by(group, mutation) %>%
@@ -357,6 +407,8 @@ cohort_all_groups_all <- sample_region %>%
     .groups = "drop"
   )
 
+# Bind the four summary blocks, derive negative counts from their own aggregate
+# droplet totals, then calculate estimates and CIs from those same rows.
 cohort_table <- bind_rows(
   cohort_by_group_mutation,
   cohort_by_group_all,
@@ -376,6 +428,8 @@ cohort_table <- bind_rows(
   ) %>%
   arrange(group_label, mutation_label)
 
+# Keep calculated numeric columns in the CSVs; convert to formatted strings
+# only for the TeX table.
 tex_table <- cohort_table %>%
   transmute(
     Group = escape_latex(as.character(group_label)),
@@ -406,6 +460,7 @@ tex_table <- cohort_table %>%
     `Genomes per accepted droplet` = format_num(haploid_genomes_per_accepted_droplet, 3)
   )
 
+# Build a small booktabs table without extra dependencies.
 tex_header <- paste(escape_latex(names(tex_table)), collapse = " & ")
 tex_body <- apply(tex_table, 1, function(row) paste0(paste(row, collapse = " & "), " \\\\"))
 
@@ -435,6 +490,8 @@ writeLines(tex_lines, file.path(output_dir, "ddpcr_haploid_genomes_supplement_ta
 # run summary
 # -------------------------------------
 
+# The summary is a quick audit file: it records which inputs were validated,
+# the formula used, and the headline grand total without requiring TeX parsing.
 grand_total <- cohort_table %>%
   filter(group_label == "All", mutation_label == "All assays") %>%
   slice(1)

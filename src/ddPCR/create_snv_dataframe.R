@@ -336,15 +336,22 @@ ddpcr.plot.data <- ddpcr.plot.data %>%
 # partition-count denominator table for downstream genome-equivalent summaries
 # --------------------------------------------------------
 
-# The main ddPCR workbooks intentionally stay focused on FA/LoB/LoD results.
-# This compact CSV exposes the partition counts needed to estimate how many
-# haploid genome equivalents were surveyed, while reusing the same cleaned
-# biological sample set as the existing workflow.
+# Keep this block downstream of the existing cleaning and metadata join. That
+# makes the new denominator table inherit the same biological sample set as
+# SNV_data_final.xlsx, instead of reimplementing any filtering logic here.
+# The existing workbook schemas stay unchanged; this block only writes an
+# intermediate CSV for the separate haploid-genome supplementary script.
+
 partition_rows <- data.mut.brief %>%
   mutate(
+    # Double-positive and signal-negative droplets do not depend on channel
+    # orientation, so they can be read directly from the QuantaSoft 2D classes.
     n_double_positive_droplets = as.numeric(`Ch1+Ch2+`),
+    n_signal_negative_droplets = as.numeric(`Ch1-Ch2-`),
+
     # QuantaSoft repeats these four 2D partitions on both target rows for a
-    # well. D178N/E200K have MUT on Ch2; P102L has MUT on Ch1.
+    # well. The single-positive channels are assay-specific: D178N/E200K have
+    # MUT on Ch2, whereas P102L has MUT on Ch1.
     n_ref_only_droplets = case_when(
       ExperimentType == "P102L" ~ as.numeric(`Ch1-Ch2+`),
       TRUE ~ as.numeric(`Ch1+Ch2-`)
@@ -353,13 +360,19 @@ partition_rows <- data.mut.brief %>%
       ExperimentType == "P102L" ~ as.numeric(`Ch1+Ch2-`),
       TRUE ~ as.numeric(`Ch1-Ch2+`)
     ),
-    n_signal_negative_droplets = as.numeric(`Ch1-Ch2-`),
+
+    # REF+ and MUT+ include double-positive droplets. They are not treated as
+    # literal genome counts later; they are audit counts and inputs to negative
+    # droplet fractions for Poisson occupancy estimates.
     n_ref_positive_droplets = n_double_positive_droplets + n_ref_only_droplets,
     n_mut_positive_droplets = n_double_positive_droplets + n_mut_only_droplets,
     n_signal_positive_droplets =
       n_double_positive_droplets + n_ref_only_droplets + n_mut_only_droplets
   )
 
+# Two raw-export invariants should hold before any pooling. The first checks
+# that the four partition classes exhaust accepted droplets. The second checks
+# that the assay-specific MUT channel mapping agrees with QuantaSoft Positives.
 partition_row_errors <- partition_rows %>%
   filter(
     n_signal_positive_droplets + n_signal_negative_droplets != AcceptedDroplets |
@@ -374,6 +387,8 @@ if (nrow(partition_row_errors) > 0) {
        paste(utils::capture.output(print(partition_row_errors)), collapse = "\n"))
 }
 
+# Aggregate to exactly the grain used by ddpcr.plot.data: one biological
+# sample-region by mutation assay, with replicate wells/runs summed.
 partition_counts <- partition_rows %>%
   group_by(Sample, ExperimentType) %>%
   summarise(
@@ -398,6 +413,9 @@ partition_counts <- partition_rows %>%
          n_signal_positive_droplets, n_signal_negative_droplets,
          n_ref_positive_droplets, n_mut_positive_droplets)
 
+# Validate against the already curated long-format ddPCR table. This is the
+# main guard against quietly changing sample inclusion or breaking existing
+# outputs while adding the denominator table.
 partition_counts_check <- partition_counts %>%
   left_join(
     ddpcr.plot.data %>%
@@ -431,7 +449,9 @@ if (nrow(partition_mismatch) > 0 || nrow(partition_counts) != nrow(ddpcr.plot.da
 # export
 # --------------------------------------------------------
 
-# raw partition-count denominator input for downstream supplementary summary
+# Raw partition-count denominator input for the downstream supplementary
+# summary. The existing workbook exports below deliberately keep their original
+# columns.
 write.csv(partition_counts,
           file.path(output_dir, "ddpcr_partition_counts_by_sample_assay.csv"),
           row.names = FALSE)
