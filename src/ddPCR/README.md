@@ -5,6 +5,7 @@ This folder contains the *PRNP* somatic mutations ddPCR dataframe workflow.
 ## Script
 
 - `create_snv_dataframe.R`
+- `estimate_haploid_genomes_surveyed.R`
 
 ## Inputs
 
@@ -19,6 +20,7 @@ Create a dedicated conda environment (reviewer-side). Then the workflow command 
 
 ```bash
 bash src/ddPCR/run_ddpcr.sh
+Rscript src/ddPCR/estimate_haploid_genomes_surveyed.R
 ```
 
 Environment setup example:
@@ -42,6 +44,8 @@ Written to `results/ddPCR/`:
 - `SNV_data_final.xlsx` (long format)
 - `SNV_pooled_participant.xlsx`
 - `p0_fallback.csv`
+- `ddpcr_partition_counts_by_sample_assay.csv`
+- `haploid_genomes_surveyed/`
 
 ### Output File Meanings
 
@@ -53,6 +57,12 @@ Written to `results/ddPCR/`:
 
 - `p0_fallback.csv`:
   - fallback blank-rate (`p0`) values used when a plate lacks usable blank controls, supporting LoB/LoBFA-based background classification.
+
+- `ddpcr_partition_counts_by_sample_assay.csv`:
+  - intermediate sample/assay partition-count table used by the haploid-genome supplementary workflow.
+
+- `haploid_genomes_surveyed/`:
+  - dedicated supplementary output directory containing sample-region, participant-pooled, TeX table, and run-summary outputs for droplet counts and Poisson-corrected haploid genome-equivalent estimates.
 
 These expected output paths are also listed in:
 

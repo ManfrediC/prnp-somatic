@@ -68,6 +68,7 @@ bigdata <- purrr::map_dfr(files, function(f) {
 data.subset <- bigdata %>%
   dplyr::select(Sample, Date, Well, ExperimentType, Target,
                 `Accepted Droplets`, Positives, Negatives,
+                `Ch1+Ch2+`, `Ch1+Ch2-`, `Ch1-Ch2+`, `Ch1-Ch2-`,
                 `Fractional Abundance`,
                 PoissonFractionalAbundanceMax,
                 PoissonFractionalAbundanceMin) %>%
@@ -332,8 +333,108 @@ ddpcr.plot.data <- ddpcr.plot.data %>%
          detected_above_LoB, detected_above_LoD)
 
 # --------------------------------------------------------
+# partition-count denominator table for downstream genome-equivalent summaries
+# --------------------------------------------------------
+
+# The main ddPCR workbooks intentionally stay focused on FA/LoB/LoD results.
+# This compact CSV exposes the partition counts needed to estimate how many
+# haploid genome equivalents were surveyed, while reusing the same cleaned
+# biological sample set as the existing workflow.
+partition_rows <- data.mut.brief %>%
+  mutate(
+    n_double_positive_droplets = as.numeric(`Ch1+Ch2+`),
+    # QuantaSoft repeats these four 2D partitions on both target rows for a
+    # well. D178N/E200K have MUT on Ch2; P102L has MUT on Ch1.
+    n_ref_only_droplets = case_when(
+      ExperimentType == "P102L" ~ as.numeric(`Ch1-Ch2+`),
+      TRUE ~ as.numeric(`Ch1+Ch2-`)
+    ),
+    n_mut_only_droplets = case_when(
+      ExperimentType == "P102L" ~ as.numeric(`Ch1+Ch2-`),
+      TRUE ~ as.numeric(`Ch1-Ch2+`)
+    ),
+    n_signal_negative_droplets = as.numeric(`Ch1-Ch2-`),
+    n_ref_positive_droplets = n_double_positive_droplets + n_ref_only_droplets,
+    n_mut_positive_droplets = n_double_positive_droplets + n_mut_only_droplets,
+    n_signal_positive_droplets =
+      n_double_positive_droplets + n_ref_only_droplets + n_mut_only_droplets
+  )
+
+partition_row_errors <- partition_rows %>%
+  filter(
+    n_signal_positive_droplets + n_signal_negative_droplets != AcceptedDroplets |
+      n_mut_positive_droplets != Positives
+  ) %>%
+  select(Sample, ExperimentType, AcceptedDroplets, Positives,
+         n_signal_positive_droplets, n_signal_negative_droplets,
+         n_mut_positive_droplets)
+
+if (nrow(partition_row_errors) > 0) {
+  stop("Partition-count validation failed before aggregation:\n",
+       paste(utils::capture.output(print(partition_row_errors)), collapse = "\n"))
+}
+
+partition_counts <- partition_rows %>%
+  group_by(Sample, ExperimentType) %>%
+  summarise(
+    n_wells = n(),
+    n_accepted_droplets = sum(AcceptedDroplets, na.rm = TRUE),
+    n_double_positive_droplets = sum(n_double_positive_droplets, na.rm = TRUE),
+    n_ref_only_droplets = sum(n_ref_only_droplets, na.rm = TRUE),
+    n_mut_only_droplets = sum(n_mut_only_droplets, na.rm = TRUE),
+    n_signal_positive_droplets = sum(n_signal_positive_droplets, na.rm = TRUE),
+    n_signal_negative_droplets = sum(n_signal_negative_droplets, na.rm = TRUE),
+    n_ref_positive_droplets = sum(n_ref_positive_droplets, na.rm = TRUE),
+    n_mut_positive_droplets = sum(n_mut_positive_droplets, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  rename(sample_id = Sample, mutation = ExperimentType) %>%
+  separate(sample_id, into = c("code", "brain_region"), sep = "_",
+           fill = "right", remove = FALSE) %>%
+  left_join(patient.names, by = "code") %>%
+  select(participant, group, histotype, code, brain_region, sample_id, mutation,
+         n_wells, n_accepted_droplets,
+         n_double_positive_droplets, n_ref_only_droplets, n_mut_only_droplets,
+         n_signal_positive_droplets, n_signal_negative_droplets,
+         n_ref_positive_droplets, n_mut_positive_droplets)
+
+partition_counts_check <- partition_counts %>%
+  left_join(
+    ddpcr.plot.data %>%
+      select(code, brain_region, mutation, n_mut_droplets, n_total_droplets),
+    by = c("code", "brain_region", "mutation")
+  )
+
+partition_missing <- partition_counts_check %>%
+  filter(is.na(n_total_droplets))
+
+if (nrow(partition_missing) > 0) {
+  stop("Partition-count rows did not match SNV_data_final rows:\n",
+       paste(utils::capture.output(print(partition_missing)), collapse = "\n"))
+}
+
+partition_mismatch <- partition_counts_check %>%
+  filter(
+    n_accepted_droplets != n_total_droplets |
+      n_mut_positive_droplets != n_mut_droplets
+  ) %>%
+  select(participant, code, brain_region, mutation,
+         n_accepted_droplets, n_total_droplets,
+         n_mut_positive_droplets, n_mut_droplets)
+
+if (nrow(partition_mismatch) > 0 || nrow(partition_counts) != nrow(ddpcr.plot.data)) {
+  stop("Partition-count totals do not match SNV_data_final:\n",
+       paste(utils::capture.output(print(partition_mismatch)), collapse = "\n"))
+}
+
+# --------------------------------------------------------
 # export
 # --------------------------------------------------------
+
+# raw partition-count denominator input for downstream supplementary summary
+write.csv(partition_counts,
+          file.path(output_dir, "ddpcr_partition_counts_by_sample_assay.csv"),
+          row.names = FALSE)
 
 # dataset
 write.xlsx(ddpcr.plot.data, file.path(output_dir, "SNV_data_final.xlsx"))
