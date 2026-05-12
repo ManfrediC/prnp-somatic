@@ -156,8 +156,9 @@ config/preprocessing.env
 config/junctions.env
 
 # Personal journal notes and plans
-doc/journal/
 doc/plans/
+doc/notes/
+doc/JOURNAL.md
 
 # Manuscript workspace (temporarily excluded from version control)
 /manuscript
