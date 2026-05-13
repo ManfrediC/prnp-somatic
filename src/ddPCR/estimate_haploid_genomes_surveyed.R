@@ -259,11 +259,14 @@ format_count <- function(x) {
   )
 }
 
-format_mean_range_values <- function(mean_value, min_value, max_value) {
-  ifelse(
-    is.na(mean_value) | is.na(min_value) | is.na(max_value),
-    "NA",
-    paste0(
+format_mean_range_values <- function(mean_value, min_value, max_value, n_values) {
+  missing_value <- is.na(mean_value) | is.na(min_value) | is.na(max_value)
+  single_value <- !missing_value & n_values <= 1
+
+  case_when(
+    missing_value ~ "NA",
+    single_value ~ format_count(mean_value),
+    TRUE ~ paste0(
       format_count(mean_value),
       " (",
       format_count(min_value),
@@ -566,7 +569,7 @@ participant_lob_lod_status <- sample_region_status %>%
 participant_mean_ranges_formatted_long <- participant_mean_ranges_numeric %>%
   mutate(
     column = paste(as.character(mutation), metric_label),
-    display = format_mean_range_values(mean, min, max),
+    display = format_mean_range_values(mean, min, max, n_sample_regions),
     display = if_else(participant == "CJD30" & mutation == "E200K", paste0(display, "*"), display)
   )
 
