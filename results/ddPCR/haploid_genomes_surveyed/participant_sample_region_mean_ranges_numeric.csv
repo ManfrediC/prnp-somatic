@@ -1,0 +1,469 @@
+participant,mutation,metric,metric_label,source_column,n_sample_regions,mean,min,max
+CJD1,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,5,2.6,0,4
+CJD1,D178N,droplets,droplets,n_accepted_droplets,5,13606.2,12251,14662
+CJD1,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,5,2.600351022834069,-0,4.000653150091923
+CJD1,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,5,24134.46383308392,7768.317518065672,33652.89845385506
+CJD1,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,5,5.2,1,10
+CJD1,E200K,droplets,droplets,n_accepted_droplets,5,13189,11502,15751
+CJD1,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,5,5.201463925900232,1.0000395747034125,10.003621001916
+CJD1,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,5,24668.244523784488,8791.025788986535,33722.84350043379
+CJD1,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,5,8.2,6,10
+CJD1,P102L,droplets,droplets,n_accepted_droplets,5,14687,13301,17514
+CJD1,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,5,8.202321983136196,6.001323918814553,10.002855946130975
+CJD1,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,5,36961.645262227124,27823.05735352637,44627.79454867797
+CJD2,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,4.166666666666667,0,12
+CJD2,D178N,droplets,droplets,n_accepted_droplets,6,12626.333333333334,10276,13971
+CJD2,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,4.16791413983349,-0,12.005743459130944
+CJD2,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,29266.950229500886,13488.359722044215,59856.633378123544
+CJD2,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,6.833333333333333,3,14
+CJD2,E200K,droplets,droplets,n_accepted_droplets,6,13756,12273,15429
+CJD2,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,6.835486325333346,3.0003667182802385,14.006633424666939
+CJD2,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,32551.86397002849,12960.559476790751,86681.05970268778
+CJD2,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,7.833333333333333,0,26
+CJD2,P102L,droplets,droplets,n_accepted_droplets,6,19013.333333333332,15571,27842
+CJD2,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,7.836054400649569,-0,26.012147495617572
+CJD2,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,24045.333674881356,15601.390306957277,43632.234839960394
+CJD3,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,13.166666666666666,2,22
+CJD3,D178N,droplets,droplets,n_accepted_droplets,6,13623.166666666666,11622,15580
+CJD3,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,13.175186423399621,2.0001283806923005,22.020683175480638
+CJD3,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,39237.07752427675,21156.786352926305,59331.323419397464
+CJD3,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,14.5,10,23
+CJD3,E200K,droplets,droplets,n_accepted_droplets,6,15025.666666666666,13694,16472
+CJD3,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,14.507579753614928,10.00321784840622,23.016072515416095
+CJD3,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,44590.12861783242,22358.638718019505,79012.26964286774
+CJD3,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,13.5,3,35
+CJD3,P102L,droplets,droplets,n_accepted_droplets,6,14304.833333333334,12201,15760
+CJD3,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,13.511932254449636,3.00029888416633,35.04913103754929
+CJD3,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,38425.46863963119,13200.587391472294,64398.65837645357
+CJD4,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,5,15,4,25
+CJD4,D178N,droplets,droplets,n_accepted_droplets,5,14027.2,9808,25938
+CJD4,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,5,15.010853937316138,4.0007256674679175,25.025262057413347
+CJD4,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,5,39408.140136567956,18688.307194374316,53951.56131098086
+CJD4,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,5,97.8,13,376
+CJD4,E200K,droplets,droplets,n_accepted_droplets,5,36299.8,28515,45458
+CJD4,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,5,98.1402882213562,13.002493189238908,377.6499253587303
+CJD4,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,5,94600.02497630482,44522.309068426264,142171.17108924867
+CJD4,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,5,22,16,30
+CJD4,P102L,droplets,droplets,n_accepted_droplets,5,15498.2,11303,28557
+CJD4,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,5,22.0181063966659,16.009383935616206,30.03728562054948
+CJD4,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,5,49766.02402039149,35097.75033475247,80899.60040452027
+CJD5,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,11.666666666666666,2,31
+CJD5,D178N,droplets,droplets,n_accepted_droplets,6,15261.833333333334,11528,16596
+CJD5,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,11.675048590626552,2.0001205206484474,31.030915570773836
+CJD5,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,79852.78517577238,54275.475253865894,138255.01300704427
+CJD5,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,9.666666666666666,4,20
+CJD5,E200K,droplets,droplets,n_accepted_droplets,6,15322.333333333334,12731,17518
+CJD5,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,9.670989089015277,4.00045674266513,20.015726157376893
+CJD5,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,85680.9396106438,52263.41705283414,139780.05888136505
+CJD5,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,16.166666666666668,1,35
+CJD5,P102L,droplets,droplets,n_accepted_droplets,6,16527.833333333332,13601,25846
+CJD5,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,16.17811275114214,1.0000346228411456,35.02371947368648
+CJD5,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,93764.64459516473,48650.966751881824,220995.5307575627
+CJD6,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,15.333333333333334,2,39
+CJD6,D178N,droplets,droplets,n_accepted_droplets,6,22001,13975,33447
+CJD6,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,15.340026466663744,2.0001102313028767,39.02275515566738
+CJD6,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,123111.30570741356,55520.875940191356,173298.11872542393
+CJD6,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,19.333333333333332,3,41
+CJD6,E200K,droplets,droplets,n_accepted_droplets,6,18923.333333333332,15002,31192
+CJD6,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,19.349234949908716,3.0002573487358064,41.05612815087103
+CJD6,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,100185.53247117471,55148.55824873508,128833.28109526342
+CJD6,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,12,1,29
+CJD6,P102L,droplets,droplets,n_accepted_droplets,6,15479,11101,27145
+CJD6,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,12.008152231844322,1.0000351955700209,29.031428294904316
+CJD6,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,74019.94732424544,41462.90824619266,123685.29307843497
+CJD7,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,2.8333333333333335,0,7
+CJD7,D178N,droplets,droplets,n_accepted_droplets,6,16206,12057,23524
+CJD7,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,2.8336628644507993,-0,7.001082426408973
+CJD7,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,23607.033224085528,7150.562863622929,47634.293150325626
+CJD7,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,5.666666666666667,2,9
+CJD7,E200K,droplets,droplets,n_accepted_droplets,6,15778.666666666666,12223,29150
+CJD7,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,5.667828135152263,2.00014572302891,9.00138965139199
+CJD7,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,42736.882804887806,31513.568096842708,63236.59062881288
+CJD7,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,16.166666666666668,6,31
+CJD7,P102L,droplets,droplets,n_accepted_droplets,6,21775.333333333332,14309,29455
+CJD7,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,16.174030752822127,6.0012082969834015,31.01632447469399
+CJD7,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,63835.58603839531,21736.322528748853,105783.09328800908
+CJD8,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,16.166666666666668,0,36
+CJD8,D178N,droplets,droplets,n_accepted_droplets,6,17944,14456,30392
+CJD8,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,16.17834949147049,-0,36.04199340262386
+CJD8,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,100076.72493506309,70637.29447788208,134895.1060107526
+CJD8,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,13.333333333333334,1,34
+CJD8,E200K,droplets,droplets,n_accepted_droplets,6,17481.833333333332,12545,31198
+CJD8,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,13.342304556247996,1.0000370718211367,34.038244386576686
+CJD8,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,88770.22123048485,14522.518167297168,139641.98218378663
+CJD8,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,13.166666666666666,1,30
+CJD8,P102L,droplets,droplets,n_accepted_droplets,6,14935,10313,27270
+CJD8,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,13.174809071695064,1.000037110340943,30.016513762579024
+CJD8,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,56217.245392159144,9494.824600141501,86864.25026392505
+CJD9,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,9,1,17
+CJD9,D178N,droplets,droplets,n_accepted_droplets,6,15578,13928,16376
+CJD9,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,9.004295462596701,1.0000305337295428,17.009112886854712
+CJD9,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,95360.00807941274,44961.09428506071,149819.4622280961
+CJD9,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,7.833333333333333,2,16
+CJD9,E200K,droplets,droplets,n_accepted_droplets,6,16244.833333333334,15255,17084
+CJD9,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,7.836074231779235,2.0001233983912106,16.00749707182146
+CJD9,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,97427.85648856005,47582.86834432707,154084.6542760128
+CJD9,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,13.666666666666666,4,26
+CJD9,P102L,droplets,droplets,n_accepted_droplets,6,14473.166666666666,13268,15779
+CJD9,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,13.674934873702806,4.000569017026076,26.02144443593713
+CJD9,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,58655.60446634869,46702.75993072276,73410.64375449216
+CJD10,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,20.833333333333332,4,35
+CJD10,D178N,droplets,droplets,n_accepted_droplets,6,15904.166666666666,14269,17620
+CJD10,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,20.850106587664296,4.000501462601865,35.035115051423226
+CJD10,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,91335.58238275928,57595.61338904788,151419.72510512106
+CJD10,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,13.5,1,24
+CJD10,E200K,droplets,droplets,n_accepted_droplets,6,15498,14482,16354
+CJD10,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,13.508010997917772,1.0000314537952584,24.018399031343062
+CJD10,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,85440.54378873408,60657.07485954626,122837.04070376247
+CJD10,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,20.166666666666668,4,43
+CJD10,P102L,droplets,droplets,n_accepted_droplets,6,19955.5,13492,31703
+CJD10,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,20.190319997784513,4.000253097810257,43.0661333744405
+CJD10,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,114185.3165967986,49881.53361648695,258073.337663125
+CJD11,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,4.666666666666667,3,7
+CJD11,D178N,droplets,droplets,n_accepted_droplets,6,11582.5,10268,12483
+CJD11,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,4.667684874911795,3.000362435567844,7.0020532447239345
+CJD11,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,19854.108758975104,15501.555038071705,23792.02071093069
+CJD11,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,3.1666666666666665,2,6
+CJD11,E200K,droplets,droplets,n_accepted_droplets,6,11726.666666666666,8274,13876
+CJD11,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,3.167178964460098,2.0001441476068744,6.001475409855749
+CJD11,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,20256.43847915742,15532.414028480805,27827.823148255316
+CJD11,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,12,6,18
+CJD11,P102L,droplets,droplets,n_accepted_droplets,6,14498.833333333334,13473,16687
+CJD11,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,12.005323430337917,6.001315501001326,18.010857182030932
+CJD11,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,35614.089035365076,29892.61222223718,41874.386290011804
+CJD12,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,4.333333333333333,2,6
+CJD12,D178N,droplets,droplets,n_accepted_droplets,6,12600.833333333334,10094,16233
+CJD12,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,4.334226011971648,2.0001232159353717,6.001617541363593
+CJD12,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,25804.439656340277,14863.732964834442,56821.9298134818
+CJD12,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,5.666666666666667,1,11
+CJD12,E200K,droplets,droplets,n_accepted_droplets,6,12573.166666666666,8863,16787
+CJD12,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,5.668790720344637,1.0000297861361294,11.005472802134443
+CJD12,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,26515.73016828221,15881.364232186801,49940.01792598343
+CJD12,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,13,11,20
+CJD12,P102L,droplets,droplets,n_accepted_droplets,6,14240.333333333334,13415,14876
+CJD12,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,13.00625361257717,11.004068959456482,20.013587265598442
+CJD12,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,41609.04972195984,31675.98390292787,53072.111796387806
+CJD13,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,3.5,1,12
+CJD13,D178N,droplets,droplets,n_accepted_droplets,6,12078.5,9109,15196
+CJD13,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,3.5012935708318293,1.0000329048397238,12.006979449923374
+CJD13,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,17628.43207547398,10153.425811294555,24894.24877243637
+CJD13,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,4.833333333333333,0,13
+CJD13,E200K,droplets,droplets,n_accepted_droplets,6,12949.5,9518,15118
+CJD13,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,4.835046403859763,-0,13.00742574311307
+CJD13,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,21444.756131261795,16242.529122721447,27550.718508632923
+CJD13,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,13,0,29
+CJD13,P102L,droplets,droplets,n_accepted_droplets,6,20140.833333333332,13633,31582
+CJD13,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,13.005054607587534,-0,29.013322702550703
+CJD13,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,61821.095060201835,32037.496897583238,126352.2786105227
+CJD14,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,3.1666666666666665,0,7
+CJD14,D178N,droplets,droplets,n_accepted_droplets,6,14298.166666666666,10563,24554
+CJD14,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,3.1672088625411723,-0,7.001982147226241
+CJD14,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,31020.80829703038,17057.36380158888,68540.46884012976
+CJD14,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,6.833333333333333,1,12
+CJD14,E200K,droplets,droplets,n_accepted_droplets,6,14308,11032,23180
+CJD14,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,6.835626197525083,1.0000409187621375,12.00616385619609
+CJD14,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,49929.612848128374,33406.37332746667,86054.61507684717
+CJD14,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,16.5,6,34
+CJD14,P102L,droplets,droplets,n_accepted_droplets,6,31456.5,28144,42567
+CJD14,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,16.505644829537168,6.000579094683977,34.013585828600185
+CJD14,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,99962.6313447605,47487.72144715554,139034.34482872585
+CJD15,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,5,4,7
+CJD15,D178N,droplets,droplets,n_accepted_droplets,6,12317.166666666666,9520,14251
+CJD15,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,5.001136368683292,4.000561469180502,7.002574791641874
+CJD15,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,21269.1137558395,19003.31685893543,23059.893285343554
+CJD15,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,3.3333333333333335,1,10
+CJD15,E200K,droplets,droplets,n_accepted_droplets,6,11487.333333333334,8621,13255
+CJD15,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,3.3341799457135908,1.0000551369237847,10.004038663617733
+CJD15,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,22643.314829229683,19441.822062402865,25303.61364785227
+CJD15,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,11.333333333333334,4,17
+CJD15,P102L,droplets,droplets,n_accepted_droplets,6,14746,12091,17481
+CJD15,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,11.338160919995168,4.000552168414403,17.008271480523483
+CJD15,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,34616.06717510213,8381.84260150565,53762.31542244139
+CJD16,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,1,7,7,7
+CJD16,D178N,droplets,droplets,n_accepted_droplets,1,14236,14236,14236
+CJD16,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,1,7.001721553402289,7.001721553402289,7.001721553402289
+CJD16,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,1,13055.319110940183,13055.319110940183,13055.319110940183
+CJD16,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,1,4,4,4
+CJD16,E200K,droplets,droplets,n_accepted_droplets,1,15246,15246,15246
+CJD16,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,1,4.000524819595958,4.000524819595958,4.000524819595958
+CJD16,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,1,15697.577634343937,15697.577634343937,15697.577634343937
+CJD16,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,1,19,19,19
+CJD16,P102L,droplets,droplets,n_accepted_droplets,1,14766,14766,14766
+CJD16,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,1,19.01223452439851,19.01223452439851,19.01223452439851
+CJD16,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,1,11011.05139648162,11011.05139648162,11011.05139648162
+CJD17,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,10.833333333333334,2,27
+CJD17,D178N,droplets,droplets,n_accepted_droplets,6,15057,11515,23490
+CJD17,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,10.840669926558677,2.000142799343485,27.031703932473825
+CJD17,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,32157.607901989788,18548.376608212522,75755.07879152277
+CJD17,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,9,3,17
+CJD17,E200K,droplets,droplets,n_accepted_droplets,6,15459.333333333334,11440,25064
+CJD17,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,9.003707941769141,3.0003259688526613,17.012643646190355
+CJD17,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,32174.210978549887,16393.811407632445,81769.07810611618
+CJD17,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,16.333333333333332,7,35
+CJD17,P102L,droplets,droplets,n_accepted_droplets,6,13668.833333333334,10780,15883
+CJD17,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,16.35054673599585,7.001544831661666,35.05694146514776
+CJD17,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,38128.31088312812,16735.729269556003,61466.941371998335
+CJD18,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,9.5,6,12
+CJD18,D178N,droplets,droplets,n_accepted_droplets,6,14173.833333333334,11568,15204
+CJD18,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,9.503470448209136,6.0012124478084266,12.00622837407519
+CJD18,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,48394.551640260695,18753.613232900574,90528.90633074273
+CJD18,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,9.166666666666666,5,18
+CJD18,E200K,droplets,droplets,n_accepted_droplets,6,14896,13914,15635
+CJD18,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,9.170038332099095,5.000845127563059,18.01036932803921
+CJD18,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,39049.50612440833,10631.176333088206,72238.61982602341
+CJD18,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,5.333333333333333,1,16
+CJD18,P102L,droplets,droplets,n_accepted_droplets,6,14701.166666666666,13175,16754
+CJD18,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,5.335005099271646,1.0000339966456082,16.007644834152646
+CJD18,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,48655.63982721427,17999.520625627647,92130.06382267356
+CJD19,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,11.666666666666666,4,21
+CJD19,D178N,droplets,droplets,n_accepted_droplets,6,15274,14092,16765
+CJD19,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,11.67183661907108,4.000567805433771,21.013163394379244
+CJD19,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,57254.773546982986,31242.470448483884,73655.09827335361
+CJD19,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,12.166666666666666,2,26
+CJD19,E200K,droplets,droplets,n_accepted_droplets,6,15022.166666666666,12334,17532
+CJD19,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,12.173383442364038,2.000162170928444,26.0213955679652
+CJD19,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,56030.768187196285,34982.229308802955,79308.3311189829
+CJD19,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,13.333333333333334,6,27
+CJD19,P102L,droplets,droplets,n_accepted_droplets,6,14163.666666666666,13078,15881
+CJD19,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,13.341672699371324,6.0012374536068425,27.02790965440515
+CJD19,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,52407.78334208935,41870.461717078615,66186.27633088964
+CJD20,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,7,2,27
+CJD20,D178N,droplets,droplets,n_accepted_droplets,6,13554.5,10586,15525
+CJD20,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,7.004433367208295,2.0001312278555887,27.02467840674743
+CJD20,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,45302.506587444484,29330.147976415257,73306.78406449324
+CJD20,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,2.1666666666666665,0,10
+CJD20,E200K,droplets,droplets,n_accepted_droplets,6,15038.333333333334,13394,16833
+CJD20,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,2.1671891394798504,-0,10.00297153277425
+CJD20,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,44677.25180363746,27159.32905141745,57316.844197759725
+CJD20,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,4,1,7
+CJD20,P102L,droplets,droplets,n_accepted_droplets,6,14462.833333333334,13746,15211
+CJD20,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,4.000691477708846,1.0000340545332362,7.00161117080282
+CJD20,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,44941.77950611954,23281.257693059106,66356.46821718053
+CJD21,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,6.166666666666667,1,14
+CJD21,D178N,droplets,droplets,n_accepted_droplets,6,13554,11770,16158
+CJD21,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,6.168525676759677,1.0000421005367026,14.006068612729523
+CJD21,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,38564.99849631537,24888.047125527595,54073.56577307067
+CJD21,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,30.666666666666668,10,98
+CJD21,E200K,droplets,droplets,n_accepted_droplets,6,29268,27447,30815
+CJD21,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,30.697402836831312,10.001683652863818,98.15616438254932
+CJD21,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,66518.53813272493,47507.757987988865,85921.86110167946
+CJD21,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,4.333333333333333,2,7
+CJD21,P102L,droplets,droplets,n_accepted_droplets,6,14241.5,13765,14545
+CJD21,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,4.334084633067745,2.000145310116549,7.001765468894435
+CJD21,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,41887.42318110992,29013.580664338504,72115.08791999155
+CJD22,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,2.8333333333333335,1,8
+CJD22,D178N,droplets,droplets,n_accepted_droplets,6,12671.833333333334,11821,14371
+CJD22,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,2.8338912580113096,1.0000347939034633,8.002567050891383
+CJD22,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,40190.959421920896,22187.037398580993,47024.52423694752
+CJD22,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,6,3,9
+CJD22,E200K,droplets,droplets,n_accepted_droplets,6,13864.333333333334,11371,16662
+CJD22,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,6.001443927292075,3.000329332554147,9.002839713987779
+CJD22,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,46808.316061255755,22307.509466452713,58721.70327584171
+CJD22,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,6,3,8
+CJD22,P102L,droplets,droplets,n_accepted_droplets,6,14236,13207,15238
+CJD22,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,6.001367461478706,3.000308747857251,8.002423936420872
+CJD22,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,42201.00846917441,25056.80093762651,49475.01444909478
+CJD23,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,20.666666666666668,10,28
+CJD23,D178N,droplets,droplets,n_accepted_droplets,6,14693.833333333334,14149,15009
+CJD23,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,20.68251953813339,10.003366701166886,28.027741743683723
+CJD23,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,53080.247473204356,32991.336768692854,61826.43180561593
+CJD23,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,17.666666666666668,14,23
+CJD23,E200K,droplets,droplets,n_accepted_droplets,6,14811,14491,15162
+CJD23,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,17.677656673804194,14.006600364019148,23.018272045300115
+CJD23,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,60059.595069771,33100.22686447188,77073.70922256586
+CJD23,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,18.666666666666668,9,26
+CJD23,P102L,droplets,droplets,n_accepted_droplets,6,14637,9420,16417
+CJD23,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,18.67979948463296,9.002638264658952,26.022917329815662
+CJD23,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,49365.333034722855,28510.56861447608,66822.78545235151
+CJD24,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,19.833333333333332,9,25
+CJD24,D178N,droplets,droplets,n_accepted_droplets,6,15305.166666666666,14289,16665
+CJD24,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,19.847131324502204,9.002664999723219,25.018770650063146
+CJD24,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,76303.3606008815,57982.717999144945,102282.22162634169
+CJD24,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,19.166666666666668,14,31
+CJD24,E200K,droplets,droplets,n_accepted_droplets,6,14601.666666666666,12847,15738
+CJD24,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,19.18039231042074,14.006839436458069,31.0337516771547
+CJD24,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,82205.05689357099,57967.02205191775,101855.43820625065
+CJD24,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,22,16,31
+CJD24,P102L,droplets,droplets,n_accepted_droplets,6,13144.5,11002,14405
+CJD24,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,22.019103192016946,16.009430256130727,31.033739827248844
+CJD24,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,58679.33350364547,33791.78074814279,76453.75170586765
+CJD25,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,18,8,28
+CJD25,D178N,droplets,droplets,n_accepted_droplets,6,13811.666666666666,11686,14787
+CJD25,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,18.01307102895096,8.002164843872551,28.027500415125875
+CJD25,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,73797.8517153881,48834.872630228936,91828.97707908686
+CJD25,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,17,9,25
+CJD25,E200K,droplets,droplets,n_accepted_droplets,6,13958.833333333334,12382,15981
+CJD25,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,17.01121001977799,9.00304511285971,25.019574888348576
+CJD25,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,70104.43225288783,53208.060942304845,103197.78926770065
+CJD25,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,20.666666666666668,15,25
+CJD25,P102L,droplets,droplets,n_accepted_droplets,6,14511.166666666666,12260,15861
+CJD25,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,20.681675746413028,15.009183674234068,25.021065998874253
+CJD25,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,58877.78477676284,25143.02405218303,81126.37585900091
+CJD26,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,30.333333333333332,21,36
+CJD26,D178N,droplets,droplets,n_accepted_droplets,6,15083.666666666666,12571,16845
+CJD26,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,30.364102353516973,21.017559929462507,36.03973754678416
+CJD26,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,106323.93558623227,75903.07537411738,125568.77529323791
+CJD26,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,26.833333333333332,20,34
+CJD26,E200K,droplets,droplets,n_accepted_droplets,6,15243.333333333334,13607,17289
+CJD26,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,26.858714615058226,20.01157697811344,34.040512138378936
+CJD26,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,105701.17066721313,80019.41267671507,144039.63813425275
+CJD26,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,20.333333333333332,13,30
+CJD26,P102L,droplets,droplets,n_accepted_droplets,6,15974.666666666666,15140,16825
+CJD26,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,20.347538349283614,13.00502487677408,30.028477413623524
+CJD26,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,93314.02176422189,88196.39400393676,98490.53898757671
+CJD27,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,21.5,15,27
+CJD27,D178N,droplets,droplets,n_accepted_droplets,6,15958.5,14662,16860
+CJD27,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,21.514949464121184,15.007201844041537,27.02249167321889
+CJD27,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,67267.65086104684,26239.766437394755,122197.78292860588
+CJD27,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,17.166666666666668,10,29
+CJD27,E200K,droplets,droplets,n_accepted_droplets,6,17216,16167,18272
+CJD27,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,17.176182852070788,10.002951361618521,29.023037732877413
+CJD27,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,70626.87787855472,29763.600091024753,124567.4019524127
+CJD27,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,13.666666666666666,9,22
+CJD27,P102L,droplets,droplets,n_accepted_droplets,6,15933.166666666666,15202,16984
+CJD27,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,13.673133610316958,9.002665175098427,22.015086969843093
+CJD27,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,68132.16721939543,29575.184229966486,110959.10542717694
+CJD28,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,17.5,12,23
+CJD28,D178N,droplets,droplets,n_accepted_droplets,6,14368.166666666666,13736,15022
+CJD28,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,17.511028091013586,12.005244755466661,23.018100737014116
+CJD28,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,62689.96649875514,37206.38617983016,85970.5217834003
+CJD28,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,16.166666666666668,11,18
+CJD28,E200K,droplets,droplets,n_accepted_droplets,6,13375.5,12171,15225
+CJD28,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,16.17666303650565,11.004973829389531,18.013116348401244
+CJD28,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,56195.65677652008,32451.439837897888,78633.8664529855
+CJD28,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,17.166666666666668,11,22
+CJD28,P102L,droplets,droplets,n_accepted_droplets,6,14704.166666666666,13814,15700
+CJD28,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,17.177061511758005,11.004327095153743,22.016454378546335
+CJD28,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,58550.140210250116,35649.99569829562,67884.88321267079
+CJD29,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,25.5,16,33
+CJD29,D178N,droplets,droplets,n_accepted_droplets,6,15773.166666666666,14745,16813
+CJD29,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,25.521965842592486,16.00784345807566,33.03621550686306
+CJD29,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,77738.36032305536,38119.34823461077,107427.05185085213
+CJD29,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,17,4,29
+CJD29,E200K,droplets,droplets,n_accepted_droplets,6,15878.5,12884,17176
+CJD29,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,17.01104665119235,4.000505295072934,29.024509426855
+CJD29,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,81371.62204361227,37277.0856864209,119368.60600883893
+CJD29,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,16,11,18
+CJD29,P102L,droplets,droplets,n_accepted_droplets,6,15576.166666666666,14714,16646
+CJD29,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,16.008409984040725,11.003931720319807,18.01080720566813
+CJD29,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,69108.05305743127,33984.454786676724,100848.8825697694
+CJD30,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,16.666666666666668,10,26
+CJD30,D178N,droplets,droplets,n_accepted_droplets,6,14108.5,12684,16424
+CJD30,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,16.67720981948631,10.003932260398303,26.022689643578676
+CJD30,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,57286.394192511216,40060.90542527937,66586.41663709118
+CJD30,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,13372.5,11077,16383
+CJD30,E200K,droplets,droplets,n_accepted_droplets,6,15519.666666666666,14565,17378
+CJD30,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,32198.65027044015,20817.65086077134,49704.86110942043
+CJD30,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,66365.29353330746,42502.831751517355,101333.45855027912
+CJD30,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,28.833333333333332,22,34
+CJD30,P102L,droplets,droplets,n_accepted_droplets,6,15136.833333333334,13530,16883
+CJD30,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,28.86115289283794,22.01689433121129,34.034281655001486
+CJD30,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,61591.93564931229,36594.9938891002,87816.29956434104
+CJD31,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,16.333333333333332,10,26
+CJD31,D178N,droplets,droplets,n_accepted_droplets,6,13053.666666666666,12105,13657
+CJD31,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,16.34474773136958,10.003971931821523,26.024908501971392
+CJD31,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,70570.00242374504,49061.657355262454,93448.82352724936
+CJD31,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,29.166666666666668,19,43
+CJD31,E200K,droplets,droplets,n_accepted_droplets,6,15796.666666666666,11805,17582
+CJD31,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,29.197726783756433,19.0104635666257,43.078504969100806
+CJD31,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,91333.34562791733,47159.215150903576,140354.8460305207
+CJD31,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,31.333333333333332,19,44
+CJD31,P102L,droplets,droplets,n_accepted_droplets,6,14870.166666666666,13166,15505
+CJD31,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,31.37010837097612,19.01176023555356,44.073686927406975
+CJD31,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,73522.28305065393,49263.28386474718,107464.47610485456
+Control1,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,9.666666666666666,3,19
+Control1,D178N,droplets,droplets,n_accepted_droplets,6,15210.333333333334,12260,16927
+Control1,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,9.671341933480527,3.000269332056585,19.01254314360209
+Control1,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,66321.45804127597,11238.725392630291,104057.43205465465
+Control1,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,10.166666666666666,5,16
+Control1,E200K,droplets,droplets,n_accepted_droplets,6,15305.333333333334,13585,16723
+Control1,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,10.170552004587698,5.000824719601025,16.009429561417935
+Control1,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,68793.65901238295,23108.611032541652,129281.49909720833
+Control1,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,11.5,2,28
+Control1,P102L,droplets,droplets,n_accepted_droplets,6,14317.5,13171,16368
+Control1,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,11.509179185214698,2.0001336481496117,28.029131271094727
+Control1,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,53018.69070550814,11431.659774554093,87274.41973654194
+Control2,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,2,3.5,0,7
+Control2,D178N,droplets,droplets,n_accepted_droplets,2,22578.5,14913,30244
+Control2,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,2,3.5004051015243056,-0,7.000810203048611
+Control2,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,2,121380.44856481317,109784.04111961942,132976.85601000692
+Control2,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,3,6,3,12
+Control2,E200K,droplets,droplets,n_accepted_droplets,3,16281.666666666666,15330,16937
+Control2,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,3,6.0017454414378175,3.000265721877641,12.004699125601338
+Control2,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,3,68611.16429342557,49053.168888244596,103103.9571294518
+Control2,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,1,0,0,0
+Control2,P102L,droplets,droplets,n_accepted_droplets,1,13201,13201,13201
+Control2,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,1,0,-0,-0
+Control2,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,1,45389.188500652235,45389.188500652235,45389.188500652235
+Control3,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,5.5,1,26
+Control3,D178N,droplets,droplets,n_accepted_droplets,6,14245.333333333334,11134,16105
+Control3,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,5.503987456145906,1.0000338929438233,26.023554558408424
+Control3,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,39733.84679753418,4962.33757090113,104449.58554747155
+Control3,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,6,1,18
+Control3,E200K,droplets,droplets,n_accepted_droplets,6,12466.666666666666,10087,13993
+Control3,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,6.003060484721871,1.000036981336041,18.012930003876242
+Control3,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,40226.02422753136,21525.03715626878,80165.03315709996
+Control3,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,27.5,17,34
+Control3,P102L,droplets,droplets,n_accepted_droplets,6,27573.666666666668,11215,32310
+Control3,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,27.517656508799273,17.00485589156602,34.01925746725057
+Control3,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,84422.85924285199,54152.54372663225,107962.08532329038
+Control4,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,4,3,6
+Control4,D178N,droplets,droplets,n_accepted_droplets,6,14789.166666666666,14247,15020
+Control4,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,4.000573405482118,3.0003065812794705,6.001219016671606
+Control4,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,41975.92099853446,21298.80133154326,62845.59854350024
+Control4,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,6.333333333333333,0,12
+Control4,E200K,droplets,droplets,n_accepted_droplets,6,15069.333333333334,12687,16087
+Control4,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,6.335224535922514,-0,12.00491904097128
+Control4,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,48682.840633590706,24018.19482630376,82606.74136826456
+Control4,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,8.666666666666666,0,20
+Control4,P102L,droplets,droplets,n_accepted_droplets,6,14474.5,13465,15022
+Control4,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,8.670853544811017,-0,20.014868047916476
+Control4,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,49520.04853787937,22703.514581082953,81849.84050089207
+Control5,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,3.6666666666666665,1,11
+Control5,D178N,droplets,droplets,n_accepted_droplets,6,13144.166666666666,11707,14943
+Control5,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,3.6675798564592976,1.000040137001132,11.004287232930805
+Control5,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,27401.17713178064,12607.234366065722,38238.96135608151
+Control5,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,10.166666666666666,2,29
+Control5,E200K,droplets,droplets,n_accepted_droplets,6,13975.833333333334,12309,15587
+Control5,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,10.173341485343691,2.0001295784382846,29.0282012935931
+Control5,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,37930.423062395224,24368.157470171252,55590.88291503102
+Control5,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,10.166666666666666,0,28
+Control5,P102L,droplets,droplets,n_accepted_droplets,6,13792,11306,15549
+Control5,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,10.17284268346025,-0,28.025266962007944
+Control5,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,45192.78397103375,26496.631629864114,76989.74251379883
+Control6,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,7.833333333333333,1,20
+Control6,D178N,droplets,droplets,n_accepted_droplets,6,13033.166666666666,11883,14599
+Control6,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,7.8374980290863325,1.0000420792778868,20.014377457799753
+Control6,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,41144.25331677948,7750.711752259327,107905.5665725884
+Control6,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,14.833333333333334,2,40
+Control6,E200K,droplets,droplets,n_accepted_droplets,6,12753.5,10303,15254
+Control6,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,14.847221009267367,2.0001647627413273,40.05253712446295
+Control6,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,53952.63639463632,20737.095055495807,101238.73518892212
+Control6,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,24.333333333333332,21,35
+Control6,P102L,droplets,droplets,n_accepted_droplets,6,24072.166666666668,14161,30406
+Control6,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,24.34879169037525,21.007255198927965,35.039123225031304
+Control6,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,81325.37449789699,49472.26046520578,109000.83627593395
+Control7,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,6,1,14
+Control7,D178N,droplets,droplets,n_accepted_droplets,6,13095.5,12055,14065
+Control7,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,6.002075134769968,1.0000374270179104,14.00697227728394
+Control7,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,32249.88818745925,26518.582207232692,39040.04543397772
+Control7,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,6.666666666666667,2,16
+Control7,E200K,droplets,droplets,n_accepted_droplets,6,12110.5,10905,13307
+Control7,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,6.669349377487743,2.0001603377785946,16.00962671490676
+Control7,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,33893.58682246497,29032.853913040948,37227.36977624369
+Control7,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,6.166666666666667,4,9
+Control7,P102L,droplets,droplets,n_accepted_droplets,6,14305,13647,14861
+Control7,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,6.168128344227111,4.000540236355824,9.002863405042222
+Control7,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,36662.4670837296,30399.74708061372,47619.47235658674
+Control8,D178N,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,3.3333333333333335,1,8
+Control8,D178N,droplets,droplets,n_accepted_droplets,6,15470.166666666666,14731,16190
+Control8,D178N,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,3.3338698218663723,1.000033943562822,8.002143670624239
+Control8,D178N,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,61929.543914391594,27557.68396897452,87016.66928741781
+Control8,E200K,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,4.166666666666667,1,8
+Control8,E200K,droplets,droplets,n_accepted_droplets,6,13285.166666666666,12316,15138
+Control8,E200K,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,4.167535682652151,1.000033030916607,8.002524920494448
+Control8,E200K,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,56193.728330328646,24598.482869603984,83693.98386869584
+Control8,P102L,mut_positive_droplets,MUT+ droplets,n_mut_positive_droplets,6,9.166666666666666,2,19
+Control8,P102L,droplets,droplets,n_accepted_droplets,6,13693.666666666666,12605,14310
+Control8,P102L,mut_haploid_genomes,MUT haploid genomes,n_mut_genomes_poisson,6,9.1706683287526225,2.0001586839814625,19.013414756477715
+Control8,P102L,total_haploid_genomes,total haploid genomes,n_haploid_genomes_poisson,6,54630.9107424555,43659.42825841714,71287.66974448884
