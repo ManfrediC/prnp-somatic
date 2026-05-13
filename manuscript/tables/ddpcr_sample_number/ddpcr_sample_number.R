@@ -109,6 +109,9 @@ participant_lob_lod_status <- lob_lod_status_rows %>%
   summarise(`LoB+LoD pass` = paste(.status_label, collapse = "; "), .groups = "drop")
 
 group_lob_lod_status <- lob_lod_status_rows %>%
+  # Keep known germline heterozygous E200K out of aggregate CJD pass labels so
+  # "All CJD" does not imply somatic E200K signal in the primarily sCJD cohort.
+  filter(!known_heterozygous_e200k) %>%
   distinct(group, .mutation_order, .status_label) %>%
   arrange(group, .mutation_order, .status_label) %>%
   group_by(group) %>%

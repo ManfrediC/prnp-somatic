@@ -1,0 +1,837 @@
+\documentclass[a4paper]{article}
+\usepackage[margin=1.5cm]{geometry}
+\usepackage{adjustbox}
+\usepackage{afterpage}  % \afterpage
+\usepackage{amsmath}    % \text{} in math mode
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{makecell}
+\usepackage{multirow}
+\usepackage{pdflscape}  % landscape pages that rotate correctly in PDF viewers
+\usepackage{threeparttable}
+\usepackage[table]{xcolor} % for \rowcolor and named colours like gray
+\usepackage{siunitx}
+\usepackage{xspace}     % insert space after macros
+
+% Column type used in tabular:
+% 'L' = left-aligned math mode column
+% 'C' = centered matho mode
+\newcolumntype{L}{>{$}l<{$}}
+\newcolumntype{C}{>{$}c<{$}}
+
+% macros
+\newcommand{\prnp}{\textit{PRNP}\xspace}
+\newcommand{\prpsc}{PrP\textsuperscript{Sc}\xspace}
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+\newcommand{\xfold}{\ensuremath{\times}}
+
+% ---- PRNP variant shorthands ----
+\newcommand{\dn}{D178N\xspace}
+\newcommand{\ek}{E200K\xspace}
+\newcommand{\pl}{P102L\xspace}
+
+% Struts used in patients table for vertical spacing
+\newcommand{\Tstrut}{\rule{0pt}{2.6ex}}
+\newcommand{\Bstrut}{\rule[-1.2ex]{0pt}{4.0ex}}
+
+
+\captionsetup[table]{skip=6pt,font=footnotesize,justification=raggedright,singlelinecheck=false}
+\renewcommand{\arraystretch}{1.18}
+
+% Siunitx setup
+\sisetup{
+	round-mode          = places,
+	round-precision     = 2,
+	table-align-text-post = false,
+	group-minimum-digits = 4,
+	group-separator     = {\,}
+}
+
+\captionsetup[table]{skip=5pt, font=footnotesize, justification=raggedright, singlelinecheck=false}
+\renewcommand{\arraystretch}{1.2} % Slightly more vertical space
+
+
+
+\begin{document}
+
+
+% patient table
+
+
+%patient list
+\afterpage{%
+	\clearpage% Flush earlier floats (otherwise order might not be correct)
+	\thispagestyle{empty}% empty page style
+	\begin{landscape}% Landscape page
+		\centering % Center table
+		\resizebox{1\linewidth}{!}{%
+			\begin{tabular}{lCcClllcll} %age and duration in math mode. Put NA in \text{}.
+				\toprule[2pt]\Bstrut
+				name & \text{age} & sex & \text{time to death (d)} & symptoms & main diagnosis & other diagnoses & codon $129$ & histotype & \prpsc type \\
+				\hline \Tstrut
+				CJD1 & 66 & F & 95 & visual disturbances, ataxia, dystonia, EEG compatible with sCJD & sCJD &  & MM & MM1+2C & type 1 (2) \\
+				CJD2 & 74 & M & 74 & mild dementia, myoclonus, nystagmus, ataxia, palsy of right arm & sCJD &  & MM & MM1 & type 1 \\
+				CJD3 & 69 & M & 368 & dementia (cortical and subcortical) & sCJD &  & MM & atypical & type 2 \\
+				CJD4 & 66 & F &  &  & sCJD &  & VV & VV2 & type 2 \\
+				CJD5 & 71 & M & 543 & progressive fronto-subcortical dysfunction, visual disturbances, EEG compatible with sCJD & sCJD &  & MV & MV2K+C & type 2 (1) \\
+				CJD6 & 62 & F &  &  & sCJD &  & MV & MV2C & type 2 \\
+				CJD7 & 78 & F & 324 & moderate cognitive deficits, postural instability, sensory axonal polyneuropathy & sCJD &  & MV & atypical & type 1 \\
+				CJD8 & 72 & M & 169 & severe cognitive deficits, memory loss, visual disturbances, myoclonus, ataxia, gait disorder & sCJD &  & MM & MM1 & type 1 \\
+				CJD9 & 56 & M & 86 & cognitive deficits, memory loss, amnestic aphasia, non-convulsive status epilepticus & sCJD &  & MM & atypical & type 1 \\
+				CJD10 & 73 & F & 121 & Broca's aphasia, mild cerebellar dysfunction & sCJD & intermed. AD, mild CAA & MM & MM1+2C & type 1 (2) \\
+				CJD11 & 48 & F & 64 & memory loss, affective disorder, nystagmus, extrapyramidal symptoms, myoclonus & sCJD &  & MM & MM1 & type 1 \\
+				CJD12 & 76 & M & 213 & rapidly progressive dementia, visual disturbances, gait disorder & sCJD &  & MM & MM1 & type 1 \\
+				CJD13 & 57 & F & 100 & cognitive deficits, memory loss, amnestic aphasia, gait disorder & sCJD &  & MM & MM1 & type 1 \\
+				CJD14 & 83 & M & 152 & dementia, myoclonus, visual disturbances, positive psychiatric symptoms & sCJD &  & MV & atypical & type 1 \\
+				CJD15 & 63 & M & 95 & dementia, visual disturbances, cerebellar dysfunction, pyramidal signs, extrapyramidal symptoms & sCJD & low AD, moderate CAA & MM & MM+2C & type 1 \\
+				CJD16 & 71 & F & 55 & mild cognitive deficits (loss of memory, concentration, impulse control), myoclonus, ataxia & sCJD & low AD & MM & MM1 & type 1 \\
+				CJD17 & 67 & M &  &  & sCJD & low AD & MM & MM1+2C & type 1 \\
+				CJD18 & 69 & F & 180 & myoclonus, pyramidal signs & sCJD & low AD & MV & MV2K+C & type 2 \\
+				CJD19 & 59 & M & 363 & dementia, progressive dysarthria & sCJD & stroke & MV & atypical & types 1 \& 2 \\
+				CJD20 & 57 & M & 156 & dementia, myoclonus, cerebellar dysfunction & sCJD &  & MM & MM1 & type 1 \\
+				CJD21 & 69 & M & 131 & rapidly progressive dementia, ataxia, myoclonus, EEG compatible with sCJD & sCJD & low AD, moderate CAA & MM & MM1 & type 1 \\
+				CJD22 & 72 & M & 55 & dysarthria, dysphagia, gait disorder & sCJD & PART, schizophrenia & MM & MM1 & type 1 \\
+				CJD23 & 64 & M & 390 & cognitive deficits with memory loss, confusion, aphasia and abnormal behaviour & sCJD &  & VV & VV1 & type 1 \\
+				CJD24 & 27 & F & 1080 & behavioural changes, delusion, insomnia with enacted dreams, diplopia, ataxia, late dementia & sCJD &  & MM & MM2T & type 2 \\
+				CJD25 & 55 & M & 240 & ataxia, cognitive deficits, visual disturbances & sCJD &  & MM & MM2T & type 2 \\
+				CJD26 & 43 & F & 720 & insomnia with enacted dreams, diplopia, ataxia, memory loss, disorientation, late dementia & sCJD &  & MM & MM2T & type 2 \\
+				CJD27 & 78 & M & 390 & disorientation, memory loss, behavioural changes, action tremor, myoclonus, apraxia, gait ataxia & sCJD & focal ARTAG (hippocampus) & MV & MV2K & type 2 \\
+				CJD28 & 66 & M & 480 & apraxia, disorientation, memory loss, nystagmus, dysmetria, action tremor, gait ataxia & sCJD &  & MV & MV2K & type 2 \\
+				CJD29 & 78 & F & 300 & disorientation, aphasia, ataxia, dysarthria, extrapyramidal and pyramidal signs, action tremor & sCJD & low AD & MV & MV2K & type 2 \\
+				CJD30 & 67 &  &  &  & gCJD (E200K heterozygous) &  & VV & VV2 & \\
+				CJD31 & 74 &  &  &  & sCJD &  & VV & VV2 & \\
+				\hline \Tstrut
+				Control1 & 78 & F &  & dementia, Parkinsonism, multifocal epilepsy, EEG compatible with sCJD & high AD & CAA & MV &  &  \\
+				Control2 & 72 & M &  & rapidly progressive neurological disorder, rigidity & multiple ischaemic strokes & atherosclerosis, PART & MV &  &  \\
+				Control3 & 76 & M &  & rapidly progressive dementia, postural instability, cachexia & CMV encephalitis &  & MM &  &  \\
+				Control4 & 78 & M &  & visual disturbances, dizziness, paralysis of eye muscles & severe alpha-synucleinopathy & PART & MM &  &  \\
+				Control5 & 70 & F &  & dementia, Parkinsonism, temporal lobe atrophy & Lewy body disease & PART, TDP-43 & MV &  &  \\
+				Control6 & 84 & F &  & ataxia, reduced vigilance, epilepsy, EEG compatible with sCJD & paraneoplastic encephalomyelitis & low AD & MM &  &  \\
+				Control7 & 64 & M &  & dementia & FTLD with TDP-43 pathology & intermed. AD & MV &  &  \\
+				Control8 & 78 & F &  & rapidly progressive dementia, cerebellar dysfunction, pyramidal signs, epilepsy & CAA & inflammatory encephalopathy & MV &  &  \\
+				\bottomrule[2pt]
+			\end{tabular}
+		}
+		\captionof{table}{\textbf{Overview of patients included in the study}. Age at death, sex, time from onset of symptoms to death (illness duration, given in days), main clinical symptoms, main neuropathological diagnosis, other neuropathological diagnoses, \prnp codon $129$ genotype, prion disease histotype and predominant \prpsc subtype (minor \prpsc subtype given in brackets, if present) are given, where available. In the control samples, other brain pathologies were identified. Sample CJD30 was unexpectedly found to be germline heterozygous for the E200K variant, classifying it as genetic CJD (gCJD). Low, intermediate, high AD: degree of AD-related neuropathological change. AD: Alzheimer's disease. CAA: cerebral amyloid angiopathy. CMV: cytomegalovirus. FTLD: frontotemporal lobar degeneration. PART: primary age-related tauopathy.}
+		\label{tab:patients}
+	\end{landscape}
+	\clearpage% Flush page
+}
+
+\clearpage
+
+
+% ddPCR LoD table
+
+\begin{table}[t]
+	\centering
+	\begin{adjustbox}{max width=\textwidth}
+		\begin{minipage}{\textwidth}
+			\centering
+			{\normalsize
+				
+				\begin{tabular}{@{} l r r r r r @{}}
+					\toprule
+					Sample & Expected & Measured (95\% CI) & Droplets & Positive & Negative \\
+					\midrule
+					\addlinespace
+					\textbf{D178N} & & & & & \\
+					NTC       & 0.00 & 0.00 (0.00--0.00) & 7092  & 0   & 7092 \\
+					WT        & 0.00 & 0.01 (0.00--0.02) & 13062 & 3   & 13059 \\
+					0.05\%    & 0.05 & 0.06 (0.03--0.08) & 13726 & 18  & 13708 \\
+					0.1\%     & 0.10 & 0.17 (0.15--0.20) & 46272 & 178 & 46094 \\
+					0.33\%    & 0.33 & 0.31 (0.27--0.36) & 23707 & 156 & 23551 \\
+					1\%       & 1.00 & 1.21 (1.11--1.30) & 22879 & 601 & 22278 \\
+					\addlinespace
+					\textbf{E200K} & & & & & \\
+					NTC       & 0.00 & 0.00 (0.00--0.00) & 23746 & 0   & 23746 \\
+					WT        & 0.00 & 0.01 (0.00--0.02) & 25239 & 6   & 25233 \\
+					0.05\%    & 0.05 & 0.07 (0.05--0.08) & 53456 & 86  & 53370 \\
+					0.1\%     & 0.10 & 0.12 (0.10--0.14) & 53203 & 149 & 53054 \\
+					0.33\%    & 0.33 & 0.33 (0.28--0.38) & 25176 & 174 & 25002 \\
+					1\%       & 1.00 & 1.06 (0.97--1.15) & 24811 & 532 & 24279 \\
+					\addlinespace
+					\textbf{P102L} & & & & & \\
+					NTC       & 0.00 & 0.00 (0.00--0.00) & 29652 & 0   & 29652 \\
+					WT        & 0.00 & 0.07 (0.04--0.09) & 22130 & 23  & 22107 \\
+					0.05\%    & 0.05 & 0.13 (0.11--0.15) & 59896 & 139 & 59757 \\
+					0.1\%     & 0.10 & 0.18 (0.16--0.21) & 58993 & 174 & 58819 \\
+					0.33\%    & 0.33 & 0.49 (0.43--0.55) & 28280 & 257 & 28023 \\
+					1\%       & 1.00 & 1.42 (1.31--1.53) & 27914 & 643 & 27271 \\
+					\bottomrule
+				\end{tabular}
+				\vspace{0.5em}
+				
+				\caption{\textbf{ddPCR quantification of mutant allele fractions in dilution series and controls.}
+					Block headers indicate the assayed \textit{PRNP} mutation. Controls (NTC, WT) are included.
+					“Expected” is the nominal mutant fraction in the input mixture. “Measured (95\% CI)” gives the
+					mutant allele fraction with two-sided 95\% Poisson CIs (QuantaSoft Analysis Pro). 
+					Droplet counts are reported after quality filtering.
+					Goodness of fit for computed versus expected mutant allele fractions across the dilution series only (excluding controls) and was high for all assays (dilution-only $R^2$: D178N, 0.988577; E200K, 0.999045; P102L, 0.999737).
+					}
+				\label{tab:ddpcr_fractions}
+			}
+		\end{minipage}
+	\end{adjustbox}
+\end{table}
+
+\clearpage
+
+
+
+
+		% ddPCR results table
+\begin{table}[p]
+	\ra{1.0}
+	\centering
+	\begin{adjustbox}{max width=\linewidth, max totalheight=0.95\textheight}
+		\begin{tabular}{lrrrrccccc}
+			\toprule[2pt]
+			name &
+			\multicolumn{4}{c}{Analysed (n)} &
+			\multicolumn{4}{c}{Max. VAF} &
+			LoB/LoD pass\\
+			\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+			& samples & \dn & \ek & \pl & \dn & \ek & \pl & overall & \\
+			\midrule \Tstrut
+			CJD1 & 5 & 5 & 5 & 5 & 0.015 & 0.046 & 0.032 & 0.046 & None\\
+			CJD2 & 6 & 6 & 6 & 6 & 0.067 & 0.033 & 0.044 & 0.067 & None\\
+			CJD3 & 6 & 6 & 6 & 6 & 0.047 & 0.045 & 0.054 & 0.054 & None\\
+			CJD4 & 5 & 5 & 5 & 5 & 0.046 & 0.009 & 0.049 & 0.049 & None\\
+			CJD5 & 6 & 6 & 6 & 6 & 0.042 & 0.022 & 0.043 & 0.043 & None\\
+			CJD6 & 6 & 6 & 6 & 6 & 0.023 & 0.065 & 0.056 & 0.065 & None\\
+			CJD7 & 6 & 6 & 6 & 6 & 0.020 & 0.021 & 0.058 & 0.058 & None\\
+			CJD8 & 6 & 6 & 6 & 6 & 0.052 & 0.044 & 0.168 & 0.168 & None\\
+			CJD9 & 6 & 6 & 6 & 6 & 0.033 & 0.030 & 0.047 & 0.047 & None\\
+			CJD10 & 6 & 6 & 6 & 6 & 0.043 & 0.032 & 0.086 & 0.086 & None\\
+			CJD11 & 6 & 6 & 6 & 6 & 0.035 & 0.022 & 0.045 & 0.045 & None\\
+			CJD12 & 6 & 6 & 6 & 6 & 0.040 & 0.051 & 0.046 & 0.051 & None\\
+			CJD13 & 6 & 6 & 6 & 6 & 0.073 & 0.078 & 0.034 & 0.078 & None\\
+			CJD14 & 6 & 6 & 6 & 6 & 0.033 & 0.035 & 0.001 & 0.035 & None\\
+			CJD15 & 6 & 6 & 6 & 6 & 0.035 & 0.042 & 0.131 & 0.131 & None\\
+			CJD16 & 1 & 1 & 1 & 1 & 0.054 & 0.025 & 0.172 & 0.172 & None\\
+			CJD17 & 6 & 6 & 6 & 6 & 0.038 & 0.055 & 0.072 & 0.072 & None\\
+			CJD18 & 6 & 6 & 6 & 6 & 0.037 & 0.047 & 0.028 & 0.047 & None\\
+			CJD19 & 6 & 6 & 6 & 6 & 0.033 & 0.033 & 0.047 & 0.047 & None\\
+			CJD20 & 6 & 6 & 6 & 6 & 0.037 & 0.022 & 0.021 & 0.037 & None\\
+			CJD21 & 6 & 6 & 6 & 6 & 0.046 & 0.003 & 0.024 & 0.046 & None\\
+			CJD22 & 6 & 6 & 6 & 6 & 0.036 & 0.022 & 0.028 & 0.036 & None\\
+			CJD23 & 6 & 6 & 6 & 6 & 0.050 & 0.069 & 0.056 & 0.069 & None\\
+			CJD24 & 6 & 6 & 6 & 6 & 0.040 & 0.036 & 0.062 & 0.062 & None\\
+			CJD25 & 6 & 6 & 6 & 6 & 0.034 & 0.046 & 0.060 & 0.060 & None\\
+			CJD26 & 6 & 6 & 6 & 6 & 0.035 & 0.041 & 0.033 & 0.041 & None\\
+			CJD27 & 6 & 6 & 6 & 6 & 0.057 & 0.034 & 0.034 & 0.057 & None\\
+			CJD28 & 6 & 6 & 6 & 6 & 0.048 & 0.037 & 0.035 & 0.048 & None\\
+			CJD29 & 6 & 6 & 6 & 6 & 0.043 & 0.032 & 0.050 & 0.050 & None\\
+			CJD30 & 6 & 6 & 6 & 6 & 0.039 & 49.857* & 0.063 & 0.063 & E200K*\\
+			CJD31 & 6 & 6 & 6 & 6 & 0.028 & 0.057 & 0.076 & 0.076 & None\\
+			\addlinespace[2pt]
+			Control1 & 6 & 6 & 6 & 6 & 0.062 & 0.052 & 0.051 & 0.062 & None\\
+			Control2 & 3 & 2 & 3 & 1 & 0.000 & 0.024 & 0.000 & 0.024 & None\\
+			Control3 & 6 & 6 & 6 & 6 & 0.025 & 0.033 & 0.037 & 0.037 & None\\
+			Control4 & 6 & 6 & 6 & 6 & 0.019 & 0.033 & 0.043 & 0.043 & None\\
+			Control5 & 6 & 6 & 6 & 6 & 0.029 & 0.071 & 0.067 & 0.071 & None\\
+			Control6 & 6 & 6 & 6 & 6 & 0.026 & 0.043 & 0.034 & 0.043 & None\\
+			Control7 & 6 & 6 & 6 & 6 & 0.039 & 0.044 & 0.025 & 0.044 & None\\
+			Control8 & 6 & 6 & 6 & 6 & 0.009 & 0.014 & 0.029 & 0.029 & None\\
+			\addlinespace[2pt]
+				All CJD & 179 & 179 & 179 & 179 & 0.073 & 0.078 & 0.172 & 0.172 & None\\
+			All controls & 45 & 44 & 45 & 43 & 0.062 & 0.071 & 0.067 & 0.071 & None\\
+			\bottomrule[2pt]
+		\end{tabular}
+	\end{adjustbox}
+	\caption{\textbf{Overview of ddPCR single-nucleotide variant analysis.} Purified brain DNA from $31$ CJD and $8$ control individuals was analysed. Shown are the number of samples passing ddPCR quality control overall (\textit{analysed samples}) and per assay (\textit{analysed \dn}, \textit{analysed \ek}, \textit{analysed \pl}), together with the maximum estimated variant allele fraction (\textit{VAF}; \textit{max. VAF}) per assay and the maximum across assays (\textit{Max. VAF overall}). The \textit{LoB/LoD pass} column lists mutation assays for which at least one sample-region passed both the limit of blank and limit of detection filters; \textit{None} indicates no non-heterozygous assay passed both filters. For the aggregate values overall \textit{Max. VAF overall} and \textit{All CJD}, the values for \ek were computed excluding CJD30, which was unexpectedly found to be germline heterozygous for \ek (marked with *). VAFs are reported as a fraction of total analysed DNA.}
+	\label{tab:ddPCR-results}
+\end{table}
+
+\clearpage
+
+\begin{table}[t]
+	\centering
+	\resizebox{\textwidth}{!}{
+		\begin{tabular}{%
+				l  % Sample
+				l  % Variant
+				l  % dbSNP ID
+				l  % Chromosome
+				r  % Position
+				c  % REF
+				c  % ALT
+				l  % Mutation Type
+				r  % Read Depth (DP)
+				r  % REF Count
+				r  % ALT Count
+				r  % AAF (\%)
+				r  % Base Quality
+				r  % Mapping Quality
+				r  % REF Forward Count
+				r  % REF Reverse Count
+				r  % ALT Forward Count
+				r  % ALT Reverse Count
+			}
+			\toprule
+			Sample & Variant & dbSNP ID & Chromosome & Position & REF & ALT 
+			& Mutation Type & Read Depth (DP) & REF Count & ALT Count 
+			& AAF (\%) & Base Quality & Mapping Quality 
+			& REF Forward Count & REF Reverse Count 
+			& ALT Forward Count & ALT Reverse Count \\
+			\midrule
+			A117V 0.5\% spike-in & A117V & rs74315402 & chr20 & 4699570 
+			& C & T & MISSENSE & 6961 & 6869 & 92 
+			& 1.321649 & 60 & 21.88 
+			& 3730 & 3139 & 40 & 52 \\
+			A117V 1\% spike-in & A117V & rs74315402 & chr20 & 4699570 
+			& C & T & MISSENSE & 4315 & 4280 & 35 
+			& 0.811124 & 60 & 22.24 
+			& 2216 & 2064 & 16 & 19 \\
+			\bottomrule
+		\end{tabular}
+	}
+	\vspace{0.5em}
+	\caption{\textbf{A117V spike-in analysis for limit-of-detection determination.} Sequencing metrics for A117V (rs74315402) spike-in mixtures at nominal 0.5\% and 1\% alternate-allele frequencies. Both variants were confidently detected by Mutect2 and passed all quality filters. Observed variant-allele fractions (AAFs) were 1.32\% and 0.81\%, respectively, with balanced strand support and high base quality.}
+	\label{tab:a117v_spike_in_lod}
+\end{table}
+
+\clearpage
+
+% Sequencing metrics table
+
+\begin{table}[t]
+	\centering
+	\resizebox{\textwidth}{!}{%
+		\begin{tabular}{llrrrrrrr}
+			\toprule
+			\multirow{2}{*}[-0.8ex]{Sample} & \multirow{2}{*}[-0.8ex]{Group}
+			& \multicolumn{2}{c}{Reads}
+			& \multicolumn{5}{c}{\textit{PRNP} coding region coverage} \\
+			\cmidrule(lr){3-4}\cmidrule(lr){5-9}
+			& & Primary mapped (n) & On-target (\%)
+			& Mean depth (\xfold) & P20 depth (\xfold) & Fold-80
+			& Bases $\geq$100\xfold (\%) & Bases $\geq$500\xfold (\%) \\
+			\midrule
+			CJD1 & CJD & 2971083 & 82.3 & 4874 & 4492 & 1.08 & 100.0 & 100.0\\
+			CJD2 & CJD & 2707989 & 82.2 & 4749 & 4500 & 1.05 & 100.0 & 100.0\\
+			CJD3 & CJD & 2418307 & 70.3 & 6854 & 5627 & 1.22 & 100.0 & 100.0\\
+			CJD4 & CJD & 2367843 & 64.1 & 4132 & 3412 & 1.21 & 100.0 & 100.0\\
+			CJD5 & CJD & 2418541 & 0.3 & 264 & 229 & 1.15 & 100.0 & 0.0\\
+			CJD6 & CJD & 2879603 & 69.0 & 13997 & 13340 & 1.05 & 100.0 & 100.0\\
+			CJD7 & CJD & 1201860 & 65.8 & 4418 & 3853 & 1.15 & 100.0 & 100.0\\
+			CJD8 & CJD & 479340 & 3.4 & 533 & 461 & 1.16 & 100.0 & 58.7\\
+			CJD11 & CJD & 1799120 & 67.3 & 5119 & 4498 & 1.14 & 100.0 & 100.0\\
+			CJD12 & CJD & 764317 & 21.7 & 1204 & 1036 & 1.16 & 100.0 & 100.0\\
+			CJD13 & CJD & 2332310 & 84.4 & 5267 & 4876 & 1.08 & 100.0 & 100.0\\
+			CJD14 & CJD & 2028669 & 0.4 & 100 & 75 & 1.34 & 48.7 & 0.0\\
+			CJD15 & CJD & 1757196 & 0.7 & 157 & 133 & 1.18 & 100.0 & 0.0\\
+			CJD18 & CJD & 1943421 & 0.6 & 175 & 113 & 1.55 & 96.5 & 0.0\\
+			CJD19 & CJD & 1030223 & 5.8 & 1114 & 909 & 1.23 & 100.0 & 100.0\\
+			CJD21 & CJD & 847271 & 80.1 & 3905 & 3467 & 1.13 & 100.0 & 100.0\\
+			CJD22 & CJD & 2656868 & 73.7 & 6299 & 5990 & 1.05 & 100.0 & 100.0\\
+			CJD23 & CJD & 2256474 & 73.7 & 9503 & 8676 & 1.09 & 100.0 & 100.0\\
+			CJD24 & CJD & 1822237 & 0.5 & 434 & 331 & 1.31 & 100.0 & 33.7\\
+			CJD25 & CJD & 2513891 & 61.0 & 12492 & 9277 & 1.35 & 100.0 & 100.0\\
+			CJD26 & CJD & 649606 & 11.9 & 699 & 560 & 1.25 & 100.0 & 94.2\\
+			CJD27 & CJD & 5251449 & 77.0 & 8707 & 8454 & 1.03 & 100.0 & 100.0\\
+			CJD28 & CJD & 816675 & 4.1 & 676 & 526 & 1.28 & 100.0 & 85.6\\
+			CJD29 & CJD & 795483 & 6.4 & 1468 & 1374 & 1.07 & 100.0 & 100.0\\
+			CJD30 & CJD & 1214681 & 3.3 & 840 & 759 & 1.11 & 100.0 & 100.0\\
+			CJD31 & CJD & 550327 & 1.6 & 229 & 165 & 1.39 & 100.0 & 0.0\\
+			\addlinespace
+			Control1 & control & 2570807 & 44.5 & 8908 & 8122 & 1.10 & 100.0 & 100.0\\
+			Control2 & control & 1295808 & 22.6 & 2656 & 2270 & 1.17 & 100.0 & 100.0\\
+			Control3 & control & 2701096 & 67.0 & 4380 & 4077 & 1.07 & 100.0 & 100.0\\
+			Control4 & control & 952052 & 2.8 & 666 & 551 & 1.21 & 100.0 & 90.2\\
+			Control5 & control & 1326561 & 62.7 & 5068 & 4772 & 1.06 & 100.0 & 100.0\\
+			Control7 & control & 882024 & 3.8 & 652 & 547 & 1.19 & 100.0 & 95.9\\
+			\addlinespace
+			Wildtype & spike-in & 2222988 & 77.8 & 5742 & 4985 & 1.15 & 100.0 & 100.0\\
+			A117V 0.5\% spike-in & spike-in & 4751420 & 77.0 & 10050 & 7846 & 1.28 & 100.0 & 100.0\\
+			A117V 1\% spike-in & spike-in & 3147044 & 81.6 & 4651 & 4182 & 1.11 & 100.0 & 100.0\\
+			\bottomrule
+		\end{tabular}
+	}
+	\vspace{0.5em}
+	\caption{\textbf{Sequencing quality metrics and \textit{PRNP} coding-region coverage}. For each sample, we report primary mapped reads, on-target read fraction, coverage statistics across the \textit{PRNP} coding region, including mean depth, P20 depth (20th percentile depth), Fold-80 (mean/P20; an indicator of coverage uniformity) and the percentage of coding bases covered at $\geq$100\xfold and $\geq$500\xfold.}
+	\label{tab:sequencing_metrics}
+\end{table}
+
+\clearpage
+
+
+% SNV table
+
+\begin{table}[t]
+	\centering
+	{\normalsize
+		\begin{adjustbox}{max width=\textwidth}
+			\begin{tabular}{>{\centering\arraybackslash}p{1.3cm}  % Sample
+					>{\centering\arraybackslash}p{1.9cm}  % Chromosome
+					>{\centering\arraybackslash}p{1.7cm}  % Position
+					>{\centering\arraybackslash}p{1.1cm}  % AAF
+					>{\centering\arraybackslash}p{0.7cm}  % REF
+					>{\centering\arraybackslash}p{0.7cm}  % ALT
+					>{\centering\arraybackslash}p{1.6cm}  % Mutation Type
+					>{\centering\arraybackslash}p{2.2cm}  % Pop Freq
+					>{\centering\arraybackslash}p{1.2cm}  % Read Depth
+					>{\centering\arraybackslash}p{1.3cm}  % REF Count
+					>{\centering\arraybackslash}p{1.3cm}  % ALT Count
+					>{\centering\arraybackslash}p{1.4cm}  % Base Qual
+					>{\centering\arraybackslash}p{1.4cm}  % Mapping Q
+					>{\centering\arraybackslash}p{1.0cm}  % REF Fwd
+					>{\centering\arraybackslash}p{1.0cm}  % REF Rev
+					>{\centering\arraybackslash}p{1.0cm}  % ALT Fwd
+					>{\centering\arraybackslash}p{1.0cm}} % ALT Rev
+				\toprule
+				\textbf{Sample} & \textbf{Chromosome} & \textbf{Position} & \textbf{AAF (\%)} & \textbf{REF} & \textbf{ALT} & \textbf{Mutation Type} & \textbf{Population Frequency} & \textbf{Read Depth} & \textbf{REF Count} & \textbf{ALT Count} & \textbf{Base Quality} & \textbf{Mapping Quality} & \textbf{REF Fwd} & \textbf{REF Rev} & \textbf{ALT Fwd} & \textbf{ALT Rev} \\
+				\midrule
+				\rule{0pt}{1.2em}CJD2  & Chr20 & 4691920 & 0.55 & G & A & intron & not described & 4706 & 4680 & 26 & 37.9 & 22.01 & 2327 & 2353 & 10 & 16 \\
+				\rule{0pt}{1.2em}CJD6  & Chr20 & 4691920 & 0.52 & G & A & intron & not described & 3482 & 3464 & 18 & 33.4 & 20.10 & 1787 & 1677 & 6  & 12 \\
+				\rule{0pt}{1.2em}CJD23 & Chr20 & 4691920 & 0.60 & G & A & intron & not described & 5133 & 5102 & 31 & 38.5 & 21.00 & 2525 & 2577 & 12 & 19 \\
+				\rule{0pt}{1.2em}CJD23 & Chr20 & 4694249 & 0.82 & T & C & intron & not described & 1344 & 1333 & 11 & 30.0 & 20.62 & 686  & 647  & 5  & 6 \\
+				\bottomrule
+			\end{tabular}
+		\end{adjustbox}
+	}
+	
+	\vspace{0.5em}
+	
+	% SNV table
+	
+	\begin{adjustbox}{max width=\textwidth}
+		\begin{minipage}{\linewidth}
+			\caption{\textbf{Somatic single nucleotide variants (sSNVs)} detected in the \textit{PRNP} gene. A total of four intronic variants were identified: one variant each in samples CJD2 and CJD6, and two variants in sample CJD23. The alternative allele fraction (AAF) ranged from 0.52\% to 0.82\%. Abbreviations: AAF, alternative allele fraction; REF, reference allele; ALT, alternative allele; Fwd, forward read count; Rev, reverse read count.}
+			\label{tab:prnp_somatic_snv_summary}
+		\end{minipage}
+	\end{adjustbox}
+	
+\end{table}
+
+\clearpage
+
+
+% Junction metrics table
+\begin{table}[t]
+	\centering
+	\resizebox{\textwidth}{!}{%
+		\begin{tabular}{lrrrrrr}
+			\toprule
+			\multirow{2}{*}[-0.8ex]{Sample}
+			& \multicolumn{6}{c}{Junction alignment metrics, n} \\
+			\cmidrule(lr){2-7}
+			& {\makecell{Unmapped}}
+			& {\makecell{Secondary}}
+			& {\makecell{Supplementary}}
+			& {\makecell{Primary mapped\\non-duplicate}}
+			& {\makecell{MAPQ $\geq$ 20}}
+			& {\makecell{Junction-spanning\\reads}} \\
+			\midrule
+			CJD1 & 415526 & 0 & 0 & 9658 & 4054 & 0\\
+			CJD2 & 402153 & 0 & 0 & 9665 & 4085 & 0\\
+			CJD3 & 493538 & 0 & 0 & 9266 & 2607 & 0\\
+			CJD4 & 302208 & 0 & 0 & 5238 & 1378 & 0\\
+			CJD5 & 6338 & 0 & 0 & 262 & 29 & 0\\
+			CJD6 & 557003 & 0 & 0 & 23921 & 8662 & 0\\
+			CJD7 & 301273 & 0 & 0 & 6583 & 2015 & 0\\
+			CJD8 & 12528 & 0 & 0 & 642 & 117 & 0\\
+			CJD11 & 369345 & 0 & 0 & 8411 & 3138 & 0\\
+			CJD12 & 86855 & 0 & 0 & 1733 & 446 & 0\\
+			CJD13 & 433575 & 0 & 0 & 9797 & 3691 & 0\\
+			CJD14 & 5394 & 0 & 0 & 118 & 26 & 0\\
+			CJD15 & 7328 & 0 & 0 & 186 & 32 & 0\\
+			CJD18 & 7307 & 0 & 0 & 151 & 31 & 0\\
+			CJD19 & 40393 & 0 & 0 & 1331 & 260 & 0\\
+			CJD21 & 248040 & 0 & 0 & 6008 & 1702 & 0\\
+			CJD22 & 272388 & 0 & 0 & 15256 & 7605 & 0\\
+			CJD23 & 543685 & 0 & 0 & 16299 & 5868 & 0\\
+			CJD24 & 7424 & 0 & 0 & 520 & 131 & 0\\
+			CJD25 & 286523 & 0 & 0 & 27999 & 13593 & 0\\
+			CJD26 & 46850 & 0 & 0 & 804 & 153 & 0\\
+			CJD27 & 548038 & 0 & 0 & 18634 & 8458 & 0\\
+			CJD28 & 24782 & 0 & 0 & 764 & 110 & 0\\
+			CJD29 & 38632 & 0 & 0 & 2118 & 565 & 0\\
+			CJD30 & 28618 & 0 & 0 & 1098 & 221 & 0\\
+			CJD31 & 6338 & 0 & 0 & 216 & 35 & 0\\
+			\addlinespace
+			Control1 & 320224 & 0 & 0 & 18782 & 8339 & 0\\
+			Control2 & 141353 & 0 & 0 & 3705 & 979 & 0\\
+			Control3 & 342382 & 0 & 0 & 8362 & 3488 & 0\\
+			Control4 & 20425 & 0 & 0 & 805 & 179 & 0\\
+			Control5 & 257019 & 0 & 0 & 8957 & 3504 & 0\\
+			Control7 & 23691 & 0 & 0 & 793 & 160 & 0\\
+			\bottomrule
+		\end{tabular}%
+	}
+	\vspace{0.5em}
+	\caption{\textbf{Junction alignment metrics for \textit{PRNP} exon1--exon2 junction analysis.}
+		For each sequenced CJD and control sample, the table shows the numbers of unmapped, secondary, and supplementary alignments, primary mapped non-duplicate alignments, alignments with mapping quality (MAPQ) $\geq$ 20, and retained junction-spanning reads. Junction-spanning reads were defined as reads crossing the exon1--exon2 junction with at least 10 bp aligned on each side. No junction-spanning reads were detected.}
+	\label{tab:prnp_junction_metrics}
+\end{table}
+
+\clearpage
+
+% -----------------------
+% Supplementary Tables
+% -----------------------
+
+% Set to supplementary
+\setcounter{table}{0}
+\renewcommand{\thetable}{S\arabic{table}}
+
+% DNA quality evidence table
+
+\begin{table}[t]
+	\centering
+	\resizebox{\textwidth}{!}{%
+		\begin{tabular}{l r r r r r r r r}
+			\toprule
+			\textbf{Sample} &
+			\makecell{\textbf{Pre-capture}\\\textbf{conc.}\\\textbf{(ng/$\mu$L)}} &
+			\makecell{\textbf{Main}\\\textbf{fragment}\\\textbf{(bp)}} &
+			\makecell{\textbf{Avg. fragment}\\\textbf{region}\\\textbf{(bp)}} &
+			\makecell{\textbf{Submission}\\\textbf{conc.}\\\textbf{(ng/$\mu$L)}} &
+			\makecell{\textbf{ddPCR}\\\textbf{droplets}} &
+			\makecell{\textbf{\textit{PRNP} coding}\\\textbf{bases}\\\textbf{$\geq$100\xfold (\%)}} &
+			\makecell{\textbf{Mean \textit{PRNP}}\\\textbf{coverage}\\\textbf{(\xfold)}} &
+			\makecell{\textbf{ddPCR +}\\\textbf{sequencing}} \\
+			\midrule
+			CJD1 & 187 & 348 & 419 & 1.6 & 14833 & 100.0 & 4874 & yes \\
+			CJD2 & 196 & 390 & 432 & 1.9 & 17355 & 100.0 & 4749 & yes \\
+			CJD3 & 188 & 324 & 380 & 0.7 & 15580 & 100.0 & 6854 & yes \\
+			CJD4 & 204 & 329 & 364 & 0.6 & 33901 & 100.0 & 4132 & yes \\
+			CJD5 & 28 & 383 & 445 & 17.1 & 16123 & 100.0 & 264 & yes \\
+			CJD6 & 174 & 352 & 401 & 2.4 & 15002 & 100.0 & 13997 & yes \\
+			CJD7 & 201 & 342 & 401 & 1.5 & 15851 & 100.0 & 4418 & yes \\
+			CJD8 & 29.2 & 369 & 435 & 66.9 & 15767 & 100.0 & 533 & yes \\
+			CJD11 & 257 & 324 & 385 & 1.2 & 14122 & 100.0 & 5119 & yes \\
+			CJD12 & 36.5 & 398 & 459 & 24.7 & 14484 & 100.0 & 1204 & yes \\
+			CJD13 & 155 & 366 & 430 & 2.9 & 14795 & 100.0 & 5267 & yes \\
+			CJD14 & 38.2 & 390 & 449 & 17.4 & 30330 & 48.7 & 100 & yes \\
+			CJD15 & 45.4 & 385 & 441 & 23.4 & 14764 & 100.0 & 157 & yes \\
+			CJD18 & 42.8 & 347 & 409 & 16.3 & 15204 & 96.5 & 175 & yes \\
+			CJD19 & 61 & 365 & 413 & 24.7 & 15566 & 100.0 & 1114 & yes \\
+			CJD21 & 54.6 & 358 & 424 & 8.5 & 28954 & 100.0 & 3905 & yes \\
+			CJD22 & 191 & 470 & 461 & 2.1 & 14371 & 100.0 & 6299 & yes \\
+			CJD23 & 181 & 343 & 396 & 3.2 & 15825 & 100.0 & 9503 & yes \\
+			CJD24 & 20.2 & 356 & 447 & 39.5 & 15738 & 100.0 & 434 & yes \\
+			CJD25 & 181 & 351 & 419 & 1.5 & 14851 & 100.0 & 12492 & yes \\
+			CJD26 & 27.7 & 384 & 454 & 46.8 & 16658 & 100.0 & 699 & yes \\
+			CJD27 & 225 & 361 & 405 & 1.6 & 17512 & 100.0 & 8707 & yes \\
+			CJD28 & 33.6 & 350 & 410 & 55.7 & 15013 & 100.0 & 676 & yes \\
+			CJD29 & 50.7 & 358 & 412 & 57.8 & 16612 & 100.0 & 1468 & yes \\
+			CJD30 & 41.8 & 343 & 403 & 60.2 & 16424 & 100.0 & 840 & yes \\
+			CJD31 & 30.2 & 345 & 406 & 41.6 & 15473 & 100.0 & 229 & yes \\
+			\addlinespace
+			Control1 & 283 & 378 & 442 & 1.5 & 16710 & 100.0 & 8908 & yes \\
+			Control2 & 188 & 383 & 451 & 2.6 & 15330 & 100.0 & 2656 & yes \\
+			Control3 & 253 & 364 & 438 & 0.9 & 30686 & 100.0 & 4380 & yes \\
+			Control4 & 34.7 & 327 & 411 & 51.6 & 15271 & 100.0 & 666 & yes \\
+			Control5 & 262 & 348 & 412 & 1.6 & 15533 & 100.0 & 5068 & yes \\
+			Control7 & 51.6 & 313 & 381 & 41.6 & 14811 & 100.0 & 652 & yes \\
+			\bottomrule
+		\end{tabular}
+	}
+	\vspace{0.5em}
+	\caption{\textbf{Sample-level DNA quality and downstream performance evidence.}
+		For each sequenced CJD and control frontal-cortex sample, the table summarises 	pre-capture TapeStation fragment metrics, submission-QC concentration, ddPCR accepted-droplet counts, and downstream \textit{PRNP} coding-region sequencing coverage. 
+		The final column indicates whether the sample showed both ddPCR evidence of amplifiable DNA and successful targeted sequencing evidence across the \textit{PRNP} coding region. 
+		In summary, DNA extracted using the decontamination and purification protocol was sufficiently preserved and amplifiable in ddPCR and targeted \textit{PRNP} capture sequencing.}	
+	\label{tab:dna_quality_evidence}
+\end{table}
+
+\clearpage
+
+
+% ddPCR participant haploid genome table
+% Body values generated from results/ddPCR/haploid_genomes_surveyed/participant_sample_region_mean_ranges_formatted.csv.
+\begin{landscape}
+\begin{table}[p]
+	\centering
+	\captionsetup{font=footnotesize}
+		\begingroup
+			\setlength{\tabcolsep}{2.0pt}
+			\renewcommand{\arraystretch}{0.86}
+			\scriptsize
+			\begin{adjustbox}{max width=\linewidth, max totalheight=0.82\textheight}
+			\begin{tabular}{@{}l*{12}{c}l@{}}
+				\toprule
+				Participant &
+				\multicolumn{4}{c}{\dn} &
+				\multicolumn{4}{c}{\ek} &
+				\multicolumn{4}{c}{\pl} &
+				LoB/LoD pass\\
+				\cmidrule(lr){2-5}\cmidrule(lr){6-9}\cmidrule(lr){10-13}
+				& MUT+ droplets & Droplets & MUT genomes & Total genomes
+				& MUT+ droplets & Droplets & MUT genomes & Total genomes
+				& MUT+ droplets & Droplets & MUT genomes & Total genomes & \\
+				\midrule
+					CJD1 & 3 (0-4) & 13,606 (12,251-14,662) & 3 (0-4) & 24,134 (7,768-33,653) & 5 (1-10) & 13,189 (11,502-15,751) & 5 (1-10) & 24,668 (8,791-33,723) & 8 (6-10) & 14,687 (13,301-17,514) & 8 (6-10) & 36,962 (27,823-44,628) & None\\
+					CJD2 & 4 (0-12) & 12,626 (10,276-13,971) & 4 (0-12) & 29,267 (13,488-59,857) & 7 (3-14) & 13,756 (12,273-15,429) & 7 (3-14) & 32,552 (12,961-86,681) & 8 (0-26) & 19,013 (15,571-27,842) & 8 (0-26) & 24,045 (15,601-43,632) & None\\
+					CJD3 & 13 (2-22) & 13,623 (11,622-15,580) & 13 (2-22) & 39,237 (21,157-59,331) & 14 (10-23) & 15,026 (13,694-16,472) & 15 (10-23) & 44,590 (22,359-79,012) & 14 (3-35) & 14,305 (12,201-15,760) & 14 (3-35) & 38,425 (13,201-64,399) & None\\
+					CJD4 & 15 (4-25) & 14,027 (9,808-25,938) & 15 (4-25) & 39,408 (18,688-53,952) & 98 (13-376) & 36,300 (28,515-45,458) & 98 (13-378) & 94,600 (44,522-142,171) & 22 (16-30) & 15,498 (11,303-28,557) & 22 (16-30) & 49,766 (35,098-80,900) & None\\
+					CJD5 & 12 (2-31) & 15,262 (11,528-16,596) & 12 (2-31) & 79,853 (54,275-138,255) & 10 (4-20) & 15,322 (12,731-17,518) & 10 (4-20) & 85,681 (52,263-139,780) & 16 (1-35) & 16,528 (13,601-25,846) & 16 (1-35) & 93,765 (48,651-220,996) & None\\
+					CJD6 & 15 (2-39) & 22,001 (13,975-33,447) & 15 (2-39) & 123,111 (55,521-173,298) & 19 (3-41) & 18,923 (15,002-31,192) & 19 (3-41) & 100,186 (55,149-128,833) & 12 (1-29) & 15,479 (11,101-27,145) & 12 (1-29) & 74,020 (41,463-123,685) & None\\
+					CJD7 & 3 (0-7) & 16,206 (12,057-23,524) & 3 (0-7) & 23,607 (7,151-47,634) & 6 (2-9) & 15,779 (12,223-29,150) & 6 (2-9) & 42,737 (31,514-63,237) & 16 (6-31) & 21,775 (14,309-29,455) & 16 (6-31) & 63,836 (21,736-105,783) & None\\
+					CJD8 & 16 (0-36) & 17,944 (14,456-30,392) & 16 (0-36) & 100,077 (70,637-134,895) & 13 (1-34) & 17,482 (12,545-31,198) & 13 (1-34) & 88,770 (14,523-139,642) & 13 (1-30) & 14,935 (10,313-27,270) & 13 (1-30) & 56,217 (9,495-86,864) & None\\
+					CJD9 & 9 (1-17) & 15,578 (13,928-16,376) & 9 (1-17) & 95,360 (44,961-149,819) & 8 (2-16) & 16,245 (15,255-17,084) & 8 (2-16) & 97,428 (47,583-154,085) & 14 (4-26) & 14,473 (13,268-15,779) & 14 (4-26) & 58,656 (46,703-73,411) & None\\
+					CJD10 & 21 (4-35) & 15,904 (14,269-17,620) & 21 (4-35) & 91,336 (57,596-151,420) & 14 (1-24) & 15,498 (14,482-16,354) & 14 (1-24) & 85,441 (60,657-122,837) & 20 (4-43) & 19,956 (13,492-31,703) & 20 (4-43) & 114,185 (49,882-258,073) & None\\
+					CJD11 & 5 (3-7) & 11,582 (10,268-12,483) & 5 (3-7) & 19,854 (15,502-23,792) & 3 (2-6) & 11,727 (8,274-13,876) & 3 (2-6) & 20,256 (15,532-27,828) & 12 (6-18) & 14,499 (13,473-16,687) & 12 (6-18) & 35,614 (29,893-41,874) & None\\
+					CJD12 & 4 (2-6) & 12,601 (10,094-16,233) & 4 (2-6) & 25,804 (14,864-56,822) & 6 (1-11) & 12,573 (8,863-16,787) & 6 (1-11) & 26,516 (15,881-49,940) & 13 (11-20) & 14,240 (13,415-14,876) & 13 (11-20) & 41,609 (31,676-53,072) & None\\
+					CJD13 & 4 (1-12) & 12,078 (9,109-15,196) & 4 (1-12) & 17,628 (10,153-24,894) & 5 (0-13) & 12,950 (9,518-15,118) & 5 (0-13) & 21,445 (16,243-27,551) & 13 (0-29) & 20,141 (13,633-31,582) & 13 (0-29) & 61,821 (32,037-126,352) & None\\
+					CJD14 & 3 (0-7) & 14,298 (10,563-24,554) & 3 (0-7) & 31,021 (17,057-68,540) & 7 (1-12) & 14,308 (11,032-23,180) & 7 (1-12) & 49,930 (33,406-86,055) & 16 (6-34) & 31,456 (28,144-42,567) & 17 (6-34) & 99,963 (47,488-139,034) & None\\
+					CJD15 & 5 (4-7) & 12,317 (9,520-14,251) & 5 (4-7) & 21,269 (19,003-23,060) & 3 (1-10) & 11,487 (8,621-13,255) & 3 (1-10) & 22,643 (19,442-25,304) & 11 (4-17) & 14,746 (12,091-17,481) & 11 (4-17) & 34,616 (8,382-53,762) & None\\
+					CJD16 & 7 & 14,236 & 7 & 13,055 & 4 & 15,246 & 4 & 15,698 & 19 & 14,766 & 19 & 11,011 & None\\
+					CJD17 & 11 (2-27) & 15,057 (11,515-23,490) & 11 (2-27) & 32,158 (18,548-75,755) & 9 (3-17) & 15,459 (11,440-25,064) & 9 (3-17) & 32,174 (16,394-81,769) & 16 (7-35) & 13,669 (10,780-15,883) & 16 (7-35) & 38,128 (16,736-61,467) & None\\
+					CJD18 & 10 (6-12) & 14,174 (11,568-15,204) & 10 (6-12) & 48,395 (18,754-90,529) & 9 (5-18) & 14,896 (13,914-15,635) & 9 (5-18) & 39,050 (10,631-72,239) & 5 (1-16) & 14,701 (13,175-16,754) & 5 (1-16) & 48,656 (18,000-92,130) & None\\
+					CJD19 & 12 (4-21) & 15,274 (14,092-16,765) & 12 (4-21) & 57,255 (31,242-73,655) & 12 (2-26) & 15,022 (12,334-17,532) & 12 (2-26) & 56,031 (34,982-79,308) & 13 (6-27) & 14,164 (13,078-15,881) & 13 (6-27) & 52,408 (41,870-66,186) & None\\
+					CJD20 & 7 (2-27) & 13,554 (10,586-15,525) & 7 (2-27) & 45,303 (29,330-73,307) & 2 (0-10) & 15,038 (13,394-16,833) & 2 (0-10) & 44,677 (27,159-57,317) & 4 (1-7) & 14,463 (13,746-15,211) & 4 (1-7) & 44,942 (23,281-66,356) & None\\
+					CJD21 & 6 (1-14) & 13,554 (11,770-16,158) & 6 (1-14) & 38,565 (24,888-54,074) & 31 (10-98) & 29,268 (27,447-30,815) & 31 (10-98) & 66,519 (47,508-85,922) & 4 (2-7) & 14,242 (13,765-14,545) & 4 (2-7) & 41,887 (29,014-72,115) & None\\
+					CJD22 & 3 (1-8) & 12,672 (11,821-14,371) & 3 (1-8) & 40,191 (22,187-47,025) & 6 (3-9) & 13,864 (11,371-16,662) & 6 (3-9) & 46,808 (22,308-58,722) & 6 (3-8) & 14,236 (13,207-15,238) & 6 (3-8) & 42,201 (25,057-49,475) & None\\
+					CJD23 & 21 (10-28) & 14,694 (14,149-15,009) & 21 (10-28) & 53,080 (32,991-61,826) & 18 (14-23) & 14,811 (14,491-15,162) & 18 (14-23) & 60,060 (33,100-77,074) & 19 (9-26) & 14,637 (9,420-16,417) & 19 (9-26) & 49,365 (28,511-66,823) & None\\
+					CJD24 & 20 (9-25) & 15,305 (14,289-16,665) & 20 (9-25) & 76,303 (57,983-102,282) & 19 (14-31) & 14,602 (12,847-15,738) & 19 (14-31) & 82,205 (57,967-101,855) & 22 (16-31) & 13,144 (11,002-14,405) & 22 (16-31) & 58,679 (33,792-76,454) & None\\
+					CJD25 & 18 (8-28) & 13,812 (11,686-14,787) & 18 (8-28) & 73,798 (48,835-91,829) & 17 (9-25) & 13,959 (12,382-15,981) & 17 (9-25) & 70,104 (53,208-103,198) & 21 (15-25) & 14,511 (12,260-15,861) & 21 (15-25) & 58,878 (25,143-81,126) & None\\
+					CJD26 & 30 (21-36) & 15,084 (12,571-16,845) & 30 (21-36) & 106,324 (75,903-125,569) & 27 (20-34) & 15,243 (13,607-17,289) & 27 (20-34) & 105,701 (80,019-144,040) & 20 (13-30) & 15,975 (15,140-16,825) & 20 (13-30) & 93,314 (88,196-98,491) & None\\
+					CJD27 & 22 (15-27) & 15,958 (14,662-16,860) & 22 (15-27) & 67,268 (26,240-122,198) & 17 (10-29) & 17,216 (16,167-18,272) & 17 (10-29) & 70,627 (29,764-124,567) & 14 (9-22) & 15,933 (15,202-16,984) & 14 (9-22) & 68,132 (29,575-110,959) & None\\
+					CJD28 & 18 (12-23) & 14,368 (13,736-15,022) & 18 (12-23) & 62,690 (37,206-85,971) & 16 (11-18) & 13,376 (12,171-15,225) & 16 (11-18) & 56,196 (32,451-78,634) & 17 (11-22) & 14,704 (13,814-15,700) & 17 (11-22) & 58,550 (35,650-67,885) & None\\
+					CJD29 & 26 (16-33) & 15,773 (14,745-16,813) & 26 (16-33) & 77,738 (38,119-107,427) & 17 (4-29) & 15,878 (12,884-17,176) & 17 (4-29) & 81,372 (37,277-119,369) & 16 (11-18) & 15,576 (14,714-16,646) & 16 (11-18) & 69,108 (33,984-100,849) & None\\
+					CJD30 & 17 (10-26) & 14,108 (12,684-16,424) & 17 (10-26) & 57,286 (40,061-66,586) & 13,372 (11,077-16,383)* & 15,520 (14,565-17,378)* & 32,199 (20,818-49,705)* & 66,365 (42,503-101,333)* & 29 (22-34) & 15,137 (13,530-16,883) & 29 (22-34) & 61,592 (36,595-87,816) & E200K*\\
+					CJD31 & 16 (10-26) & 13,054 (12,105-13,657) & 16 (10-26) & 70,570 (49,062-93,449) & 29 (19-43) & 15,797 (11,805-17,582) & 29 (19-43) & 91,333 (47,159-140,355) & 31 (19-44) & 14,870 (13,166-15,505) & 31 (19-44) & 73,522 (49,263-107,464) & None\\
+					\addlinespace[2pt]
+					Control1 & 10 (3-19) & 15,210 (12,260-16,927) & 10 (3-19) & 66,321 (11,239-104,057) & 10 (5-16) & 15,305 (13,585-16,723) & 10 (5-16) & 68,794 (23,109-129,281) & 12 (2-28) & 14,318 (13,171-16,368) & 12 (2-28) & 53,019 (11,432-87,274) & None\\
+					Control2 & 4 (0-7) & 22,578 (14,913-30,244) & 4 (0-7) & 121,380 (109,784-132,977) & 6 (3-12) & 16,282 (15,330-16,937) & 6 (3-12) & 68,611 (49,053-103,104) & 0 & 13,201 & 0 & 45,389 & None\\
+					Control3 & 6 (1-26) & 14,245 (11,134-16,105) & 6 (1-26) & 39,734 (4,962-104,450) & 6 (1-18) & 12,467 (10,087-13,993) & 6 (1-18) & 40,226 (21,525-80,165) & 28 (17-34) & 27,574 (11,215-32,310) & 28 (17-34) & 84,423 (54,153-107,962) & None\\
+					Control4 & 4 (3-6) & 14,789 (14,247-15,020) & 4 (3-6) & 41,976 (21,299-62,846) & 6 (0-12) & 15,069 (12,687-16,087) & 6 (0-12) & 48,683 (24,018-82,607) & 9 (0-20) & 14,474 (13,465-15,022) & 9 (0-20) & 49,520 (22,704-81,850) & None\\
+					Control5 & 4 (1-11) & 13,144 (11,707-14,943) & 4 (1-11) & 27,401 (12,607-38,239) & 10 (2-29) & 13,976 (12,309-15,587) & 10 (2-29) & 37,930 (24,368-55,591) & 10 (0-28) & 13,792 (11,306-15,549) & 10 (0-28) & 45,193 (26,497-76,990) & None\\
+					Control6 & 8 (1-20) & 13,033 (11,883-14,599) & 8 (1-20) & 41,144 (7,751-107,906) & 15 (2-40) & 12,754 (10,303-15,254) & 15 (2-40) & 53,953 (20,737-101,239) & 24 (21-35) & 24,072 (14,161-30,406) & 24 (21-35) & 81,325 (49,472-109,001) & None\\
+					Control7 & 6 (1-14) & 13,096 (12,055-14,065) & 6 (1-14) & 32,250 (26,519-39,040) & 7 (2-16) & 12,110 (10,905-13,307) & 7 (2-16) & 33,894 (29,033-37,227) & 6 (4-9) & 14,305 (13,647-14,861) & 6 (4-9) & 36,662 (30,400-47,619) & None\\
+					Control8 & 3 (1-8) & 15,470 (14,731-16,190) & 3 (1-8) & 61,930 (27,558-87,017) & 4 (1-8) & 13,285 (12,316-15,138) & 4 (1-8) & 56,194 (24,598-83,694) & 9 (2-19) & 13,694 (12,605-14,310) & 9 (2-19) & 54,631 (43,659-71,288) & None\\
+				\bottomrule
+				\end{tabular}
+			\end{adjustbox}
+		\endgroup
+		\caption{\textbf{Participant-level ddPCR droplet counts and estimated haploid genome equivalents.} Values are shown for each participant and mutation assay as mean (range) across available sample-regions after technical pooling. Single-sample summaries are shown without a range. Droplet columns report accepted droplets after quality filtering; MUT+ droplets are mutant-positive droplets. MUT and total genome columns are Poisson haploid genome-equivalent estimates derived from mutant-negative and signal-negative droplet fractions, respectively. The LoB/LoD pass column lists mutation assays with at least one sample-region passing both the limit of blank and limit of detection filters. None indicates no non-heterozygous assay passed both filters. \textsuperscript{*}CJD30 was unexpectedly found to be germline heterozygous for \ek; \ek values marked with * reflect this germline heterozygous state and are not somatic-candidate positives.}
+		\label{tab:ddpcr_participant_haploid_genomes}
+	\end{table}
+\end{landscape}
+
+
+
+\clearpage
+
+% huge table with all ddPCR values
+
+\begin{table}[t]
+	\captionsetup{font=small}
+	\centering
+	
+	% Tighten horizontal & vertical spacing without breaking booktabs
+	\setlength{\tabcolsep}{2.5pt}      % default ~6pt
+	\renewcommand{\arraystretch}{0.80} % default 1.0
+	\setlength{\aboverulesep}{0pt}
+	\setlength{\belowrulesep}{0pt}
+	
+	% Fit within page text area (height guard keeps it on one page)
+	\begin{adjustbox}{max totalsize={\textwidth}{0.9\textheight},center}
+		\scriptsize % or \footnotesize; use \scriptsize for more rows on one page
+		
+		\begin{tabular}{@{}lllrrrrrr@{}}
+			\toprule
+		participant & histotype & mutation & basal ganglia & cerebellum & hippocampus & frontal cortex & substantia nigra & thalamus \\ 
+\midrule\addlinespace[2.5pt]
+CJD1 & MM1+2C & D178N & 0.015 (0-0.031) & 0.006 (0-0.015) & — & 0.015 (0-0.031) & 0.011 (0-0.024) & 0 (0-0) \\ 
+CJD1 & MM1+2C & E200K & 0.032 (0.012-0.052) & 0.024 (0.007-0.041) & — & 0.012 (0-0.027) & 0.004 (0-0.013) & 0.046 (0-0.092) \\ 
+CJD1 & MM1+2C & P102L & 0.021 (0.005-0.037) & 0.013 (0.002-0.025) & — & 0.032 (0.011-0.054) & 0.025 (0.008-0.042) & 0.023 (0.009-0.038) \\ 
+CJD2 & MM1 & D178N & {\cellcolor[HTML]{E5E5E5}\textbf{0.067} (0.029–0.106)} & 0.022 (0-0.049) & 0 (0-0) & 0.025 (0.002-0.047) & 0.007 (0-0.015) & 0.003 (0-0.008) \\ 
+CJD2 & MM1 & E200K & 0.026 (0-0.052) & 0.023 (0-0.051) & 0.019 (0-0.039) & 0.033 (0.008-0.059) & 0.023 (0.008-0.039) & {\cellcolor[HTML]{E5E5E5}{0.016 (0.008-0.025)}} \\ 
+CJD2 & MM1 & P102L & 0.021 (0-0.043) & 0 (0-0) & 0.013 (0-0.032) & 0.044 (0.016-0.072) & 0.02 (0.002-0.037) & 0.001 (0.001-0.001) \\ 
+CJD3 & atypical & D178N & 0.047 (0.023-0.07) & 0.028 (0.009-0.046) & 0.03 (0.015-0.044) & 0.009 (0-0.024) & {\cellcolor[HTML]{E5E5E5}{0.037 (0.021-0.053)}} & 0.043 (0.019-0.067) \\ 
+CJD3 & atypical & E200K & {\cellcolor[HTML]{E5E5E5}{0.044 (0.023-0.065)}} & 0.04 (0.019-0.061) & 0.018 (0.008-0.028) & 0.043 (0.016-0.071) & {\cellcolor[HTML]{E5E5E5}{0.029 (0.017-0.041)}} & 0.045 (0.016-0.073) \\ 
+CJD3 & atypical & P102L & 0.019 (0.006-0.033) & 0.021 (0.006-0.036) & 0.039 (0.022-0.057) & 0.053 (0.013-0.093) & {\cellcolor[HTML]{E5E5E5}{0.054 (0.036-0.073)}} & 0.013 (0-0.03) \\ 
+CJD4 & VV2 & D178N & 0.027 (0.01-0.045) & 0.001 (0-0.001) & — & 0.021 (0-0.043) & — & {\cellcolor[HTML]{E5E5E5}{0.046 (0.028-0.065)}} \\ 
+CJD4 & VV2 & E200K & 0.001 (0.001-0.001) & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.001)}} & — & 0 (0-0.001) & — & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.002)}} \\ 
+CJD4 & VV2 & P102L & 0.049 (0.026-0.072) & 0.036 (0.018-0.054) & — & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.001)}} & — & 0.04 (0.023-0.058) \\ 
+CJD5 & MV2K+C & D178N & 0.003 (0-0.007) & {\cellcolor[HTML]{E5E5E5}{0.02 (0.008-0.032)}} & {\cellcolor[HTML]{E5E5E5}{0.037 (0.021-0.052)}} & 0.003 (0-0.008) & 0.001 (0-0.004) & {\cellcolor[HTML]{E5E5E5}{0.042 (0.027-0.056)}} \\ 
+CJD5 & MV2K+C & E200K & 0.006 (0.001-0.012) & 0.012 (0.004-0.021) & 0.019 (0.007-0.031) & 0.014 (0.005-0.023) & 0.003 (0-0.006) & {\cellcolor[HTML]{E5E5E5}{0.022 (0.012-0.032)}} \\ 
+CJD5 & MV2K+C & P102L & 0.008 (0.001-0.016) & {\cellcolor[HTML]{E5E5E5}{0.042 (0.026-0.059)}} & {\cellcolor[HTML]{E5E5E5}{0.043 (0.025-0.062)}} & 0.001 (0-0.004) & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.002)}} & 0.009 (0.002-0.016) \\ 
+CJD6 & MV2C & D178N & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.002)}} & 0.005 (0.001-0.009) & 0.009 (0.002-0.015) & {\cellcolor[HTML]{E5E5E5}{0.023 (0.01-0.036)}} & 0.001 (0-0.004) & 0.001 (0-0.001) \\ 
+CJD6 & MV2C & E200K & {\cellcolor[HTML]{E5E5E5}{0.047 (0.029-0.065)}} & {\cellcolor[HTML]{E5E5E5}{0.012 (0.006-0.018)}} & 0.006 (0.001-0.011) & {\cellcolor[HTML]{E5E5E5}{0.065 (0.045-0.085)}} & 0.002 (0-0.005) & {\cellcolor[HTML]{E5E5E5}{0.001 (0-0.001)}} \\ 
+CJD6 & MV2C & P102L & 0.006 (0-0.012) & {\cellcolor[HTML]{E5E5E5}{0.009 (0.003-0.014)}} & 0.001 (0-0.005) & {\cellcolor[HTML]{E5E5E5}{0.056 (0.035-0.076)}} & 0.002 (0-0.008) & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.001)}} \\ 
+CJD7 & atypical & D178N & 0 (0-0) & 0.02 (0-0.051) & 0 (0-0) & 0.01 (0-0.034) & 0.008 (0-0.02) & 0 (0-0.001) \\ 
+CJD7 & atypical & E200K & 0.017 (0.003-0.031) & {\cellcolor[HTML]{E5E5E5}{0 (0-0.001)}} & {\cellcolor[HTML]{E5E5E5}{0.021 (0.006-0.036)}} & 0.009 (0-0.018) & 0.003 (0-0.008) & 0.016 (0.001-0.03) \\ 
+CJD7 & atypical & P102L & {\cellcolor[HTML]{E5E5E5}{0.058 (0.031-0.084)}} & 0.028 (0.005-0.05) & {\cellcolor[HTML]{E5E5E5}{0.001 (0-0.001)}} & 0.033 (0.015-0.051) & 0 (0-0.001) & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.001)}} \\ 
+CJD8 & MM1 & D178N & 0 (0-0.001) & {\cellcolor[HTML]{E5E5E5}{0.052 (0.035-0.069)}} & 0.017 (0.007-0.027) & 0 (0-0) & 0.014 (0.007-0.021) & 0.017 (0.008-0.025) \\ 
+CJD8 & MM1 & E200K & 0 (0-0.001) & 0.028 (0-0.056) & {\cellcolor[HTML]{E5E5E5}{0.023 (0.012-0.035)}} & 0.001 (0-0.003) & 0.011 (0.004-0.017) & {\cellcolor[HTML]{E5E5E5}{0.044 (0.029-0.059)}} \\ 
+CJD8 & MM1 & P102L & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.002)}} & 0.168 (0.085-0.252) & 0.052 (0.029-0.075) & 0.006 (0-0.013) & 0.001 (0-0.004) & {\cellcolor[HTML]{E5E5E5}{0.012 (0.004-0.021)}} \\ 
+CJD9 & atypical & D178N & {\cellcolor[HTML]{E5E5E5}{0.033 (0.016-0.05)}} & 0.003 (0-0.007) & {\cellcolor[HTML]{E5E5E5}{0.022 (0.011-0.032)}} & 0.001 (0-0.002) & {\cellcolor[HTML]{E5E5E5}{0.033 (0.017-0.049)}} & 0.001 (0-0.003) \\ 
+CJD9 & atypical & E200K & 0.019 (0.006-0.032) & 0.001 (0-0.004) & 0.02 (0.009-0.031) & 0.003 (0-0.005) & 0.03 (0.015-0.044) & 0.002 (0-0.005) \\ 
+CJD9 & atypical & P102L & 0.027 (0.012-0.043) & 0.005 (0-0.011) & {\cellcolor[HTML]{E5E5E5}{0.038 (0.023-0.052)}} & {\cellcolor[HTML]{E5E5E5}{0.017 (0.006-0.028)}} & {\cellcolor[HTML]{E5E5E5}{0.047 (0.027-0.067)}} & {\cellcolor[HTML]{E5E5E5}{0.012 (0.003-0.022)}} \\ 
+CJD10 & MM1+2C & D178N & 0.004 (0-0.009) & {\cellcolor[HTML]{E5E5E5}{0.023 (0.015-0.031)}} & {\cellcolor[HTML]{E5E5E5}{0.018 (0.009-0.027)}} & 0.031 (0.019-0.042) & {\cellcolor[HTML]{E5E5E5}{0.023 (0.01-0.035)}} & {\cellcolor[HTML]{E5E5E5}{0.043 (0.027-0.058)}} \\ 
+CJD10 & MM1+2C & E200K & 0.001 (0-0.004) & 0.014 (0.007-0.021) & {\cellcolor[HTML]{E5E5E5}{0.026 (0.015-0.037)}} & {\cellcolor[HTML]{E5E5E5}{0.032 (0.019-0.044)}} & 0.012 (0.003-0.02) & 0.012 (0.004-0.02) \\ 
+CJD10 & MM1+2C & P102L & 0 (0-0) & 0 (0-0) & {\cellcolor[HTML]{E5E5E5}{0.031 (0.018-0.044)}} & 0.005 (0-0.009) & {\cellcolor[HTML]{E5E5E5}{0.086 (0.06-0.112)}} & {\cellcolor[HTML]{E5E5E5}{0.069 (0.047-0.091)}} \\ 
+CJD11 & MM1 & D178N & 0.017 (0-0.034) & 0.019 (0-0.043) & 0.025 (0.002-0.047) & 0.026 (0.004-0.047) & 0.019 (0-0.041) & 0.035 (0.008-0.061) \\ 
+CJD11 & MM1 & E200K & 0.011 (0-0.027) & 0.019 (0-0.038) & 0.015 (0-0.033) & 0.011 (0-0.028) & 0.022 (0.004-0.039) & 0.013 (0-0.033) \\ 
+CJD11 & MM1 & P102L & 0.043 (0.02-0.066) & 0.033 (0.013-0.053) & 0.02 (0.003-0.037) & 0.026 (0.01-0.042) & 0.033 (0.014-0.052) & {\cellcolor[HTML]{E5E5E5}{0.045 (0.024-0.066)}} \\ 
+CJD12 & MM1 & D178N & 0.04 (0.007-0.073) & 0.017 (0-0.038) & 0.026 (0.005-0.048) & 0.022 (0.004-0.04) & 0.02 (0-0.045) & 0.004 (0-0.009) \\ 
+CJD12 & MM1 & E200K & {\cellcolor[HTML]{E5E5E5}{0.049 (0.019-0.078)}} & 0.012 (0-0.026) & {\cellcolor[HTML]{E5E5E5}{0.044 (0.01-0.078)}} & {\cellcolor[HTML]{E5E5E5}{0.051 (0.019-0.083)}} & 0.008 (0-0.02) & 0.002 (0-0.007) \\ 
+CJD12 & MM1 & P102L & {\cellcolor[HTML]{E5E5E5}{0.046 (0.026-0.067)}} & 0.035 (0.014-0.056) & 0.029 (0.012-0.045) & 0.028 (0.012-0.044) & 0.033 (0.014-0.051) & 0.021 (0.008-0.033) \\ 
+CJD13 & MM1 & D178N & 0.016 (0-0.036) & 0.009 (0-0.023) & 0.01 (0-0.033) & 0.015 (0-0.037) & {\cellcolor[HTML]{E5E5E5}{\textbf{0.073} (0.031-0.115)}} & 0.004 (0-0.014) \\ 
+CJD13 & MM1 & E200K & 0.031 (0.003-0.059) & {\cellcolor[HTML]{E5E5E5}{\textbf{0.078} (0.035-0.122)}} & 0.013 (0-0.028) & 0.011 (0-0.024) & 0.025 (0.002-0.049) & 0 (0-0) \\ 
+CJD13 & MM1 & P102L & 0.022 (0.008-0.036) & 0 (0-0) & 0.034 (0.016-0.052) & 0.016 (0.001-0.03) & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.001)}} & {\cellcolor[HTML]{E5E5E5}{0.001 (0-0.001)}} \\ 
+CJD14 & atypical & D178N & 0 (0-0) & 0 (0-0) & 0.015 (0-0.033) & 0.012 (0-0.027) & {\cellcolor[HTML]{E5E5E5}{0.033 (0.008-0.058)}} & 0.006 (0-0.015) \\ 
+CJD14 & atypical & E200K & 0 (0-0.001) & 0.003 (0-0.01) & {\cellcolor[HTML]{E5E5E5}{0.035 (0.015-0.055)}} & 0.016 (0.003-0.029) & 0.003 (0-0.007) & 0.028 (0.011-0.045) \\ 
+CJD14 & atypical & P102L & {\cellcolor[HTML]{E5E5E5}{0 (0-0.001)}} & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.001)}} & {\cellcolor[HTML]{E5E5E5}{0.001 (0-0.001)}} & 0 (0-0) & 0 (0-0) & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.001)}} \\ 
+CJD15 & MM1+2C & D178N & 0.026 (0.005-0.048) & 0.024 (0.002-0.045) & 0.018 (0-0.036) & 0.021 (0-0.043) & 0.018 (0-0.037) & 0.035 (0.008-0.062) \\ 
+CJD15 & MM1+2C & E200K & 0.008 (0-0.02) & 0.009 (0-0.022) & 0.005 (0-0.017) & {\cellcolor[HTML]{E5E5E5}{0.042 (0.015-0.068)}} & 0.008 (0-0.021) & 0.015 (0-0.034) \\ 
+CJD15 & MM1+2C & P102L & 0.032 (0.015-0.049) & 0.008 (0-0.017) & 0.019 (0.007-0.03) & 0.038 (0.016-0.059) & 0.131 (0.052-0.21) & {\cellcolor[HTML]{E5E5E5}{0.076 (0.039-0.113)}} \\ 
+CJD16 & MM1 & D178N & — & — & — & 0.054 (0.013-0.094) & — & — \\ 
+CJD16 & MM1 & E200K & — & — & — & 0.025 (0-0.052) & — & — \\ 
+CJD16 & MM1 & P102L & — & — & — & 0.172 (0.094-0.251) & — & — \\ 
+CJD17 & MM1+2C & D178N & 0.011 (0-0.027) & {\cellcolor[HTML]{E5E5E5}{0.038 (0.011-0.065)}} & {\cellcolor[HTML]{E5E5E5}{0.036 (0.022-0.049)}} & 0.019 (0-0.038) & 0.02 (0-0.04) & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.001)}} \\ 
+CJD17 & MM1+2C & E200K & 0.016 (0-0.036) & 0.036 (0.009-0.063) & {\cellcolor[HTML]{E5E5E5}{0.021 (0.011-0.031)}} & 0.018 (0-0.037) & 0.055 (0.018-0.092) & 0.001 (0-0.001) \\ 
+CJD17 & MM1+2C & P102L & 0.018 (0.005-0.031) & 0.03 (0.009-0.051) & {\cellcolor[HTML]{E5E5E5}{0.046 (0.028-0.063)}} & 0.039 (0.016-0.061) & 0.042 (0.01-0.074) & {\cellcolor[HTML]{E5E5E5}{0.072 (0.048-0.097)}} \\ 
+CJD18 & MV2K+C & D178N & 0.011 (0.004-0.018) & 0.037 (0.009-0.066) & 0.024 (0.009-0.04) & 0.023 (0.01-0.036) & 0.026 (0.011-0.041) & 0.015 (0.003-0.027) \\ 
+CJD18 & MV2K+C & E200K & {\cellcolor[HTML]{E5E5E5}{0.025 (0.013-0.037)}} & 0.032 (0.006-0.058) & 0.018 (0.004-0.032) & 0.019 (0.006-0.031) & 0.047 (0.004-0.09) & 0.022 (0.008-0.036) \\ 
+CJD18 & MV2K+C & P102L & 0.001 (0-0.004) & 0.028 (0.002-0.053) & 0.012 (0.001-0.024) & 0.002 (0-0.007) & {\cellcolor[HTML]{E5E5E5}{0.028 (0.014-0.042)}} & 0.01 (0-0.02) \\ 
+CJD19 & atypical & D178N & 0.014 (0.005-0.022) & 0.006 (0-0.012) & 0.027 (0.01-0.045) & 0.032 (0.012-0.052) & 0.033 (0.019-0.048) & {\cellcolor[HTML]{E5E5E5}{0.02 (0.01-0.031)}} \\ 
+CJD19 & atypical & E200K & 0.017 (0.006-0.027) & 0.003 (0-0.008) & 0.024 (0.009-0.038) & 0.017 (0.003-0.031) & 0.033 (0.017-0.048) & {\cellcolor[HTML]{E5E5E5}{0.033 (0.02-0.046)}} \\ 
+CJD19 & atypical & P102L & {\cellcolor[HTML]{E5E5E5}{0.028 (0.014-0.042)}} & 0.014 (0.005-0.023) & 0.013 (0.002-0.025) & 0.019 (0.006-0.033) & 0.029 (0.014-0.045) & 0.047 (0.029-0.065) \\ 
+CJD20 & MM1 & D178N & {\cellcolor[HTML]{E5E5E5}{0.037 (0.023-0.051)}} & 0.006 (0-0.016) & 0.006 (0-0.013) & 0.007 (0-0.016) & 0.007 (0-0.017) & 0.011 (0.001-0.021) \\ 
+CJD20 & MM1 & E200K & 0.022 (0.008-0.036) & 0 (0-0) & 0 (0-0) & 0.002 (0-0.006) & 0.007 (0-0.019) & 0 (0-0) \\ 
+CJD20 & MM1 & P102L & 0.021 (0.005-0.038) & 0.006 (0-0.013) & 0.01 (0-0.019) & 0.002 (0-0.005) & 0.013 (0-0.028) & 0.011 (0.002-0.02) \\ 
+CJD21 & MM1 & D178N & 0.046 (0.022-0.071) & 0.017 (0.004-0.03) & 0.007 (0-0.015) & 0.014 (0.001-0.026) & 0.013 (0.003-0.023) & 0.004 (0-0.014) \\ 
+CJD21 & MM1 & E200K & 0.001 (0-0.001) & 0.001 (0-0.001) & {\cellcolor[HTML]{E5E5E5}{0 (0-0.001)}} & 0.001 (0-0.001) & {\cellcolor[HTML]{E5E5E5}{0 (0-0.001)}} & {\cellcolor[HTML]{E5E5E5}{0.003 (0.003-0.004)}} \\ 
+CJD21 & MM1 & P102L & 0.024 (0.006-0.043) & 0.004 (0-0.011) & 0.01 (0-0.02) & 0.01 (0-0.023) & 0.007 (0.001-0.013) & 0.016 (0.001-0.03) \\ 
+CJD22 & MM1 & D178N & 0.007 (0-0.016) & 0.005 (0-0.012) & 0.036 (0.01-0.062) & 0.002 (0-0.007) & 0.004 (0-0.011) & 0.002 (0-0.008) \\ 
+CJD22 & MM1 & E200K & 0.012 (0.001-0.022) & 0.005 (0-0.011) & 0.022 (0.002-0.043) & 0.016 (0.005-0.027) & 0.012 (0.002-0.021) & 0.016 (0.005-0.028) \\ 
+CJD22 & MM1 & P102L & 0.014 (0.003-0.025) & 0.006 (0-0.014) & 0.028 (0.007-0.049) & 0.011 (0.001-0.021) & 0.012 (0.002-0.022) & 0.022 (0.006-0.038) \\ 
+CJD23 & VV1 & D178N & {\cellcolor[HTML]{E5E5E5}{0.039 (0.021-0.057)}} & 0.03 (0.011-0.049) & {\cellcolor[HTML]{E5E5E5}{0.044 (0.026-0.061)}} & {\cellcolor[HTML]{E5E5E5}{0.029 (0.016-0.043)}} & {\cellcolor[HTML]{E5E5E5}{0.05 (0.031-0.069)}} & {\cellcolor[HTML]{E5E5E5}{0.039 (0.023-0.055)}} \\ 
+CJD23 & VV1 & E200K & 0.025 (0.012-0.038) & {\cellcolor[HTML]{E5E5E5}{\textbf{0.069} (0.041-0.098)}} & {\cellcolor[HTML]{E5E5E5}{0.027 (0.015-0.039)}} & {\cellcolor[HTML]{E5E5E5}{0.03 (0.016-0.043)}} & 0.023 (0.011-0.035) & 0.021 (0.01-0.033) \\ 
+CJD23 & VV1 & P102L & {\cellcolor[HTML]{E5E5E5}{0.056 (0.034-0.078)}} & 0.032 (0.01-0.053) & {\cellcolor[HTML]{E5E5E5}{0.043 (0.027-0.06)}} & 0.022 (0.011-0.034) & {\cellcolor[HTML]{E5E5E5}{0.034 (0.02-0.048)}} & {\cellcolor[HTML]{E5E5E5}{0.047 (0.022-0.072)}} \\ 
+CJD24 & MM2T & D178N & {\cellcolor[HTML]{E5E5E5}{0.04 (0.023-0.056)}} & 0.013 (0.004-0.022) & {\cellcolor[HTML]{E5E5E5}{0.026 (0.014-0.039)}} & {\cellcolor[HTML]{E5E5E5}{0.027 (0.015-0.038)}} & {\cellcolor[HTML]{E5E5E5}{0.024 (0.015-0.034)}} & {\cellcolor[HTML]{E5E5E5}{0.028 (0.016-0.04)}} \\ 
+CJD24 & MM2T & E200K & 0.023 (0.011-0.036) & 0.016 (0.008-0.024) & {\cellcolor[HTML]{E5E5E5}{0.028 (0.014-0.041)}} & {\cellcolor[HTML]{E5E5E5}{0.021 (0.012-0.031)}} & {\cellcolor[HTML]{E5E5E5}{0.019 (0.01-0.027)}} & {\cellcolor[HTML]{E5E5E5}{0.036 (0.023-0.049)}} \\ 
+CJD24 & MM2T & P102L & {\cellcolor[HTML]{E5E5E5}{0.062 (0.035-0.089)}} & 0.022 (0.011-0.034) & {\cellcolor[HTML]{E5E5E5}{0.044 (0.024-0.063)}} & {\cellcolor[HTML]{E5E5E5}{0.04 (0.024-0.057)}} & {\cellcolor[HTML]{E5E5E5}{0.041 (0.026-0.055)}} & {\cellcolor[HTML]{E5E5E5}{0.031 (0.018-0.045)}} \\ 
+CJD25 & MM2T & D178N & 0.016 (0.005-0.028) & {\cellcolor[HTML]{E5E5E5}{0.032 (0.016-0.047)}} & {\cellcolor[HTML]{E5E5E5}{0.034 (0.021-0.047)}} & {\cellcolor[HTML]{E5E5E5}{0.021 (0.011-0.031)}} & {\cellcolor[HTML]{E5E5E5}{0.019 (0.01-0.028)}} & {\cellcolor[HTML]{E5E5E5}{0.025 (0.014-0.035)}} \\ 
+CJD25 & MM2T & E200K & {\cellcolor[HTML]{E5E5E5}{0.046 (0.028-0.064)}} & 0.017 (0.006-0.028) & 0.018 (0.008-0.028) & {\cellcolor[HTML]{E5E5E5}{0.022 (0.013-0.032)}} & 0.022 (0.01-0.033) & {\cellcolor[HTML]{E5E5E5}{0.024 (0.013-0.036)}} \\ 
+CJD25 & MM2T & P102L & 0.06 (0.029-0.09) & 0.036 (0.019-0.053) & {\cellcolor[HTML]{E5E5E5}{0.036 (0.021-0.052)}} & {\cellcolor[HTML]{E5E5E5}{0.031 (0.019-0.043)}} & {\cellcolor[HTML]{E5E5E5}{0.031 (0.017-0.045)}} & {\cellcolor[HTML]{E5E5E5}{0.034 (0.02-0.047)}} \\ 
+CJD26 & MM2T & D178N & {\cellcolor[HTML]{E5E5E5}{0.025 (0.015-0.035)}} & {\cellcolor[HTML]{E5E5E5}{0.028 (0.016-0.04)}} & {\cellcolor[HTML]{E5E5E5}{0.027 (0.018-0.037)}} & {\cellcolor[HTML]{E5E5E5}{0.026 (0.016-0.036)}} & {\cellcolor[HTML]{E5E5E5}{0.03 (0.02-0.04)}} & {\cellcolor[HTML]{E5E5E5}{0.035 (0.024-0.047)}} \\ 
+CJD26 & MM2T & E200K & {\cellcolor[HTML]{E5E5E5}{0.027 (0.016-0.038)}} & {\cellcolor[HTML]{E5E5E5}{0.041 (0.027-0.056)}} & {\cellcolor[HTML]{E5E5E5}{0.02 (0.012-0.028)}} & {\cellcolor[HTML]{E5E5E5}{0.037 (0.024-0.049)}} & {\cellcolor[HTML]{E5E5E5}{0.017 (0.01-0.024)}} & 0.02 (0.011-0.029) \\ 
+CJD26 & MM2T & P102L & {\cellcolor[HTML]{E5E5E5}{0.033 (0.021-0.044)}} & 0.014 (0.006-0.022) & {\cellcolor[HTML]{E5E5E5}{0.02 (0.011-0.029)}} & {\cellcolor[HTML]{E5E5E5}{0.029 (0.018-0.04)}} & {\cellcolor[HTML]{E5E5E5}{0.02 (0.011-0.029)}} & 0.015 (0.007-0.023) \\ 
+CJD27 & MV2K & D178N & 0.057 (0.028-0.086) & 0.051 (0.031-0.07) & 0.029 (0.016-0.042) & 0.029 (0.016-0.041) & 0.022 (0.014-0.031) & 0.032 (0.017-0.046) \\ 
+CJD27 & MV2K & E200K & 0.034 (0.012-0.055) & 0.028 (0.013-0.043) & 0.02 (0.009-0.031) & 0.021 (0.01-0.031) & {\cellcolor[HTML]{E5E5E5}{0.023 (0.015-0.032)}} & {\cellcolor[HTML]{E5E5E5}{0.028 (0.016-0.04)}} \\ 
+CJD27 & MV2K & P102L & 0.034 (0.012-0.055) & 0.022 (0.009-0.035) & {\cellcolor[HTML]{E5E5E5}{0.023 (0.011-0.035)}} & 0.017 (0.008-0.025) & {\cellcolor[HTML]{E5E5E5}{0.02 (0.011-0.028)}} & 0.014 (0.005-0.024) \\ 
+CJD28 & MV2K & D178N & 0.029 (0.015-0.042) & 0.027 (0.016-0.038) & 0.018 (0.008-0.029) & 0.023 (0.011-0.035) & 0.032 (0.018-0.046) & 0.048 (0.026-0.071) \\ 
+CJD28 & MV2K & E200K & {\cellcolor[HTML]{E5E5E5}{0.03 (0.016-0.044)}} & 0.02 (0.01-0.03) & {\cellcolor[HTML]{E5E5E5}{0.027 (0.015-0.04)}} & 0.032 (0.016-0.047) & {\cellcolor[HTML]{E5E5E5}{0.037 (0.019-0.054)}} & 0.034 (0.013-0.054) \\ 
+CJD28 & MV2K & P102L & {\cellcolor[HTML]{E5E5E5}{0.034 (0.019-0.05)}} & {\cellcolor[HTML]{E5E5E5}{0.024 (0.012-0.035)}} & {\cellcolor[HTML]{E5E5E5}{0.025 (0.013-0.038)}} & {\cellcolor[HTML]{E5E5E5}{0.029 (0.015-0.042)}} & {\cellcolor[HTML]{E5E5E5}{0.035 (0.02-0.05)}} & 0.031 (0.012-0.049) \\ 
+CJD29 & MV2K & D178N & {\cellcolor[HTML]{E5E5E5}{0.043 (0.027-0.059)}} & {\cellcolor[HTML]{E5E5E5}{0.031 (0.02-0.042)}} & 0.042 (0.021-0.063) & 0.039 (0.024-0.053) & 0.031 (0.019-0.043) & 0.022 (0.012-0.031) \\ 
+CJD29 & MV2K & E200K & {\cellcolor[HTML]{E5E5E5}{0.032 (0.018-0.046)}} & 0.015 (0.008-0.022) & 0.011 (0-0.022) & 0.017 (0.007-0.026) & 0.02 (0.011-0.03) & {\cellcolor[HTML]{E5E5E5}{0.028 (0.017-0.038)}} \\ 
+CJD29 & MV2K & P102L & {\cellcolor[HTML]{E5E5E5}{0.028 (0.015-0.041)}} & 0.011 (0.004-0.018) & {\cellcolor[HTML]{E5E5E5}{0.05 (0.026-0.074)}} & {\cellcolor[HTML]{E5E5E5}{0.025 (0.013-0.038)}} & {\cellcolor[HTML]{E5E5E5}{0.023 (0.012-0.033)}} & {\cellcolor[HTML]{E5E5E5}{0.022 (0.012-0.033)}} \\ 
+CJD30 & VV2 & D178N & {\cellcolor[HTML]{E5E5E5}{0.031 (0.017-0.045)}} & 0.027 (0.011-0.044) & 0.024 (0.012-0.036) & {\cellcolor[HTML]{E5E5E5}{0.029 (0.015-0.042)}} & 0.021 (0.008-0.035) & 0.039 (0.024-0.055) \\ 
+CJD30 & VV2 & E200K & {\cellcolor[HTML]{E5E5E5}{49.522 (48.811-50.234)}} & {\cellcolor[HTML]{E5E5E5}{49.471 (48.755-50.187)}} & {\cellcolor[HTML]{E5E5E5}{48.939 (48.194-49.684)}} & {\cellcolor[HTML]{E5E5E5}{49.857 (49.148-50.566)}} & {\cellcolor[HTML]{E5E5E5}{49.48 (48.792-50.167)}} & {\cellcolor[HTML]{E5E5E5}{49.444 (48.693-50.195)}} \\ 
+CJD30 & VV2 & P102L & 0.061 (0.04-0.082) & 0.063 (0.037-0.089) & {\cellcolor[HTML]{E5E5E5}{0.042 (0.027-0.057)}} & 0.045 (0.026-0.064) & {\cellcolor[HTML]{E5E5E5}{0.044 (0.028-0.059)}} & {\cellcolor[HTML]{E5E5E5}{0.039 (0.026-0.052)}} \\ 
+CJD31 & VV2 & D178N & 0.019 (0.008-0.029) & 0.016 (0.006-0.025) & 0.024 (0.013-0.036) & 0.024 (0.01-0.039) & {\cellcolor[HTML]{E5E5E5}{0.028 (0.017-0.039)}} & 0.026 (0.014-0.037) \\ 
+CJD31 & VV2 & E200K & {\cellcolor[HTML]{E5E5E5}{0.032 (0.02-0.045)}} & {\cellcolor[HTML]{E5E5E5}{0.024 (0.013-0.035)}} & {\cellcolor[HTML]{E5E5E5}{0.025 (0.016-0.034)}} & {\cellcolor[HTML]{E5E5E5}{0.057 (0.035-0.079)}} & {\cellcolor[HTML]{E5E5E5}{0.021 (0.013-0.029)}} & {\cellcolor[HTML]{E5E5E5}{0.053 (0.036-0.069)}} \\ 
+CJD31 & VV2 & P102L & {\cellcolor[HTML]{E5E5E5}{0.042 (0.027-0.057)}} & 0.033 (0.018-0.048) & {\cellcolor[HTML]{E5E5E5}{0.028 (0.017-0.039)}} & {\cellcolor[HTML]{E5E5E5}{0.053 (0.032-0.073)}} & {\cellcolor[HTML]{E5E5E5}{0.039 (0.027-0.051)}} & {\cellcolor[HTML]{E5E5E5}{0.076 (0.054-0.099)}} \\ 
+Control1 & control & D178N & 0.011 (0.002-0.021) & 0.062 (0.015-0.11) & 0.005 (0-0.011) & 0.003 (0-0.006) & {\cellcolor[HTML]{E5E5E5}{0.02 (0.011-0.029)}} & {\cellcolor[HTML]{E5E5E5}{0.031 (0.017-0.046)}} \\ 
+Control1 & control & E200K & 0.018 (0.006-0.03) & 0.052 (0.022-0.082) & 0.011 (0.003-0.019) & 0.004 (0-0.007) & {\cellcolor[HTML]{E5E5E5}{0.021 (0.01-0.031)}} & 0.019 (0.007-0.03) \\ 
+Control1 & control & P102L & 0.012 (0.001-0.022) & 0.044 (0.004-0.084) & 0.003 (0-0.008) & 0.005 (0-0.011) & {\cellcolor[HTML]{E5E5E5}{0.03 (0.018-0.041)}} & {\cellcolor[HTML]{E5E5E5}{0.051 (0.032-0.07)}} \\ 
+Control2 & control & D178N & — & 0 (0-0) & — & — & — & 0 (0-0) \\ 
+Control2 & control & E200K & — & 0.003 (0-0.006) & — & {\cellcolor[HTML]{E5E5E5}{0.024 (0.01-0.039)}} & — & 0.006 (0-0.012) \\ 
+Control2 & control & P102L & — & 0 (0-0) & — & — & — & — \\ 
+Control3 & control & D178N & 0.004 (0-0.012) & 0.003 (0-0.01) & {\cellcolor[HTML]{E5E5E5}{0.025 (0.015-0.035)}} & 0.005 (0-0.012) & 0.008 (0-0.019) & 0.02 (0-0.068) \\ 
+Control3 & control & E200K & 0.01 (0-0.022) & 0.005 (0-0.013) & {\cellcolor[HTML]{E5E5E5}{0.022 (0.012-0.033)}} & 0.003 (0-0.009) & {\cellcolor[HTML]{E5E5E5}{0.033 (0.013-0.052)}} & 0.005 (0-0.016) \\ 
+Control3 & control & P102L & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.001)}} & {\cellcolor[HTML]{E5E5E5}{0.001 (0-0.001)}} & {\cellcolor[HTML]{E5E5E5}{0.037 (0.023-0.051)}} & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.001)}} & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.002)}} & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.001)}} \\ 
+Control4 & control & D178N & 0.005 (0-0.011) & 0.014 (0-0.028) & 0.019 (0-0.038) & 0.01 (0.002-0.018) & 0.01 (0-0.02) & 0.008 (0-0.017) \\ 
+Control4 & control & E200K & 0.015 (0.006-0.023) & 0 (0-0) & 0.033 (0.01-0.057) & 0.01 (0.002-0.018) & 0.007 (0-0.014) & {\cellcolor[HTML]{E5E5E5}{0.02 (0.006-0.034)}} \\ 
+Control4 & control & P102L & {\cellcolor[HTML]{E5E5E5}{0.007 (0.001-0.013)}} & 0.018 (0-0.036) & {\cellcolor[HTML]{E5E5E5}{0.043 (0.019-0.067)}} & 0 (0-0) & {\cellcolor[HTML]{E5E5E5}{0.028 (0.016-0.041)}} & {\cellcolor[HTML]{E5E5E5}{0.021 (0.007-0.035)}} \\ 
+Control5 & control & D178N & 0.003 (0-0.011) & 0.01 (0-0.022) & 0.012 (0-0.025) & 0.029 (0.011-0.046) & 0.008 (0-0.027) & 0.01 (0-0.025) \\ 
+Control5 & control & E200K & 0.005 (0-0.012) & 0.007 (0-0.019) & 0.061 (0.032-0.091) & {\cellcolor[HTML]{E5E5E5}{\textbf{0.071} (0.045-0.096)}} & 0.012 (0.002-0.021) & 0.016 (0-0.033) \\ 
+Control5 & control & P102L & 0.009 (0-0.019) & 0.026 (0.006-0.047) & {\cellcolor[HTML]{E5E5E5}{0.019 (0.009-0.03)}} & {\cellcolor[HTML]{E5E5E5}{0.067 (0.042-0.092)}} & 0 (0-0) & {\cellcolor[HTML]{E5E5E5}{0.013 (0.003-0.023)}} \\ 
+Control6 & control & D178N & 0.026 (0-0.065) & 0.018 (0-0.044) & 0.008 (0-0.027) & 0.025 (0.004-0.045) & {\cellcolor[HTML]{E5E5E5}{0.019 (0.01-0.029)}} & {\cellcolor[HTML]{E5E5E5}{0.019 (0.01-0.027)}} \\ 
+Control6 & control & E200K & {\cellcolor[HTML]{E5E5E5}{0.024 (0.009-0.04)}} & {\cellcolor[HTML]{E5E5E5}{0.043 (0.014-0.072)}} & 0.005 (0-0.011) & 0.007 (0-0.015) & {\cellcolor[HTML]{E5E5E5}{0.034 (0.021-0.048)}} & {\cellcolor[HTML]{E5E5E5}{0.04 (0.027-0.052)}} \\ 
+Control6 & control & P102L & {\cellcolor[HTML]{E5E5E5}{0.001 (0-0.001)}} & {\cellcolor[HTML]{E5E5E5}{0.001 (0-0.001)}} & {\cellcolor[HTML]{E5E5E5}{0.001 (0.001-0.001)}} & {\cellcolor[HTML]{E5E5E5}{0.001 (0-0.001)}} & {\cellcolor[HTML]{E5E5E5}{0.034 (0.02-0.048)}} & {\cellcolor[HTML]{E5E5E5}{0.032 (0.021-0.043)}} \\ 
+Control7 & control & D178N & 0.015 (0.001-0.029) & 0.007 (0-0.017) & {\cellcolor[HTML]{E5E5E5}{0.035 (0.013-0.057)}} & 0.003 (0-0.009) & {\cellcolor[HTML]{E5E5E5}{0.039 (0.018-0.06)}} & 0.015 (0-0.031) \\ 
+Control7 & control & E200K & 0.013 (0.001-0.026) & 0.014 (0-0.028) & 0.01 (0-0.021) & 0.005 (0-0.014) & 0.044 (0.022-0.065) & 0.031 (0.011-0.05) \\ 
+Control7 & control & P102L & 0.011 (0.001-0.02) & 0.013 (0-0.027) & 0.025 (0.007-0.043) & 0.01 (0-0.021) & 0.022 (0.007-0.037) & 0.023 (0.005-0.04) \\ 
+Control8 & control & D178N & 0.007 (0-0.018) & 0.003 (0-0.008) & 0.001 (0-0.004) & 0.007 (0-0.015) & 0.009 (0.003-0.016) & 0.006 (0-0.012) \\ 
+Control8 & control & E200K & 0.004 (0-0.014) & 0.014 (0.004-0.025) & 0.005 (0-0.01) & 0.005 (0-0.012) & 0.007 (0.001-0.014) & 0.008 (0.001-0.015) \\ 
+Control8 & control & P102L & 0.023 (0.008-0.037) & 0.004 (0-0.011) & 0.011 (0.003-0.019) & 0.018 (0.005-0.031) & {\cellcolor[HTML]{E5E5E5}{0.029 (0.016-0.043)}} & 0.014 (0.004-0.024) \\ 
+			\bottomrule
+		\end{tabular}
+		
+	\end{adjustbox}
+	
+\caption{\textbf{Fractional abundance (FA) of \textit{PRNP} point mutation signal across brain regions}, quantified by ddPCR and reported as percentages. Bold type indicates samples in which the mean FA, but not the lower bound of the 95\% confidence interval, surpassed the limit of detection (LoD). Grey shading denotes values exceeding the respective limit of blank (LoB).}
+
+	\label{tab:ddpcr_results_by_region}
+\end{table}
+
+\clearpage
+
+
+% ORR repeat analysis metrics
+
+
+\begin{table}[t]
+	\centering
+	\resizebox{\textwidth}{!}{%
+		\begin{tabular}{l r l r r r r l r r r r r l}
+			\toprule
+			\multirow{2}{*}[-0.8ex]{\textbf{Sample}} &
+			\multirow{2}{*}[-0.8ex]{\makecell{\textbf{ORR}\\\textbf{overlapping}\\\textbf{reads}}} &
+			\multicolumn{5}{c}{\textbf{ExpansionHunter}} &
+			\multicolumn{3}{c}{\textbf{GangSTR}} &
+			\multicolumn{3}{c}{\textbf{Manual review}} &
+			\multirow{2}{*}[-0.8ex]{\makecell{\textbf{Control-aware}\\\textbf{filter}}} \\
+			\cmidrule(lr){3-7}
+			\cmidrule(lr){8-10}
+			\cmidrule(lr){11-13}
+			& & \textbf{Call} & \textbf{LC} & \textbf{ADSP} & \textbf{ADFL} & \textbf{ADIR}
+			& \textbf{Call} & \textbf{DP} & \textbf{Enclosing}
+			& \textbf{Exact nonreference} & \textbf{Synthetic nonreference} & \makecell{\textbf{One-sided}\\\textbf{indel/soft-clip}}
+			& \\[0.35ex]
+			\midrule
+			CJD1 &  30554 & Reference & 20069.1 & 8503/8503 & 11258/11258 & 0/0 & Reference &  6697 & 0 &  4 & 0 & 21 & No candidate \\
+			CJD2 &  30750 & Reference & 18573.7 & 8926/8926 & 11170/11170 & 0/0 & Reference &  7249 & 0 &  1 & 0 & 12 & No candidate \\
+			CJD3 &  21678 & Reference & 14818.1 & 6159/6159 & 7496/7496 & 0/0 & Reference &  4300 & 0 &  2 & 0 & 18 & No candidate \\
+			CJD4 &  18190 & Reference & 13453.2 & 5282/5282 & 5918/5918 & 0/0 & Reference &  3635 & 0 &  0 & 0 &  7 & No candidate \\
+			CJD5 &    462 & Reference & 179.5 & 155/155 & 156/156 & 0/0 & Reference &   118 & 0 &  0 & 0 &  1 & No candidate \\
+			CJD6 &  84806 & Reference & 43784.9 & 24464/24464 & 30745/30745 & 0/0 & Reference & 17775 & 2 &  8 & 1 & 71 & No candidate \\
+			CJD7 &  11121 & Reference & 6490.1 & 3262/3262 & 3776/3776 & 0/0 & Reference &  2378 & 0 &  2 & 0 &  8 & No candidate \\
+			CJD8 &    863 & Reference & 378.8 & 254/254 & 305/305 & 0/0 & Reference &   183 & 0 &  0 & 0 &  1 & No candidate \\
+			CJD11 &  17109 & Reference & 10085.3 & 5021/5021 & 5869/5869 & 1/1 & Reference &  3587 & 0 &  1 & 0 &  9 & No candidate \\
+			CJD12 &   2259 & Reference & 1367.8 & 629/629 & 815/815 & 0/0 & Reference &   522 & 0 &  0 & 0 &  1 & No candidate \\
+			CJD13 &  26178 & Reference & 16214.9 & 7640/7640 & 9279/9279 & 1/1 & Reference &  6196 & 0 &  3 & 0 & 21 & No candidate \\
+			CJD14 &    147 & Reference & 75.7 & 34/34 & 62/62 & 0/0 & Reference &    30 & 0 &  0 & 0 &  0 & No candidate \\
+			CJD15 &    242 & Reference & 113.7 & 65/65 & 91/91 & 0/0 & Reference &    48 & 0 &  0 & 0 &  1 & No candidate \\
+			CJD18 &    243 & Reference & 126.3 & 66/66 & 88/88 & 0/0 & Reference &    47 & 0 &  0 & 0 &  0 & No candidate \\
+			CJD19 &   1804 & Reference & 953.0 & 479/479 & 660/660 & 0/0 & Reference &   369 & 0 &  0 & 0 &  1 & No candidate \\
+			CJD21 &  10920 & Reference & 6167.3 & 2963/2963 & 3930/3930 & 0/0 & Reference &  2447 & 0 &  1 & 0 &  4 & No candidate \\
+			CJD22 &  66871 & Reference & 33045.5 & 18715/18715 & 24425/24425 & 0/0 & Reference & 16690 & 0 &  4 & 0 & 31 & No candidate \\
+			CJD23 &  40314 & Reference & 24359.5 & 11968/11968 & 14488/14488 & 0/0 & Reference &  8669 & 0 &  3 & 0 & 34 & No candidate \\
+			CJD24 &   1088 & Reference & 244.5 & 347/347 & 346/346 & 0/0 & Reference &   268 & 0 &  0 & 0 &  1 & No candidate \\
+			CJD25 & 173898 & Reference & 41619.0 & 56542/56542 & 61653/61653 & 0/0 & Reference & 42067 & 0 & 12 & 0 & 58 & No candidate \\
+			CJD26 &   1071 & Reference & 663.0 & 287/287 & 398/398 & 0/0 & Reference &   227 & 0 &  0 & 0 &  0 & No candidate \\
+			CJD27 &  88903 & Reference & 51992.1 & 26597/26597 & 32123/32123 & 8/8 & Reference & 19429 & 0 & 10 & 0 & 37 & No candidate \\
+			CJD28 &    983 & Reference & 578.5 & 242/242 & 368/368 & 0/0 & Reference &   186 & 0 &  1 & 0 &  1 & No candidate \\
+			CJD29 &   2973 & Reference & 1219.9 & 868/868 & 1037/1037 & 0/0 & Reference &   661 & 0 &  0 & 0 &  4 & No candidate \\
+			CJD30 &   1488 & Reference & 670.0 & 399/399 & 533/533 & 0/0 & Reference &   301 & 0 &  0 & 0 &  0 & No candidate \\
+			CJD31 &    350 & Reference & 161.3 & 79/79 & 138/138 & 0/0 & Reference &    67 & 0 &  0 & 0 &  0 & No candidate \\
+			\addlinespace
+			Control1 &  53233 & Reference & 22511.0 & 16084/16084 & 18389/18389 & 1/1 & Reference & 12398 & 0 &  4 & 1 & 25 &  \\
+			Control2 &   6510 & Reference & 4079.9 & 1857/1857 & 2124/2124 & 0/0 & Reference &  1498 & 0 &  0 & 0 &  3 &  \\
+			Control3 &  23740 & Reference & 14900.4 & 6613/6613 & 8278/8278 & 0/0 & Reference &  5480 & 0 &  1 & 0 & 13 &  \\
+			Control4 &   1103 & Reference & 547.3 & 301/301 & 394/394 & 0/0 & Reference &   236 & 0 &  0 & 0 &  1 &  \\
+			Control5 &  18603 & Reference & 8508.2 & 5500/5500 & 6432/6432 & 0/0 & Reference &  4238 & 2 &  6 & 1 & 18 &  \\
+			Control7 &   1048 & Reference & 551.6 & 304/304 & 365/365 & 0/0 & Reference &   220 & 0 &  0 & 0 &  0 &  \\
+			\bottomrule
+		\end{tabular}
+	}
+	\vspace{0.5em}
+	\caption{\textbf{\textit{PRNP} octapeptide-repeat region summary across repeat-analysis tools}. For each sample, we report ORR-overlapping reads, ExpansionHunter call and read-support metrics, GangSTR call and depth metrics, manual-review read counts, and the control-aware filter outcome. ExpansionHunter and GangSTR were reference throughout, and the residual manual-review signal was sparse and background-like, with no somatic ORR mutation identified. Column definitions: LC, locus coverage; AD, allele depth; ADSP, AD of spanning reads; ADFL, AD of flanking reads; ADIR, AD in-repeat (within the repeat); DP, GangSTR depth; Enclosing, nonreference enclosing reads; Exact nonreference, exact two-sided nonreference reads; Synthetic nonreference, high- or medium-confidence nonreference reads after synthetic remapping; One-sided indel/soft-clip, left- or right-only reads with an indel near the ORR or a soft clip at its edge; Control-aware filter, outcome of the control-aware CJD filter.}
+	\label{tab:prnp_orr_repeat_tool_summary}
+\end{table}
+
+
+
+\end{document}
