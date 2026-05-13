@@ -8,15 +8,81 @@ library(binom)
 # reproducible, repo-relative paths
 # -------------------------------------
 
-args <- commandArgs(trailingOnly = FALSE)
-file_arg <- "--file="
-script_path <- sub(file_arg, "", args[grep(file_arg, args)])
-if (length(script_path) == 0) {
-  stop("Could not determine script path. Please run with: Rscript src/ddPCR/create_snv_dataframe.R")
+get_ddpcr_project_root <- function() {
+  normalise_existing_dir <- function(path) {
+    if (length(path) != 1L || is.na(path) || !nzchar(path)) {
+      return(character(0))
+    }
+    if (file.exists(path) && !dir.exists(path)) {
+      path <- dirname(path)
+    }
+    if (!dir.exists(path)) {
+      return(character(0))
+    }
+    normalizePath(path, winslash = "/", mustWork = TRUE)
+  }
+
+  find_project_root <- function(start_dir) {
+    current_dir <- normalise_existing_dir(start_dir)
+    if (length(current_dir) == 0L) {
+      return(character(0))
+    }
+
+    repeat {
+      if (dir.exists(file.path(current_dir, "src", "ddPCR")) &&
+          file.exists(file.path(current_dir, "env", "ddpcr.environment.yml"))) {
+        return(current_dir)
+      }
+
+      parent_dir <- dirname(current_dir)
+      if (identical(parent_dir, current_dir)) {
+        return(character(0))
+      }
+      current_dir <- parent_dir
+    }
+  }
+
+  args <- commandArgs(trailingOnly = FALSE)
+  file_arg <- grep("^--file=", args, value = TRUE)
+
+  source_files <- unlist(lapply(sys.frames(), function(frame) {
+    if (is.null(frame$ofile)) {
+      character(0)
+    } else {
+      frame$ofile
+    }
+  }))
+
+  rstudio_path <- character(0)
+  if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
+    rstudio_path <- tryCatch(
+      rstudioapi::getActiveDocumentContext()$path,
+      error = function(e) character(0)
+    )
+  }
+
+  candidate_dirs <- unique(c(
+    normalise_existing_dir(sub("^--file=", "", file_arg[1])),
+    unlist(lapply(source_files, normalise_existing_dir), use.names = FALSE),
+    normalise_existing_dir(rstudio_path[1]),
+    normalise_existing_dir(getwd())
+  ))
+
+  for (candidate_dir in candidate_dirs) {
+    project_root <- find_project_root(candidate_dir)
+    if (length(project_root) == 1L) {
+      return(project_root)
+    }
+  }
+
+  stop(
+    "Could not determine project root. ",
+    "Set the working directory to the repository root, ",
+    "or source the script file directly."
+  )
 }
 
-script_dir <- dirname(normalizePath(script_path, winslash = "/", mustWork = TRUE))
-project_root <- normalizePath(file.path(script_dir, "..", ".."), winslash = "/", mustWork = TRUE)
+project_root <- get_ddpcr_project_root()
 
 input_dir <- file.path(project_root, "raw", "ddpcr")
 sample_details_path <- file.path(input_dir, "sample_details.xlsx")
