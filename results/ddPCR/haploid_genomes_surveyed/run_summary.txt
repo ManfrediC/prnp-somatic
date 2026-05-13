@@ -1,6 +1,6 @@
 ddPCR droplet counts and haploid genome-equivalent estimates
-Run time: 2026-05-12 17:24:59 CEST
-Project root: /mnt/c/Projects/prnp-somatic
+Run time: 2026-05-13 11:27:13 CEST
+Project root: C:/Projects/prnp-somatic
 Partition-count rows read: 669
 Curated ddPCR rows validated: 669
 Participants retained: 39
