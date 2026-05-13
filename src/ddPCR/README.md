@@ -30,6 +30,12 @@ conda env create -f env/ddpcr.environment.yml
 conda activate prnp-somatic-ddpcr
 ```
 
+Windows/RStudio usage:
+
+1. Open this repository in RStudio, or set the working directory anywhere inside the repository.
+2. From the repository root, run `source("src/ddPCR/create_snv_dataframe.R")`, or open the file and click Source in RStudio.
+3. Then run `source("src/ddPCR/estimate_haploid_genomes_surveyed.R")`, or open that file and click Source.
+
 Optional Docker path (if Docker daemon is available):
 
 ```bash

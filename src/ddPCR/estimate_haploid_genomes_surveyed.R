@@ -8,15 +8,81 @@ library(openxlsx)
 # reproducible, repo-relative paths
 # -------------------------------------
 
-args <- commandArgs(trailingOnly = FALSE)
-file_arg <- "--file="
-script_path <- sub(file_arg, "", args[grep(file_arg, args)])
-if (length(script_path) == 0) {
-  stop("Could not determine script path. Please run with: Rscript src/ddPCR/estimate_haploid_genomes_surveyed.R")
+get_ddpcr_project_root <- function() {
+  normalise_existing_dir <- function(path) {
+    if (length(path) != 1L || is.na(path) || !nzchar(path)) {
+      return(character(0))
+    }
+    if (file.exists(path) && !dir.exists(path)) {
+      path <- dirname(path)
+    }
+    if (!dir.exists(path)) {
+      return(character(0))
+    }
+    normalizePath(path, winslash = "/", mustWork = TRUE)
+  }
+
+  find_project_root <- function(start_dir) {
+    current_dir <- normalise_existing_dir(start_dir)
+    if (length(current_dir) == 0L) {
+      return(character(0))
+    }
+
+    repeat {
+      if (dir.exists(file.path(current_dir, "src", "ddPCR")) &&
+          file.exists(file.path(current_dir, "env", "ddpcr.environment.yml"))) {
+        return(current_dir)
+      }
+
+      parent_dir <- dirname(current_dir)
+      if (identical(parent_dir, current_dir)) {
+        return(character(0))
+      }
+      current_dir <- parent_dir
+    }
+  }
+
+  args <- commandArgs(trailingOnly = FALSE)
+  file_arg <- grep("^--file=", args, value = TRUE)
+
+  source_files <- unlist(lapply(sys.frames(), function(frame) {
+    if (is.null(frame$ofile)) {
+      character(0)
+    } else {
+      frame$ofile
+    }
+  }))
+
+  rstudio_path <- character(0)
+  if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
+    rstudio_path <- tryCatch(
+      rstudioapi::getActiveDocumentContext()$path,
+      error = function(e) character(0)
+    )
+  }
+
+  candidate_dirs <- unique(c(
+    normalise_existing_dir(sub("^--file=", "", file_arg[1])),
+    unlist(lapply(source_files, normalise_existing_dir), use.names = FALSE),
+    normalise_existing_dir(rstudio_path[1]),
+    normalise_existing_dir(getwd())
+  ))
+
+  for (candidate_dir in candidate_dirs) {
+    project_root <- find_project_root(candidate_dir)
+    if (length(project_root) == 1L) {
+      return(project_root)
+    }
+  }
+
+  stop(
+    "Could not determine project root. ",
+    "Set the working directory to the repository root, ",
+    "or source the script file directly."
+  )
 }
 
-script_dir <- dirname(normalizePath(script_path, winslash = "/", mustWork = TRUE))
-project_root <- normalizePath(file.path(script_dir, "..", ".."), winslash = "/", mustWork = TRUE)
+project_root <- get_ddpcr_project_root()
 
 partition_counts_path <- file.path(project_root, "results", "ddPCR", "ddpcr_partition_counts_by_sample_assay.csv")
 curated_ddpcr_path <- file.path(project_root, "results", "ddPCR", "SNV_data_final.xlsx")
@@ -24,8 +90,7 @@ output_dir <- file.path(project_root, "results", "ddPCR", "haploid_genomes_surve
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 # The partition-count CSV is produced by create_snv_dataframe.R after all
-# existing ddPCR sample filtering and harmonisation. This script deliberately
-# consumes that intermediate rather than touching the raw exports again.
+# existing ddPCR sample filtering and harmonisation.
 if (!file.exists(partition_counts_path)) {
   stop("Missing partition-count input: ", partition_counts_path,
        "\nRun bash src/ddPCR/run_ddpcr.sh first.")
@@ -52,14 +117,19 @@ poisson_from_negative_fraction <- function(negative_fraction, n_total) {
   )
 }
 
+# Why negative droplets? Because the fraction of empty droplets is 
+# informative about how many molecules were distributed into droplets. 
+# If very few droplets are empty, the reaction was heavily loaded. 
+# If many droplets are empty, fewer target molecules were present.
+
 # Convenience wrapper for rows where the negative count is available directly.
 poisson_from_negative_count <- function(n_negative, n_total) {
   poisson_from_negative_fraction(n_negative / n_total, n_total)
 }
 
-# Exact binomial interval for the negative-droplet fraction. The Poisson
-# transform is monotone decreasing, so upper negative-fraction bounds become
-# lower genome-count bounds, and vice versa.
+# Exact binomial confidence interval for the negative-droplet fraction.
+# The Poisson transform is monotone decreasing, so upper negative-fraction
+# bounds become lower genome-count bounds, and vice versa.
 exact_negative_fraction_ci <- function(n_negative, n_total, conf.level = 0.95) {
   alpha <- 1 - conf.level
   n_negative <- as.numeric(n_negative)
@@ -145,8 +215,7 @@ add_genome_estimates <- function(.data) {
 }
 
 # Sum droplets first, then estimate genomes from the aggregate negative
-# fraction. Averaging or summing row-level estimates would give different
-# confidence intervals and would be harder to audit against the displayed row.
+# fraction.
 summarise_counts <- function(.data, group_cols) {
   .data %>%
     group_by(across(all_of(group_cols))) %>%
