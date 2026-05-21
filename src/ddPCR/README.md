@@ -68,7 +68,8 @@ Written to `results/ddPCR/`:
   - intermediate sample/assay partition-count table used by the haploid-genome supplementary workflow.
 
 - `haploid_genomes_surveyed/`:
-  - dedicated supplementary output directory containing sample-region, participant-pooled, TeX table, and run-summary outputs for droplet counts and Poisson-corrected haploid genome-equivalent estimates.
+  - dedicated supplementary output directory containing sample-region, participant-pooled, participant-review TeX, and run-summary outputs for droplet counts and Poisson-corrected haploid genome-equivalent estimates.
+  - cohort-level pooled droplet summaries are not emitted.
 
 These expected output paths are also listed in:
 

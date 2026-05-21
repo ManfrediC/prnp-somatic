@@ -1,20 +1,16 @@
-ddPCR droplet counts and haploid genome-equivalent estimates
-Run time: 2026-05-13 11:27:13 CEST
-Project root: C:/Projects/prnp-somatic
+ddPCR sample-region and participant-level droplet counts and haploid genome-equivalent estimates
+Run time: 2026-05-21 17:14:23 CEST
+Project root: /mnt/c/Projects/prnp-somatic
 Partition-count rows read: 669
 Curated ddPCR rows validated: 669
 Participants retained: 39
+Sample-region rows written: 669
+Participant-pooled rows written: 117
 Known heterozygous E200K sample-region rows retained: 6
+Participant mean-range table rows: 39
+Participant LoB+LoD pass statuses other than None: 1
 
-Formula:
+Formula for retained genome-equivalent columns:
   n_genomes = -n_accepted_droplets * log(n_negative_droplets / n_accepted_droplets)
 
-Grand total across all biological samples and assays:
-  participants = 39
-  sample-regions = 224
-  wells = 724
-  accepted droplets = 10331061
-  signal-positive droplets = 9534886
-  signal-negative droplets = 796175
-  total haploid genomes = 26479452.119
-  total haploid genomes 95% CI = 26457651.877-26501266.614
+Cohort-level pooled droplet summaries are not emitted by this workflow.

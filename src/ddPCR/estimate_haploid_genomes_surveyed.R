@@ -632,207 +632,30 @@ write_basic_tex_from_formatted_table(
 )
 
 # -------------------------------------
-# cohort-level TeX supplement table
-# -------------------------------------
-
-# The TeX table is the manuscript-facing summary. The CSVs above keep the
-# detailed rows, while this table reports CJD/control/all rows by mutation plus
-# clearly labelled all-assay rows.
-cohort_by_group_mutation <- sample_region %>%
-  group_by(group, mutation) %>%
-  summarise(
-    n_participants = n_distinct(participant),
-    n_sample_regions = n_distinct(paste(code, brain_region, sep = "__")),
-    n_wells = sum(n_wells, na.rm = TRUE),
-    n_accepted_droplets = sum(n_accepted_droplets, na.rm = TRUE),
-    n_double_positive_droplets = sum(n_double_positive_droplets, na.rm = TRUE),
-    n_ref_only_droplets = sum(n_ref_only_droplets, na.rm = TRUE),
-    n_mut_only_droplets = sum(n_mut_only_droplets, na.rm = TRUE),
-    n_signal_positive_droplets = sum(n_signal_positive_droplets, na.rm = TRUE),
-    n_signal_negative_droplets = sum(n_signal_negative_droplets, na.rm = TRUE),
-    n_ref_positive_droplets = sum(n_ref_positive_droplets, na.rm = TRUE),
-    n_mut_positive_droplets = sum(n_mut_positive_droplets, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-# All-assay rows are assay-level genome-equivalent observations. They should
-# not be read as unique genomes, because the same DNA sample may be assayed for
-# multiple mutations.
-cohort_by_group_all <- sample_region %>%
-  mutate(mutation = "all_assays") %>%
-  group_by(group, mutation) %>%
-  summarise(
-    n_participants = n_distinct(participant),
-    n_sample_regions = n_distinct(paste(code, brain_region, sep = "__")),
-    n_wells = sum(n_wells, na.rm = TRUE),
-    n_accepted_droplets = sum(n_accepted_droplets, na.rm = TRUE),
-    n_double_positive_droplets = sum(n_double_positive_droplets, na.rm = TRUE),
-    n_ref_only_droplets = sum(n_ref_only_droplets, na.rm = TRUE),
-    n_mut_only_droplets = sum(n_mut_only_droplets, na.rm = TRUE),
-    n_signal_positive_droplets = sum(n_signal_positive_droplets, na.rm = TRUE),
-    n_signal_negative_droplets = sum(n_signal_negative_droplets, na.rm = TRUE),
-    n_ref_positive_droplets = sum(n_ref_positive_droplets, na.rm = TRUE),
-    n_mut_positive_droplets = sum(n_mut_positive_droplets, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-# Add mutation-specific totals across CJD and control groups for readers who
-# want the overall survey depth per assay.
-cohort_all_groups_mutation <- sample_region %>%
-  mutate(group = "all") %>%
-  group_by(group, mutation) %>%
-  summarise(
-    n_participants = n_distinct(participant),
-    n_sample_regions = n_distinct(paste(code, brain_region, sep = "__")),
-    n_wells = sum(n_wells, na.rm = TRUE),
-    n_accepted_droplets = sum(n_accepted_droplets, na.rm = TRUE),
-    n_double_positive_droplets = sum(n_double_positive_droplets, na.rm = TRUE),
-    n_ref_only_droplets = sum(n_ref_only_droplets, na.rm = TRUE),
-    n_mut_only_droplets = sum(n_mut_only_droplets, na.rm = TRUE),
-    n_signal_positive_droplets = sum(n_signal_positive_droplets, na.rm = TRUE),
-    n_signal_negative_droplets = sum(n_signal_negative_droplets, na.rm = TRUE),
-    n_ref_positive_droplets = sum(n_ref_positive_droplets, na.rm = TRUE),
-    n_mut_positive_droplets = sum(n_mut_positive_droplets, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-# Final grand-total row, again at assay-observation level rather than unique
-# biological genomes.
-cohort_all_groups_all <- sample_region %>%
-  mutate(group = "all", mutation = "all_assays") %>%
-  group_by(group, mutation) %>%
-  summarise(
-    n_participants = n_distinct(participant),
-    n_sample_regions = n_distinct(paste(code, brain_region, sep = "__")),
-    n_wells = sum(n_wells, na.rm = TRUE),
-    n_accepted_droplets = sum(n_accepted_droplets, na.rm = TRUE),
-    n_double_positive_droplets = sum(n_double_positive_droplets, na.rm = TRUE),
-    n_ref_only_droplets = sum(n_ref_only_droplets, na.rm = TRUE),
-    n_mut_only_droplets = sum(n_mut_only_droplets, na.rm = TRUE),
-    n_signal_positive_droplets = sum(n_signal_positive_droplets, na.rm = TRUE),
-    n_signal_negative_droplets = sum(n_signal_negative_droplets, na.rm = TRUE),
-    n_ref_positive_droplets = sum(n_ref_positive_droplets, na.rm = TRUE),
-    n_mut_positive_droplets = sum(n_mut_positive_droplets, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-# Bind the four summary blocks, derive negative counts from their own aggregate
-# droplet totals, then calculate estimates and CIs from those same rows.
-cohort_table <- bind_rows(
-  cohort_by_group_mutation,
-  cohort_by_group_all,
-  cohort_all_groups_mutation,
-  cohort_all_groups_all
-) %>%
-  mutate(
-    n_ref_negative_droplets = n_accepted_droplets - n_ref_positive_droplets,
-    n_mut_negative_droplets = n_accepted_droplets - n_mut_positive_droplets
-  ) %>%
-  add_genome_estimates() %>%
-  mutate(
-    group_label = recode(group, prion = "CJD", control = "Control", all = "All"),
-    mutation_label = recode(mutation, all_assays = "All assays"),
-    group_label = factor(group_label, levels = c("CJD", "Control", "All")),
-    mutation_label = factor(mutation_label, levels = c("D178N", "E200K", "P102L", "All assays"))
-  ) %>%
-  arrange(group_label, mutation_label)
-
-# Keep calculated numeric columns in the CSVs; convert to formatted strings
-# only for the TeX table.
-tex_table <- cohort_table %>%
-  transmute(
-    Group = escape_latex(as.character(group_label)),
-    Mutation = escape_latex(as.character(mutation_label)),
-    Participants = format_int(n_participants),
-    `Sample-regions` = format_int(n_sample_regions),
-    Wells = format_int(n_wells),
-    `Accepted droplets` = format_int(n_accepted_droplets),
-    `REF+ droplets` = format_int(n_ref_positive_droplets),
-    `MUT+ droplets` = format_int(n_mut_positive_droplets),
-    `Signal+ droplets` = format_int(n_signal_positive_droplets),
-    `Signal- droplets` = format_int(n_signal_negative_droplets),
-    `REF haploid genomes (95% CI)` = format_ci(
-      n_ref_genomes_poisson,
-      n_ref_genomes_poisson_low,
-      n_ref_genomes_poisson_high
-    ),
-    `MUT haploid genomes (95% CI)` = format_ci(
-      n_mut_genomes_poisson,
-      n_mut_genomes_poisson_low,
-      n_mut_genomes_poisson_high
-    ),
-    `Total haploid genomes (95% CI)` = format_ci(
-      n_haploid_genomes_poisson,
-      n_haploid_genomes_poisson_low,
-      n_haploid_genomes_poisson_high
-    ),
-    `Genomes per accepted droplet` = format_num(haploid_genomes_per_accepted_droplet, 3)
-  )
-
-# Build a small booktabs table without extra dependencies.
-tex_header <- paste(escape_latex(names(tex_table)), collapse = " & ")
-tex_body <- apply(tex_table, 1, function(row) paste0(paste(row, collapse = " & "), " \\\\"))
-
-tex_lines <- c(
-  "% Auto-generated by src/ddPCR/estimate_haploid_genomes_surveyed.R",
-  "\\begin{table}[t]",
-  "\\centering",
-  "\\scriptsize",
-  "\\resizebox{\\textwidth}{!}{%",
-  "\\begin{tabular}{llrrrrrrrrlllr}",
-  "\\toprule",
-  paste0(tex_header, " \\\\"),
-  "\\midrule",
-  tex_body,
-  "\\bottomrule",
-  "\\end{tabular}%",
-  "}",
-  "\\caption{\\textbf{ddPCR droplet counts and estimated haploid genome equivalents surveyed.} Counts are shown after applying the existing ddPCR sample inclusion and quality-control workflow. REF+ and MUT+ droplets include double-positive droplets. Haploid genome-equivalent estimates and 95\\% confidence intervals were derived from the corresponding negative-droplet fractions using a Poisson occupancy model. All-assay rows are assay-level genome-equivalent observations, not unique biological genomes, because the same DNA sample can contribute to multiple mutation assays.}",
-  "\\label{tab:ddpcr_haploid_genomes}",
-  "\\end{table}",
-  ""
-)
-
-writeLines(tex_lines, file.path(output_dir, "ddpcr_haploid_genomes_supplement_table.tex"))
-
-# -------------------------------------
 # run summary
 # -------------------------------------
 
-# The summary is a quick audit file: it records which inputs were validated,
-# the formula used, and the headline grand total without requiring TeX parsing.
-grand_total <- cohort_table %>%
-  filter(group_label == "All", mutation_label == "All assays") %>%
-  slice(1)
-
+# The summary is a quick audit file: it records which inputs were validated
+# and which non-cohort outputs were emitted.
 summary_lines <- c(
-  "ddPCR droplet counts and haploid genome-equivalent estimates",
+  "ddPCR sample-region and participant-level droplet counts and haploid genome-equivalent estimates",
   paste0("Run time: ", format(Sys.time(), "%Y-%m-%d %H:%M:%S %Z")),
   paste0("Project root: ", project_root),
   paste0("Partition-count rows read: ", nrow(partition_counts)),
   paste0("Curated ddPCR rows validated: ", nrow(curated_ddpcr)),
   paste0("Participants retained: ", n_distinct(partition_counts$participant)),
+  paste0("Sample-region rows written: ", nrow(sample_region)),
+  paste0("Participant-pooled rows written: ", nrow(participant_pooled)),
   paste0("Known heterozygous E200K sample-region rows retained: ",
          sum(sample_region$known_heterozygous_e200k)),
   paste0("Participant mean-range table rows: ", nrow(participant_mean_ranges_formatted)),
   paste0("Participant LoB+LoD pass statuses other than None: ",
          sum(participant_mean_ranges_formatted$`LoB+LoD pass` != "None")),
   "",
-  "Formula:",
+  "Formula for retained genome-equivalent columns:",
   "  n_genomes = -n_accepted_droplets * log(n_negative_droplets / n_accepted_droplets)",
   "",
-  "Grand total across all biological samples and assays:",
-  paste0("  participants = ", grand_total$n_participants),
-  paste0("  sample-regions = ", grand_total$n_sample_regions),
-  paste0("  wells = ", grand_total$n_wells),
-  paste0("  accepted droplets = ", grand_total$n_accepted_droplets),
-  paste0("  signal-positive droplets = ", grand_total$n_signal_positive_droplets),
-  paste0("  signal-negative droplets = ", grand_total$n_signal_negative_droplets),
-  paste0("  total haploid genomes = ", round(grand_total$n_haploid_genomes_poisson, 3)),
-  paste0("  total haploid genomes 95% CI = ",
-         round(grand_total$n_haploid_genomes_poisson_low, 3),
-         "-",
-         round(grand_total$n_haploid_genomes_poisson_high, 3))
+  "Cohort-level pooled droplet summaries are not emitted by this workflow."
 )
 
 writeLines(summary_lines, file.path(output_dir, "run_summary.txt"))
