@@ -159,6 +159,7 @@ config/junctions.env
 doc/plans/
 doc/notes/
 doc/JOURNAL.md
+doc/reproducibility/a117v_reviewer_defensibility_package.md
 
 # Manuscript workspace (temporarily excluded from version control)
 /manuscript
