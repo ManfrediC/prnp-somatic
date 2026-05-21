@@ -554,7 +554,7 @@
 			\renewcommand{\arraystretch}{0.86}
 			\scriptsize
 			\begin{adjustbox}{max width=\linewidth, max totalheight=0.82\textheight}
-			\begin{tabular}{@{}l*{12}{c}l@{}}
+			\begin{tabular}{@{}l c r c c c r c c c r c c l@{}}
 				\toprule
 				Participant &
 				\multicolumn{4}{c}{\dn} &
@@ -562,9 +562,9 @@
 				\multicolumn{4}{c}{\pl} &
 				LoB/LoD pass\\
 				\cmidrule(lr){2-5}\cmidrule(lr){6-9}\cmidrule(lr){10-13}
-				& MUT+ droplets & Droplets & MUT genomes & Total genomes
-				& MUT+ droplets & Droplets & MUT genomes & Total genomes
-				& MUT+ droplets & Droplets & MUT genomes & Total genomes & \\
+				& MUT+ droplets & \multicolumn{1}{c}{Droplets} & MUT genomes & Total genomes
+				& MUT+ droplets & \multicolumn{1}{c}{Droplets} & MUT genomes & Total genomes
+				& MUT+ droplets & \multicolumn{1}{c}{Droplets} & MUT genomes & Total genomes & \\
 				\midrule
 					CJD1 & 3 (0-4) & 13,606 (12,251-14,662) & 3 (0-4) & 24,134 (7,768-33,653) & 5 (1-10) & 13,189 (11,502-15,751) & 5 (1-10) & 24,668 (8,791-33,723) & 8 (6-10) & 14,687 (13,301-17,514) & 8 (6-10) & 36,962 (27,823-44,628) & None\\
 					CJD2 & 4 (0-12) & 12,626 (10,276-13,971) & 4 (0-12) & 29,267 (13,488-59,857) & 7 (3-14) & 13,756 (12,273-15,429) & 7 (3-14) & 32,552 (12,961-86,681) & 8 (0-26) & 19,013 (15,571-27,842) & 8 (0-26) & 24,045 (15,601-43,632) & None\\
@@ -610,7 +610,17 @@
 				\end{tabular}
 			\end{adjustbox}
 		\endgroup
-		\caption{\textbf{Participant-level ddPCR droplet counts and estimated haploid genome equivalents.} Values are shown for each participant and mutation assay as mean (range) across available sample-regions after technical pooling. single-sample summaries omit ranges. Droplet columns report accepted droplets after quality filtering; MUT+ denotes mutant-positive droplets. MUT and total genomes are Poisson estimates from mutant-negative and signal-negative droplet fractions, respectively. LoB/LoD pass lists assays with at least one sample-region passing both limit-of-blank and limit-of-detection filters; None indicates no non-heterozygous assay passed. \textsuperscript{*}CJD30 was unexpectedly found to be germline heterozygous for \ek; \ek values marked with * reflect this germline heterozygous state and are not somatic-candidate positives.}		
+		\caption{\textbf{Participant-level ddPCR droplet counts and estimated haploid genome equivalents.} 
+		Values are shown for each participant and mutation assay as mean (range) 
+		across available sample-regions after technical pooling. single-sample 
+		summaries omit ranges. Droplet columns report accepted droplets after 
+		quality filtering; MUT+ denotes mutant-positive droplets. MUT and total 
+		genomes are Poisson estimates from mutant-negative and signal-negative 
+		droplet fractions, respectively. LoB/LoD pass lists assays with at least 
+		one sample-region passing both limit-of-blank and limit-of-detection 
+		filters; None indicates no non-heterozygous assay passed. 
+		*) CJD30 was unexpectedly found to be germline heterozygous 
+		for \ek.}		
 		\label{tab:ddpcr_participant_haploid_genomes}
 	\end{table}
 \end{landscape}
