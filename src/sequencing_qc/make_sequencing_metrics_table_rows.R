@@ -26,12 +26,51 @@ rows_tex <- Sys.getenv(
   unset = file.path(repo_root, "results", "sequencing_qc", "sequencing_metrics_table_rows.tex")
 )
 
-## ---- define the manuscript-facing spike-in rows ----
-spike_display_names <- c(
-  NA100_undil = "Wildtype",
-  NA995A05_undil = "A117V 0.5% spike-in",
-  NA99A1_undil = "A117V 1% spike-in"
+sample_manifest_tsv <- Sys.getenv(
+  "PRNP_MANIFEST",
+  unset = file.path(repo_root, "authoritative_files", "manifest.tsv")
 )
+
+## ---- define the manuscript-facing spike-in rows ----
+manuscript_spike_ids <- c("NA100_undil", "NA995A05_undil", "NA99A1_undil")
+
+load_spike_display_names <- function(manifest_path, sample_ids) {
+  if (!file.exists(manifest_path)) {
+    stop("Sample manifest does not exist: ", manifest_path)
+  }
+
+  manifest <- read.delim(
+    manifest_path,
+    sep = "\t",
+    header = TRUE,
+    stringsAsFactors = FALSE,
+    check.names = FALSE
+  )
+
+  required_cols <- c("sample_id", "display_label")
+  missing_cols <- setdiff(required_cols, names(manifest))
+  if (length(missing_cols) > 0L) {
+    stop("Sample manifest is missing required display-label column(s): ", paste(missing_cols, collapse = ", "))
+  }
+
+  rows <- manifest$sample_id %in% sample_ids
+  if (any(duplicated(manifest$sample_id[rows]))) {
+    stop("Sample manifest has duplicate rows for manuscript spike-in IDs")
+  }
+
+  labels <- trimws(as.character(manifest$display_label[rows]))
+  display_names <- setNames(labels, manifest$sample_id[rows])
+  display_names <- display_names[sample_ids]
+
+  missing_labels <- names(display_names)[is.na(display_names) | display_names == "" | display_names == "NA"]
+  if (length(missing_labels) > 0L) {
+    stop("Sample manifest is missing display_label values for: ", paste(missing_labels, collapse = ", "))
+  }
+
+  display_names
+}
+
+spike_display_names <- load_spike_display_names(sample_manifest_tsv, manuscript_spike_ids)
 
 ## ---- load the canonical sequencing metrics table ----
 metrics <- read.delim(

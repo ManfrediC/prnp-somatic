@@ -72,7 +72,7 @@ These expected output paths are also listed in:
 
 ### Inputs
 
-- `config/preprocessing_samples.tsv` (committed)
+- `config/preprocessing_samples.tsv` (committed; first four columns drive file lookup, optional `display_label` is metadata)
 - `config/preprocessing.env` (gitignored)
 - `raw/fastq/<batch_id>/...` (not committed)
 - `resources/` references (committed)

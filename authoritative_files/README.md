@@ -19,6 +19,7 @@ sample-level QC metrics are generated", this is the reference location.
     - `group` (`dilution`, `CJD`, `control`)
     - `batch`
     - `input_dir`
+    - `display_label` (optional manuscript-facing label; raw `sample_id` values remain unchanged)
 
 - `validate_manifest.sh`
   - validates manifest structure and allowed group values
@@ -31,6 +32,7 @@ sample-level QC metrics are generated", this is the reference location.
 
 - `manifest_qc.tsv`
   - generated validation report with resolved paths and per-row error flags
+  - carries `display_label` through from `manifest.tsv` for labelled spike-in rows
   - intended for quick inspection and fail-fast checks in automation
 
 - `compute_sequencing_metrics.py`
@@ -61,4 +63,6 @@ python3 authoritative_files/compute_sequencing_metrics.py \
 ## Notes
 
 - Current manifest convention points `input_dir` to `results/final_bam` for active samples.
+- A117V spike-in manuscript labels are recorded in `display_label`:
+  `NA99A1_undil` -> `A117V low` and `NA995A05_undil` -> `A117V high`.
 - The validator fails when required files are missing, so it can be used as a preflight gate.

@@ -75,10 +75,11 @@ run() {
 # Main loop
 # -----------------------
 
-# Read and validate header
-# Expected schema is fixed so pipeline parsing remains deterministic.
+# Read and validate header.
+# The first four columns drive file handling; later metadata columns are ignored here.
 header="$(grep -v '^#' "$SAMPLES_TSV" | head -n 1)"
-[[ "$header" == $'batch_id\tsample_id\tr1\tr2' ]] || {
+IFS=$'\t' read -r h_batch h_sample h_r1 h_r2 _h_extra <<< "$header"
+[[ "$h_batch"$'\t'"$h_sample"$'\t'"$h_r1"$'\t'"$h_r2" == $'batch_id\tsample_id\tr1\tr2' ]] || {
   echo "ERROR: unexpected header in $SAMPLES_TSV: $header" >&2
   exit 1
 }
@@ -87,7 +88,7 @@ header="$(grep -v '^#' "$SAMPLES_TSV" | head -n 1)"
 mkdir -p "$FINAL_BAM_DIR"
 
 # Iterate TSV rows (skip header + comments)
-tail -n +2 "$SAMPLES_TSV" | grep -v '^#' | while IFS=$'\t' read -r batch sample r1 r2; do
+tail -n +2 "$SAMPLES_TSV" | grep -v '^#' | while IFS=$'\t' read -r batch sample r1 r2 _extra; do
   [[ -n "${batch// }" ]] || continue #skip blanks/whitespace
 
   # Filter to selected batches (loop)

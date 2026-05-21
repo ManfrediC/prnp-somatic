@@ -98,6 +98,11 @@ variant_dir <- get_arg(parsed, "variant-dir", required = TRUE)
 metrics_dir <- get_arg(parsed, "metrics-dir", required = TRUE)
 manual_freq_path <- get_arg(parsed, "manual-freq", required = TRUE)
 output_dir <- get_arg(parsed, "output-dir", required = TRUE)
+sample_manifest_path <- get_arg(
+  parsed,
+  "sample-manifest",
+  Sys.getenv("PRNP_MANIFEST", file.path("authoritative_files", "manifest.tsv"))
+)
 
 enable_aaf_filter <- parse_bool(get_arg(parsed, "enable-aaf-filter", "1"), "enable-aaf-filter")
 aaf_threshold <- parse_num(get_arg(parsed, "aaf-threshold", "0.0081"), "aaf-threshold")
@@ -114,6 +119,28 @@ if (!dir.exists(variant_dir)) fail(paste0("Variant table directory does not exis
 if (!dir.exists(metrics_dir)) fail(paste0("Readcount metrics directory does not exist: ", metrics_dir))
 if (!file.exists(manual_freq_path)) fail(paste0("Manual frequency TSV does not exist: ", manual_freq_path))
 if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+
+load_sample_display_labels <- function(manifest_path) {
+  if (!file.exists(manifest_path)) {
+    return(tibble(sample_name = character(), sample_display_label = character()))
+  }
+
+  manifest <- read_tsv(manifest_path, col_types = cols(.default = col_character()), show_col_types = FALSE)
+  required_cols <- c("sample_id", "display_label")
+  missing_cols <- setdiff(required_cols, colnames(manifest))
+  if (length(missing_cols) > 0L) {
+    return(tibble(sample_name = character(), sample_display_label = character()))
+  }
+
+  manifest %>%
+    transmute(
+      sample_name = sample_id,
+      sample_display_label = trimws(display_label)
+    ) %>%
+    mutate(sample_display_label = na_if(sample_display_label, "")) %>%
+    filter(!is.na(sample_display_label), sample_display_label != "NA") %>%
+    distinct(sample_name, .keep_all = TRUE)
+}
 
 # ----------------------------------------------------
 # 1) Import TSVs (VariantsToTable outputs)
@@ -372,6 +399,12 @@ summary_table$sample_name <- sub("\\.func\\.af$", "", summary_table$sample_name)
 summary_table$REF <- toupper(summary_table$REF)
 summary_table$ALT <- toupper(summary_table$ALT)
 
+sample_display_labels <- load_sample_display_labels(sample_manifest_path)
+summary_table <- summary_table %>%
+  left_join(sample_display_labels, by = "sample_name") %>%
+  mutate(sample_display_label = coalesce(sample_display_label, sample_name)) %>%
+  relocate(sample_display_label, .after = sample_name)
+
 summary_table <- summary_table %>%
   left_join(sample_basecount, by = c("sample_name", "CHROM", "POS", "REF", "ALT"))
 
@@ -477,11 +510,13 @@ filter_counts <- tibble(
 settings <- tibble(
   key = c(
     "enable_aaf_filter", "aaf_filter_applied", "aaf_threshold", "min_alt_count", "min_dp",
-    "min_strand_alt", "min_mean_bq", "min_mean_mq", "max_pop_freq", "max_binom_p"
+    "min_strand_alt", "min_mean_bq", "min_mean_mq", "max_pop_freq", "max_binom_p",
+    "sample_manifest"
   ),
   value = c(
     as.character(enable_aaf_filter), "FALSE (temporary override)", as.character(aaf_threshold), as.character(min_alt_count), as.character(min_dp),
-    as.character(min_strand_alt), as.character(min_mean_bq), as.character(min_mean_mq), as.character(max_pop_freq), as.character(max_binom_p)
+    as.character(min_strand_alt), as.character(min_mean_bq), as.character(min_mean_mq), as.character(max_pop_freq), as.character(max_binom_p),
+    sample_manifest_path
   )
 )
 

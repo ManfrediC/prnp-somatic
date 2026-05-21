@@ -66,7 +66,8 @@ INTERVALS="${INTERVALS:-resources/capture_targets.interval_list}"
 GNOMAD_VCF="${GNOMAD_VCF:-resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz}"
 PON_VCF="${PON_VCF:-results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz}"
 
-# Dilution order kept explicit for reproducibility and stable output ordering.
+# Dilution order uses raw BAM/sample IDs for reproducibility and stable output ordering.
+# Manuscript-facing A117V labels are supplied by registry display_label fields.
 DILUTION_SAMPLES="${DILUTION_SAMPLES:-NA100_undil NA100_1to10 NA99A1_undil A100_1to2 NA99A1_1to5 NA995A05_undil NA100_1to2}"
 
 to_abs() {

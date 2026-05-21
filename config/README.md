@@ -1,7 +1,7 @@
 # Config
 
 Committed:
-- `preprocessing_samples.tsv` - sample manifest for preprocessing (`batch_id`, `sample_id`, `r1`, `r2`)
+- `preprocessing_samples.tsv` - sample manifest for preprocessing (`batch_id`, `sample_id`, `r1`, `r2`, optional `display_label`)
 - `preprocessing.env.example` - template for local configuration
 - `junctions.env.example` - template for exon-exon junction workflow configuration
 - `repeats.env.example` - template for PRNP ORR repeat workflow configuration
@@ -171,6 +171,11 @@ Recommended values:
 - `MUTECT2_WITH_PON_OUT_ROOT="runs/mutect2_cjd_dilutions_with_pon"`
 - `PON_VCF="results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz"`
 - `DILUTION_SAMPLES="NA100_undil NA100_1to10 NA99A1_undil A100_1to2 NA99A1_1to5 NA995A05_undil NA100_1to2"`
+
+Note: `DILUTION_SAMPLES` uses raw BAM/sample IDs for file lookup and stable
+pipeline ordering. Manuscript-facing labels for the A117V spike-ins are
+assigned through sample-registry `display_label` values
+(`NA99A1_undil` -> `A117V low`; `NA995A05_undil` -> `A117V high`).
 
 ## CJD + dilution post-processing with PoN settings
 

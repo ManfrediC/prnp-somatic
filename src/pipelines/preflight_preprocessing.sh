@@ -157,7 +157,8 @@ check_samples_tsv() {
 
   local header
   header="$(grep -v '^#' "$tsv" | head -n 1)"
-  [[ "$header" == $'batch_id\tsample_id\tr1\tr2' ]] || die "Unexpected TSV header: $header"
+  IFS=$'\t' read -r h_batch h_sample h_r1 h_r2 _h_extra <<< "$header"
+  [[ "$h_batch"$'\t'"$h_sample"$'\t'"$h_r1"$'\t'"$h_r2" == $'batch_id\tsample_id\tr1\tr2' ]] || die "Unexpected TSV header: $header"
 
   [[ "${#BATCHES[@]}" -gt 0 ]] || die "No batches selected (BATCHES array is empty)."
 

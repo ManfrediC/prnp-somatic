@@ -279,11 +279,11 @@
 			& REF Forward Count & REF Reverse Count 
 			& ALT Forward Count & ALT Reverse Count \\
 			\midrule
-			A117V 0.5\% spike-in & A117V & rs74315402 & chr20 & 4699570 
+			A117V high & A117V & rs74315402 & chr20 & 4699570
 			& C & T & MISSENSE & 6961 & 6869 & 92 
 			& 1.321649 & 60 & 21.88 
 			& 3730 & 3139 & 40 & 52 \\
-			A117V 1\% spike-in & A117V & rs74315402 & chr20 & 4699570 
+			A117V low & A117V & rs74315402 & chr20 & 4699570
 			& C & T & MISSENSE & 4315 & 4280 & 35 
 			& 0.811124 & 60 & 22.24 
 			& 2216 & 2064 & 16 & 19 \\
@@ -291,7 +291,7 @@
 		\end{tabular}
 	}
 	\vspace{0.5em}
-	\caption{\textbf{A117V spike-in analysis for limit-of-detection determination.} Sequencing metrics for A117V (rs74315402) spike-in mixtures at nominal 0.5\% and 1\% alternate-allele frequencies. Both variants were confidently detected by Mutect2 and passed all quality filters. Observed variant-allele fractions (AAFs) were 1.32\% and 0.81\%, respectively, with balanced strand support and high base quality.}
+	\caption{\textbf{A117V spike-in analysis for targeted-sequencing sensitivity assessment.} A117V high denotes the higher-input sample; its observed VAF was 1.32\%. A117V low denotes the lower-input sample; its observed VAF was 0.81\%. A117V low was used as the conservative LoD anchor for downstream somatic calling.}
 	\label{tab:a117v_spike_in_lod}
 \end{table}
 
@@ -347,8 +347,8 @@
 			Control7 & control & 882024 & 3.8 & 652 & 547 & 1.19 & 100.0 & 95.9\\
 			\addlinespace
 			Wildtype & spike-in & 2222988 & 77.8 & 5742 & 4985 & 1.15 & 100.0 & 100.0\\
-			A117V 0.5\% spike-in & spike-in & 4751420 & 77.0 & 10050 & 7846 & 1.28 & 100.0 & 100.0\\
-			A117V 1\% spike-in & spike-in & 3147044 & 81.6 & 4651 & 4182 & 1.11 & 100.0 & 100.0\\
+			A117V high & spike-in & 4751420 & 77.0 & 10050 & 7846 & 1.28 & 100.0 & 100.0\\
+			A117V low & spike-in & 3147044 & 81.6 & 4651 & 4182 & 1.11 & 100.0 & 100.0\\
 			\bottomrule
 		\end{tabular}
 	}

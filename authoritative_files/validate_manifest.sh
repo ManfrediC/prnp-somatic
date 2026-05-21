@@ -11,9 +11,10 @@ fi
 
 expected_header=$'sample_id\tgroup\tbatch\tinput_dir'
 read -r header < "$MANIFEST" || true
-if [[ "$header" != "$expected_header" ]]; then
+IFS=$'\t' read -r h_sample_id h_group h_batch h_input_dir _h_extra <<< "$header"
+if [[ "$h_sample_id"$'\t'"$h_group"$'\t'"$h_batch"$'\t'"$h_input_dir" != "$expected_header" ]]; then
   echo "ERROR: manifest header mismatch." >&2
-  echo "Expected: $expected_header" >&2
+  echo "Expected first columns: $expected_header" >&2
   echo "Found:    $header" >&2
   exit 2
 fi
@@ -29,9 +30,9 @@ bam_candidate_suffixes=(
 
 picard_metrics_suffix=".bwa.picard.markedDup.metrics"
 
-printf "sample_id\tgroup\tbatch\tinput_dir\tbam_path\tbam_style\tbam_exists\tbai_path\tbai_exists\tpicard_metrics_path\tpicard_metrics_exists\tpicard_metrics_required\terrors\n" > "$OUT"
+printf "sample_id\tgroup\tbatch\tinput_dir\tbam_path\tbam_style\tbam_exists\tbai_path\tbai_exists\tpicard_metrics_path\tpicard_metrics_exists\tpicard_metrics_required\terrors\tdisplay_label\n" > "$OUT"
 
-while IFS=$'\t' read -r sample_id group batch input_dir || [[ -n "${sample_id:-}${group:-}${batch:-}${input_dir:-}" ]]; do
+while IFS=$'\t' read -r sample_id group batch input_dir display_label _extra || [[ -n "${sample_id:-}${group:-}${batch:-}${input_dir:-}" ]]; do
   if [[ -z "${sample_id}${group}${batch}${input_dir}" ]]; then
     continue
   fi
@@ -113,12 +114,12 @@ while IFS=$'\t' read -r sample_id group batch input_dir || [[ -n "${sample_id:-}
     err_str="$(IFS=';'; echo "${errors[*]}")"
   fi
 
-  printf "%s\t%s\t%s\t%s\t%s\t%s\t%d\t%s\t%d\t%s\t%d\t%d\t%s\n" \
+  printf "%s\t%s\t%s\t%s\t%s\t%s\t%d\t%s\t%d\t%s\t%d\t%d\t%s\t%s\n" \
     "$sample_id" "$group" "$batch" "$input_dir" \
     "$bam_path" "$bam_style" "$bam_exists" \
     "$bai_path" "$bai_exists" \
     "$picard_metrics_path" "$picard_metrics_exists" "$picard_metrics_required" \
-    "$err_str" >> "$OUT"
+    "$err_str" "${display_label:-}" >> "$OUT"
 done < <(tail -n +2 "$MANIFEST")
 
 # Failure definition:

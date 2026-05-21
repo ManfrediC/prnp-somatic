@@ -86,6 +86,7 @@ WITH_PON_VARIANT_QC_METRICS_SUBDIR="${WITH_PON_VARIANT_QC_METRICS_SUBDIR:-readco
 WITH_PON_VARIANT_QC_RESULTS_ROOT="${WITH_PON_VARIANT_QC_RESULTS_ROOT:-results/mutect2_cjd_dilutions_with_pon/variant_qc}"
 WITH_PON_VARIANT_QC_R_SCRIPT="${WITH_PON_VARIANT_QC_R_SCRIPT:-src/pipelines/12_cjd_dilutions_variant_table_qc_with_pon.R}"
 MANUAL_POP_FREQ_TSV="${MANUAL_POP_FREQ_TSV:-resources/annotations/manual_population_freq.tsv}"
+SAMPLE_MANIFEST_TSV="${SAMPLE_MANIFEST_TSV:-${PRNP_MANIFEST:-authoritative_files/manifest.tsv}}"
 
 
 to_abs() {
@@ -102,6 +103,7 @@ VARIANT_QC_ROOT="$(to_abs "$MUTECT2_WITH_PON_VARIANT_QC_ROOT")"
 WITH_PON_VARIANT_QC_RESULTS_ROOT="$(to_abs "$WITH_PON_VARIANT_QC_RESULTS_ROOT")"
 WITH_PON_VARIANT_QC_R_SCRIPT="$(to_abs "$WITH_PON_VARIANT_QC_R_SCRIPT")"
 MANUAL_POP_FREQ_TSV="$(to_abs "$MANUAL_POP_FREQ_TSV")"
+SAMPLE_MANIFEST_TSV="$(to_abs "$SAMPLE_MANIFEST_TSV")"
 
 mkdir -p "$WITH_PON_VARIANT_QC_RESULTS_ROOT"
 
@@ -142,6 +144,7 @@ have Rscript || die "Rscript not in PATH"
 [[ -d "$VARIANT_QC_ROOT" ]] || die "Missing variant-QC root directory: $VARIANT_QC_ROOT"
 [[ -s "$WITH_PON_VARIANT_QC_R_SCRIPT" ]] || die "Missing R QC script: $WITH_PON_VARIANT_QC_R_SCRIPT"
 [[ -s "$MANUAL_POP_FREQ_TSV" ]] || die "Missing manual population frequency file: $MANUAL_POP_FREQ_TSV"
+[[ -s "$SAMPLE_MANIFEST_TSV" ]] || die "Missing sample manifest file: $SAMPLE_MANIFEST_TSV"
 
 read -r -a groups <<< "$WITH_PON_VARIANT_QC_GROUPS"
 [[ "${#groups[@]}" -gt 0 ]] || die "WITH_PON_VARIANT_QC_GROUPS is empty"
@@ -154,6 +157,7 @@ echo "WITH_PON_GROUPS:                   $WITH_PON_VARIANT_QC_GROUPS"
 echo "WITH_PON_VARIANT_QC_RESULTS_ROOT:  $WITH_PON_VARIANT_QC_RESULTS_ROOT"
 echo "WITH_PON_VARIANT_QC_R_SCRIPT:      $WITH_PON_VARIANT_QC_R_SCRIPT"
 echo "MANUAL_POP_FREQ_TSV:               $MANUAL_POP_FREQ_TSV"
+echo "SAMPLE_MANIFEST_TSV:               $SAMPLE_MANIFEST_TSV"
 echo "JAVA_MEM_GB:                       $JAVA_MEM_GB"
 echo "ENABLE_AAF_FILTER:                 $ENABLE_AAF_FILTER"
 echo "AAF_THRESHOLD:                     $AAF_THRESHOLD"
@@ -277,6 +281,7 @@ for group in "${groups[@]}"; do
     --metrics-dir "$METRICS_DIR" \
     --manual-freq "$MANUAL_POP_FREQ_TSV" \
     --output-dir "$OUTPUT_DIR" \
+    --sample-manifest "$SAMPLE_MANIFEST_TSV" \
     --enable-aaf-filter "$group_enable_aaf_filter" \
     --aaf-threshold "$AAF_THRESHOLD" \
     --min-alt-count "$MIN_ALT_COUNT" \
