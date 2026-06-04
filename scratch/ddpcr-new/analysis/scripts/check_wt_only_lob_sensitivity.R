@@ -1,9 +1,10 @@
 library(tidyverse)
 library(binom)
 
-# Diagnostic only. This script compares the current LoB blank model
-# (WT_control + NTC) with a WT_control-only blank model. It does not alter the
-# main analysis code; it writes comparison tables under analysis/validation.
+# Diagnostic only. This script compares the legacy WT_control + NTC LoB blank
+# model with the WT_control-only model now used by the main analysis. It does
+# not alter the main analysis code; it writes comparison tables under
+# analysis/validation.
 
 get_script_path <- function() {
   args <- commandArgs(trailingOnly = FALSE)
@@ -144,31 +145,31 @@ summarise_compare <- function(compare_data, level) {
   tibble(
     level = level,
     n_rows = nrow(compare_data),
-    n_lob_count_changed = sum(compare_data$current_lob_count != compare_data$wt_only_lob_count, na.rm = TRUE),
-    n_lob_count_lower_with_wt_only = sum(compare_data$wt_only_lob_count < compare_data$current_lob_count, na.rm = TRUE),
-    n_lob_count_higher_with_wt_only = sum(compare_data$wt_only_lob_count > compare_data$current_lob_count, na.rm = TRUE),
-    current_lob_positive = sum(compare_data$current_detected_lob, na.rm = TRUE),
+    n_lob_count_changed = sum(compare_data$wt_plus_ntc_lob_count != compare_data$wt_only_lob_count, na.rm = TRUE),
+    n_lob_count_lower_with_wt_only = sum(compare_data$wt_only_lob_count < compare_data$wt_plus_ntc_lob_count, na.rm = TRUE),
+    n_lob_count_higher_with_wt_only = sum(compare_data$wt_only_lob_count > compare_data$wt_plus_ntc_lob_count, na.rm = TRUE),
+    wt_plus_ntc_lob_positive = sum(compare_data$wt_plus_ntc_detected_lob, na.rm = TRUE),
     wt_only_lob_positive = sum(compare_data$wt_only_detected_lob, na.rm = TRUE),
-    n_lob_flag_changed = sum(compare_data$current_detected_lob != compare_data$wt_only_detected_lob, na.rm = TRUE),
-    current_lod_lob_positive = sum(compare_data$current_lod_lob_positive, na.rm = TRUE),
+    n_lob_flag_changed = sum(compare_data$wt_plus_ntc_detected_lob != compare_data$wt_only_detected_lob, na.rm = TRUE),
+    wt_plus_ntc_lod_lob_positive = sum(compare_data$wt_plus_ntc_lod_lob_positive, na.rm = TRUE),
     wt_only_lod_lob_positive = sum(compare_data$wt_only_lod_lob_positive, na.rm = TRUE),
-    n_lod_lob_flag_changed = sum(compare_data$current_lod_lob_positive != compare_data$wt_only_lod_lob_positive, na.rm = TRUE)
+    n_lod_lob_flag_changed = sum(compare_data$wt_plus_ntc_lod_lob_positive != compare_data$wt_only_lod_lob_positive, na.rm = TRUE)
   )
 }
 
-current <- build_lob_outputs(c("WT_control", "NTC"), "current_wt_plus_ntc")
+wt_plus_ntc <- build_lob_outputs(c("WT_control", "NTC"), "legacy_wt_plus_ntc")
 wt_only <- build_lob_outputs("WT_control", "wt_only")
 
 sample_lod <- analysis_env$final %>%
   select(Sample, assay = ExperimentType, detected_LoD)
 
-sample_compare <- current$sample_lob %>%
+sample_compare <- wt_plus_ntc$sample_lob %>%
   rename(
-    current_p0 = p0_use,
-    current_plate_p0_max = plate_p0_max,
-    current_lob_count = LoB_count,
-    current_lob_fa = LoB_FA,
-    current_detected_lob = detected_LoB
+    wt_plus_ntc_p0 = p0_use,
+    wt_plus_ntc_plate_p0_max = plate_p0_max,
+    wt_plus_ntc_lob_count = LoB_count,
+    wt_plus_ntc_lob_fa = LoB_FA,
+    wt_plus_ntc_detected_lob = detected_LoB
   ) %>%
   inner_join(
     wt_only$sample_lob %>%
@@ -183,20 +184,20 @@ sample_compare <- current$sample_lob %>%
   ) %>%
   left_join(sample_lod, by = c("Sample", "assay")) %>%
   mutate(
-    current_lod_lob_positive = current_detected_lob & detected_LoD,
+    wt_plus_ntc_lod_lob_positive = wt_plus_ntc_detected_lob & detected_LoD,
     wt_only_lod_lob_positive = wt_only_detected_lob & detected_LoD
   )
 
 participant_lod <- analysis_env$pooled_participant_assay %>%
   select(code, assay, detected_above_lod)
 
-participant_compare <- current$participant_lob %>%
+participant_compare <- wt_plus_ntc$participant_lob %>%
   rename(
-    current_p0 = p0_max,
-    current_plate_p0_max = plate_p0_max,
-    current_lob_count = LoB_count,
-    current_lob_fa = LoB_FA,
-    current_detected_lob = detected_above_lob
+    wt_plus_ntc_p0 = p0_max,
+    wt_plus_ntc_plate_p0_max = plate_p0_max,
+    wt_plus_ntc_lob_count = LoB_count,
+    wt_plus_ntc_lob_fa = LoB_FA,
+    wt_plus_ntc_detected_lob = detected_above_lob
   ) %>%
   inner_join(
     wt_only$participant_lob %>%
@@ -211,13 +212,13 @@ participant_compare <- current$participant_lob %>%
   ) %>%
   left_join(participant_lod, by = c("code", "assay")) %>%
   mutate(
-    current_lod_lob_positive = current_detected_lob & detected_above_lod,
+    wt_plus_ntc_lod_lob_positive = wt_plus_ntc_detected_lob & detected_above_lod,
     wt_only_lod_lob_positive = wt_only_detected_lob & detected_above_lod
   )
 
-p0_compare <- current$blank_pooled %>%
-  select(plate, assay, current_x_blank = x_blank, current_n_blank = n_blank,
-         current_n_wells_blank = n_wells_blank, current_p0_upper = p0_upper) %>%
+p0_compare <- wt_plus_ntc$blank_pooled %>%
+  select(plate, assay, wt_plus_ntc_x_blank = x_blank, wt_plus_ntc_n_blank = n_blank,
+         wt_plus_ntc_n_wells_blank = n_wells_blank, wt_plus_ntc_p0_upper = p0_upper) %>%
   full_join(
     wt_only$blank_pooled %>%
       select(plate, assay, wt_only_x_blank = x_blank, wt_only_n_blank = n_blank,

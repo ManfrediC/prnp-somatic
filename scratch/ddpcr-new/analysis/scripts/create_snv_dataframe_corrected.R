@@ -280,14 +280,20 @@ merged <- counts %>%
 
 # --------------------------------------------------------
 # >>> >>> LIMIT OF BLANK (LoB) SECTION <<< <<<
-# - Use WT + NTC controls from the same plate (Date) and assay
+# - Use WT genomic controls from the same plate (Date) and assay
+# - NTCs are contamination controls; they are not used to model rare SNV
+#   background in wild-type genomic DNA
 # - Conservative p0: CP upper 95% bound on pooled blank proportion
 # - Fallback: assay-wide p0 if a plate lacks blanks
 # --------------------------------------------------------
 
-# 1) Build blank table (QC: ≥10,000 droplets) from your controls object
+# WT controls are the biological blanks for the LoB calculation because they
+# contain genomic DNA background without the targeted mutation.
+lob_blank_samples <- "WT_control"
+
+# 1) Build blank table (QC: >=10,000 droplets) from WT control wells
 blanks <- data.mut.controls %>%
-  filter(Target %in% mutation.list, Sample %in% c("WT_control","NTC")) %>% # only blank/control wells
+  filter(Target %in% mutation.list, Sample %in% lob_blank_samples) %>% # WT genomic blank wells
   filter(AcceptedDroplets >= 10000) %>% # only wells with at least 10,000 accepted droplets
   transmute(plate = Date,
             assay = ExperimentType,
