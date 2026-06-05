@@ -115,11 +115,12 @@
 				\bottomrule[2pt]
 			\end{tabular}
 		}
-		\captionof{table}{\textbf{Overview of patients included in the study}. Age at death, sex, time from onset of symptoms to death (illness duration, given in days), main clinical symptoms, main neuropathological diagnosis, other neuropathological diagnoses, \prnp codon $129$ genotype, prion disease histotype and predominant \prpsc subtype (minor \prpsc subtype given in brackets, if present) are given, where available. In the control samples, other brain pathologies were identified. Sample CJD30 was unexpectedly found to be germline heterozygous for the E200K variant, classifying it as genetic CJD (gCJD). Low, intermediate, high AD: degree of AD-related neuropathological change. AD: Alzheimer's disease. CAA: cerebral amyloid angiopathy. CMV: cytomegalovirus. FTLD: frontotemporal lobar degeneration. PART: primary age-related tauopathy.}
+		\captionof{table}{\textbf{Overview of patients included in the study}. Age at death, sex, time from onset of symptoms to death (illness duration, days), main clinical symptoms, main neuropathological diagnosis, other neuropathological diagnoses, \prnp codon $129$ genotype, prion disease histotype and predominant \prpsc subtype are shown, where available. Minor \prpsc subtypes are given in brackets. Blank cells denote unavailable data. In the control samples, other brain pathologies were identified. CJD30 was unexpectedly found to be germline heterozygous for \ek, classifying this case as genetic CJD (gCJD). Low, intermediate, high AD: degree of AD-related neuropathological change. AD: Alzheimer's disease. CAA: cerebral amyloid angiopathy. CMV: cytomegalovirus. FTLD: frontotemporal lobar degeneration. PART: primary age-related tauopathy.}
 		\label{tab:patients}
 	\end{landscape}
 	\clearpage% Flush page
 }
+
 
 \clearpage
 
@@ -165,18 +166,15 @@
 				\end{tabular}
 				\vspace{0.5em}
 				
-				\caption{\textbf{ddPCR quantification of mutant allele fractions in dilution series and controls.}
-					Block headers indicate the assayed \textit{PRNP} mutation. Controls (NTC, WT) are included.
-					“Expected” is the nominal mutant fraction in the input mixture. “Measured (95\% CI)” gives the
-					mutant allele fraction with two-sided 95\% Poisson CIs (QuantaSoft Analysis Pro). 
-					Droplet counts are reported after quality filtering.
-					Goodness of fit for computed versus expected mutant allele fractions across the dilution series only (excluding controls) and was high for all assays (dilution-only $R^2$: D178N, 0.988577; E200K, 0.999045; P102L, 0.999737).
+				\caption{\textbf{ddPCR quantification of variant allele fractions in dilution series and controls.}
+					Block headers indicate the assayed \textit{PRNP} variant. Expected and measured VAFs are reported as percentages. ``Expected'' denotes the nominal mutant fraction in the input mixture. ``Measured (95\% CI)'' gives the ddPCR-derived VAF with two-sided 95\% Poisson confidence intervals calculated in QuantaSoft Analysis Pro. Droplet counts are shown after quality filtering. Measured and expected VAFs were highly concordant across the dilution series, excluding controls, with dilution-only $R^2$ values of 0.988577 for D178N, 0.999045 for E200K and 0.999737 for P102L.
 					}
 				\label{tab:ddpcr_fractions}
 			}
 		\end{minipage}
 	\end{adjustbox}
 \end{table}
+
 
 \clearpage
 
@@ -243,9 +241,10 @@
 			\bottomrule[2pt]
 		\end{tabular}
 	\end{adjustbox}
-	\caption{\textbf{Overview of ddPCR single-nucleotide variant analysis.} Purified brain DNA from $31$ CJD and $8$ control individuals was analysed. Shown are the number of samples passing ddPCR quality control overall (\textit{analysed samples}) and per assay (\textit{analysed \dn}, \textit{analysed \ek}, \textit{analysed \pl}), together with the maximum estimated variant allele fraction (\textit{VAF}; \textit{max. VAF}) per assay and the maximum across assays (\textit{Max. VAF overall}). The \textit{LoB/LoD pass} column lists mutation assays for which at least one sample-region passed both the limit of blank and limit of detection filters; \textit{None} indicates no non-heterozygous assay passed both filters. For the aggregate values overall \textit{Max. VAF overall} and \textit{All CJD}, the values for \ek were computed excluding CJD30, which was unexpectedly found to be germline heterozygous for \ek (marked with *). VAFs are reported as a fraction of total analysed DNA.}
+	\caption{\textbf{Overview of ddPCR single-nucleotide variant analysis.} Purified brain DNA from $31$ CJD and $8$ control individuals was analysed. The table shows the number of sample-regions passing ddPCR quality control overall and per assay, together with the maximum estimated VAF for \dn, \ek and \pl. VAFs are reported as percentages. The \textit{LoB/LoD pass} column lists assays in which at least one sample-region met the prespecified calling criterion, defined as a lower 95\% confidence bound exceeding both the limit of blank (LoB) and the limit of detection (LoD). \textit{None} indicates that no non-germline mosaic call met this criterion. CJD30 was germline heterozygous for \ek; its \ek value is marked with an asterisk and was excluded from aggregate \ek mosaicism summaries.}
 	\label{tab:ddPCR-results}
 \end{table}
+
 
 \clearpage
 
@@ -289,6 +288,8 @@
   \caption{\textbf{A117V spike-in analysis for targeted-sequencing sensitivity assessment.} \textbf{A117V high} denotes the higher-input sample; its observed VAF was 1.32\% (exact 95\% binomial CI of 1.07--1.62\%). \textbf{A117V low} denotes the lower-input sample; its observed VAF was 0.81\% (exact 95\% binomial CI of 0.57--1.13\%). Exact binomial confidence intervals were calculated by the Clopper--Pearson method using ALT count as x and read depth as n. \textbf{A117V low} was used as the conservative LoD anchor for downstream somatic calling.}
   \label{tab:a117v_spike_in_lod}
 \end{table}
+
+
 
 \clearpage
 
@@ -348,7 +349,7 @@
 		\end{tabular}
 	}
 	\vspace{0.5em}
-	\caption{\textbf{Sequencing quality metrics and \textit{PRNP} coding-region coverage}. For each sample, we report primary mapped reads, on-target read fraction, coverage statistics across the \textit{PRNP} coding region, including mean depth, P20 depth (20th percentile depth), Fold-80 (mean/P20; an indicator of coverage uniformity) and the percentage of coding bases covered at $\geq$100\xfold and $\geq$500\xfold.}
+	\caption{\textbf{Sequencing quality metrics and \textit{PRNP} coding-region coverage}. For each sample, the table reports primary mapped reads, on-target read fraction, coverage statistics across the \textit{PRNP} coding region, including mean depth, P20 depth (20th percentile depth), Fold-80 (mean/P20; an indicator of coverage uniformity) and the percentage of coding bases covered at $\geq$100\xfold and $\geq$500\xfold.}
 	\label{tab:sequencing_metrics}
 \end{table}
 
@@ -364,7 +365,7 @@
 			\begin{tabular}{>{\centering\arraybackslash}p{1.3cm}  % Sample
 					>{\centering\arraybackslash}p{1.9cm}  % Chromosome
 					>{\centering\arraybackslash}p{1.7cm}  % Position
-					>{\centering\arraybackslash}p{1.1cm}  % AAF
+					>{\centering\arraybackslash}p{1.1cm}  % VAF
 					>{\centering\arraybackslash}p{0.7cm}  % REF
 					>{\centering\arraybackslash}p{0.7cm}  % ALT
 					>{\centering\arraybackslash}p{1.6cm}  % Mutation Type
@@ -379,7 +380,7 @@
 					>{\centering\arraybackslash}p{1.0cm}  % ALT Fwd
 					>{\centering\arraybackslash}p{1.0cm}} % ALT Rev
 				\toprule
-				\textbf{Sample} & \textbf{Chromosome} & \textbf{Position} & \textbf{AAF (\%)} & \textbf{REF} & \textbf{ALT} & \textbf{Mutation Type} & \textbf{Population Frequency} & \textbf{Read Depth} & \textbf{REF Count} & \textbf{ALT Count} & \textbf{Base Quality} & \textbf{Mapping Quality} & \textbf{REF Fwd} & \textbf{REF Rev} & \textbf{ALT Fwd} & \textbf{ALT Rev} \\
+				\textbf{Sample} & \textbf{Chromosome} & \textbf{Position} & \textbf{VAF (\%)} & \textbf{REF} & \textbf{ALT} & \textbf{Mutation Type} & \textbf{Population Frequency} & \textbf{Read Depth} & \textbf{REF Count} & \textbf{ALT Count} & \textbf{Base Quality} & \textbf{Mapping Quality} & \textbf{REF Fwd} & \textbf{REF Rev} & \textbf{ALT Fwd} & \textbf{ALT Rev} \\
 				\midrule
 				\rule{0pt}{1.2em}CJD2  & Chr20 & 4691920 & 0.55 & G & A & intron & not described & 4706 & 4680 & 26 & 37.9 & 22.01 & 2327 & 2353 & 10 & 16 \\
 				\rule{0pt}{1.2em}CJD6  & Chr20 & 4691920 & 0.52 & G & A & intron & not described & 3482 & 3464 & 18 & 33.4 & 20.10 & 1787 & 1677 & 6  & 12 \\
@@ -396,12 +397,14 @@
 	
 	\begin{adjustbox}{max width=\textwidth}
 		\begin{minipage}{\linewidth}
-			\caption{\textbf{Somatic single nucleotide variants (sSNVs)} detected in the \textit{PRNP} gene. A total of four intronic variants were identified: one variant each in samples CJD2 and CJD6, and two variants in sample CJD23. The alternative allele fraction (AAF) ranged from 0.52\% to 0.82\%. Abbreviations: AAF, alternative allele fraction; REF, reference allele; ALT, alternative allele; Fwd, forward read count; Rev, reverse read count.}
+			\caption{\textbf{Candidate intronic variants} detected by targeted \textit{PRNP} sequencing. Four sample-level intronic candidate calls, representing two genomic sites, were retained after filtering. One site, chr20:4694249 T$>$C in CJD23, narrowly exceeded the sequencing LoD. A second site, chr20:4691920 G$>$A, was observed in CJD2, CJD6 and CJD23 below the LoD, but met all other quality-control criteria and is reported for completeness. VAFs ranged from 0.52\% to 0.82\%. Abbreviations: VAF, variant allele fraction; REF, reference allele; ALT, alternative allele; Fwd, forward read count; Rev, reverse read count.}
 			\label{tab:prnp_somatic_snv_summary}
 		\end{minipage}
 	\end{adjustbox}
 	
 \end{table}
+
+
 
 \clearpage
 

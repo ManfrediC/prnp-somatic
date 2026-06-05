@@ -4,11 +4,15 @@ CONTINUITY.md
 MEMORY.md
 
 # env
+*.env
+.env.*
 env/ssh.auth.env
 
-# plans and notes
+# plans, notes and scratch
 doc/repeat_notes
 doc/dna_quality
+doc/tmp
+/scratch
 
 # journal
 doc/journal
