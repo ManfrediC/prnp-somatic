@@ -30,7 +30,7 @@ bash bin/verify_output_checksums.sh --mode check
 ## Documentation consistency
 
 - Ensure root `README.md` run steps match current script names and order.
-- Ensure workflow READMEs (`src/ddPCR`, `src/junctions`, `src/pipelines`) reflect current inputs/outputs.
+- Ensure workflow READMEs (`src/ddpcr`, `src/junctions`, `src/pipelines`) reflect current inputs/outputs.
 - In `src/pipelines/README.md`, ensure stage output lists match real script outputs (and do not list per-stage log files unless scripts actually emit them).
 - Ensure provenance/version notes in `doc/reproducibility/tooling_and_reference_provenance.md` are up to date.
 

@@ -1,7 +1,7 @@
 # Tooling and Reference Provenance
 
 Checked on: 2026-03-06
-Scope: `src/ddPCR`, `src/junctions`, `src/pipelines`
+Scope: `src/ddpcr`, `src/junctions`, `src/pipelines`
 
 ## Required CLI tools and versions
 
@@ -31,7 +31,7 @@ Verified from dedicated reproducibility environments:
 - `dplyr`: `1.1.4`
 - `txdbmaker`: `1.2.0` (installed in dedicated reproducible env `prnp-junctions`; required by current `GenomicFeatures::makeTxDbFromGFF()` stack)
 
-### ddPCR workflow (`src/ddPCR`)
+### ddPCR workflow (`src/ddpcr`)
 
 - `binom`: `1.1.1.1`
 - `dplyr`: `1.1.4`
