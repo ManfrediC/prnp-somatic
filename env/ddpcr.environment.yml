@@ -2,14 +2,26 @@ name: prnp-somatic-ddpcr
 channels:
   - conda-forge
 dependencies:
+  - python=3.12
   - r-base=4.4
+  - r-binom
+  - r-cowplot
+  - r-dplyr
+  - r-ggplot2
+  - r-ggpubr
+  - r-ggthemes
+  - r-glue
+  - r-gtools
+  - r-jsonlite
+  - r-magick
   - r-readr
-  - r-tidyverse
+  - r-readxl
+  - r-rlang
+  - r-stringr
+  - r-tibble
+  - r-tidyr
   - r-openxlsx
   - r-magrittr
-  - r-binom
-  - r-dplyr
-  - r-stringr
-  - r-tidyr
-  - r-tibble
   - r-purrr
+  - r-tidyverse
+  - r-viridis

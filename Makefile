@@ -141,7 +141,7 @@ help:
 
 ddpcr: REQUIRED_CONDA_ENV=prnp-somatic-ddpcr
 ddpcr: check_conda
-	@bash src/ddPCR/run_ddpcr.sh
+	@bash src/ddpcr/run_ddpcr.sh
 
 snv: REQUIRED_CONDA_ENV=prnp-somatic
 snv: check_conda
@@ -175,7 +175,7 @@ all:
 	# Run each workflow in its expected environment without requiring manual activation.
 	@command -v "$(CONDA_BIN)" >/dev/null 2>&1 || { echo "ERROR: conda not found in PATH."; exit 1; }
 	@echo "== [1/3] ddPCR (env: prnp-somatic-ddpcr) =="
-	@"$(CONDA_BIN)" run -n prnp-somatic-ddpcr bash src/ddPCR/run_ddpcr.sh
+	@"$(CONDA_BIN)" run -n prnp-somatic-ddpcr bash src/ddpcr/run_ddpcr.sh
 	@echo "== [2/3] SNV Stage-12 wrapper (env: prnp-somatic) =="
 	@"$(CONDA_BIN)" run -n prnp-somatic bash src/pipelines/run_cjd_dilutions_variant_qc_with_pon.sh
 	@echo "== [3/3] Junctions (env: prnp-junctions) =="

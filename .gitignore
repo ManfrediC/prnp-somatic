@@ -149,8 +149,11 @@ nohup.out
 # Raw input data (large; keep out of git)
 /raw/fastq/
 /raw/dna_quality/
-/raw/ddpcr/*.csv
-/raw/ddpcr/*.xlsx
+/raw/ddpcr/*
+!/raw/ddpcr/
+!/raw/ddpcr/README.md
+/src/tools/export_ddpcr_archives.py
+/src/tools/docx_tooling/
 
 # Pipeline run outputs (large; keep out of git)
 /runs/*

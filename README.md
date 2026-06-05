@@ -3,7 +3,7 @@
 This repository contains the reproducible analysis workflows used in the *PRNP* somatic project:
 
 - NGS somatic SNV detection (`src/pipelines`): FASTQ preprocessing, Mutect2 calling, post-processing, QC, and final variant tables.
-- ddPCR SNV quantification (`src/ddPCR`): processing of raw droplet exports into long-format and participant-level result tables.
+- ddPCR SNV quantification (`src/ddpcr`): processing of raw droplet exports into long-format and participant-level result tables.
 - PRNP exon-exon junction analysis (`src/junctions`): junction-reference construction, read realignment, and junction-count quantification.
 - PRNP octapeptide repeat region analysis (`src/repeats`): repeat-aware screening of OPRI/OPRD candidates from existing BAMs.
 - Manuscript artifact generation (`manuscript`): scripts that build figures/tables from outputs in `results/`.
@@ -60,7 +60,7 @@ Funcotator resource acquisition, layout and datasource details are documented in
 
 Required inputs must be placed as follows:
 
-- ddPCR raw files: `raw/ddpcr/*.csv`
+- ddPCR raw exports: `raw/ddpcr/{ddpcr_archive,csv_export,archive_contents,layout_xlsx,manifests}/`
 - ddPCR sample metadata: `raw/ddpcr/sample_details.xlsx`
 - raw FASTQ files: `raw/fastq`
 - resources for GATK workflow: `resources`
@@ -88,7 +88,7 @@ conda activate prnp-somatic
 ### 6. Run ddPCR workflow
 
 ```bash
-bash src/ddPCR/run_ddpcr.sh
+bash src/ddpcr/run_ddpcr.sh
 ```
 
 Expected outputs:
@@ -249,7 +249,7 @@ Expected manifest/checksum files:
 
 Detailed workflow docs:
 
-- `src/ddPCR/README.md`
+- `src/ddpcr/README.md`
 - `src/junctions/README.md`
 - `src/pipelines/README.md`
 - `manuscript/README.md`
@@ -299,7 +299,7 @@ Target implementations are in the repository root `Makefile`.
 Raw data and sequencing pipeline outputs are gitignored, to account for GitHub storage constraints.
 
 - DNA quality raw inputs: `raw/dna_quality/`
-- ddPCR raw exports: `raw/ddpcr/*.csv` (ignored via repo `.gitignore`)
+- ddPCR raw exports: `raw/ddpcr/` (ignored via repo `.gitignore` except `README.md`)
 - ddPCR metadata sheet: `raw/ddpcr/sample_details.xlsx` (ignored via repo `.gitignore`)
 - junction BAM inputs: `results/final_bam/*.bam` (ignored via repo `.gitignore` patterns for BAM/results)
 - pipeline run intermediates: `runs/**` (ignored via repo `.gitignore`)

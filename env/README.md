@@ -14,7 +14,7 @@ This directory contains Conda environment specifications used by the reproducibl
   - dedicated `prnp-junctions` environment specification for the exon-junction workflow (`src/junctions`).
 
 - `ddpcr.environment.yml`:
-  - dedicated `prnp-somatic-ddpcr` environment specification for the ddPCR workflow (`src/ddPCR`).
+  - dedicated `prnp-somatic-ddpcr` environment specification for the ddPCR workflow (`src/ddpcr`).
 
 - `repeats.environment.yml`:
   - dedicated `prnp-repeats` environment specification for ExpansionHunter, GangSTR, manual mosaic review, cohort summarization, and cohort filtering in the PRNP ORR workflow (`src/repeats`).

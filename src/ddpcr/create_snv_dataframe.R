@@ -9,6 +9,7 @@ library(binom)
 # -------------------------------------
 
 get_ddpcr_project_root <- function() {
+  # Convert a file or directory path into an existing directory path.
   normalise_existing_dir <- function(path) {
     if (length(path) != 1L || is.na(path) || !nzchar(path)) {
       return(character(0))
@@ -22,18 +23,21 @@ get_ddpcr_project_root <- function() {
     normalizePath(path, winslash = "/", mustWork = TRUE)
   }
 
+  # Walk upwards from a starting directory until the repository markers are found.
   find_project_root <- function(start_dir) {
     current_dir <- normalise_existing_dir(start_dir)
     if (length(current_dir) == 0L) {
       return(character(0))
     }
 
+    # The ddPCR source directory and conda environment file identify this repo.
     repeat {
-      if (dir.exists(file.path(current_dir, "src", "ddPCR")) &&
+      if (dir.exists(file.path(current_dir, "src", "ddpcr")) &&
           file.exists(file.path(current_dir, "env", "ddpcr.environment.yml"))) {
         return(current_dir)
       }
 
+      # Stop once dirname() can no longer move up the directory tree.
       parent_dir <- dirname(current_dir)
       if (identical(parent_dir, current_dir)) {
         return(character(0))
@@ -42,9 +46,11 @@ get_ddpcr_project_root <- function() {
     }
   }
 
+  # When run with Rscript, prefer the path supplied by the --file argument.
   args <- commandArgs(trailingOnly = FALSE)
   file_arg <- grep("^--file=", args, value = TRUE)
 
+  # When sourced, sys.frames() can expose the source file path via frame$ofile.
   source_files <- unlist(lapply(sys.frames(), function(frame) {
     if (is.null(frame$ofile)) {
       character(0)
@@ -53,6 +59,7 @@ get_ddpcr_project_root <- function() {
     }
   }))
 
+  # When run interactively in RStudio, use the active editor path if available.
   rstudio_path <- character(0)
   if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
     rstudio_path <- tryCatch(
@@ -61,6 +68,7 @@ get_ddpcr_project_root <- function() {
     )
   }
 
+  # Try all plausible launch contexts, then de-duplicate before searching upward.
   candidate_dirs <- unique(c(
     normalise_existing_dir(sub("^--file=", "", file_arg[1])),
     unlist(lapply(source_files, normalise_existing_dir), use.names = FALSE),
@@ -68,6 +76,7 @@ get_ddpcr_project_root <- function() {
     normalise_existing_dir(getwd())
   ))
 
+  # Return the first candidate that resolves to this project's repository root.
   for (candidate_dir in candidate_dirs) {
     project_root <- find_project_root(candidate_dir)
     if (length(project_root) == 1L) {
@@ -75,6 +84,7 @@ get_ddpcr_project_root <- function() {
     }
   }
 
+  # Fail visibly if none of the launch contexts can be tied back to the repo.
   stop(
     "Could not determine project root. ",
     "Set the working directory to the repository root, ",
@@ -82,49 +92,42 @@ get_ddpcr_project_root <- function() {
   )
 }
 
+# Anchor all subsequent inputs and outputs to the detected repository root.
 project_root <- get_ddpcr_project_root()
 
+# Define the input metadata, raw database, validation, and output locations.
 input_dir <- file.path(project_root, "raw", "ddpcr")
 sample_details_path <- file.path(input_dir, "sample_details.xlsx")
+raw_database_root <- file.path(project_root, "raw", "ddpcr")
 output_dir <- file.path(project_root, "results", "ddPCR")
-dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+validation_dir <- file.path(output_dir, "validation")
 
+# Ensure generated result and validation folders exist before writing files.
+dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(validation_dir, recursive = TRUE, showWarnings = FALSE)
+
+# Express fractional abundance outputs as percentages.
+fa_scale <- 100
+
+# The sample metadata workbook is required before any ddPCR import can proceed.
 if (!file.exists(sample_details_path)) {
   stop("Missing metadata file: ", sample_details_path)
 }
 
+# Load helpers that import and validate the raw ddPCR database exports.
+source(file.path(project_root, "src", "ddpcr", "ddpcr_raw_import_helpers.R"))
+
 # -------------------------------------
-# import CSVs exported from QuantaSoft
+# import active wells from the raw ddPCR database
 # -------------------------------------
 
 mutation.list <- c("D178N", "E200K", "P102L")
 
-# list of CSVs to import
-files <- list.files(input_dir, pattern = "\\.csv$", full.names = TRUE)
-if (length(files) == 0) {
-  stop("No CSV files found in ", input_dir)
-}
-
-# import
-bigdata <- purrr::map_dfr(files, function(f) {
-  df <- readr::read_csv(f, show_col_types = FALSE)
-  
-  # date from first 10 chars (YYYY-MM-DD)
-  df$Date <- as.Date(substr(basename(f), 1, 10), format = "%Y-%m-%d")
-  
-  # experiment type from filename: SNV_<MUT>; tolerate extra suffixes (_v2, _repA) before .csv
-  # whitelist only your three valid targets; case-insensitive
-  mut_str <- stringr::str_extract(basename(f), "(?i)(?<=SNV_)(D178N|E200K|P102L)")
-  
-  if (is.na(mut_str)) {
-    warning("Could not parse ExperimentType from filename: ", f)
-  }
-  df$ExperimentType <- toupper(mut_str)  # normalise just in case
-  
-  # tidy front columns
-  df <- dplyr::select(df, Sample, Date, Well, Target, ExperimentType, dplyr::everything())
-  df
-})
+# load raw ddPCR data and CSV export data from Quantasoft
+bigdata <- read_ddpcr_raw_bigdata_from_database(
+  raw_root = raw_database_root,
+  validation_dir = validation_dir
+)
 
 # -------------------------------------
 # subset mutant ddPCR probe experiments
@@ -134,17 +137,13 @@ bigdata <- purrr::map_dfr(files, function(f) {
 data.subset <- bigdata %>%
   dplyr::select(Sample, Date, Well, ExperimentType, Target,
                 `Accepted Droplets`, Positives, Negatives,
-                `Ch1+Ch2+`, `Ch1+Ch2-`, `Ch1-Ch2+`, `Ch1-Ch2-`,
-                `Fractional Abundance`,
-                PoissonFractionalAbundanceMax,
-                PoissonFractionalAbundanceMin) %>%
-    rename(FractionalAbundance = `Fractional Abundance`) %>%
-    rename(AcceptedDroplets    = `Accepted Droplets`)
+                `Ch1+Ch2+`, `Ch1+Ch2-`, `Ch1-Ch2+`, `Ch1-Ch2-`) %>%
+  rename(AcceptedDroplets = `Accepted Droplets`)
 
 #remove unwanted suffixes from Target column
 data.subset$Target <- str_replace_all(data.subset$Target, "-mut|_FAM1|_VIC2", "")
 
-# Target == PRNP refers to WT
+# Target == PRNP refers to WT (according to our droplet reader settings)
 data.subset$Target[data.subset$Target == "PRNP"] <- "WT"
 
 # subset ddPCR data with mutant probes (WT probes are analysed in the QC section)
@@ -184,7 +183,7 @@ data.mut          <- subset(data.mut, !(Sample %in% control_samples))
 # -------------------------------------
 
 #some Sample strings end in "-bg" instead of "_bg" etc, replace hyphen (and "pons")
-#also change Bologna sample names to our naming system
+#also change Bologna brain region designators to our naming system
 data.mut$Sample %<>%
   gsub("-bg", "_bg", .) %>%
   gsub("-cb", "_cb", .) %>%
@@ -200,19 +199,6 @@ data.mut$Sample %<>%
   gsub("-hip", "_hc", .) %>%
   gsub("-mdb", "_sn", .)
 
-# -------------------------------------
-# if concentration is 0, quantasoft gives NA for fract.abund. -> replace with 0 to allow scaling
-# -------------------------------------
-fa_cols <- c("FractionalAbundance",
-             "PoissonFractionalAbundanceMax",
-             "PoissonFractionalAbundanceMin")
-
-na_rows <- rowSums(is.na(data.mut[fa_cols])) > 0
-na_data <- data.mut[na_rows, ]
-
-# replace NA with 0 only in the FA columns
-data.mut[fa_cols] <- lapply(data.mut[fa_cols], replace_na, 0)
-
 # --------------------------------------------------------
 # pool droplets (only affects samples with multiple runs)
 # --------------------------------------------------------
@@ -221,6 +207,21 @@ data.mut[fa_cols] <- lapply(data.mut[fa_cols], replace_na, 0)
 data.mut.brief <- data.mut %>%
   select(-Well, -Target, -Negatives)
 
+data.mut.brief <- data.mut.brief %>%
+  mutate(
+    n_double_positive_droplets = as.numeric(`Ch1+Ch2+`),
+    n_ref_only_droplets = case_when(
+      ExperimentType == "P102L" ~ as.numeric(`Ch1-Ch2+`),
+      TRUE ~ as.numeric(`Ch1+Ch2-`)
+    ),
+    n_mut_only_droplets = case_when(
+      ExperimentType == "P102L" ~ as.numeric(`Ch1+Ch2-`),
+      TRUE ~ as.numeric(`Ch1-Ch2+`)
+    ),
+    n_ref_positive_droplets = n_double_positive_droplets + n_ref_only_droplets,
+    n_mut_positive_droplets = n_double_positive_droplets + n_mut_only_droplets
+  )
+
 # --------------------------------------------------------
 # Summarise droplet counts per Sample × Assay
 # --------------------------------------------------------
@@ -228,8 +229,9 @@ data.mut.brief <- data.mut %>%
 counts <- data.mut.brief %>%
   group_by(Sample, ExperimentType) %>%
   summarise(
-    Pos_pool   = sum(Positives,         na.rm = TRUE),
-    Drop_pool  = sum(AcceptedDroplets,  na.rm = TRUE),
+    Pos_pool     = sum(n_mut_positive_droplets, na.rm = TRUE),
+    Ref_pos_pool = sum(n_ref_positive_droplets, na.rm = TRUE),
+    Drop_pool    = sum(AcceptedDroplets,        na.rm = TRUE),
     n_wells    = n(),                       # how many rows pooled
     Date       = first(Date),
     .groups = "drop"
@@ -239,60 +241,65 @@ counts <- data.mut.brief %>%
 counts$pooled <- counts$n_wells > 1
 
 # --------------------------------------------------------
-# Compute pooled FA and its binomial CI (Clopper-Pearson)
+# calculate mutant fractional abundance from Poisson-corrected molecules
 # --------------------------------------------------------
-# (these will be used only when pooled == TRUE)
 
-counts$FA_pool <- counts$Pos_pool / counts$Drop_pool
-
-ci <- binom.confint(
-  x = counts$Pos_pool,
-  n = counts$Drop_pool,
-  methods = "exact"
+# dMIQE-style lambda is estimated from accepted positive/negative partitions.
+# The CI follows the Dube/Fieller dPCR concentration-ratio approach, applied to
+# lambda_mut / lambda_wt and transformed to mutant fractional abundance.
+count_fa <- purrr::pmap_dfr(
+  list(
+    Sample = counts$Sample,
+    ExperimentType = counts$ExperimentType,
+    ref_positive = counts$Ref_pos_pool,
+    ref_negative = counts$Drop_pool - counts$Ref_pos_pool,
+    mut_positive = counts$Pos_pool,
+    mut_negative = counts$Drop_pool - counts$Pos_pool,
+    total = counts$Drop_pool
+  ),
+  function(Sample, ExperimentType, ref_positive, ref_negative, mut_positive, mut_negative, total) {
+    fractional_abundance(
+      ref_positive = ref_positive,
+      ref_negative = ref_negative,
+      mut_positive = mut_positive,
+      mut_negative = mut_negative,
+      total = total
+    ) %>%
+      mutate(Sample = Sample, ExperimentType = ExperimentType, .before = 1)
+  }
 )
 
-counts$FA_pool_lower <- ci$lower
-counts$FA_pool_upper <- ci$upper
-
-# --------------------------------------------------------
-# Combine pooled and non-pooled
-# --------------------------------------------------------
-
-# Identify Sample × Assay combinations with only ONE well
-single_keys <- counts %>%                       # from step 1
-  filter(!pooled) %>%                           # keeps only rows where pooled == FALSE (i.e. n_rows == 1)
-  select(Sample, ExperimentType)
-
-# Pull the Quantasoft FA and CI only for those singletons
-qs <- data.mut.brief %>%
-  semi_join(single_keys, by = c("Sample","ExperimentType")) %>%   # keep singles
-  select(
-    Sample, ExperimentType,
-    FA_QS    = FractionalAbundance,
-    QS_lower = PoissonFractionalAbundanceMin,
-    QS_upper = PoissonFractionalAbundanceMax
+merged <- counts %>%
+  left_join(count_fa, by = c("Sample", "ExperimentType")) %>%
+  rename(
+    FA_estimate = fractional_abundance,
+    CI_lower = ci_low,
+    CI_upper = ci_high
   )
-
-# Merge the two tables
-merged <- left_join(counts, qs, by = c("Sample","ExperimentType"))
 
 # --------------------------------------------------------
 # >>> >>> LIMIT OF BLANK (LoB) SECTION <<< <<<
-# - Use WT + NTC controls from the same plate (Date) and assay
+# - Use WT genomic controls from the same plate (Date) and assay
+# - NTCs are contamination controls; they are not used to model rare SNV
+#   background in wild-type genomic DNA
 # - Conservative p0: CP upper 95% bound on pooled blank proportion
 # - Fallback: assay-wide p0 if a plate lacks blanks
 # --------------------------------------------------------
 
-# 1) Build blank table (QC: ≥10,000 droplets) from your controls object
+# WT controls are the biological blanks for the LoB calculation because they
+# contain genomic DNA background without the targeted mutation.
+lob_blank_samples <- "WT_control"
+
+# 1) Build blank table (QC: >=10,000 droplets) from WT control wells
 blanks <- data.mut.controls %>%
-  filter(Target %in% mutation.list, Sample %in% c("WT_control","NTC")) %>%
-  filter(AcceptedDroplets >= 10000) %>%
+  filter(Target %in% mutation.list, Sample %in% lob_blank_samples) %>% # WT genomic blank wells
+  filter(AcceptedDroplets >= 10000) %>% # only wells with at least 10,000 accepted droplets
   transmute(plate = Date,
             assay = ExperimentType,
             n = AcceptedDroplets,
             x = Positives)
 
-# 2) Per-plate × assay pooled blanks
+# 2) Pool blanks by plate and assay
 blank_pooled <- blanks %>%
   group_by(plate, assay) %>%
   summarise(x_blank = sum(x, na.rm = TRUE),
@@ -300,6 +307,7 @@ blank_pooled <- blanks %>%
             n_wells_blank = n(),
             .groups = "drop") %>%
   mutate(p0_upper = binom.confint(x_blank, n_blank, methods = "exact")$upper)
+    # p0: upper 95% Clopper-Pearson bound for the blank positive rate
 
 # 3) Assay-wide fallback p0
 assay_fallback <- blank_pooled %>%
@@ -308,40 +316,56 @@ assay_fallback <- blank_pooled %>%
   mutate(p0_upper_fallback = binom.confint(x_blank, n_blank, methods = "exact")$upper) %>%
   select(assay, p0_upper_fallback)
 
-# 4) Attach plate and assay to each sample’s pooled counts, then compute LoB
-counts_lob <- merged %>%
-  rename(assay = ExperimentType, n_tot = Drop_pool, x_mut = Pos_pool, plate = Date) %>%
+# 4) For each sample x assay, use the highest blank rate from any plate that
+# contributed droplets to that pooled sample. This is conservative when a
+# sample was run on more than one plate.
+sample_lob_p0 <- data.mut.brief %>%
+  select(Sample, assay = ExperimentType, plate = Date) %>%
+  distinct() %>%
   left_join(blank_pooled, by = c("plate","assay")) %>%
   left_join(assay_fallback, by = "assay") %>%
-  mutate(p0_use = dplyr::coalesce(p0_upper, p0_upper_fallback)) %>%
+  mutate(p0_per_plate = dplyr::coalesce(p0_upper, p0_upper_fallback)) %>%
   # final guard if coalesce still NA (shouldn’t happen if we had any blanks)
+  mutate(p0_per_plate = ifelse(is.na(p0_per_plate), 0, p0_per_plate)) %>%
+  group_by(Sample, assay) %>%
+  slice_max(p0_per_plate, n = 1, with_ties = FALSE) %>%
+  summarise(p0_use = first(p0_per_plate),
+            plate_p0_max = first(plate),
+            .groups = "drop")
+
+# 5) Attach the conservative blank rate to each sample’s pooled counts, then compute LoB
+counts_lob <- merged %>%
+  rename(assay = ExperimentType, n_tot = Drop_pool, x_mut = Pos_pool) %>%
+  left_join(sample_lob_p0, by = c("Sample","assay")) %>%
   mutate(p0_use = ifelse(is.na(p0_use), 0, p0_use)) %>%
   rowwise() %>%
+
+  # This asks: given this sample’s total droplets and the blank/background probability,
+  # what mutant-positive count is still within the 95th percentile of expected blank noise?
   mutate(
     LoB_count = qbinom(0.95, size = n_tot, prob = p0_use),
-    LoB_FA    = ifelse(n_tot > 0, LoB_count / n_tot, NA_real_),
+    # fractional-abundance scale
+    LoB_FA    = ifelse(n_tot > 0, fa_scale * LoB_count / n_tot, NA_real_),
+    # flag detections above LoB
     detected_LoB  = x_mut > LoB_count
   ) %>%
   ungroup() %>%
+  # Keep only LoB outputs
   select(Sample, assay, LoB_count, LoB_FA, detected_LoB)
 
 
 # --------------------------------------------------------
-# Choose the appropriate FA estimate & CI and add LoB outputs
+# add LoB outputs
 # --------------------------------------------------------
 
 merged <- merged %>%
-  mutate(
-    FA_estimate = ifelse(pooled, FA_pool, FA_QS),
-    CI_lower    = ifelse(pooled, FA_pool_lower, QS_lower),
-    CI_upper    = ifelse(pooled, FA_pool_upper, QS_upper)
-  ) %>%
   left_join(counts_lob, by = c("Sample" = "Sample", "ExperimentType" = "assay"))
 
 # --------------------------------------------------------
 # Passed Limit of Detection?
 # --------------------------------------------------------
 
+# empirically determined LoD
 lod_cut <- c(D178N = 0.056, E200K = 0.067, P102L = 0.13)
 
 final <- merged %>%
@@ -353,6 +377,7 @@ final <- merged %>%
 # Keep what you need for the dot-plot (+ LoB fields)
 # --------------------------------------------------------
 
+# main cleaned sample-region × mutation ddPCR results table
 ddpcr.plot.data <- final %>%
   select(Sample, ExperimentType, pooled,
          Pos_pool, Drop_pool,
@@ -402,22 +427,21 @@ ddpcr.plot.data <- ddpcr.plot.data %>%
 # partition-count denominator table for downstream genome-equivalent summaries
 # --------------------------------------------------------
 
-# Keep this block downstream of the existing cleaning and metadata join. That
-# makes the new denominator table inherit the same biological sample set as
-# SNV_data_final.xlsx, instead of reimplementing any filtering logic here.
-# The existing workbook schemas stay unchanged; this block only writes an
-# intermediate CSV for the separate haploid-genome supplementary script.
+# Build an auxiliary denominator table from the same cleaned, pooled sample set
+# used for SNV_data_final.xlsx. This table keeps the underlying Ch1/Ch2
+# partition counts needed by the haploid-genome supplementary script.
 
 partition_rows <- data.mut.brief %>%
   mutate(
-    # Double-positive and signal-negative droplets do not depend on channel
-    # orientation, so they can be read directly from the QuantaSoft 2D classes.
+    # Double-positive and signal-negative droplets
+    # can be read directly from the channel classes.
     n_double_positive_droplets = as.numeric(`Ch1+Ch2+`),
     n_signal_negative_droplets = as.numeric(`Ch1-Ch2-`),
 
-    # QuantaSoft repeats these four 2D partitions on both target rows for a
-    # well. The single-positive channels are assay-specific: D178N/E200K have
-    # MUT on Ch2, whereas P102L has MUT on Ch1.
+    # Convert the single-positive partitions to REF-only and MUT-only counts
+    # using each assay's channel orientation:
+    #   D178N/E200K: Ch1 = REF, Ch2 = MUT
+    #   P102L:       Ch1 = MUT, Ch2 = REF
     n_ref_only_droplets = case_when(
       ExperimentType == "P102L" ~ as.numeric(`Ch1-Ch2+`),
       TRUE ~ as.numeric(`Ch1+Ch2-`)
@@ -427,18 +451,19 @@ partition_rows <- data.mut.brief %>%
       TRUE ~ as.numeric(`Ch1-Ch2+`)
     ),
 
-    # REF+ and MUT+ include double-positive droplets. They are not treated as
-    # literal genome counts later; they are audit counts and inputs to negative
-    # droplet fractions for Poisson occupancy estimates.
+    # A double-positive droplet is positive for both target channels, so it
+    # contributes to both the REF-positive and MUT-positive droplet totals.
+    # Single-positive droplets contribute only to the target on their channel.
     n_ref_positive_droplets = n_double_positive_droplets + n_ref_only_droplets,
     n_mut_positive_droplets = n_double_positive_droplets + n_mut_only_droplets,
     n_signal_positive_droplets =
       n_double_positive_droplets + n_ref_only_droplets + n_mut_only_droplets
   )
 
-# Two raw-export invariants should hold before any pooling. The first checks
-# that the four partition classes exhaust accepted droplets. The second checks
-# that the assay-specific MUT channel mapping agrees with QuantaSoft Positives.
+# Before pooling wells, check that the reconstructed partition counts match the
+# source counts for each row:
+#   1. positive partitions + signal-negative droplets = accepted droplets
+#   2. double-positive + mutant-only droplets = QuantaSoft Positives
 partition_row_errors <- partition_rows %>%
   filter(
     n_signal_positive_droplets + n_signal_negative_droplets != AcceptedDroplets |
@@ -453,8 +478,8 @@ if (nrow(partition_row_errors) > 0) {
        paste(utils::capture.output(print(partition_row_errors)), collapse = "\n"))
 }
 
-# Aggregate to exactly the grain used by ddpcr.plot.data: one biological
-# sample-region by mutation assay, with replicate wells/runs summed.
+# Use one row for each Sample and mutation assay. If the same Sample/assay was
+# run in multiple wells or on multiple dates, sum those droplet counts here.
 partition_counts <- partition_rows %>%
   group_by(Sample, ExperimentType) %>%
   summarise(
@@ -479,24 +504,31 @@ partition_counts <- partition_rows %>%
          n_signal_positive_droplets, n_signal_negative_droplets,
          n_ref_positive_droplets, n_mut_positive_droplets)
 
-# Validate against the already curated long-format ddPCR table. This is the
-# main guard against quietly changing sample inclusion or breaking existing
-# outputs while adding the denominator table.
+# Check that the denominator table has the same sample-region x mutation rows
+# as ddpcr.plot.data, and that its total droplets and mutant-positive droplets
+# match the values exported in SNV_data_final.xlsx.
 partition_counts_check <- partition_counts %>%
+  # Bring in the already-exported totals for the same sample-region x mutation.
   left_join(
     ddpcr.plot.data %>%
       select(code, brain_region, mutation, n_mut_droplets, n_total_droplets),
     by = c("code", "brain_region", "mutation")
   )
 
+# Rows with no joined total exist in the denominator table but not in
+# SNV_data_final.xlsx.
 partition_missing <- partition_counts_check %>%
   filter(is.na(n_total_droplets))
 
+# Stop if the denominator table contains any sample-region x mutation that the
+# final SNV workbook does not contain.
 if (nrow(partition_missing) > 0) {
   stop("Partition-count rows did not match SNV_data_final rows:\n",
        paste(utils::capture.output(print(partition_missing)), collapse = "\n"))
 }
 
+# Among matched rows, check that the denominator table reproduces the two
+# exported count fields used by downstream summaries.
 partition_mismatch <- partition_counts_check %>%
   filter(
     n_accepted_droplets != n_total_droplets |
@@ -506,6 +538,8 @@ partition_mismatch <- partition_counts_check %>%
          n_accepted_droplets, n_total_droplets,
          n_mut_positive_droplets, n_mut_droplets)
 
+# Stop if any matched row has different count totals, or if the two tables have
+# different row counts after the missing-row check above.
 if (nrow(partition_mismatch) > 0 || nrow(partition_counts) != nrow(ddpcr.plot.data)) {
   stop("Partition-count totals do not match SNV_data_final:\n",
        paste(utils::capture.output(print(partition_mismatch)), collapse = "\n"))
@@ -544,8 +578,9 @@ merged.new <- merged %>%
 pooled_participant_assay <- merged.new %>%
   group_by(code, assay) %>%
   summarise(
-    pos_total  = sum(Pos_pool,  na.rm = TRUE),
-    drop_total = sum(Drop_pool, na.rm = TRUE),
+    pos_total     = sum(Pos_pool,     na.rm = TRUE),
+    ref_pos_total = sum(Ref_pos_pool, na.rm = TRUE),
+    drop_total    = sum(Drop_pool,    na.rm = TRUE),
     .groups = "drop"
   )
 
@@ -553,34 +588,34 @@ pooled_participant_assay <- merged.new %>%
 pooled_participant_assay <- pooled_participant_assay %>%
   filter(!(code == "14-2" & assay == "E200K"))
 
-# compute fractional abundance
-pooled_participant_assay$FA <- pooled_participant_assay$pos_total / pooled_participant_assay$drop_total
-
-# compute confidence intervals
-ci_pooled <- binom.confint(
-  x = pooled_participant_assay$pos_total,
-  n = pooled_participant_assay$drop_total,
-  methods = "exact"
+# compute fractional abundance and confidence intervals using the same
+# molecule concentration-ratio method as the sample-region table.
+participant_fa <- purrr::pmap_dfr(
+  list(
+    ref_positive = pooled_participant_assay$ref_pos_total,
+    ref_negative = pooled_participant_assay$drop_total - pooled_participant_assay$ref_pos_total,
+    mut_positive = pooled_participant_assay$pos_total,
+    mut_negative = pooled_participant_assay$drop_total - pooled_participant_assay$pos_total,
+    total = pooled_participant_assay$drop_total
+  ),
+  fractional_abundance
 )
 
-pooled_participant_assay$ci_lower <- ci_pooled$lower
-pooled_participant_assay$ci_upper <- ci_pooled$upper
+pooled_participant_assay$FA <- participant_fa$fractional_abundance
+pooled_participant_assay$ci_lower <- participant_fa$ci_low
+pooled_participant_assay$ci_upper <- participant_fa$ci_high
 
 # --------------------------------------------------------
 # create mapping dataframe of plates x assays with respective p0 
 # --------------------------------------------------------
 
-# plate mapping (we need to know which plates the droplets come from)
-plate_mapping <- merged.new %>%
-  select(Sample, code, plate = Date, assay, Drop_pool)
-
-# sum droplets (so we know how many came from each plate)
-plate_mapping <- plate_mapping %>%
-  group_by(code, assay, plate) %>%
-  summarise(
-    drop_from_plate  = sum(Drop_pool, na.rm = TRUE),
-    .groups = "drop"
-  )
+# plate mapping (we need to know every plate contributing droplets before
+# sample-region rows were pooled)
+plate_mapping <- data.mut.brief %>%
+  mutate(code = sub("_.*$", "", Sample),
+         assay = ExperimentType,
+         plate = Date) %>%
+  distinct(code, assay, plate)
 
 # join plate-specific blank rates
 plate_mapping <- plate_mapping %>%
@@ -610,7 +645,7 @@ pooled_participant_assay <- pooled_participant_assay %>%
             by = c("code", "assay")) %>%
   mutate(
     LoB_count          = qbinom(0.95, size = drop_total, prob = p0_max),
-    LoB_FA             = LoB_count / drop_total,
+    LoB_FA             = fa_scale * LoB_count / drop_total,
     detected_above_lob = pos_total > LoB_count
   )
 
@@ -649,6 +684,3 @@ pooled_plot_data <- pooled_participant_assay %>%
 
 # export
 write.xlsx(pooled_plot_data, file.path(output_dir, "SNV_pooled_participant.xlsx"))
-
-
-
