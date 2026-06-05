@@ -145,6 +145,7 @@ results/repeats/manual_cohort/*/samples/*
 v*.log
 *.log.*
 nohup.out
+/results/ddPCR/logs/
 
 # Raw input data (large; keep out of git)
 /raw/fastq/

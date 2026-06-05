@@ -1,0 +1,10 @@
+metric,value
+manifest_rows,1690
+raw_rows,1690
+joined_rows,1690
+missing_in_manifest,0
+missing_in_raw,0
+rows_with_count_differences,0
+mutant_rows_with_csv_vs_calculated_fractional_abundance_differences,780
+active_wells,845
+raw_gated_or_unassigned_droplets,821624

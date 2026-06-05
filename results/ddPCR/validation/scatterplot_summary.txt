@@ -1,0 +1,8 @@
+Active wells in full set: 845
+Active wells considered in this run: 845
+Scatterplots written this run: 824
+Scatterplots already present this run: 0
+Active wells missing peak data this run: 21
+Scatterplot manifest rows: 845
+Active wells missing peak data in manifest: 21
+Scatterplot files present in manifest: 824
