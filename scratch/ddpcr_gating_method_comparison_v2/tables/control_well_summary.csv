@@ -1,0 +1,13 @@
+assay,sample_type,wells
+D178N,NTC,13
+D178N,WT_control,13
+D178N,biological_sample,214
+D178N,positive_control,13
+E200K,NTC,14
+E200K,WT_control,14
+E200K,biological_sample,243
+E200K,positive_control,14
+P102L,NTC,12
+P102L,WT_control,12
+P102L,biological_sample,250
+P102L,positive_control,12

@@ -1,0 +1,4 @@
+package,validation,status,message,path,rows
+ddPCRclust,readFiles_readTemplate,ok,NA,/mnt/c/Projects/prnp-somatic/scratch/ddpcr_gating_method_comparison_v2/inputs/ddPCRclust/D178N/2020-10-12_SNV_D178N,NA
+dPCP,read_sampleTable,ok,NA,/mnt/c/Projects/prnp-somatic/scratch/ddpcr_gating_method_comparison_v2/inputs/dPCP/D178N/2020-10-12_SNV_D178N,NA
+ddpcRquant,ddpcRquant_smoke,ok,NA,/mnt/c/Projects/prnp-somatic/scratch/ddpcr_gating_method_comparison_v2/inputs/ddpcRquant/D178N/2020-10-12_SNV_D178N/ch1,6
