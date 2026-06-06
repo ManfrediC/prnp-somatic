@@ -24,4 +24,4 @@ method papers or reviews, and the raw-data contract of this repository.
 - `SPEC_05_one_channel_methods.md`
 - `SPEC_06_bayesian_mixture.md`
 - `SPEC_07_lob_lod_reporting.md`
-
+- `SPEC_08_polygon_gates.md`

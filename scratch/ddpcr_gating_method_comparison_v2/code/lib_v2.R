@@ -39,7 +39,8 @@ setup_v2_dirs <- function() {
     "inputs/ddPCRclust", "inputs/dPCP", "inputs/definetherain",
     "inputs/ddpcRquant", "models/control_geometry", "models/twoddpcr",
     "models/ddPCRclust", "models/dPCP", "models/definetherain",
-    "models/ddpcRquant", "models/bayesian_mixture", "data",
+    "models/ddpcRquant", "models/bayesian_mixture",
+    "models/polygon_gates", "data",
     "data/droplets", "tables",
     "plots/individual", "plots/panels", "report", "logs"
   )
