@@ -28,11 +28,18 @@ rare-variant training strategy:
 ## Outputs
 
 - `models/twoddpcr/training_sets.rds`
-- `data/droplets/twoddpcr_*.rds`
+- `data/droplets/twoddpcr_plot_droplets.rds`
 - `tables/twoddpcr_well_counts.csv`
 - `tables/twoddpcr_parameter_grid.csv`
 - `tables/twoddpcr_control_validation.csv`
 - `plots/individual/twoddpcr/*.svg`
+
+Full classifications are computed for every droplet before aggregation. To
+avoid duplicating the 12.5M-row shared droplet cache for every variant, the
+persisted droplet-level artefact is a deterministic downsample used for plots
+and audit diagnostics. Full per-droplet classifications remain reproducible
+from `data/shared_droplets.rds`, `models/control_geometry/**`, and the method
+script.
 
 ## Variants
 
@@ -75,7 +82,10 @@ Apply `mahalanobisRain()` to k-means and kNN classifications. Tune
 Method IDs:
 
 - `twoddpcr_kmeans_mah_rain`
-- `twoddpcr_knn_mah_rain`
+- `twoddpcr_knn_k3_mah_rain`
+- `twoddpcr_knn_k5_mah_rain`
+- `twoddpcr_knn_k11_mah_rain`
+- `twoddpcr_knn_k21_mah_rain`
 
 ## Parameter Selection
 
@@ -89,14 +99,17 @@ Use leave-control-well-out validation:
 ## E2E Checks
 
 - Each variant completes for all complete wells or logs a native package error.
+- Native k-means failures caused by empty clusters are retained in the status
+  table rather than silently replaced by control-centred results.
 - kNN training rows, class balance, and `k` values are recorded.
-- `mahalanobisRain()` radii are recorded by class.
+- `mahalanobisRain()` distances are recorded by class.
 - Counts are written to the common method schema.
 - Control validation is generated before LoB/LoD application.
+- Posterior/Bayesian classifiers are not implemented here; they remain reserved
+  for `SPEC_06`.
 
 ## Failure Handling
 
 If `kmeansClassify()` returns empty-cluster errors, the native variant logs
 failure. A control-centred or kNN variant may still proceed, but it must not be
 reported as native k-means success.
-

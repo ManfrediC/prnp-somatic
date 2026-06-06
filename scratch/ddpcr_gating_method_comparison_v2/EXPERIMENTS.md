@@ -71,3 +71,33 @@ rows, 12 gate-radius rows, 117 baseline-shift rows, 143 control-validation
 rows, and SVG/PDF diagnostic plots for D178N, E200K, and P102L.
 
 Next: Implement `twoddpcr` native and control-anchored variants.
+
+## E4: `twoddpcr` k-means, kNN, and Mahalanobis rain
+
+Status: completed
+
+Hypothesis: `twoddpcr` can be run as both a native four-cluster comparator and
+a control-anchored rare-variant comparator when kNN training is built from
+control-geometry-cleaned NTC, WT-control, and positive-control droplets.
+
+Mechanism: Updated `specs/SPEC_02_twoddpcr.md` and added
+`code/03_run_twoddpcr.R`. The script runs native k-means, control-centred
+k-means, native and control-centred Mahalanobis rain variants, kNN for
+`k = 3, 5, 11, 21`, and kNN plus Mahalanobis rain for each k. The kNN training
+set uses up to 100 balanced control droplets per class and assay after
+control-geometry cleaning. Full classifications are aggregated to well-level
+counts; a deterministic sampled droplet table is retained locally for plots.
+
+Decision rule: Keep if all methods produce one well-count row for every
+complete well, all native package failures are logged with messages, training
+contains four classes per assay, control validation is non-empty, run-status
+rows cover every method/run combination, and sampled plot droplets are written.
+
+Result: Passed 7 built-in E2E checks. Generated 12 methods, 9,888 well-count
+rows, 11,709 control-validation rows, 468 run-status rows, and 1,923,593 sampled
+plot-droplet rows. Native package-default k-means failed on 4 of 39 assay/run
+jobs because of empty clusters; these failures correspond to 63 well rows and
+are retained as native failures. Control-centred k-means and all kNN variants
+completed for all 824 wells.
+
+Next: Implement `ddPCRclust` native and control-anchored variants.

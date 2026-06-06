@@ -1,0 +1,13 @@
+assay,twoddpcr_class,assigned_class,training_rows,label_source,max_training_per_class,random_seed
+D178N,NN,NN,100,control_geometry_cleaned_controls,100,20260606
+D178N,NP,MUT,100,control_geometry_cleaned_controls,100,20260606
+D178N,PN,WT,100,control_geometry_cleaned_controls,100,20260606
+D178N,PP,DP,100,control_geometry_cleaned_controls,100,20260606
+E200K,NN,NN,100,control_geometry_cleaned_controls,100,20260606
+E200K,NP,MUT,100,control_geometry_cleaned_controls,100,20260606
+E200K,PN,WT,100,control_geometry_cleaned_controls,100,20260606
+E200K,PP,DP,100,control_geometry_cleaned_controls,100,20260606
+P102L,NN,NN,100,control_geometry_cleaned_controls,100,20260606
+P102L,NP,WT,100,control_geometry_cleaned_controls,100,20260606
+P102L,PN,MUT,100,control_geometry_cleaned_controls,100,20260606
+P102L,PP,DP,100,control_geometry_cleaned_controls,100,20260606

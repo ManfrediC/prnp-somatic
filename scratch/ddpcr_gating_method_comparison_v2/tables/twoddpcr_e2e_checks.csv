@@ -1,0 +1,8 @@
+check,passed
+all_methods_present,TRUE
+well_count_rows_complete,TRUE
+run_status_rows_present,TRUE
+training_has_four_classes_per_assay,TRUE
+control_validation_present,TRUE
+failed_rows_have_messages,TRUE
+plot_sample_present,TRUE
