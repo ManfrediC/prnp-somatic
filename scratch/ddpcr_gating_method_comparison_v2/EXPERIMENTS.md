@@ -234,3 +234,40 @@ after NTC/WT-only prior fitting: D178N MUT 0.00128 and DP 0.000746; E200K MUT
 
 Next: Recalculate LoB/LoD pass tables across all implemented methods, then
 build the comparison plots and PDF report.
+
+## E9: cross-method LoB/LoD synthesis and report artefacts
+
+Status: completed
+
+Hypothesis: The implemented classifiers can be compared on a shared
+sample-region surface by pooling complete well rows per method, recalculating
+fractional abundance with the official helper, applying WT-control-derived LoB
+and assay LoD thresholds, and rendering vector plots plus a PDF report.
+
+Mechanism: Added `code/08_summarise_lob_lod_report.R` and
+`code/09_build_report_panels.py`. The R synthesis combines the current exported
+JSON target-class calls with twoddpcr, ddPCRclust, dPCP, definetherain,
+ddpcRquant, and Bayesian result tables; pools wells by method, assay, and
+sample-region; recalculates fractional abundance and confidence intervals; and
+applies WT-control LoB with same-plate preference and assay-wide fallback. It
+exports summary tables, individual SVG/PDF plots, a PDF panel, and the final PDF
+comparison report. The Python panel builder inlines the R-generated SVG plots
+into a standalone SVG panel with prefixed svglite clip-path IDs.
+
+Decision rule: Keep if the method summary contains every implemented method,
+all requested method families are represented, report and panel artefacts exist
+and are non-empty, all method-level E2E checks pass, and the SVG panel builder
+passes its own input/output/id-prefix checks.
+
+Result: Passed 7 final report checks, 58 combined E2E rows, and 5 SVG panel E2E
+checks. Generated 19,776 well-count rows, 16,172 sample-region rows, 24 method
+summary rows, and 3,755 biological LoB/LoD-positive rows after excluding
+germline E200K rows from the biological pass matrix. Method coverage is
+`current` 1, `twoddpcr` 12, `ddPCRclust` 3, `dPCP` 2, `definetherain` 1,
+`ddpcRquant` 3, and `bayesian` 2. The report artefacts are
+`report/ddpcr_gating_method_comparison_v2.pdf`,
+`plots/panels/method_summary_panel.pdf`, and
+`plots/panels/method_summary_panel.svg`.
+
+Next: Run the final completion audit, stage the reviewable code/spec/table
+outputs, and commit the synthesis milestone.

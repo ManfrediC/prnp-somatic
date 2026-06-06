@@ -1,0 +1,3 @@
+plot,svg_path,pdf_path
+method_lob_lod_heatmap,/mnt/c/Projects/prnp-somatic/scratch/ddpcr_gating_method_comparison_v2/plots/individual/method_summary/method_lob_lod_heatmap.svg,/mnt/c/Projects/prnp-somatic/scratch/ddpcr_gating_method_comparison_v2/plots/individual/method_summary/method_lob_lod_heatmap.pdf
+method_failure_rates,/mnt/c/Projects/prnp-somatic/scratch/ddpcr_gating_method_comparison_v2/plots/individual/method_summary/method_failure_rates.svg,/mnt/c/Projects/prnp-somatic/scratch/ddpcr_gating_method_comparison_v2/plots/individual/method_summary/method_failure_rates.pdf

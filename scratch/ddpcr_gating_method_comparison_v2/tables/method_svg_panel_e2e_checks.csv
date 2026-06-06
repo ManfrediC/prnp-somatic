@@ -1,0 +1,6 @@
+check,passed,details
+input_1_exists,True,scratch/ddpcr_gating_method_comparison_v2/plots/individual/method_summary/method_lob_lod_heatmap.svg
+input_2_exists,True,scratch/ddpcr_gating_method_comparison_v2/plots/individual/method_summary/method_failure_rates.svg
+output_svg_exists,True,scratch/ddpcr_gating_method_comparison_v2/plots/panels/method_summary_panel.svg
+output_svg_contains_two_panels,True,2
+inlined_clip_ids_are_prefixed,True,avoids duplicate svglite clip-path ids
