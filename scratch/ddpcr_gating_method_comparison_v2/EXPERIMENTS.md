@@ -203,3 +203,34 @@ channel-run status rows, and 400,365 sampled plot-droplet rows. All one-channel
 methods completed for all 824 wells.
 
 Next: Implement the Bayesian/probabilistic classifiers.
+
+## E8: Bayesian control-anchored mixture classifiers
+
+Status: completed
+
+Hypothesis: A control-anchored probabilistic classifier can quantify rare
+mutant signal without training on rare biological samples alone by using
+control-derived class densities, conservative NTC/WT-derived priors, and
+posterior-weighted counts.
+
+Mechanism: Updated `specs/SPEC_06_bayesian_mixture.md` and added
+`code/07_run_bayesian_mixture.R`. The model uses Gaussian NN, WT, MUT, and DP
+components from control geometry, a broad explicit rain component, and priors
+estimated from NTC and WT-control geometry assignments with additive smoothing.
+It exports both probability-weighted counts
+(`bayesian_control_mixture_weighted`) and hard maximum-a-posteriori counts
+(`bayesian_control_mixture_hard_map`).
+
+Decision rule: Keep if class parameters are finite, priors sum to one by assay,
+posterior probabilities sum to one for every processed droplet, both Bayesian
+methods produce one well-count row per complete well, control validation is
+non-empty, and sampled plot droplets are written.
+
+Result: Passed 7 built-in E2E checks. Generated 2 methods, 1,648 well-count
+rows, 1,037 control-validation rows, 824 uncertainty rows, 39 run-status rows,
+and 127,635 sampled plot-droplet rows. MUT/DP priors are non-zero but small
+after NTC/WT-only prior fitting: D178N MUT 0.00128 and DP 0.000746; E200K MUT
+0.000271 and DP 0.000638; P102L MUT 0.000284 and DP 0.000587.
+
+Next: Recalculate LoB/LoD pass tables across all implemented methods, then
+build the comparison plots and PDF report.

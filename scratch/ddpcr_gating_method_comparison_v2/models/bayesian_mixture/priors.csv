@@ -1,0 +1,16 @@
+assay,target_class,observed,smoothed,prior,prior_source
+D178N,NN,207240,207340,0.5747040415547554,ntc_wt_control_geometry_assignments_smoothed
+D178N,WT,151328,151428,0.4197274216482758,ntc_wt_control_geometry_assignments_smoothed
+D178N,MUT,362,462,0.0012805694376304476,ntc_wt_control_geometry_assignments_smoothed
+D178N,DP,169,269,7.45612940957988e-4,ntc_wt_control_geometry_assignments_smoothed
+D178N,Rain,1178,1278,0.0035423544183803292,ntc_wt_control_geometry_assignments_smoothed
+E200K,NN,238984,239084,0.6223698493561126,ntc_wt_control_geometry_assignments_smoothed
+E200K,WT,141868,141968,0.3695630103787313,ntc_wt_control_geometry_assignments_smoothed
+E200K,MUT,4,104,2.707268756296352e-4,ntc_wt_control_geometry_assignments_smoothed
+E200K,DP,145,245,6.37770043550583e-4,ntc_wt_control_geometry_assignments_smoothed
+E200K,Rain,2650,2750,0.007158643345975931,ntc_wt_control_geometry_assignments_smoothed
+P102L,NN,227025,227125,0.6200823409285742,ntc_wt_control_geometry_assignments_smoothed
+P102L,WT,136548,136648,0.3730677456167652,ntc_wt_control_geometry_assignments_smoothed
+P102L,MUT,4,104,2.8393423646261626e-4,ntc_wt_control_geometry_assignments_smoothed
+P102L,DP,115,215,5.869794311486778e-4,ntc_wt_control_geometry_assignments_smoothed
+P102L,Rain,2090,2190,0.005978999787049323,ntc_wt_control_geometry_assignments_smoothed

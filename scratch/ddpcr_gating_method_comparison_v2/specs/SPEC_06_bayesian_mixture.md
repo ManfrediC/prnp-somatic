@@ -29,10 +29,10 @@ classification methods.
 
 - `models/bayesian_mixture/class_parameters.rds`
 - `models/bayesian_mixture/priors.csv`
-- `data/droplets/bayesian_control_mixture_weighted.rds`
-- `data/droplets/bayesian_control_mixture_hard_map.rds`
+- `data/droplets/bayesian_mixture_plot_droplets.rds`
 - `tables/bayesian_well_counts.csv`
 - `tables/bayesian_uncertainty.csv`
+- `tables/bayesian_e2e_checks.csv`
 - `plots/individual/bayesian_mixture/*.svg`
 
 ## Model
@@ -51,16 +51,21 @@ Classes:
 - DP;
 - Rain.
 
-Start with robust Gaussian components. If Gaussian tails behave poorly, test a
-multivariate t-style approximation or broaden the rain component.
+Start with robust Gaussian components for NN, WT, MUT, and DP from
+`SPEC_01`. Add a broad explicit Gaussian rain component centred between the
+four biological class centres, with inflated covariance. If Gaussian tails
+behave poorly, this comparator remains a sensitivity analysis rather than a
+candidate final workflow.
 
 ## Control Fitting
 
 - Fit centres and covariance from controls only.
 - Use baseline-aligned amplitudes if control validation supports it.
 - Use shrinkage covariance from `SPEC_01`.
-- Priors are estimated from controls and rare-variant expectations, with a
-  non-zero but small prior for MUT and DP.
+- Priors are estimated from NTC and WT-control class assignments with additive
+  smoothing, not from biological sample positivity or mutant-positive controls.
+- MUT and DP priors are never zero, so sparse rare-positive droplets can still
+  receive posterior mass when the likelihood supports them.
 
 ## Counting
 
@@ -79,6 +84,11 @@ class = argmax_k P(z_i = k | x_i)
 
 Both must be reported.
 
+Method IDs:
+
+- `bayesian_control_mixture_weighted`;
+- `bayesian_control_mixture_hard_map`.
+
 ## E2E Checks
 
 - Posterior rows sum to 1 within numerical tolerance.
@@ -92,4 +102,3 @@ Both must be reported.
 If posterior weights concentrate unrealistically in MUT or DP for WT controls,
 the model is not a candidate workflow. It remains a failed sensitivity analysis
 with diagnostic plots.
-
