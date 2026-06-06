@@ -23,13 +23,17 @@ functions, then add a clearly labelled control-projected sensitivity variant.
 
 ## Outputs
 
-- `models/ddPCRclust/native_results.rds`
-- `models/ddPCRclust/low_level_results.rds`
-- `data/droplets/ddPCRclust_*.rds`
+- `data/droplets/ddPCRclust_plot_droplets.rds`
 - `tables/ddPCRclust_well_counts.csv`
 - `tables/ddPCRclust_reader_validation.csv`
 - `tables/ddPCRclust_parameter_grid.csv`
+- `tables/ddPCRclust_run_status.csv`
+- `tables/ddPCRclust_low_level_smoke.csv`
 - `plots/individual/ddPCRclust/*.svg`
+
+Full package classifications are aggregated to well counts. Persisted
+droplet-level output is a deterministic diagnostic sample; full package result
+objects remain local/regenerable because native ensemble outputs are bulky.
 
 ## Native Template Workflow
 
@@ -51,29 +55,24 @@ Then:
 Method ID:
 
 - `ddPCRclust_template_native`
+- `ddPCRclust_template_fast`
 
-## Low-Level Algorithm Grid
+## Low-Level Algorithm Smoke
 
-For each assay/run and selected parameter grid:
+The exported low-level functions are audited on representative NTC, WT-control,
+and positive-control wells from each assay:
 
 - `runPeaks()`;
 - `runDensity()`;
 - `runSam()`.
 
-Run modes:
+The full template workflow already invokes density, SAM, and peaks internally
+when `fast = FALSE`; the explicit low-level smoke records which functions fail
+on sparse rare-variant wells and avoids duplicating the native ensemble over
+hundreds of wells.
 
-- native per-well;
-- control-augmented, where controls provide the expected cluster context and
-  final counts are computed only from sample droplets.
-
-Method IDs:
-
-- `ddPCRclust_runPeaks_native`
-- `ddPCRclust_runDensity_native`
-- `ddPCRclust_runSam_native`
-- `ddPCRclust_runPeaks_control_augmented`
-- `ddPCRclust_runDensity_control_augmented`
-- `ddPCRclust_runSam_control_augmented`
+These low-level smoke rows are not LoB/LoD candidate methods unless they
+produce complete well-count tables in a later run.
 
 ## Control-Projected Sensitivity Variant
 
@@ -91,13 +90,15 @@ This is not a native ddPCRclust workflow and must be labelled as such.
 
 - Generated files pass `readFiles()`.
 - Generated templates pass `readTemplate()`.
-- Native `ddPCRclust()` completes on at least one assay/run smoke test.
+- Native `ddPCRclust()` completes or logs package failures for each assay/run
+  and mode.
 - All package errors are logged with input file paths.
 - The full run produces common-schema well counts.
 - Control false-positive and positive-control recovery summaries are written.
+- Low-level smoke rows are written for `runDensity()`, `runPeaks()`, and
+  `runSam()`.
 
 ## Failure Handling
 
 Native package failures are not replaced silently. They are logged, then
 control-augmented or control-projected variants are run as separate methods.
-

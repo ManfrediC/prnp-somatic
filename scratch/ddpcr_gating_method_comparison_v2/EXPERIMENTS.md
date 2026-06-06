@@ -101,3 +101,38 @@ are retained as native failures. Control-centred k-means and all kNN variants
 completed for all 824 wells.
 
 Next: Implement `ddPCRclust` native and control-anchored variants.
+
+## E5: `ddPCRclust` native template and control-projected variants
+
+Status: completed
+
+Hypothesis: The `ddPCRclust` template workflow can be run against the exported
+amplitude CSV/template inputs, with package clusters mapped to assay biology by
+control-derived geometry, while low-level function failures on sparse wells are
+logged explicitly.
+
+Mechanism: Updated `specs/SPEC_03_ddPCRclust.md` and added
+`code/04_run_ddpcrclust.R`. The script runs `ddPCRclust()` in full native
+ensemble mode and fast density mode for every assay/run, maps package cluster
+centres to NN/WT/MUT/DP/Rain using control geometry, writes common well-count
+and control-validation tables, and runs `runDensity()`, `runPeaks()`, and
+`runSam()` smoke checks on representative NTC, WT-control, and positive-control
+wells from each assay. It also writes a labelled
+`ddPCRclust_control_projected` sensitivity comparator.
+
+Decision rule: Keep if all generated files pass `readFiles()`/`readTemplate()`,
+each candidate method has one well-count row per complete well, run-status rows
+cover every method/run combination, package failures remain logged with
+messages, low-level smoke rows are present, and plot-sample droplets are
+written.
+
+Result: Passed 8 built-in E2E checks. Generated 3 methods, 2,472 well-count
+rows, 2,805 control-validation rows, 117 run-status rows, 27 low-level smoke
+rows, and 311,739 sampled plot-droplet rows. `ddPCRclust_template_fast` had 97
+failed well rows and `ddPCRclust_template_native` had 265 failed well rows after
+package/result mapping; both retain failure messages. The control-projected
+sensitivity completed all 824 wells. Low-level smoke succeeded for all 9
+`runSam()` checks and for 8 of 9 `runDensity()`/`runPeaks()` checks.
+
+Next: Implement the native `dPCP()` workflow and compare it against the v1
+adapter-style result.
