@@ -171,3 +171,35 @@ control-projected baseline completed all 824 wells.
 
 Next: Implement one-channel methods, including `definetherain` and
 `ddpcRquant`, then the Bayesian classifiers.
+
+## E7: one-channel `definetherain` and `ddpcRquant`
+
+Status: completed
+
+Hypothesis: One-channel rain/threshold methods can be run as explicit
+comparators by classifying WT and mutant channels separately, then combining
+channel calls into NN/WT/MUT/DP/Rain with the limitation that channel-wise
+thresholds are not two-dimensional clusters.
+
+Mechanism: Added `code/06_run_one_channel_methods.R`. Because no maintained
+`definetherain` package is installed in the conda environment, the published
+positive-control-based one-channel rain-band logic is implemented locally:
+two-cluster k-means per assay/channel, negative valid region below
+`negative_mean + 3 * negative_sd`, positive valid region above
+`positive_mean - 3 * positive_sd`, and intermediate droplets called rain.
+`dpcR::ddpcRquant()` is run for each assay/run/channel with
+`threshold.int = 0.995, 0.999, 0.9995`, `reps = 10`, and
+`threshold.manual = FALSE`, then channel thresholds are combined into
+two-channel calls.
+
+Decision rule: Keep if all methods produce one well-count row per complete
+well, definetherain thresholds are finite for each assay/channel, ddpcRquant
+thresholds are finite for each channel/run/interval, control validation is
+non-empty, and sampled plot droplets are written.
+
+Result: Passed 7 built-in E2E checks. Generated 4 methods, 3,296 well-count
+rows, 3,459 control-validation rows, 240 threshold/model rows, 234 ddpcRquant
+channel-run status rows, and 400,365 sampled plot-droplet rows. All one-channel
+methods completed for all 824 wells.
+
+Next: Implement the Bayesian/probabilistic classifiers.

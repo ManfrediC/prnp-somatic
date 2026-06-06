@@ -1,0 +1,8 @@
+check,passed
+all_methods_present,TRUE
+well_count_rows_complete,TRUE
+definetherain_thresholds_finite,TRUE
+ddpcRquant_thresholds_present,TRUE
+control_validation_present,TRUE
+failed_rows_have_messages,TRUE
+plot_sample_present,TRUE

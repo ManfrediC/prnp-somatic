@@ -1,0 +1,5 @@
+method_id,method_variant,classifier,threshold_interval,reps
+definetherain_channel_combined,local definetherain one-channel rain bands combined into two-channel calls,definetherain,NA,NA
+ddpcRquant_0995,"ddpcRquant threshold.int=0.995, reps=10",ddpcRquant,0.995,10
+ddpcRquant_0999,"ddpcRquant threshold.int=0.999, reps=10",ddpcRquant,0.999,10
+ddpcRquant_09995,"ddpcRquant threshold.int=0.9995, reps=10",ddpcRquant,0.9995,10
