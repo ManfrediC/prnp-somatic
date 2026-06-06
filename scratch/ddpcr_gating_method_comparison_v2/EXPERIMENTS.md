@@ -232,10 +232,39 @@ and 127,635 sampled plot-droplet rows. MUT/DP priors are non-zero but small
 after NTC/WT-only prior fitting: D178N MUT 0.00128 and DP 0.000746; E200K MUT
 0.000271 and DP 0.000638; P102L MUT 0.000284 and DP 0.000587.
 
-Next: Recalculate LoB/LoD pass tables across all implemented methods, then
-build the comparison plots and PDF report.
+Next: Implement explicit polygon gates, then recalculate LoB/LoD pass tables
+across all implemented methods and build the comparison report.
 
-## E9: cross-method LoB/LoD synthesis and report artefacts
+## E9: control-anchored polygon-gate comparator
+
+Status: completed
+
+Hypothesis: A control-anchored polygon-gate comparator can represent the
+manual/free-form gate family without training on sparse rare-positive samples
+alone, and can be compared on the same full-droplet count schema as the package
+and Bayesian methods.
+
+Mechanism: Added `specs/SPEC_08_polygon_gates.md` and
+`code/08_run_polygon_gates.R`. The method builds one convex-hull polygon per
+assay/class from NTC, WT-control, and mutant-positive-control droplets after
+Mahalanobis trimming against the shared control geometry. Sparse or degenerate
+classes fall back to the control-geometry ellipse sampled as a polygon. Droplets
+inside one polygon are assigned to that class; droplets inside overlapping
+polygons are assigned to the nearest control-geometry class; droplets outside
+all polygons are called rain.
+
+Decision rule: Keep if four finite polygons exist per assay, every complete well
+has one count row, all count rows are `ok`, control validation is non-empty,
+plot-droplet rows are written, and polygon SVG/PDF overlay plots exist.
+
+Result: Passed 7 built-in E2E checks. Generated 326 polygon vertices, 824
+well-count rows, 1,079 control-validation rows, 18,108 sampled plot-droplet
+rows, 39 run-status rows, and assay-level polygon overlay SVG/PDF plots. The
+method ID is `polygon_control_hull_gates`.
+
+Next: Rerun the LoB/LoD synthesis and final report with polygon gates included.
+
+## E10: cross-method LoB/LoD synthesis and report artefacts
 
 Status: completed
 
@@ -244,30 +273,32 @@ sample-region surface by pooling complete well rows per method, recalculating
 fractional abundance with the official helper, applying WT-control-derived LoB
 and assay LoD thresholds, and rendering vector plots plus a PDF report.
 
-Mechanism: Added `code/08_summarise_lob_lod_report.R` and
-`code/09_build_report_panels.py`. The R synthesis combines the current exported
-JSON target-class calls with twoddpcr, ddPCRclust, dPCP, definetherain,
-ddpcRquant, and Bayesian result tables; pools wells by method, assay, and
-sample-region; recalculates fractional abundance and confidence intervals; and
-applies WT-control LoB with same-plate preference and assay-wide fallback. It
-exports summary tables, individual SVG/PDF plots, a PDF panel, and the final PDF
-comparison report. The Python panel builder inlines the R-generated SVG plots
-into a standalone SVG panel with prefixed svglite clip-path IDs.
+Mechanism: Updated `code/09_summarise_lob_lod_report.R` and renamed the SVG
+panel builder to `code/10_build_report_panels.py`. The R synthesis combines the
+current exported JSON target-class calls with twoddpcr, polygon gates,
+ddPCRclust, dPCP, definetherain, ddpcRquant, and Bayesian result tables; pools
+wells by method, assay, and sample-region; recalculates fractional abundance
+and confidence intervals; and applies WT-control LoB with same-plate preference
+and assay-wide fallback. It exports summary tables, package versions,
+downsampled representative gating plots, individual SVG/PDF plots, a PDF panel,
+and the final PDF comparison report. The Python panel builder inlines the
+R-generated summary SVG plots into a standalone SVG panel with prefixed svglite
+clip-path IDs.
 
 Decision rule: Keep if the method summary contains every implemented method,
 all requested method families are represented, report and panel artefacts exist
 and are non-empty, all method-level E2E checks pass, and the SVG panel builder
 passes its own input/output/id-prefix checks.
 
-Result: Passed 7 final report checks, 58 combined E2E rows, and 5 SVG panel E2E
-checks. Generated 19,776 well-count rows, 16,172 sample-region rows, 24 method
-summary rows, and 3,755 biological LoB/LoD-positive rows after excluding
-germline E200K rows from the biological pass matrix. Method coverage is
-`current` 1, `twoddpcr` 12, `ddPCRclust` 3, `dPCP` 2, `definetherain` 1,
-`ddpcRquant` 3, and `bayesian` 2. The report artefacts are
+Result: Passed 53 upstream method E2E rows, 10 final report checks, and 5 SVG
+panel E2E checks. Generated 20,600 well-count rows, 16,893 sample-region rows,
+25 method summary rows, and 3,831 biological LoB/LoD-positive rows after
+excluding germline E200K rows from the biological pass matrix. Method coverage is
+`current` 1, `twoddpcr` 12, `polygon_gates` 1, `ddPCRclust` 3, `dPCP` 2,
+`definetherain` 1, `ddpcRquant` 3, and `bayesian` 2. The report artefacts are
 `report/ddpcr_gating_method_comparison_v2.pdf`,
 `plots/panels/method_summary_panel.pdf`, and
 `plots/panels/method_summary_panel.svg`.
 
 Next: Run the final completion audit, stage the reviewable code/spec/table
-outputs, and commit the synthesis milestone.
+outputs, and commit the polygon plus expanded synthesis milestone.

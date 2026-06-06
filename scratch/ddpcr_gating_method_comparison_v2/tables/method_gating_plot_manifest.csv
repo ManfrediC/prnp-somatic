@@ -1,0 +1,4 @@
+plot,assay,svg_path,pdf_path
+D178N_representative_gating,D178N,/mnt/c/Projects/prnp-somatic/scratch/ddpcr_gating_method_comparison_v2/plots/individual/method_gating/D178N_representative_gating.svg,/mnt/c/Projects/prnp-somatic/scratch/ddpcr_gating_method_comparison_v2/plots/individual/method_gating/D178N_representative_gating.pdf
+E200K_representative_gating,E200K,/mnt/c/Projects/prnp-somatic/scratch/ddpcr_gating_method_comparison_v2/plots/individual/method_gating/E200K_representative_gating.svg,/mnt/c/Projects/prnp-somatic/scratch/ddpcr_gating_method_comparison_v2/plots/individual/method_gating/E200K_representative_gating.pdf
+P102L_representative_gating,P102L,/mnt/c/Projects/prnp-somatic/scratch/ddpcr_gating_method_comparison_v2/plots/individual/method_gating/P102L_representative_gating.svg,/mnt/c/Projects/prnp-somatic/scratch/ddpcr_gating_method_comparison_v2/plots/individual/method_gating/P102L_representative_gating.pdf

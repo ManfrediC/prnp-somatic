@@ -32,6 +32,8 @@ reviewable plots, panels, and a PDF report.
 - `tables/method_summary.csv`
 - `tables/method_control_false_positive_summary.csv`
 - `tables/method_positive_control_recovery_summary.csv`
+- `tables/method_package_versions.csv`
+- `tables/method_gating_plot_manifest.csv`
 - `plots/individual/**/*.svg`
 - `plots/individual/**/*.pdf`
 - `plots/panels/*.svg`
@@ -84,10 +86,11 @@ reviewable plots, panels, and a PDF report.
 - PDF report renders without missing figures.
 - SVG and PDF panels exist and are non-empty.
 - Report states package versions and parameters.
+- Report includes downsampled representative droplet-classification plots for
+  the major method families.
 
 ## Failure Handling
 
 Do not report a method as successful if only a fallback or adapter ran. Label
 native, control-anchored, one-channel, probabilistic, and failed variants
 separately.
-

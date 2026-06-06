@@ -32,6 +32,9 @@ ddpcRquant_09995,ddpcRquant,P102L,2,2,1,95.04595134786828
 definetherain_channel_combined,definetherain,D178N,5,5,5,39.55853094330299
 definetherain_channel_combined,definetherain,E200K,4,3,4,48.985352122324095
 definetherain_channel_combined,definetherain,P102L,2,1,2,49.93756207130689
+polygon_control_hull_gates,polygon_gates,D178N,5,5,5,48.09174832980358
+polygon_control_hull_gates,polygon_gates,E200K,4,4,4,49.08668331631415
+polygon_control_hull_gates,polygon_gates,P102L,2,2,2,49.89056905718493
 twoddpcr_kmeans_control_centres,twoddpcr,D178N,5,2,5,54.15745441413804
 twoddpcr_kmeans_control_centres,twoddpcr,E200K,4,0,4,55.05753218055607
 twoddpcr_kmeans_control_centres,twoddpcr,P102L,2,1,2,50.545633452489184
