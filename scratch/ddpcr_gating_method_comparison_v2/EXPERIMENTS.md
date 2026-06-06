@@ -136,3 +136,38 @@ sensitivity completed all 824 wells. Low-level smoke succeeded for all 9
 
 Next: Implement the native `dPCP()` workflow and compare it against the v1
 adapter-style result.
+
+## E6: native `dPCP()` and control-projected adapter comparison
+
+Status: completed
+
+Hypothesis: Native `dPCP()` can be run end-to-end from the converted Bio-Rad
+amplitude files and sample tables; if native clustering fails, the failures can
+be compared against a control-projected adapter-style baseline on the same
+inputs.
+
+Mechanism: Updated `specs/SPEC_04_dPCP_native.md` and added
+`code/05_run_dpcp.R`. The script validates `read_sampleTable()`,
+`read_reference()`, and `read_sample()`, then runs native `dPCP()` with a fixed
+DBSCAN retry grid: `(eps, minPts) = (200,50), (150,30), (250,50), (300,50),
+(200,30)`. Native droplet labels are extracted from `final cluster` when
+available and mapped to NN/WT/MUT/DP/Rain. The comparison baseline is
+`dPCP_control_projected`, using the same converted dPCP inputs and shared
+control geometry.
+
+Decision rule: Keep if reader validation passes, every method has one
+well-count row per complete well, native failures are logged with messages,
+the adapter comparison has one row per well, and sampled plot droplets are
+written.
+
+Result: Passed 8 built-in E2E checks. Generated 2 methods, 1,648 well-count
+rows, 1,142 control-validation rows, 226 run-status rows, 824 adapter-comparison
+rows, and 137,356 sampled plot-droplet rows. Native `dPCP()` succeeded for 2 of
+39 assay/run jobs and 26 of 824 wells. The other 37 jobs failed through all five
+pre-specified DBSCAN attempts, mostly with LAPACK `dgecon()` numerical errors;
+three attempts failed because the reference had fewer predicted clusters than
+expected, and one failed because initial centres were not distinct. The
+control-projected baseline completed all 824 wells.
+
+Next: Implement one-channel methods, including `definetherain` and
+`ddpcRquant`, then the Bayesian classifiers.
