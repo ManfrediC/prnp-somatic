@@ -6,7 +6,8 @@ tracked in git.
 Expected layout:
 
 - `raw/fastq/`: raw FASTQ files, organised by sequencing batch.
-- `raw/ddpcr/`: raw ddPCR CSV exports and `sample_details.xlsx`.
+- `raw/ddpcr/`: reviewed-gate ddPCR raw database and `sample_details.xlsx`.
+- `raw/ddpcr_original/`: original-gate ddPCR export provenance.
 - `raw/dna_quality/`: DNA-quality source files for Tapestation, ddPCR quantity
   records, sample manifests, and related metadata.
 

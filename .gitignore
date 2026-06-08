@@ -11,6 +11,7 @@ env/ssh.auth.env
 # plans, notes and scratch
 doc/repeat_notes
 doc/dna_quality
+doc/papers/
 doc/tmp
 /scratch
 
@@ -112,6 +113,8 @@ legacy/
 # global patterns above (e.g. *.bam, *.bai, *.cram, *.vcf, *.fastq, *.pdf, *.png).
 # Allow placeholders to remain tracked
 !data/.gitkeep
+/results/ddPCR/dpcp/
+/results/ddPCR/umbrella/
 
 # Repeat workflow keeps text artefacts in git for cross-machine review, but
 # heavyweight realigned BAMs, REViewer SVGs, and archived runs stay local.
@@ -153,6 +156,10 @@ nohup.out
 /raw/ddpcr/*
 !/raw/ddpcr/
 !/raw/ddpcr/README.md
+/raw/ddpcr_lod/*
+!/raw/ddpcr_lod/
+!/raw/ddpcr_lod/README.md
+/raw/ddpcr_original/
 /src/tools/export_ddpcr_archives.py
 /src/tools/docx_tooling/
 

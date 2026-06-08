@@ -60,7 +60,8 @@ Funcotator resource acquisition, layout and datasource details are documented in
 
 Required inputs must be placed as follows:
 
-- ddPCR raw exports: `raw/ddpcr/{ddpcr_archive,csv_export,archive_contents,layout_xlsx,manifests}/`
+- ddPCR reviewed-gate raw exports: `raw/ddpcr/{ddpcr_archive,csv_export,archive_contents,layout_xlsx,manifests}/`
+- ddPCR original-gate provenance exports: `raw/ddpcr_original/`
 - ddPCR sample metadata: `raw/ddpcr/sample_details.xlsx`
 - raw FASTQ files: `raw/fastq`
 - resources for GATK workflow: `resources`

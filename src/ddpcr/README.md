@@ -20,7 +20,8 @@ canonical CSV exports, layout workbooks, and raw provenance manifests.
 
 Expected under the repository root:
 
-- Raw ddPCR database: `raw/ddpcr/{ddpcr_archive,csv_export,archive_contents,layout_xlsx,manifests}/`
+- Reviewed-gate raw ddPCR database: `raw/ddpcr/{ddpcr_archive,csv_export,archive_contents,layout_xlsx,manifests}/`
+- Original-gate provenance exports: `raw/ddpcr_original/`
 - Sample metadata: `raw/ddpcr/sample_details.xlsx`
 
 ## Command

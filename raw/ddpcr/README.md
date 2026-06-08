@@ -12,9 +12,13 @@ Expected local layout:
 
 - `ddpcr_archive/`: copied `.ddpcr` instrument archives.
 - `archive_contents/`: exported droplet-amplitude JSONs and related archive contents.
-- `csv_export/`: canonical CSV exports used to validate the raw JSON import.
+- `csv_export/`: canonical reviewed-gate CSV exports used to validate the raw JSON import.
 - `layout_xlsx/`: source layout workbooks used for run/sample mapping.
 - `manifests/`: provenance, run, sample, layout, supersession, and QC manifests.
+
+The top level should not contain duplicate assay CSV exports. Current reviewed
+exports live under `csv_export/<run-date>/`. Earlier/original-gate exports are
+preserved separately in `raw/ddpcr_original/` for provenance and comparison.
 
 ## Sample metadata file
 
