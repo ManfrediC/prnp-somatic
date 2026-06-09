@@ -17,9 +17,9 @@ run_r() {
 }
 
 run_r "$SCRIPT_DIR/create_snv_dataframe.R"
-run_r "$SCRIPT_DIR/ddpcr_fractional_abundance.R"
-run_r "$SCRIPT_DIR/ddpcr_fractional_abundance_pooled.R"
+run_r "$SCRIPT_DIR/figures/ddpcr_fractional_abundance.R"
+run_r "$SCRIPT_DIR/figures/ddpcr_fractional_abundance_pooled.R"
 run_r "$SCRIPT_DIR/ddpcr_samples_results_tbl.R"
 run_r "$SCRIPT_DIR/ddpcr_sample_number.R"
 run_r "$SCRIPT_DIR/estimate_haploid_genomes_surveyed.R"
-run_r "$SCRIPT_DIR/create_ddpcr_scatterplots.R"
+run_r "$SCRIPT_DIR/figures/create_ddpcr_scatterplots.R"

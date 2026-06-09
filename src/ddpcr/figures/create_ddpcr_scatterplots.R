@@ -22,7 +22,7 @@ dir.create(positive_merged_dir, recursive = TRUE, showWarnings = FALSE)
 source(file.path(project_root, "src", "ddpcr", "ddpcr_raw_import_helpers.R"))
 
 # ---- shared scatterplot helpers ----
-source(file.path(project_root, "src", "ddpcr", "ddpcr_scatterplot_helpers.R"))
+source(file.path(project_root, "src", "ddpcr", "figures", "ddpcr_scatterplot_helpers.R"))
 
 # ---- well plotter ----
 

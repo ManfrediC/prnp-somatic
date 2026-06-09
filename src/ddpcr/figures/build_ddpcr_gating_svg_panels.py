@@ -12,7 +12,7 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 POSITIVE_DIR = PROJECT_ROOT / "manuscript" / "figures" / "ddpcr_gating_lob_lod_positive"
 STRATEGY_DIR = PROJECT_ROOT / "manuscript" / "figures" / "ddpcr_gating_strategy"
 

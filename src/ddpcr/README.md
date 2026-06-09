@@ -9,12 +9,15 @@ canonical CSV exports, layout workbooks, and raw provenance manifests.
 
 - `create_snv_dataframe.R`
 - `ddpcr_raw_import_helpers.R`
-- `ddpcr_fractional_abundance.R`
-- `ddpcr_fractional_abundance_pooled.R`
+- `figures/ddpcr_fractional_abundance.R`
+- `figures/ddpcr_fractional_abundance_pooled.R`
 - `ddpcr_samples_results_tbl.R`
 - `ddpcr_sample_number.R`
 - `estimate_haploid_genomes_surveyed.R`
-- `create_ddpcr_scatterplots.R`
+- `figures/build_ddpcr_gating_svg_panels.py`
+- `figures/create_ddpcr_gating_figure_assets.R`
+- `figures/create_ddpcr_scatterplots.R`
+- `figures/ddpcr_scatterplot_helpers.R`
 
 ## Inputs
 
