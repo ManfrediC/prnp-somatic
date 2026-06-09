@@ -232,7 +232,7 @@ validate_umbrella_manifest <- function(export_manifest) {
       missing_partition_file = !file.exists(partition_set_path),
       count_matches_manifest = accepted_droplets_exported == accepted_droplets_manifest,
       has_two_targets = !is.na(ch1_target) & !is.na(ch2_target) & ch1_target != ch2_target,
-      cluster_levels_ok = cluster_levels %in% c("1|2|3|4", "1"),
+      cluster_levels_ok = str_detect(cluster_levels, "^[1-4](\\|[1-4])*$"),
       list_name_present = nzchar(umbrella_name),
       valid = !missing_partition_file &
         count_matches_manifest &
