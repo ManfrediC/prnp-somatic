@@ -39,12 +39,12 @@ class_levels <- c(
   "Gated/unassigned",
   "Rejected/unassigned"
 )
+plot_class_levels <- setdiff(class_levels, "Gated/unassigned")
 class_colours <- c(
   `Reference-only` = "#0072B2",
   `Mutant-only` = "#D55E00",
   `Double-positive` = "#CC79A7",
   `Double-negative` = "#9CA3AF",
-  `Gated/unassigned` = "#E69F00",
   `Rejected/unassigned` = "#E5E7EB"
 )
 draw_order <- c(
@@ -318,10 +318,16 @@ base_scatter_plot <- function(
   show_legend = TRUE
 ) {
   plot <- droplets %>%
+    filter(droplet_class != "Gated/unassigned") %>%
     arrange(draw_order, droplet_index) %>%
     ggplot(aes(x = ch1_amplitude, y = ch2_amplitude, colour = droplet_class)) +
     geom_point(size = 0.18, alpha = 0.42, stroke = 0, na.rm = TRUE) +
-    scale_colour_manual(values = class_colours, drop = FALSE, name = "Droplet class") +
+    scale_colour_manual(
+      values = class_colours,
+      breaks = plot_class_levels,
+      drop = FALSE,
+      name = "Droplet class"
+    ) +
     coord_cartesian(xlim = limits$x, ylim = limits$y, expand = FALSE) +
     labs(
       title = title,

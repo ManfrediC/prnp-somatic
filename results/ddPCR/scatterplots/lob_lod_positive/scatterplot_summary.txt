@@ -1,8 +1,8 @@
 Active wells in full set: 845
-LoB+/LoD+ sample rows before CJD30 E200K exclusion: 6
-LoB+/LoD+ sample rows after CJD30 E200K exclusion: 0
-Selected positive wells: 0
-Individual well scatterplots written this run: 0
-Merged sample scatterplots written this run: 0
-Plot manifest rows: 0
-Scatterplot files present in manifest: 0
+LoB+/LoD+ sample rows before CJD30 E200K exclusion: 8
+LoB+/LoD+ sample rows after CJD30 E200K exclusion: 2
+Selected positive wells: 5
+Individual well scatterplots written this run: 5
+Merged sample scatterplots written this run: 2
+Plot manifest rows: 7
+Scatterplot files present in manifest: 21

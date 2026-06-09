@@ -11,6 +11,15 @@ pooled_plot_data <- readxl::read_excel(data_path)
 
 mutation_list <- c("D178N", "E200K", "P102L")
 lod_cut <- c(D178N = 0.056, E200K = 0.067, P102L = 0.13)
+target_mutation_panels <- strsplit(
+  Sys.getenv("DDPCR_TARGET_MUTATION_PANELS", paste(mutation_list, collapse = ",")),
+  ","
+)[[1]] %>%
+  trimws()
+target_mutation_panels <- intersect(target_mutation_panels, mutation_list)
+if (length(target_mutation_panels) == 0L) {
+  target_mutation_panels <- mutation_list
+}
 
 participant_levels <- function(x) {
   intersect(c(paste0("CJD", 1:200), paste0("Control", 1:200)), unique(x))
@@ -61,7 +70,7 @@ make_plot <- function(mut) {
 
 plots <- setNames(lapply(mutation_list, make_plot), mutation_list)
 
-for (mut in mutation_list) {
+for (mut in target_mutation_panels) {
   ggsave(
     filename = file.path(out_dir, paste0("SNV_pooled_", mut, "_panel.pdf")),
     plot = plots[[mut]],

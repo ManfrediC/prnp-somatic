@@ -11,6 +11,15 @@ snv_data <- readxl::read_excel(data_path)
 
 lod_cut <- c(D178N = 0.056, E200K = 0.067, P102L = 0.13)
 mutation_list <- c("D178N", "E200K", "P102L")
+target_mutation_panels <- strsplit(
+  Sys.getenv("DDPCR_TARGET_MUTATION_PANELS", paste(mutation_list, collapse = ",")),
+  ","
+)[[1]] %>%
+  trimws()
+target_mutation_panels <- intersect(target_mutation_panels, mutation_list)
+if (length(target_mutation_panels) == 0L) {
+  target_mutation_panels <- mutation_list
+}
 region_labels <- c(
   bg = "basal ganglia",
   cb = "cerebellum",
@@ -71,7 +80,7 @@ make_plot <- function(mut) {
 
 plots <- setNames(lapply(mutation_list, make_plot), mutation_list)
 
-for (mut in mutation_list) {
+for (mut in target_mutation_panels) {
   ggsave(
     filename = file.path(out_dir, paste0("SNV_", mut, "_panel.pdf")),
     plot = plots[[mut]],
