@@ -8,6 +8,8 @@ library(jsonlite)
 library(ggplot2)
 library(openxlsx)
 
+# ---- paths and output directories ----
+
 project_root <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
 raw_root <- file.path(project_root, "raw", "ddpcr")
 positive_out_dir <- file.path(project_root, "manuscript", "figures", "ddpcr_gating_lob_lod_positive")
@@ -19,6 +21,10 @@ dir.create(strategy_individual_dir, recursive = TRUE, showWarnings = FALSE)
 
 source(file.path(project_root, "src", "ddpcr", "ddpcr_raw_import_helpers.R"))
 
+# ---- plotting constants ----
+
+# Keep mutation, region, and control-stage order fixed across manifests and
+# rendered panels.
 mutation_order <- c("D178N", "E200K", "P102L")
 region_labels <- c(
   bg = "basal ganglia",
@@ -56,6 +62,9 @@ draw_order <- c(
   "Double-positive" = 6L
 )
 
+# ---- small normalisation helpers ----
+
+# Keep generated filenames readable while avoiding path-hostile characters.
 safe_file_component <- function(x) {
   x <- str_squish(as.character(x))
   x <- str_replace_all(x, "[^A-Za-z0-9._-]+", "_")
@@ -63,6 +72,7 @@ safe_file_component <- function(x) {
   str_replace_all(x, "^_+|_+$", "")
 }
 
+# Interpret workbook flags that may be logical values or text from Excel.
 as_true_flag <- function(x) {
   if (is.logical(x)) {
     return(!is.na(x) & x)
@@ -70,6 +80,8 @@ as_true_flag <- function(x) {
   tolower(trimws(as.character(x))) %in% c("true", "1", "yes")
 }
 
+# Match final result sample IDs back to raw well labels, allowing for historical
+# spelling and suffix differences in the ddPCR manifests.
 normalise_sample_key <- function(x) {
   x %>%
     as.character() %>%
@@ -84,10 +96,15 @@ normalise_sample_key <- function(x) {
     str_replace_all("^_+|_+$", "")
 }
 
+# Format fractional-abundance values for compact plot subtitles.
 format_pct <- function(x) {
   format(round(as.numeric(x), 3), nsmall = 3, trim = TRUE, scientific = FALSE)
 }
 
+# ---- threshold and class helpers ----
+
+# Bio-Rad metadata can store thresholds as lists or scalar values depending on
+# how the well was analysed.
 threshold_entry_value <- function(entry) {
   if (is.null(entry) || length(entry) == 0L) {
     return(NA_real_)
@@ -105,6 +122,7 @@ threshold_entry_value <- function(entry) {
   NA_real_
 }
 
+# Read manual and automatic thresholds for one fluorescence channel.
 threshold_rows_for_channel <- function(metadata, channel) {
   manual <- threshold_entry_value((metadata$ThresholdValues %||% list())[[channel]])
   auto <- threshold_entry_value((metadata$AutoThresholdValues %||% list())[[channel]])
@@ -116,6 +134,7 @@ threshold_rows_for_channel <- function(metadata, channel) {
     filter(!is.na(threshold), is.finite(threshold), threshold > 0)
 }
 
+# Collect usable threshold rows from both channels.
 thresholds_from_metadata <- function(metadata) {
   bind_rows(
     threshold_rows_for_channel(metadata, 1L),
@@ -123,6 +142,7 @@ thresholds_from_metadata <- function(metadata) {
   )
 }
 
+# Convert QuantaSoft reference/mutant calls into manuscript droplet classes.
 class_from_calls <- function(ref_result, mut_result) {
   if (!all(c(ref_result, mut_result) %in% c("Negative", "Positive"))) {
     return("Gated/unassigned")
@@ -139,6 +159,10 @@ class_from_calls <- function(ref_result, mut_result) {
   "Double-negative"
 }
 
+# ---- raw well parsing ----
+
+# Read one extracted .ddpcr well and return plotted droplets, thresholds, and
+# provenance paths for manifests.
 read_well_droplets_for_plot <- function(well_row) {
   extract_path <- file.path(raw_root, well_row$archive_contents_relative_dir)
   peak_path <- file.path(extract_path, "PeakData", paste0(well_row$well, ".ddpeakjson"))
@@ -152,11 +176,15 @@ read_well_droplets_for_plot <- function(well_row) {
 
   peak <- jsonlite::fromJSON(peak_path, simplifyVector = FALSE)
   metadata <- jsonlite::fromJSON(metadata_path, simplifyVector = FALSE)
+
+  # The amplitude arrays are the raw x/y coordinates for each droplet.
   amplitudes <- peak$PeakInfo$Amplitudes
   if (is.null(amplitudes) || length(amplitudes) < 2L) {
     stop("Peak data does not contain two amplitude channels: ", peak_path)
   }
 
+  # Select the reference and mutant targets for this assay, then map them to
+  # physical fluorescence channels.
   targets <- metadata_targets(metadata)
   selected <- selected_target_indices(targets, well_row$assay)
   if (is.null(targets) || is.null(selected)) {
@@ -172,6 +200,8 @@ read_well_droplets_for_plot <- function(well_row) {
     stop("Could not map selected targets to Ch1 and Ch2 for ", well_row$run_id, " ", well_row$well)
   }
 
+  # Start all droplets as rejected/unassigned, then fill class labels from the
+  # saved cluster assignments.
   ch1 <- as.numeric(amplitudes[[1]])
   ch2 <- as.numeric(amplitudes[[2]])
   droplet_count <- min(length(ch1), length(ch2))
@@ -182,6 +212,8 @@ read_well_droplets_for_plot <- function(well_row) {
     droplet_class = "Rejected/unassigned"
   )
 
+  # Cluster droplet indices are zero-based in the archive; tibble rows are
+  # one-based in R.
   for (cluster in metadata$Clusters %||% list()) {
     droplet_indices <- as.integer(cluster$Droplets %||% integer(0))
     if (length(droplet_indices) == 0L) {
@@ -204,6 +236,8 @@ read_well_droplets_for_plot <- function(well_row) {
     droplets$droplet_class[row_indices] <- class_from_calls(ref_result, mut_result)
   }
 
+  # Return droplets and threshold metadata together so plot and manifest writers
+  # use the same parsed source.
   thresholds <- thresholds_from_metadata(metadata) %>%
     mutate(
       run_id = well_row$run_id,
@@ -234,6 +268,9 @@ read_well_droplets_for_plot <- function(well_row) {
   )
 }
 
+# ---- plot assembly helpers ----
+
+# Choose common axes with enough headroom for dense droplet clouds and gate lines.
 axis_limits <- function(droplets, thresholds) {
   x_candidate <- max(
     quantile(droplets$ch1_amplitude, 0.997, na.rm = TRUE, names = FALSE),
@@ -251,6 +288,8 @@ axis_limits <- function(droplets, thresholds) {
   )
 }
 
+# Add exported manual/auto gate lines, or a note when QuantaSoft did not export
+# threshold values for the plotted well.
 add_gate_layers <- function(plot, thresholds, limits, show_auto = TRUE, show_manual = TRUE) {
   threshold_data <- thresholds %>%
     filter(
@@ -277,6 +316,7 @@ add_gate_layers <- function(plot, thresholds, limits, show_auto = TRUE, show_man
       guide = "none"
     )
 
+  # Channel 1 is the x-axis, and Channel 2 is the y-axis in these gating plots.
   vline_data <- threshold_data %>% filter(channel == "Ch1")
   hline_data <- threshold_data %>% filter(channel == "Ch2")
   if (nrow(vline_data) > 0L) {
@@ -306,6 +346,7 @@ add_gate_layers <- function(plot, thresholds, limits, show_auto = TRUE, show_man
   plot
 }
 
+# Build one droplet scatterplot with optional faceting and gate overlays.
 base_scatter_plot <- function(
   droplets,
   thresholds,
@@ -317,6 +358,8 @@ base_scatter_plot <- function(
   show_manual = TRUE,
   show_legend = TRUE
 ) {
+  # Drop gated/unassigned droplets from the visual layer while preserving them
+  # in the parsed metadata for audit outputs.
   plot <- droplets %>%
     filter(droplet_class != "Gated/unassigned") %>%
     arrange(draw_order, droplet_index) %>%
@@ -350,6 +393,7 @@ base_scatter_plot <- function(
       strip.text = element_text(size = 7)
     )
 
+  # Faceted plots keep contributing wells visible for merged positive samples.
   if (facet_by_well) {
     plot <- plot + facet_wrap(~well_label, ncol = 1)
   }
@@ -363,6 +407,8 @@ base_scatter_plot <- function(
   )
 }
 
+# For the final adjusted gate view, prefer manual thresholds and fall back to
+# auto thresholds only if no manual line is available.
 thresholds_for_control_stage <- function(thresholds, stage) {
   if (stage != "Final adjusted gate") {
     return(thresholds)
@@ -374,6 +420,7 @@ thresholds_for_control_stage <- function(thresholds, stage) {
   thresholds %>% filter(threshold_type == "auto")
 }
 
+# Write paired SVG/PDF outputs for each individual asset.
 save_plot_pair <- function(plot, output_dir, basename, width, height) {
   svg_path <- file.path(output_dir, paste0(basename, ".svg"))
   pdf_path <- file.path(output_dir, paste0(basename, ".pdf"))
@@ -389,10 +436,14 @@ save_plot_pair <- function(plot, output_dir, basename, width, height) {
   tibble(svg_path = svg_path, pdf_path = pdf_path)
 }
 
+# ---- source manifests ----
+
+# Active SNV runs define the raw well universe available for gating assets.
 runs <- readr::read_csv(file.path(raw_root, "manifests", "runs.csv"), show_col_types = FALSE) %>%
   filter(status == "active", experiment == "SNV") %>%
   select(run_id, archive_contents_relative_dir)
 
+# Collapse the raw sample manifest to one row per physical well.
 well_manifest <- readr::read_csv(file.path(raw_root, "manifests", "sample_manifest.csv"), show_col_types = FALSE) %>%
   filter(experiment == "SNV", assay %in% mutation_order) %>%
   group_by(run_id, run_date, assay, well, sample) %>%
@@ -403,6 +454,7 @@ well_manifest <- readr::read_csv(file.path(raw_root, "manifests", "sample_manife
   ) %>%
   left_join(runs, by = "run_id")
 
+# SNV_data_final.xlsx defines the LoB+LoD+ sample-region positives to render.
 positive_rows <- openxlsx::read.xlsx(file.path(project_root, "results", "ddPCR", "SNV_data_final.xlsx")) %>%
   as_tibble() %>%
   mutate(
@@ -425,6 +477,7 @@ positive_rows <- openxlsx::read.xlsx(file.path(project_root, "results", "ddPCR",
   arrange(match(mutation, mutation_order), participant, brain_region)
 
 if (nrow(positive_rows) == 0L) {
+  # Keep outputs deterministic when no positive rows are available.
   unlink(file.path(positive_individual_dir, list.files(positive_individual_dir)), force = TRUE)
   unlink(
     file.path(
@@ -477,6 +530,7 @@ if (nrow(positive_rows) == 0L) {
     well_plot_id = character()
   )
 } else {
+  # Map each positive sample-region result back to its contributing raw wells.
   positive_wells <- positive_rows %>%
     select(
       row_id, positive_id, manuscript_label, participant, brain_region,
@@ -496,6 +550,8 @@ if (nrow(positive_rows) == 0L) {
     stop("Could not map LoB+LoD+ rows back to raw wells")
   }
 
+  # Parse every contributing well once, then reuse the parsed droplets for merged
+  # and faceted plots.
   positive_parsed <- positive_wells %>%
     split(seq_len(nrow(.))) %>%
     map(function(row) {
@@ -504,6 +560,7 @@ if (nrow(positive_rows) == 0L) {
       list(row = row, parsed = parsed)
     })
 
+  # Attach manuscript identifiers to every parsed droplet.
   positive_droplets <- map2_dfr(positive_parsed, seq_along(positive_parsed), function(entry, i) {
     entry$parsed$droplets %>%
       mutate(
@@ -517,6 +574,7 @@ if (nrow(positive_rows) == 0L) {
       )
   })
 
+  # Keep thresholds in a separate table so plot manifests can audit gate lines.
   positive_thresholds <- map_dfr(positive_parsed, function(entry) {
     entry$parsed$thresholds %>%
       mutate(
@@ -527,8 +585,10 @@ if (nrow(positive_rows) == 0L) {
       )
   })
 
+  # Use one axis frame for all positive-sample gating assets.
   positive_limits <- axis_limits(positive_droplets, positive_thresholds)
 
+  # Render merged and faceted views for each LoB+LoD+ sample-region row.
   positive_manifest <- map_dfr(seq_len(nrow(positive_rows)), function(i) {
     row <- positive_rows[i, ]
     droplets <- positive_droplets %>% filter(row_id == row$row_id)
@@ -595,6 +655,8 @@ if (nrow(positive_rows) == 0L) {
 }
 
 readr::write_csv(positive_manifest, file.path(positive_out_dir, "plot_manifest.csv"))
+
+# Persist positive-panel source wells and thresholds for audit.
 readr::write_csv(
   positive_wells %>%
     select(
@@ -608,6 +670,9 @@ readr::write_csv(
   file.path(positive_out_dir, "selected_thresholds.csv")
 )
 
+# ---- gating strategy controls ----
+
+# Identify NTC, WT, and positive-control wells with usable raw JSON data.
 available_control_wells <- well_manifest %>%
   mutate(
     sample_upper = str_to_upper(sample),
@@ -624,12 +689,14 @@ available_control_wells <- well_manifest %>%
   ) %>%
   filter(!is.na(stage), has_peak_data, has_metadata)
 
+# Prefer control runs close to the positive-sample runs when positives exist.
 reference_dates <- if (nrow(positive_wells) > 0L) {
   unique(positive_wells$run_date)
 } else {
   unique(well_manifest$run_date)
 }
 
+# Choose complete control runs for each assay.
 control_runs <- available_control_wells %>%
   group_by(assay, run_id, run_date, archive_contents_relative_dir) %>%
   summarise(
@@ -642,6 +709,7 @@ control_runs <- available_control_wells %>%
   filter(complete) %>%
   arrange(match(assay, mutation_order), date_distance, desc(total_accepted), run_date)
 
+# Keep the highest-quality complete run for each mutation assay.
 selected_control_runs <- control_runs %>%
   group_by(assay) %>%
   slice_head(n = 1) %>%
@@ -651,6 +719,7 @@ if (nrow(selected_control_runs) != length(mutation_order)) {
   stop("Could not identify complete NTC/WT/positive-control sets for every assay")
 }
 
+# Select one representative well per assay/stage from the chosen runs.
 selected_controls <- selected_control_runs %>%
   select(assay, run_id) %>%
   left_join(
@@ -663,10 +732,12 @@ selected_controls <- selected_control_runs %>%
   slice_head(n = 1) %>%
   ungroup()
 
+# Reuse the positive-control well to show the final adjusted manual gate.
 final_gate_controls <- selected_controls %>%
   filter(stage == "Positive control") %>%
   mutate(stage = "Final adjusted gate")
 
+# Combine the raw control stages and final adjusted gate into plotting order.
 strategy_controls <- bind_rows(selected_controls, final_gate_controls) %>%
   mutate(
     stage = factor(stage, levels = control_stage_order),
@@ -674,6 +745,7 @@ strategy_controls <- bind_rows(selected_controls, final_gate_controls) %>%
   ) %>%
   arrange(match(assay, mutation_order), match(stage, control_stage_order))
 
+# Parse each selected control well once.
 strategy_parsed <- strategy_controls %>%
   split(seq_len(nrow(.))) %>%
   map(function(row) {
@@ -682,6 +754,7 @@ strategy_parsed <- strategy_controls %>%
     list(row = row, parsed = parsed)
   })
 
+# Attach stage IDs to parsed control droplets and thresholds.
 strategy_droplets <- map_dfr(strategy_parsed, function(entry) {
   entry$parsed$droplets %>%
     mutate(
@@ -698,8 +771,10 @@ strategy_thresholds <- map_dfr(strategy_parsed, function(entry) {
     )
 })
 
+# Use one common axis frame for all gating-strategy panels.
 strategy_limits <- axis_limits(strategy_droplets, strategy_thresholds)
 
+# Render one control-stage asset per selected strategy row.
 strategy_manifest <- map_dfr(seq_len(nrow(strategy_controls)), function(i) {
   row <- strategy_controls[i, ]
   droplets <- strategy_droplets %>%
@@ -750,6 +825,8 @@ strategy_manifest <- map_dfr(seq_len(nrow(strategy_controls)), function(i) {
 })
 
 readr::write_csv(strategy_manifest, file.path(strategy_out_dir, "plot_manifest.csv"))
+
+# Persist strategy-panel source wells and thresholds for audit.
 readr::write_csv(
   strategy_controls %>%
     select(assay, stage, run_id, run_date, well, sample, accepted_droplets, archive_contents_relative_dir),
@@ -759,6 +836,8 @@ readr::write_csv(
   strategy_thresholds,
   file.path(strategy_out_dir, "selected_thresholds.csv")
 )
+
+# ---- run summary ----
 
 cat("LoB+LoD+ individual plots written: ", nrow(positive_manifest), "\n", sep = "")
 cat("Gating-strategy individual plots written: ", nrow(strategy_manifest), "\n", sep = "")

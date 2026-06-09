@@ -2,13 +2,20 @@ library(tidyverse)
 library(readxl)
 library(cowplot)
 
+# ---- paths and inputs ----
+
 project_root <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
 data_path <- file.path(project_root, "results", "ddPCR", "SNV_pooled_participant.xlsx")
 out_dir <- file.path(project_root, "manuscript", "figures", "ddpcr_fractional_abundance_pooled")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
+# Read the participant-pooled ddPCR table produced by the main workflow.
 pooled_plot_data <- readxl::read_excel(data_path)
 
+# ---- plotting constants ----
+
+# Keep mutation order and LoD cut-offs explicit for consistent single-panel and
+# combined-panel output.
 mutation_list <- c("D178N", "E200K", "P102L")
 lod_cut <- c(D178N = 0.056, E200K = 0.067, P102L = 0.13)
 target_mutation_panels <- strsplit(
@@ -18,14 +25,18 @@ target_mutation_panels <- strsplit(
   trimws()
 target_mutation_panels <- intersect(target_mutation_panels, mutation_list)
 if (length(target_mutation_panels) == 0L) {
+  # Fall back to every mutation when the optional environment filter is absent.
   target_mutation_panels <- mutation_list
 }
 
+# Preserve natural participant ordering while dropping unused IDs.
 participant_levels <- function(x) {
   intersect(c(paste0("CJD", 1:200), paste0("Control", 1:200)), unique(x))
 }
 
+# Build one mutation-specific participant-pooled plot.
 make_plot <- function(mut) {
+  # Coerce workbook flags before mapping them to point shape/fill.
   df <- pooled_plot_data %>%
     filter(mutation == mut) %>%
     drop_na(fractional_abundance) %>%
@@ -37,6 +48,8 @@ make_plot <- function(mut) {
 
   y_max <- max(c(0.25, df$ci_high, lod_cut[[mut]]), na.rm = TRUE) * 1.08
 
+  # Draw participant-level point estimates, confidence intervals, and the
+  # assay-specific LoD line on the percent fractional-abundance scale.
   ggplot(df, aes(x = participant, y = fractional_abundance)) +
     geom_point(aes(shape = detected_above_lob, fill = detected_above_lod),
                colour = "black", size = 2.2, stroke = 0.4, na.rm = TRUE) +
@@ -68,8 +81,10 @@ make_plot <- function(mut) {
     )
 }
 
+# Prepare all mutation plots once so file writing can be filtered separately.
 plots <- setNames(lapply(mutation_list, make_plot), mutation_list)
 
+# Write requested single-mutation participant-pooled panels.
 for (mut in target_mutation_panels) {
   ggsave(
     filename = file.path(out_dir, paste0("SNV_pooled_", mut, "_panel.pdf")),
@@ -80,6 +95,9 @@ for (mut in target_mutation_panels) {
   )
 }
 
+# ---- combined mutation panel ----
+
+# Build the combined table with stable mutation and participant ordering.
 combined_df <- pooled_plot_data %>%
   filter(mutation %in% mutation_list) %>%
   drop_na(fractional_abundance) %>%
@@ -90,11 +108,13 @@ combined_df <- pooled_plot_data %>%
     detected_above_lod = as.logical(detected_above_lod)
   )
 
+# Store LoD cut-offs in a facetable data frame for per-panel horizontal lines.
 lod_df <- tibble(
   mutation = factor(names(lod_cut), levels = mutation_list),
   LoD = as.numeric(lod_cut)
 )
 
+# Stack all participant-pooled mutation panels into one figure.
 combined_plot <- ggplot(combined_df, aes(x = participant, y = fractional_abundance)) +
   geom_point(aes(shape = detected_above_lob, fill = detected_above_lod),
              colour = "black", size = 2.2, stroke = 0.4, na.rm = TRUE) +
@@ -125,6 +145,7 @@ combined_plot <- ggplot(combined_df, aes(x = participant, y = fractional_abundan
     legend.position = "right"
   )
 
+# Save the combined panel with the default right-side legend.
 ggsave(
   filename = file.path(out_dir, "SNV_pooled_all_mutations.pdf"),
   plot = combined_plot,
@@ -133,6 +154,8 @@ ggsave(
   dpi = 300
 )
 
+# Write SVGs when svglite is available, otherwise remove stale vectors so
+# missing optional tooling is visible rather than silently preserving old output.
 save_svg_if_available <- function(plot, path, width, height) {
   if (requireNamespace("svglite", quietly = TRUE)) {
     ggsave(
@@ -148,6 +171,7 @@ save_svg_if_available <- function(plot, path, width, height) {
   }
 }
 
+# Move the combined legend below the facets for the final manuscript layout.
 one_legend_plot <- cowplot::plot_grid(
   combined_plot + theme(legend.position = "none"),
   cowplot::get_legend(
@@ -161,6 +185,7 @@ one_legend_plot <- cowplot::plot_grid(
   rel_heights = c(1, 0.08)
 )
 
+# Save the final one-legend combined panel as PDF and SVG.
 ggsave(
   filename = file.path(out_dir, "SNV_pooled_all_mutations_one_legend.pdf"),
   plot = one_legend_plot,
@@ -176,6 +201,7 @@ save_svg_if_available(
   height = 12
 )
 
+# Write one plot per page for easier review of the individual mutation panels.
 write_multipage_pdf <- function(path, plots, width, height) {
   pdf(path, width = width, height = height)
   on.exit(dev.off(), add = TRUE)
@@ -192,6 +218,7 @@ write_multipage_pdf(
   height = 4.5
 )
 
+# Record LoB+LoD passing participant-pooled rows for audit beside the figure.
 pass_rows <- pooled_plot_data %>%
   mutate(
     detected_above_lob = as.logical(detected_above_lob),

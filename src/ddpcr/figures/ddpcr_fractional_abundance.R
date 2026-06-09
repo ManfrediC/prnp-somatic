@@ -2,13 +2,20 @@ library(tidyverse)
 library(readxl)
 library(cowplot)
 
+# ---- paths and inputs ----
+
 project_root <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
 data_path <- file.path(project_root, "results", "ddPCR", "SNV_data_final.xlsx")
 out_dir <- file.path(project_root, "manuscript", "figures", "ddpcr_fractional_abundance")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
+# Read the sample-region ddPCR table produced by the main ddPCR workflow.
 snv_data <- readxl::read_excel(data_path)
 
+# ---- plotting constants ----
+
+# Keep mutation ordering, LoD cut-offs, and requested panels explicit so single-panel
+# reruns remain reproducible from the environment alone.
 lod_cut <- c(D178N = 0.056, E200K = 0.067, P102L = 0.13)
 mutation_list <- c("D178N", "E200K", "P102L")
 target_mutation_panels <- strsplit(
@@ -18,8 +25,12 @@ target_mutation_panels <- strsplit(
   trimws()
 target_mutation_panels <- intersect(target_mutation_panels, mutation_list)
 if (length(target_mutation_panels) == 0L) {
+  # Fall back to the full figure set when the environment variable is empty or invalid.
   target_mutation_panels <- mutation_list
 }
+
+# Display labels and colours are centralised so individual and combined panels
+# use the same region vocabulary.
 region_labels <- c(
   bg = "basal ganglia",
   cb = "cerebellum",
@@ -39,7 +50,10 @@ region_colours <- c(
   th = "#CC79A7"
 )
 
+# Build one mutation-specific sample-region plot.
 make_plot <- function(mut) {
+  # Restrict to plotted rows and keep the historical CJD30 E200K exclusion
+  # aligned with the rest of the ddPCR figure workflow.
   df <- snv_data %>%
     filter(mutation == mut) %>%
     drop_na(fractional_abundance) %>%
@@ -56,6 +70,8 @@ make_plot <- function(mut) {
 
   y_max <- max(c(0.25, df$ci_high, lod_cut[[mut]]), na.rm = TRUE) * 1.08
 
+  # Draw point estimates, confidence intervals, and the assay-specific LoD line
+  # on the common percent fractional-abundance scale.
   ggplot(df, aes(x = participant, y = fractional_abundance, colour = brain_region)) +
     geom_point(aes(shape = detected_above_LoB, size = is_pooled), position = position_dodge(width = 0.6), na.rm = TRUE) +
     geom_errorbar(aes(ymin = ci_low, ymax = ci_high, group = brain_region), position = position_dodge(width = 0.6), width = 0, linewidth = 0.3, na.rm = TRUE) +
@@ -78,8 +94,11 @@ make_plot <- function(mut) {
     )
 }
 
+# Prepare all mutation plots once so panel selection only controls which files
+# are written.
 plots <- setNames(lapply(mutation_list, make_plot), mutation_list)
 
+# Write requested single-mutation panels.
 for (mut in target_mutation_panels) {
   ggsave(
     filename = file.path(out_dir, paste0("SNV_", mut, "_panel.pdf")),
@@ -90,6 +109,9 @@ for (mut in target_mutation_panels) {
   )
 }
 
+# ---- combined mutation panel ----
+
+# Build the combined long table with fixed mutation and region ordering.
 combined_df <- snv_data %>%
   filter(mutation %in% mutation_list) %>%
   drop_na(fractional_abundance) %>%
@@ -105,11 +127,13 @@ combined_df <- snv_data %>%
     is_pooled = as.logical(is_pooled)
   )
 
+# Store LoD cut-offs in a facetable data frame for per-panel horizontal lines.
 lod_df <- tibble(
   mutation = factor(names(lod_cut), levels = mutation_list),
   LoD = as.numeric(lod_cut)
 )
 
+# Stack all mutations into one manuscript-facing figure.
 combined_plot <- ggplot(
   combined_df,
   aes(x = participant, y = fractional_abundance, colour = brain_region)
@@ -137,6 +161,7 @@ combined_plot <- ggplot(
     legend.position = "right"
   )
 
+# Save the combined panel with the default right-side legend.
 ggsave(
   filename = file.path(out_dir, "SNV_all_mutations.pdf"),
   plot = combined_plot,
@@ -145,6 +170,8 @@ ggsave(
   dpi = 300
 )
 
+# Write SVGs when svglite is available, otherwise remove stale vectors so
+# missing optional tooling is visible rather than silently preserving old output.
 save_svg_if_available <- function(plot, path, width, height) {
   if (requireNamespace("svglite", quietly = TRUE)) {
     ggsave(
@@ -160,6 +187,7 @@ save_svg_if_available <- function(plot, path, width, height) {
   }
 }
 
+# Move the combined legend below the facets for the final manuscript layout.
 legend_bottom_plot <- cowplot::plot_grid(
   combined_plot + theme(legend.position = "none"),
   cowplot::get_legend(
@@ -173,6 +201,7 @@ legend_bottom_plot <- cowplot::plot_grid(
   rel_heights = c(1, 0.08)
 )
 
+# Save the final combined panel as PDF and SVG.
 ggsave(
   filename = file.path(out_dir, "SNV_all_mutations_legend_bottom_final.pdf"),
   plot = legend_bottom_plot,
@@ -188,6 +217,7 @@ save_svg_if_available(
   height = 12
 )
 
+# Write one plot per page for easier review of the individual mutation panels.
 write_multipage_pdf <- function(path, plots, width, height) {
   pdf(path, width = width, height = height)
   on.exit(dev.off(), add = TRUE)
@@ -204,6 +234,8 @@ write_multipage_pdf(
   height = 4.5
 )
 
+# Record pooled rows that affect the sample-region figure so reviewers can audit
+# the larger point markers separately from the plot.
 affected_rows <- snv_data %>%
   mutate(is_pooled = as.logical(is_pooled)) %>%
   filter(is_pooled) %>%

@@ -230,6 +230,8 @@ axis_limits_for_values <- function(values) {
   c(lower, upper)
 }
 
+# Build the three output paths that every scatterplot writer records in its
+# manifest row.
 plot_output_paths <- function(output_dir, file_stem) {
   c(
     png = file.path(output_dir, paste0(file_stem, ".png")),
@@ -238,12 +240,14 @@ plot_output_paths <- function(output_dir, file_stem) {
   )
 }
 
+# Save each plot in the raster/vector formats used for review and manuscripts.
 save_plot_outputs <- function(plot, paths, width = 6, height = 5, dpi = 180) {
   ggsave(filename = paths[["png"]], plot = plot, width = width, height = height, dpi = dpi, bg = "white")
   ggsave(filename = paths[["svg"]], plot = plot, width = width, height = height, device = grDevices::svg, bg = "white")
   ggsave(filename = paths[["pdf"]], plot = plot, width = width, height = height, device = grDevices::pdf, bg = "white")
 }
 
+# Mirror the generated paths into the manifest column layout.
 plot_path_columns <- function(paths) {
   tibble(
     output_path = paths[["png"]],
@@ -253,6 +257,7 @@ plot_path_columns <- function(paths) {
   )
 }
 
+# Remove prior rendered plot files before a rerun writes a fresh manifest.
 clean_plot_output_dir <- function(output_dir) {
   files <- list.files(output_dir, pattern = "\\.(png|svg|pdf)$", full.names = TRUE, ignore.case = TRUE)
   if (length(files) > 0L) {

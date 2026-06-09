@@ -23,6 +23,8 @@ ET.register_namespace("xlink", XLINK_NS)
 
 URL_REF_RE = re.compile(r"url\(#([^)]+)\)")
 
+# Keep legend colours in sync with the R scripts that generate the individual
+# gating SVGs.
 CLASS_COLOURS = {
     "Reference-only": "#0072B2",
     "Mutant-only": "#D55E00",
@@ -34,6 +36,7 @@ CLASS_COLOURS = {
 
 
 def read_manifest(path: Path) -> list[dict[str, str]]:
+    """Read the R-generated plot manifest that lists individual panel SVGs."""
     with path.open(newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle))
 
@@ -47,6 +50,7 @@ def text(
     weight: str = "normal",
     fill: str = "#111827",
 ) -> None:
+    """Add plain SVG text using the common panel typography."""
     node = ET.SubElement(
         parent,
         f"{{{SVG_NS}}}text",
@@ -63,6 +67,7 @@ def text(
 
 
 def circle(parent: ET.Element, cx: float, cy: float, r: float, fill: str, stroke: str = "none") -> None:
+    """Add a legend marker circle."""
     ET.SubElement(
         parent,
         f"{{{SVG_NS}}}circle",
@@ -86,6 +91,7 @@ def line(
     width: float = 1.4,
     dasharray: str | None = None,
 ) -> None:
+    """Add a straight SVG line, optionally dashed for auto thresholds."""
     attrs = {
         "x1": f"{x1:g}",
         "y1": f"{y1:g}",
@@ -101,6 +107,7 @@ def line(
 
 
 def draw_strategy_legend(root: ET.Element, centre_x: float, y: float) -> None:
+    """Draw the shared droplet-class and gate legend below strategy panels."""
     x = centre_x - 410
     text(root, x, y + 12, "Droplet class", size=12, weight="bold")
     class_items = list(CLASS_COLOURS.items())
@@ -124,6 +131,7 @@ def draw_strategy_legend(root: ET.Element, centre_x: float, y: float) -> None:
 
 
 def svg_viewbox(root: ET.Element) -> tuple[float, float, float, float]:
+    """Return an SVG viewBox, falling back to width and height attributes."""
     view_box = root.attrib.get("viewBox")
     if view_box:
         parts = [float(part) for part in re.split(r"[,\s]+", view_box.strip()) if part]
@@ -135,6 +143,7 @@ def svg_viewbox(root: ET.Element) -> tuple[float, float, float, float]:
 
 
 def prefix_svg_ids(node: ET.Element, prefix: str) -> None:
+    """Namespace embedded SVG IDs so repeated glyphs and clips do not collide."""
     for child in node.iter():
         if "id" in child.attrib:
             child.attrib["id"] = f"{prefix}{child.attrib['id']}"
@@ -157,6 +166,7 @@ def inline_svg(
     height: float,
     prefix: str,
 ) -> None:
+    """Copy one source SVG into the output panel while preserving its aspect ratio."""
     source_root = ET.parse(source_svg).getroot()
     min_x, min_y, source_width, source_height = svg_viewbox(source_root)
     scale = min(width / source_width, height / source_height)
@@ -183,6 +193,7 @@ def write_panel(
     title: str,
     common_legend: str | None = None,
 ) -> Path:
+    """Assemble a grid of individual SVG plots into one labelled panel."""
     output_svg.parent.mkdir(parents=True, exist_ok=True)
     ncols = min(ncols, max(1, len(rows)))
     margin_x = 30
@@ -205,6 +216,7 @@ def write_panel(
     )
     text(root, margin_x, 30, title, size=22, weight="bold")
 
+    # Lay out source SVGs in reading order and add panel letters in the margin.
     for index, row in enumerate(rows):
         grid_row, grid_col = divmod(index, ncols)
         x = margin_x + grid_col * (cell_width + gap_x)
@@ -213,6 +225,7 @@ def write_panel(
         inline_svg(root, Path(row["svg_path"]), x + 24, y, cell_width - 24, cell_height, f"p{index}_")
         text(root, x + 2, y + 24, letter, size=18, weight="bold")
 
+    # Strategy panels use one shared legend to avoid repeating legends in every cell.
     if common_legend == "strategy":
         draw_strategy_legend(root, width / 2, height - legend_height + 10)
 
@@ -221,6 +234,7 @@ def write_panel(
 
 
 def export_pdf(svg_path: Path) -> Path:
+    """Export the assembled SVG panel to PDF using Inkscape."""
     pdf_path = svg_path.with_suffix(".pdf")
     inkscape = shutil.which("inkscape") or "/usr/bin/inkscape"
     if not Path(inkscape).exists():
@@ -238,23 +252,28 @@ def export_pdf(svg_path: Path) -> Path:
 
 
 def sort_positive(rows: list[dict[str, str]], plot_kind: str) -> list[dict[str, str]]:
+    """Keep LoB+LoD+ panels in the R manifest order."""
     selected = [row for row in rows if row["plot_kind"] == plot_kind]
     return sorted(selected, key=lambda row: int(row["plot_order"]))
 
 
 def sort_strategy(rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    """Order control panels by mutation and gating stage."""
     assay_order = {"D178N": 0, "E200K": 1, "P102L": 2}
     stage_order = {"NTC": 0, "WT": 1, "Positive control": 2, "Final adjusted gate": 3}
     return sorted(rows, key=lambda row: (assay_order[row["assay"]], stage_order[row["stage"]]))
 
 
 def main() -> None:
+    """Build all combined gating panels from individual plot manifests."""
+    # Load manifests written by the R figure-asset script.
     positive_rows = read_manifest(POSITIVE_DIR / "plot_manifest.csv")
     strategy_rows = read_manifest(STRATEGY_DIR / "plot_manifest.csv")
     positive_merged = sort_positive(positive_rows, "merged")
     positive_faceted = sort_positive(positive_rows, "faceted")
 
     outputs = []
+    # Positive panels are only meaningful when both merged and faceted views exist.
     if positive_merged and positive_faceted:
         outputs.extend(
             [
@@ -279,6 +298,7 @@ def main() -> None:
     else:
         print("No LoB+LoD+ sample-region rows; skipping positive gating panels")
 
+    # The gating-strategy panel is always written because it comes from control wells.
     outputs.append(
         write_panel(
             sort_strategy(strategy_rows),
@@ -291,6 +311,7 @@ def main() -> None:
         ),
     )
 
+    # Export every assembled SVG to PDF and report both artefacts.
     for svg_path in outputs:
         pdf_path = export_pdf(svg_path)
         print(f"Wrote {svg_path}")
@@ -298,4 +319,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    # Keep imports side-effect free; only build panels when executed as a script.
     main()

@@ -375,6 +375,8 @@ replicate_dates <- selected_wells %>%
 selected_wells <- selected_wells %>%
   left_join(replicate_dates, by = c("positive_id", "run_date"))
 
+# Compute shared axes for all wells belonging to one positive sample so
+# individual and merged plots are directly comparable.
 compute_sample_axis_limits <- function(sample_rows) {
   droplets <- purrr::map_dfr(seq_len(nrow(sample_rows)), function(i) {
     well_row <- sample_rows[i, ]
@@ -397,6 +399,7 @@ compute_sample_axis_limits <- function(sample_rows) {
   )
 }
 
+# Pre-compute per-sample axes once before rendering individual and merged plots.
 sample_axis_limits <- if (nrow(selected_wells) > 0L) {
   selected_wells %>%
     group_by(positive_id) %>%
@@ -406,11 +409,14 @@ sample_axis_limits <- if (nrow(selected_wells) > 0L) {
   tibble(positive_id = character(), x_min = numeric(), x_max = numeric(), y_min = numeric(), y_max = numeric())
 }
 
+# Attach the plotting axes to every selected well for downstream render helpers.
 selected_wells <- selected_wells %>%
   left_join(sample_axis_limits, by = "positive_id")
 
 # ---- render batch ----
 
+# Remove the old pooled-samples directory only when it is exactly the historical
+# derived-output location.
 if (dir.exists(legacy_pooled_dir)) {
   legacy_pooled_dir_norm <- normalizePath(legacy_pooled_dir, winslash = "/", mustWork = TRUE)
   expected_legacy_dir_norm <- normalizePath(
@@ -493,6 +499,8 @@ merged_manifest <- if (nrow(selected_wells) > 0L) {
   empty_plot_manifest
 }
 
+# Combine all manifest rows into the stable output order used by downstream
+# checks and review.
 plot_manifest <- bind_rows(individual_manifest, merged_manifest) %>%
   arrange(positive_id, plot_kind, run_date, well)
 
