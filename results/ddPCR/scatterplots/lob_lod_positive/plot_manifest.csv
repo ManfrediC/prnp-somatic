@@ -1,0 +1,1 @@
+plot_kind,positive_id,participant,code,brain_region,mutation,sample_id,well_index,run_id,run_date,assay,well,sample,output_path,status,droplet_count,accepted_clustered_droplets,gated_or_unassigned_droplets,rejected_droplet_count,ch1_threshold,ch2_threshold,peak_path,metadata_path,n_wells,contributing_wells
