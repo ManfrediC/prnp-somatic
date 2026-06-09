@@ -1,5 +1,6 @@
 library(tidyverse)
 library(readxl)
+library(cowplot)
 
 project_root <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
 data_path <- file.path(project_root, "results", "ddPCR", "SNV_data_final.xlsx")
@@ -133,6 +134,49 @@ ggsave(
   width = 11,
   height = 12,
   dpi = 300
+)
+
+save_svg_if_available <- function(plot, path, width, height) {
+  if (requireNamespace("svglite", quietly = TRUE)) {
+    ggsave(
+      filename = path,
+      plot = plot,
+      width = width,
+      height = height,
+      dpi = 300
+    )
+  } else {
+    unlink(path, force = TRUE)
+    warning("svglite is not installed; removed stale SVG output: ", path, call. = FALSE)
+  }
+}
+
+legend_bottom_plot <- cowplot::plot_grid(
+  combined_plot + theme(legend.position = "none"),
+  cowplot::get_legend(
+    combined_plot +
+      theme(
+        legend.position = "bottom",
+        legend.box = "horizontal"
+      )
+  ),
+  ncol = 1,
+  rel_heights = c(1, 0.08)
+)
+
+ggsave(
+  filename = file.path(out_dir, "SNV_all_mutations_legend_bottom_final.pdf"),
+  plot = legend_bottom_plot,
+  width = 11,
+  height = 12,
+  dpi = 300
+)
+
+save_svg_if_available(
+  plot = legend_bottom_plot,
+  path = file.path(out_dir, "SNV_all_mutations_legend_bottom_final.svg"),
+  width = 11,
+  height = 12
 )
 
 write_multipage_pdf <- function(path, plots, width, height) {

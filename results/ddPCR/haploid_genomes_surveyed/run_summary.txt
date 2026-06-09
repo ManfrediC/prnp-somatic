@@ -1,5 +1,5 @@
 ddPCR sample-region and participant-level droplet counts and haploid genome-equivalent estimates
-Run time: 2026-06-05 11:40:54 CEST
+Run time: 2026-06-08 23:27:32 CEST
 Project root: /mnt/c/Projects/prnp-somatic
 Partition-count rows read: 669
 Curated ddPCR rows validated: 669
@@ -8,7 +8,7 @@ Sample-region rows written: 669
 Participant-pooled rows written: 117
 Known heterozygous E200K sample-region rows retained: 6
 Participant mean-range table rows: 39
-Participant LoB+LoD pass statuses other than None: 4
+Participant LoB+LoD pass statuses other than None: 3
 
 Formula for retained genome-equivalent columns:
   n_genomes = -n_accepted_droplets * log(n_negative_droplets / n_accepted_droplets)

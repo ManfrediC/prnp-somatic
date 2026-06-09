@@ -254,23 +254,32 @@ def main() -> None:
     positive_merged = sort_positive(positive_rows, "merged")
     positive_faceted = sort_positive(positive_rows, "faceted")
 
-    outputs = [
-        write_panel(
-            positive_merged,
-            POSITIVE_DIR / "ddpcr_lob_lod_positive_merged_panel.svg",
-            ncols=3,
-            cell_width=430,
-            cell_height=395,
-            title="LoB+LoD+ sample-region ddPCR gating: merged wells",
-        ),
-        write_panel(
-            positive_faceted,
-            POSITIVE_DIR / "ddpcr_lob_lod_positive_faceted_panel.svg",
-            ncols=3,
-            cell_width=430,
-            cell_height=395,
-            title="LoB+LoD+ sample-region ddPCR gating: contributing wells",
-        ),
+    outputs = []
+    if positive_merged and positive_faceted:
+        outputs.extend(
+            [
+                write_panel(
+                    positive_merged,
+                    POSITIVE_DIR / "ddpcr_lob_lod_positive_merged_panel.svg",
+                    ncols=3,
+                    cell_width=430,
+                    cell_height=395,
+                    title="LoB+LoD+ sample-region ddPCR gating: merged wells",
+                ),
+                write_panel(
+                    positive_faceted,
+                    POSITIVE_DIR / "ddpcr_lob_lod_positive_faceted_panel.svg",
+                    ncols=3,
+                    cell_width=430,
+                    cell_height=395,
+                    title="LoB+LoD+ sample-region ddPCR gating: contributing wells",
+                ),
+            ]
+        )
+    else:
+        print("No LoB+LoD+ sample-region rows; skipping positive gating panels")
+
+    outputs.append(
         write_panel(
             sort_strategy(strategy_rows),
             STRATEGY_DIR / "ddpcr_gating_strategy_panel.svg",
@@ -280,7 +289,7 @@ def main() -> None:
             title="ddPCR gating strategy from QuantaSoft JSON thresholds",
             common_legend="strategy",
         ),
-    ]
+    )
 
     for svg_path in outputs:
         pdf_path = export_pdf(svg_path)

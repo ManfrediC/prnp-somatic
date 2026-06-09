@@ -419,124 +419,174 @@ positive_rows <- openxlsx::read.xlsx(file.path(project_root, "results", "ddPCR",
   arrange(match(mutation, mutation_order), participant, brain_region)
 
 if (nrow(positive_rows) == 0L) {
-  stop("No non-germline sample-region LoB+LoD+ rows found")
-}
+  unlink(file.path(positive_individual_dir, list.files(positive_individual_dir)), force = TRUE)
+  unlink(
+    file.path(
+      positive_out_dir,
+      c(
+        "ddpcr_lob_lod_positive_merged_panel.svg",
+        "ddpcr_lob_lod_positive_merged_panel.pdf",
+        "ddpcr_lob_lod_positive_faceted_panel.svg",
+        "ddpcr_lob_lod_positive_faceted_panel.pdf"
+      )
+    ),
+    force = TRUE
+  )
+  positive_manifest <- tibble(
+    figure = character(),
+    plot_kind = character(),
+    plot_order = integer(),
+    assay = character(),
+    sample_label = character(),
+    stage = character(),
+    n_wells = integer(),
+    n_droplets = integer(),
+    basename = character(),
+    svg_path = character(),
+    pdf_path = character()
+  )
+  positive_wells <- tibble(
+    row_id = integer(),
+    manuscript_label = character(),
+    mutation = character(),
+    run_id = character(),
+    run_date = as.Date(character()),
+    well = character(),
+    sample = character(),
+    accepted_droplets = numeric(),
+    archive_contents_relative_dir = character()
+  )
+  positive_thresholds <- tibble(
+    channel = character(),
+    threshold_type = character(),
+    threshold = numeric(),
+    run_id = character(),
+    run_date = as.Date(character()),
+    assay = character(),
+    well = character(),
+    sample = character(),
+    row_id = integer(),
+    positive_id = character(),
+    manuscript_label = character(),
+    well_plot_id = character()
+  )
+} else {
+  positive_wells <- positive_rows %>%
+    select(
+      row_id, positive_id, manuscript_label, participant, brain_region,
+      region_label, mutation, sample_id, sample_key,
+      fractional_abundance, ci_low, ci_high
+    ) %>%
+    inner_join(
+      well_manifest,
+      by = c("mutation" = "assay", "sample_key" = "sample_key"),
+      relationship = "many-to-many"
+    ) %>%
+    filter(!is.na(archive_contents_relative_dir)) %>%
+    mutate(assay = mutation) %>%
+    arrange(row_id, run_date, well)
 
-positive_wells <- positive_rows %>%
-  select(
-    row_id, positive_id, manuscript_label, participant, brain_region,
-    region_label, mutation, sample_id, sample_key,
-    fractional_abundance, ci_low, ci_high
-  ) %>%
-  inner_join(
-    well_manifest,
-    by = c("mutation" = "assay", "sample_key" = "sample_key"),
-    relationship = "many-to-many"
-  ) %>%
-  filter(!is.na(archive_contents_relative_dir)) %>%
-  mutate(assay = mutation) %>%
-  arrange(row_id, run_date, well)
+  if (nrow(positive_wells) == 0L) {
+    stop("Could not map LoB+LoD+ rows back to raw wells")
+  }
 
-if (nrow(positive_wells) == 0L) {
-  stop("Could not map LoB+LoD+ rows back to raw wells")
-}
+  positive_parsed <- positive_wells %>%
+    split(seq_len(nrow(.))) %>%
+    map(function(row) {
+      row <- as_tibble(row)
+      parsed <- read_well_droplets_for_plot(row)
+      list(row = row, parsed = parsed)
+    })
 
-positive_parsed <- positive_wells %>%
-  split(seq_len(nrow(.))) %>%
-  map(function(row) {
-    row <- as_tibble(row)
-    parsed <- read_well_droplets_for_plot(row)
-    list(row = row, parsed = parsed)
+  positive_droplets <- map2_dfr(positive_parsed, seq_along(positive_parsed), function(entry, i) {
+    entry$parsed$droplets %>%
+      mutate(
+        row_id = entry$row$row_id,
+        positive_id = entry$row$positive_id,
+        manuscript_label = entry$row$manuscript_label,
+        fractional_abundance = entry$row$fractional_abundance,
+        ci_low = entry$row$ci_low,
+        ci_high = entry$row$ci_high,
+        well_plot_id = paste(entry$row$run_id, entry$row$well, sep = "_")
+      )
   })
 
-positive_droplets <- map2_dfr(positive_parsed, seq_along(positive_parsed), function(entry, i) {
-  entry$parsed$droplets %>%
-    mutate(
-      row_id = entry$row$row_id,
-      positive_id = entry$row$positive_id,
-      manuscript_label = entry$row$manuscript_label,
-      fractional_abundance = entry$row$fractional_abundance,
-      ci_low = entry$row$ci_low,
-      ci_high = entry$row$ci_high,
-      well_plot_id = paste(entry$row$run_id, entry$row$well, sep = "_")
+  positive_thresholds <- map_dfr(positive_parsed, function(entry) {
+    entry$parsed$thresholds %>%
+      mutate(
+        row_id = entry$row$row_id,
+        positive_id = entry$row$positive_id,
+        manuscript_label = entry$row$manuscript_label,
+        well_plot_id = paste(entry$row$run_id, entry$row$well, sep = "_")
+      )
+  })
+
+  positive_limits <- axis_limits(positive_droplets, positive_thresholds)
+
+  positive_manifest <- map_dfr(seq_len(nrow(positive_rows)), function(i) {
+    row <- positive_rows[i, ]
+    droplets <- positive_droplets %>% filter(row_id == row$row_id)
+    thresholds <- positive_thresholds %>% filter(row_id == row$row_id)
+    n_wells <- n_distinct(droplets$well_plot_id)
+    subtitle <- paste0(
+      row$mutation,
+      "; ", n_wells, " well", ifelse(n_wells == 1L, "", "s"),
+      "; FA ", format_pct(row$fractional_abundance),
+      "% (95% CI ", format_pct(row$ci_low), "-", format_pct(row$ci_high), "%)"
     )
-})
 
-positive_thresholds <- map_dfr(positive_parsed, function(entry) {
-  entry$parsed$thresholds %>%
-    mutate(
-      row_id = entry$row$row_id,
-      positive_id = entry$row$positive_id,
-      manuscript_label = entry$row$manuscript_label,
-      well_plot_id = paste(entry$row$run_id, entry$row$well, sep = "_")
+    merged_plot <- base_scatter_plot(
+      droplets = droplets,
+      thresholds = thresholds %>% filter(threshold_type == "manual"),
+      title = row$manuscript_label,
+      subtitle = paste0(subtitle, "; merged droplets"),
+      limits = positive_limits,
+      facet_by_well = FALSE,
+      show_auto = FALSE,
+      show_manual = TRUE
     )
-})
+    merged_base <- paste0("positive_merged_", row$positive_id)
+    merged_files <- save_plot_pair(merged_plot, positive_individual_dir, merged_base, width = 5.2, height = 4.8)
 
-positive_limits <- axis_limits(positive_droplets, positive_thresholds)
+    faceted_plot <- base_scatter_plot(
+      droplets = droplets,
+      thresholds = thresholds %>% filter(threshold_type == "manual"),
+      title = row$manuscript_label,
+      subtitle = paste0(subtitle, "; one facet per contributing well"),
+      limits = positive_limits,
+      facet_by_well = TRUE,
+      show_auto = FALSE,
+      show_manual = TRUE
+    )
+    faceted_base <- paste0("positive_faceted_", row$positive_id)
+    faceted_files <- save_plot_pair(faceted_plot, positive_individual_dir, faceted_base, width = 5.2, height = max(4.8, 2.4 * n_wells))
 
-positive_manifest <- map_dfr(seq_len(nrow(positive_rows)), function(i) {
-  row <- positive_rows[i, ]
-  droplets <- positive_droplets %>% filter(row_id == row$row_id)
-  thresholds <- positive_thresholds %>% filter(row_id == row$row_id)
-  n_wells <- n_distinct(droplets$well_plot_id)
-  subtitle <- paste0(
-    row$mutation,
-    "; ", n_wells, " well", ifelse(n_wells == 1L, "", "s"),
-    "; FA ", format_pct(row$fractional_abundance),
-    "% (95% CI ", format_pct(row$ci_low), "-", format_pct(row$ci_high), "%)"
-  )
-
-  merged_plot <- base_scatter_plot(
-    droplets = droplets,
-    thresholds = thresholds %>% filter(threshold_type == "manual"),
-    title = row$manuscript_label,
-    subtitle = paste0(subtitle, "; merged droplets"),
-    limits = positive_limits,
-    facet_by_well = FALSE,
-    show_auto = FALSE,
-    show_manual = TRUE
-  )
-  merged_base <- paste0("positive_merged_", row$positive_id)
-  merged_files <- save_plot_pair(merged_plot, positive_individual_dir, merged_base, width = 5.2, height = 4.8)
-
-  faceted_plot <- base_scatter_plot(
-    droplets = droplets,
-    thresholds = thresholds %>% filter(threshold_type == "manual"),
-    title = row$manuscript_label,
-    subtitle = paste0(subtitle, "; one facet per contributing well"),
-    limits = positive_limits,
-    facet_by_well = TRUE,
-    show_auto = FALSE,
-    show_manual = TRUE
-  )
-  faceted_base <- paste0("positive_faceted_", row$positive_id)
-  faceted_files <- save_plot_pair(faceted_plot, positive_individual_dir, faceted_base, width = 5.2, height = max(4.8, 2.4 * n_wells))
-
-  bind_rows(
-    tibble(
-      figure = "lob_lod_positive",
-      plot_kind = "merged",
-      plot_order = i,
-      assay = row$mutation,
-      sample_label = row$manuscript_label,
-      stage = NA_character_,
-      n_wells = n_wells,
-      n_droplets = nrow(droplets),
-      basename = merged_base
-    ) %>% bind_cols(merged_files),
-    tibble(
-      figure = "lob_lod_positive",
-      plot_kind = "faceted",
-      plot_order = i,
-      assay = row$mutation,
-      sample_label = row$manuscript_label,
-      stage = NA_character_,
-      n_wells = n_wells,
-      n_droplets = nrow(droplets),
-      basename = faceted_base
-    ) %>% bind_cols(faceted_files)
-  )
-})
+    bind_rows(
+      tibble(
+        figure = "lob_lod_positive",
+        plot_kind = "merged",
+        plot_order = i,
+        assay = row$mutation,
+        sample_label = row$manuscript_label,
+        stage = NA_character_,
+        n_wells = n_wells,
+        n_droplets = nrow(droplets),
+        basename = merged_base
+      ) %>% bind_cols(merged_files),
+      tibble(
+        figure = "lob_lod_positive",
+        plot_kind = "faceted",
+        plot_order = i,
+        assay = row$mutation,
+        sample_label = row$manuscript_label,
+        stage = NA_character_,
+        n_wells = n_wells,
+        n_droplets = nrow(droplets),
+        basename = faceted_base
+      ) %>% bind_cols(faceted_files)
+    )
+  })
+}
 
 readr::write_csv(positive_manifest, file.path(positive_out_dir, "plot_manifest.csv"))
 readr::write_csv(
@@ -568,7 +618,11 @@ available_control_wells <- well_manifest %>%
   ) %>%
   filter(!is.na(stage), has_peak_data, has_metadata)
 
-reference_dates <- unique(positive_wells$run_date)
+reference_dates <- if (nrow(positive_wells) > 0L) {
+  unique(positive_wells$run_date)
+} else {
+  unique(well_manifest$run_date)
+}
 
 control_runs <- available_control_wells %>%
   group_by(assay, run_id, run_date, archive_contents_relative_dir) %>%
@@ -576,7 +630,7 @@ control_runs <- available_control_wells %>%
     stages_present = paste(sort(unique(stage)), collapse = ";"),
     complete = all(control_stage_order[1:3] %in% stage),
     total_accepted = sum(accepted_droplets, na.rm = TRUE),
-    date_distance = min(abs(as.integer(run_date - reference_dates))),
+    date_distance = min(abs(as.integer(first(run_date) - reference_dates)), na.rm = TRUE),
     .groups = "drop"
   ) %>%
   filter(complete) %>%
