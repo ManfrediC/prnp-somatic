@@ -45,18 +45,17 @@ class_levels <- c(
   "Gated/unassigned",
   "Rejected/unassigned"
 )
-plot_class_levels <- setdiff(class_levels, "Gated/unassigned")
+plot_class_levels <- setdiff(class_levels, c("Gated/unassigned", "Rejected/unassigned"))
 class_colours <- c(
-  `Reference-only` = "#0072B2",
-  `Mutant-only` = "#D55E00",
-  `Double-positive` = "#CC79A7",
-  `Double-negative` = "#9CA3AF",
-  `Rejected/unassigned` = "#E5E7EB"
+  `Reference-only` = "#009E73",
+  `Mutant-only` = "#CC79A7",
+  `Double-positive` = "#E69F00",
+  `Double-negative` = "#5684E9"
 )
 draw_order <- c(
   "Rejected/unassigned" = 1L,
-  "Double-negative" = 2L,
-  "Gated/unassigned" = 3L,
+  "Gated/unassigned" = 2L,
+  "Double-negative" = 3L,
   "Reference-only" = 4L,
   "Mutant-only" = 5L,
   "Double-positive" = 6L
@@ -103,42 +102,69 @@ format_pct <- function(x) {
 
 # ---- threshold and class helpers ----
 
-# Bio-Rad metadata can store thresholds as lists or scalar values depending on
-# how the well was analysed.
-threshold_entry_value <- function(entry) {
-  if (is.null(entry) || length(entry) == 0L) {
+# Estimate the visible boundary between saved QuantaSoft negative and positive
+# calls for one fluorescence channel.
+infer_cluster_boundary <- function(droplets, amplitude_col, call_col) {
+  values <- droplets[[amplitude_col]]
+  calls <- droplets[[call_col]]
+  usable <- is.finite(values) & calls %in% c("Negative", "Positive")
+  values <- values[usable]
+  calls <- calls[usable]
+
+  negative <- values[calls == "Negative"]
+  positive <- values[calls == "Positive"]
+  if (length(negative) == 0L || length(positive) == 0L) {
     return(NA_real_)
   }
-  if (is.list(entry) && !is.null(entry[[1]]) && is.list(entry[[1]]) &&
-      !is.null(entry[[1]][["ThresholdValue"]])) {
-    return(as.numeric(entry[[1]][["ThresholdValue"]]))
+
+  positive_high <- stats::median(positive, na.rm = TRUE) > stats::median(negative, na.rm = TRUE)
+  ordered <- tibble(value = values, call = calls) %>%
+    arrange(value) %>%
+    mutate(
+      next_value = lead(value),
+      next_call = lead(call),
+      gap = next_value - value
+    ) %>%
+    filter(is.finite(gap), gap >= 0)
+
+  transition <- if (positive_high) {
+    ordered %>% filter(call == "Negative", next_call == "Positive")
+  } else {
+    ordered %>% filter(call == "Positive", next_call == "Negative")
   }
-  if (is.list(entry) && !is.null(entry[["ThresholdValue"]])) {
-    return(as.numeric(entry[["ThresholdValue"]]))
+  if (nrow(transition) > 0L) {
+    row <- transition[which.max(transition$gap), ]
+    return((row$value + row$next_value) / 2)
   }
-  if (is.numeric(entry) && length(entry) > 0L) {
-    return(as.numeric(entry[[1]]))
+
+  if (positive_high) {
+    low_edge <- as.numeric(stats::quantile(negative, 0.99, names = FALSE, na.rm = TRUE))
+    high_edge <- as.numeric(stats::quantile(positive, 0.01, names = FALSE, na.rm = TRUE))
+  } else {
+    low_edge <- as.numeric(stats::quantile(positive, 0.99, names = FALSE, na.rm = TRUE))
+    high_edge <- as.numeric(stats::quantile(negative, 0.01, names = FALSE, na.rm = TRUE))
   }
-  NA_real_
+  if (is.finite(low_edge) && is.finite(high_edge) && high_edge > low_edge) {
+    return((low_edge + high_edge) / 2)
+  }
+
+  (stats::median(negative, na.rm = TRUE) + stats::median(positive, na.rm = TRUE)) / 2
 }
 
-# Read manual and automatic thresholds for one fluorescence channel.
-threshold_rows_for_channel <- function(metadata, channel) {
-  manual <- threshold_entry_value((metadata$ThresholdValues %||% list())[[channel]])
-  auto <- threshold_entry_value((metadata$AutoThresholdValues %||% list())[[channel]])
+cluster_boundary_threshold_for_channel <- function(droplets, channel, amplitude_col, call_col) {
+  threshold <- infer_cluster_boundary(droplets, amplitude_col, call_col)
   tibble(
-    channel = paste0("Ch", channel),
-    threshold_type = c("manual", "auto"),
-    threshold = c(manual, auto)
+    channel = channel,
+    threshold_type = "cluster_boundary_inferred",
+    threshold = threshold
   ) %>%
     filter(!is.na(threshold), is.finite(threshold), threshold > 0)
 }
 
-# Collect usable threshold rows from both channels.
-thresholds_from_metadata <- function(metadata) {
+cluster_boundary_thresholds <- function(droplets) {
   bind_rows(
-    threshold_rows_for_channel(metadata, 1L),
-    threshold_rows_for_channel(metadata, 2L)
+    cluster_boundary_threshold_for_channel(droplets, "Ch1", "ch1_amplitude", "ch1_call"),
+    cluster_boundary_threshold_for_channel(droplets, "Ch2", "ch2_amplitude", "ch2_call")
   )
 }
 
@@ -209,6 +235,8 @@ read_well_droplets_for_plot <- function(well_row) {
     droplet_index = seq.int(0L, droplet_count - 1L),
     ch1_amplitude = ch1[seq_len(droplet_count)],
     ch2_amplitude = ch2[seq_len(droplet_count)],
+    ch1_call = NA_character_,
+    ch2_call = NA_character_,
     droplet_class = "Rejected/unassigned"
   )
 
@@ -228,17 +256,21 @@ read_well_droplets_for_plot <- function(well_row) {
     results <- as.character(unlist(cluster$Results, use.names = FALSE))
     if (length(results) < max(selected_indices) || is_true(cluster$Unassigned)) {
       droplets$droplet_class[row_indices] <- "Gated/unassigned"
+      droplets$ch1_call[row_indices] <- "Unassigned"
+      droplets$ch2_call[row_indices] <- "Unassigned"
       next
     }
 
     ref_result <- results[[selected$ref]]
     mut_result <- results[[selected$mut]]
+    droplets$ch1_call[row_indices] <- results[[ch1_idx]]
+    droplets$ch2_call[row_indices] <- results[[ch2_idx]]
     droplets$droplet_class[row_indices] <- class_from_calls(ref_result, mut_result)
   }
 
   # Return droplets and threshold metadata together so plot and manifest writers
   # use the same parsed source.
-  thresholds <- thresholds_from_metadata(metadata) %>%
+  thresholds <- cluster_boundary_thresholds(droplets) %>%
     mutate(
       run_id = well_row$run_id,
       run_date = as.Date(well_row$run_date),
@@ -288,33 +320,13 @@ axis_limits <- function(droplets, thresholds) {
   )
 }
 
-# Add exported manual/auto gate lines, or a note when QuantaSoft did not export
-# threshold values for the plotted well.
+# Add cluster-boundary gate lines inferred from saved QuantaSoft calls.
 add_gate_layers <- function(plot, thresholds, limits, show_auto = TRUE, show_manual = TRUE) {
   threshold_data <- thresholds %>%
-    filter(
-      (threshold_type == "auto" & show_auto) |
-        (threshold_type == "manual" & show_manual)
-    )
+    filter(!is.na(threshold), is.finite(threshold))
   if (nrow(threshold_data) == 0L) {
-    return(plot +
-      annotate(
-        "text",
-        x = limits$x[[1]] + diff(limits$x) * 0.03,
-        y = limits$y[[2]] - diff(limits$y) * 0.04,
-        label = "QuantaSoft cluster gate; no threshold line exported",
-        hjust = 0,
-        vjust = 1,
-        size = 2.2,
-        colour = "#374151"
-      ))
+    return(plot)
   }
-
-  plot <- plot +
-    scale_linetype_manual(
-      values = c(manual = "solid", auto = "dotted"),
-      guide = "none"
-    )
 
   # Channel 1 is the x-axis, and Channel 2 is the y-axis in these gating plots.
   vline_data <- threshold_data %>% filter(channel == "Ch1")
@@ -323,11 +335,11 @@ add_gate_layers <- function(plot, thresholds, limits, show_auto = TRUE, show_man
     plot <- plot +
       geom_vline(
         data = vline_data,
-        aes(xintercept = threshold, linetype = threshold_type),
+        aes(xintercept = threshold),
         linewidth = 0.35,
         colour = "black",
-        alpha = 0.75,
-        inherit.aes = FALSE,
+        linetype = "dotted",
+        alpha = 0.85,
         show.legend = FALSE
       )
   }
@@ -335,11 +347,11 @@ add_gate_layers <- function(plot, thresholds, limits, show_auto = TRUE, show_man
     plot <- plot +
       geom_hline(
         data = hline_data,
-        aes(yintercept = threshold, linetype = threshold_type),
+        aes(yintercept = threshold),
         linewidth = 0.35,
         colour = "black",
-        alpha = 0.75,
-        inherit.aes = FALSE,
+        linetype = "dotted",
+        alpha = 0.85,
         show.legend = FALSE
       )
   }
@@ -356,12 +368,13 @@ base_scatter_plot <- function(
   facet_by_well = FALSE,
   show_auto = TRUE,
   show_manual = TRUE,
-  show_legend = TRUE
+  show_legend = TRUE,
+  plot_title_size = 9
 ) {
-  # Drop gated/unassigned droplets from the visual layer while preserving them
-  # in the parsed metadata for audit outputs.
+  # Plot only called droplet clusters while preserving unassigned/rejected
+  # droplets in parsed metadata for audit outputs.
   plot <- droplets %>%
-    filter(droplet_class != "Gated/unassigned") %>%
+    filter(droplet_class %in% plot_class_levels) %>%
     arrange(draw_order, droplet_index) %>%
     ggplot(aes(x = ch1_amplitude, y = ch2_amplitude, colour = droplet_class)) +
     geom_point(size = 0.18, alpha = 0.42, stroke = 0, na.rm = TRUE) +
@@ -387,7 +400,7 @@ base_scatter_plot <- function(
       panel.grid.minor = element_blank(),
       legend.position = if (show_legend) "bottom" else "none",
       legend.box = "vertical",
-      plot.title = element_text(size = 9, face = "bold"),
+      plot.title = element_text(size = plot_title_size, face = "bold"),
       plot.subtitle = element_text(size = 7),
       strip.background = element_rect(fill = "#F3F4F6", colour = "#D1D5DB"),
       strip.text = element_text(size = 7)
@@ -407,17 +420,9 @@ base_scatter_plot <- function(
   )
 }
 
-# For the final adjusted gate view, prefer manual thresholds and fall back to
-# auto thresholds only if no manual line is available.
+# Strategy plots use the same cluster-boundary threshold source for every stage.
 thresholds_for_control_stage <- function(thresholds, stage) {
-  if (stage != "Final adjusted gate") {
-    return(thresholds)
-  }
-  manual_thresholds <- thresholds %>% filter(threshold_type == "manual")
-  if (nrow(manual_thresholds) > 0L) {
-    return(manual_thresholds)
-  }
-  thresholds %>% filter(threshold_type == "auto")
+  thresholds
 }
 
 # Write paired SVG/PDF outputs for each individual asset.
@@ -783,21 +788,18 @@ strategy_manifest <- map_dfr(seq_len(nrow(strategy_controls)), function(i) {
     filter(assay == row$assay, stage == row$stage, well == row$well, run_id == row$run_id)
   thresholds_to_plot <- thresholds_for_control_stage(thresholds, row$stage)
   title <- paste(row$assay, row$stage)
-  subtitle <- paste0(
-    as.Date(row$run_date), " ", row$well, " ", row$sample,
-    "; n=", nrow(droplets)
-  )
 
   plot <- base_scatter_plot(
     droplets = droplets,
     thresholds = thresholds_to_plot,
     title = title,
-    subtitle = subtitle,
+    subtitle = NULL,
     limits = strategy_limits,
     facet_by_well = FALSE,
     show_auto = TRUE,
     show_manual = TRUE,
-    show_legend = FALSE
+    show_legend = FALSE,
+    plot_title_size = 11
   )
 
   basename <- paste0(

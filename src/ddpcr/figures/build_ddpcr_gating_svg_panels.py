@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import copy
 import csv
+import math
 import re
 import shutil
 import subprocess
@@ -39,7 +40,7 @@ NUMBER_RE = re.compile(r"[-+]?(?:\d*\.\d+|\d+)(?:[eE][-+]?\d+)?")
 
 POSITIVE_PANEL_WIDTH = 1243.3007
 POSITIVE_PANEL_HEIGHT = 814.26233
-POSITIVE_PANEL_TITLE = "Samples with E200K-positive calls"
+POSITIVE_PANEL_WIDTH_MARGIN = 8
 POSITIVE_PANEL_TRANSFORMS = [
     "matrix(1.03333,0,0,1.03333,0.45103926,41.8125)",
     "matrix(1.03333,0,0,1.03333,398.45104,41.8125)",
@@ -63,13 +64,12 @@ POSITIVE_WELL_STATUS_LABEL_STYLE = "font-size:18.0646px"
 # Keep legend colours in sync with the R scripts that generate the individual
 # gating SVGs.
 CLASS_COLOURS = {
-    "Reference-only": "#0072B2",
-    "Mutant-only": "#D55E00",
-    "Double-positive": "#CC79A7",
-    "Double-negative": "#9CA3AF",
-    "Gated/unassigned": "#E69F00",
-    "Rejected/unassigned": "#E5E7EB",
+    "Double-positive": "#E69F00",
+    "Reference-only": "#009E73",
+    "Mutant-only": "#CC79A7",
+    "Double-negative": "#5684E9",
 }
+STRATEGY_PANEL_TITLE = "ddPCR gating strategy based on controls"
 
 
 # ---- manifest input ----
@@ -226,26 +226,21 @@ def line(
 def draw_strategy_legend(root: ET.Element, centre_x: float, y: float) -> None:
     """Draw the shared droplet-class and gate legend below strategy panels."""
     # Keep the legend compact enough to sit below the 12-panel strategy grid.
-    x = centre_x - 410
+    x = centre_x - 345
     text(root, x, y + 12, "Droplet class", size=12, weight="bold")
     class_items = list(CLASS_COLOURS.items())
     class_x = x + 110
-    class_gap_x = 136
-    class_gap_y = 22
+    class_gap_x = 150
     for index, (label, colour) in enumerate(class_items):
-        col = index % 3
-        row = index // 3
-        item_x = class_x + col * class_gap_x
-        item_y = y + 10 + row * class_gap_y
-        circle(root, item_x, item_y - 4, 3.5, colour, stroke="#9CA3AF" if label == "Rejected/unassigned" else "none")
+        item_x = class_x + index * class_gap_x
+        item_y = y + 10
+        circle(root, item_x, item_y - 4, 3.5, colour)
         text(root, item_x + 12, item_y, label, size=10)
 
-    gate_x = class_x + 3 * class_gap_x + 38
+    gate_x = class_x + len(class_items) * class_gap_x + 26
     text(root, gate_x, y + 12, "Gate", size=12, weight="bold")
-    line(root, gate_x + 52, y + 6, gate_x + 92, y + 6, width=1.2)
-    text(root, gate_x + 102, y + 10, "Final QuantaSoft gate", size=10)
-    line(root, gate_x + 52, y + 28, gate_x + 92, y + 28, width=1.2, dasharray="2 3")
-    text(root, gate_x + 102, y + 32, "Auto threshold", size=10)
+    line(root, gate_x + 52, y + 6, gate_x + 92, y + 6, width=1.2, dasharray="0.75 2.25")
+    text(root, gate_x + 102, y + 10, "Cluster-boundary gate", size=10)
 
 
 # ---- SVG embedding helpers ----
@@ -260,6 +255,103 @@ def svg_viewbox(root: ET.Element) -> tuple[float, float, float, float]:
     width = float(re.sub(r"[^0-9.]+$", "", root.attrib["width"]))
     height = float(re.sub(r"[^0-9.]+$", "", root.attrib["height"]))
     return 0.0, 0.0, width, height
+
+
+def parse_matrix(transform: str) -> tuple[float, float]:
+    """Return scale and translate-x for a pure matrix(a,0,0,a,e,f) transform."""
+    values = [float(value.group(0)) for value in NUMBER_RE.finditer(transform)]
+    if len(values) != 6:
+        raise ValueError(f"Unexpected transform format: {transform}")
+    a, b, c, d, e, _ = values
+    if abs(b) > 1e-9 or abs(c) > 1e-9:
+        raise ValueError(f"Expected axis-aligned panel transform, got: {transform}")
+    if abs(a - d) > 1e-9:
+        raise ValueError(f"Expected uniform scale in panel transform, got: {transform}")
+    return a, e
+
+
+def parse_finite_number(value: str) -> float | None:
+    """Parse numeric attributes with optional unit suffixes."""
+    cleaned = value.strip()
+    match = re.fullmatch(r"([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)", cleaned)
+    if match:
+        return float(match.group(1))
+    # Handle values like "12px" and "10%".
+    try:
+        return float(re.sub(r"[^0-9.+-eE].*$", "", cleaned))
+    except ValueError:
+        return None
+
+
+def update_bounds(current: float | None, candidate: float | None) -> float | None:
+    """Track the max bound from optional numeric candidates."""
+    if candidate is None or not math.isfinite(candidate):
+        return current
+    return candidate if current is None else max(current, candidate)
+
+
+def svg_content_max_x(root: ET.Element) -> float | None:
+    """Estimate rightmost x coordinate from source SVG drawing coordinates."""
+    max_x: float | None = None
+    for node in root.iter():
+        tag = node.tag.rsplit("}", maxsplit=1)[-1]
+
+        if tag == "path":
+            coordinates = [float(match.group(0)) for match in NUMBER_RE.finditer(node.attrib.get("d", ""))]
+            if coordinates:
+                max_x = update_bounds(max_x, max(coordinates[0::2]))
+
+        elif tag == "line":
+            max_x = update_bounds(max_x, parse_finite_number(node.attrib.get("x1", "")))
+            max_x = update_bounds(max_x, parse_finite_number(node.attrib.get("x2", "")))
+
+        elif tag in {"polyline", "polygon"}:
+            points = [float(match.group(0)) for match in NUMBER_RE.finditer(node.attrib.get("points", ""))]
+            if points:
+                max_x = update_bounds(max_x, max(points[0::2]))
+
+        elif tag == "rect":
+            x = parse_finite_number(node.attrib.get("x", ""))
+            width = parse_finite_number(node.attrib.get("width", ""))
+            if x is not None and width is not None:
+                max_x = update_bounds(max_x, x + width)
+            else:
+                max_x = update_bounds(max_x, x)
+
+        elif tag == "circle":
+            cx = parse_finite_number(node.attrib.get("cx", ""))
+            r = parse_finite_number(node.attrib.get("r", ""))
+            max_x = update_bounds(max_x, cx + r if cx is not None and r is not None else cx)
+
+        elif tag == "ellipse":
+            cx = parse_finite_number(node.attrib.get("cx", ""))
+            rx = parse_finite_number(node.attrib.get("rx", ""))
+            max_x = update_bounds(max_x, cx + rx if cx is not None and rx is not None else cx)
+
+        elif tag == "text":
+            text_x = parse_finite_number(node.attrib.get("x", ""))
+            if text_x is not None:
+                text = (node.text or "")
+                approximate_chars = len(text.strip()) if text else 0
+                # Conservative glyph-space fallback for labels and tick values.
+                max_x = update_bounds(max_x, text_x + approximate_chars * 6.5)
+
+        elif tag == "use":
+            use_x = parse_finite_number(node.attrib.get("x", ""))
+            # The glyph glyph widths vary; add a conservative fallback.
+            max_x = update_bounds(max_x, use_x + 24.0 if use_x is not None else None)
+
+    if max_x is None:
+        raise ValueError("No extractable geometry in source SVG")
+    return max_x
+
+
+def transformed_max_x(svg_path: Path, transform: str) -> float | None:
+    """Estimate max x after applying a fixed-scale panel transform."""
+    source_root = ET.parse(svg_path).getroot()
+    local_max_x = svg_content_max_x(source_root)
+    scale, tx = parse_matrix(transform)
+    return scale * local_max_x + tx
 
 
 def prefix_svg_ids(node: ET.Element, prefix: str) -> None:
@@ -406,7 +498,7 @@ def inline_svg(
     width: float,
     height: float,
     prefix: str,
-) -> None:
+) -> ET.Element:
     """Copy one source SVG into the output panel while preserving its aspect ratio."""
     source_root = ET.parse(source_svg).getroot()
     min_x, min_y, source_width, source_height = svg_viewbox(source_root)
@@ -427,6 +519,7 @@ def inline_svg(
         cloned = copy.deepcopy(child)
         prefix_svg_ids(cloned, prefix)
         wrapper.append(cloned)
+    return wrapper
 
 
 # ---- LoB/LoD status labels ----
@@ -445,7 +538,7 @@ def lob_lod_status_lines(row: dict[str, str]) -> tuple[str, str]:
     """Return compact LoD/LoB status labels for one individual well."""
     lod = "LoD+" if manifest_bool(row, "detected_above_LoD") else "LoD-"
     lob = "LoB+" if manifest_bool(row, "detected_above_LoB") else "LoB-"
-    return lod, lob
+    return lob, lod
 
 
 def add_lob_lod_status_label(group: ET.Element, row: dict[str, str]) -> None:
@@ -501,28 +594,46 @@ def write_lob_lod_positive_panel(
     if len(rows) != 5:
         raise RuntimeError(f"Expected 5 LoB/LoD individual-well rows; found {len(rows)}")
 
+    panel_row_paths = [manifest_svg_path(row) for row in rows]
+    legend_path = manifest_svg_path(legend_row)
+
+    panel_width = POSITIVE_PANEL_WIDTH
+    right_bound: float | None = None
+    width_is_estimated = True
+    for source_path, transform in zip(panel_row_paths, POSITIVE_PANEL_TRANSFORMS, strict=True):
+        try:
+            right_bound = update_bounds(right_bound, transformed_max_x(source_path, transform))
+        except Exception:
+            width_is_estimated = False
+            break
+    if width_is_estimated:
+        try:
+            right_bound = update_bounds(right_bound, transformed_max_x(legend_path, POSITIVE_PANEL_LEGEND_TRANSFORM))
+        except Exception:
+            width_is_estimated = False
+    if width_is_estimated and right_bound is not None and right_bound > 0:
+        panel_width = max(POSITIVE_PANEL_WIDTH_MARGIN, math.ceil(right_bound + POSITIVE_PANEL_WIDTH_MARGIN))
+
     output_svg.parent.mkdir(parents=True, exist_ok=True)
     root = ET.Element(
         f"{{{SVG_NS}}}svg",
         {
-            "width": str(POSITIVE_PANEL_WIDTH),
+            "width": str(panel_width),
             "height": str(POSITIVE_PANEL_HEIGHT),
-            "viewBox": f"0 0 {POSITIVE_PANEL_WIDTH} {POSITIVE_PANEL_HEIGHT}",
+            "viewBox": f"0 0 {panel_width} {POSITIVE_PANEL_HEIGHT}",
             "version": "1.1",
         },
     )
 
-    styled_text(root, 11.447133, 15.8125, POSITIVE_PANEL_TITLE, "22px")
-
-    for index, (row, transform) in enumerate(zip(rows, POSITIVE_PANEL_TRANSFORMS, strict=True), start=1):
+    for index, (row_path, transform) in enumerate(zip(panel_row_paths, POSITIVE_PANEL_TRANSFORMS, strict=True), start=1):
         group = ET.SubElement(
             root,
             f"{{{SVG_NS}}}g",
             {"id": f"editable_panel_{index}", "transform": transform},
         )
-        append_source_svg(group, manifest_svg_path(row), f"panel{index}_")
+        append_source_svg(group, row_path, f"panel{index}_")
         merge_droplet_paths(group)
-        add_lob_lod_status_label(group, row)
+        add_lob_lod_status_label(group, rows[index - 1])
         ensure_plot_border_drawn_last(group)
 
     legend_group = ET.SubElement(
@@ -530,7 +641,7 @@ def write_lob_lod_positive_panel(
         f"{{{SVG_NS}}}g",
         {"id": "editable_panel_6", "transform": POSITIVE_PANEL_LEGEND_TRANSFORM},
     )
-    append_source_svg(legend_group, manifest_svg_path(legend_row), "legend_")
+    append_source_svg(legend_group, legend_path, "legend_")
 
     for label, x, y in POSITIVE_PANEL_LABELS:
         styled_text(root, x, y, label, "18px", style="font-size:21.3333px")
@@ -578,7 +689,7 @@ def write_panel(
             "version": "1.1",
         },
     )
-    text(root, margin_x, 30, title, size=22, weight="bold")
+    styled_text(root, margin_x, 30, title, "22px")
 
     # Lay out source SVGs in reading order and add panel letters in the margin.
     for index, row in enumerate(rows):
@@ -591,12 +702,16 @@ def write_panel(
         x = margin_x + row_offset + grid_col * (cell_width + gap_x)
         y = margin_y + grid_row * (cell_height + gap_y)
         letter = chr(ord("A") + index)
-        inline_svg(root, manifest_svg_path(row), x + 24, y, cell_width - 24, cell_height, f"p{index}_")
-        text(root, x + 2, y + 24, letter, size=18, weight="bold")
+        wrapper = inline_svg(root, manifest_svg_path(row), x + 24, y, cell_width - 24, cell_height, f"p{index}_")
+        merge_droplet_paths(wrapper)
+        ensure_plot_border_drawn_last(wrapper)
+        styled_text(root, x + 2, y + 24, letter, "18px", style="font-size:21.3333px")
 
     # Strategy panels use one shared legend to avoid repeating legends in every cell.
     if common_legend == "strategy":
         draw_strategy_legend(root, width / 2, height - legend_height + 10)
+
+    prune_unused_defs(root)
 
     # Write via a same-directory temporary file so large SVG panels are not
     # left half-written if export is interrupted.
@@ -711,7 +826,7 @@ def main() -> None:
                 ncols=4,
                 cell_width=345,
                 cell_height=315,
-                title="ddPCR gating strategy from QuantaSoft JSON thresholds",
+                title=STRATEGY_PANEL_TITLE,
                 common_legend="strategy",
             ),
         )
