@@ -28,8 +28,6 @@ REPEAT_RESULTS_ROOT="${REPEAT_RESULTS_ROOT:-results/repeats}"
 REPEAT_REF_FASTA="${REPEAT_REF_FASTA:-resources/chr2_chr4_chr20.fasta}"
 PRNP_ORR_BED="${PRNP_ORR_BED:-resources/prnp_orr.hg38.bed}"
 PRNP_EH_CATALOG="${PRNP_EH_CATALOG:-resources/repeats/prnp_orr.expansionhunter.json}"
-REVIEWER_CONDA_ENV="${REVIEWER_CONDA_ENV:-}"
-REVIEWER_BIN="${REVIEWER_BIN:-}"
 RUN_GANGSTR="${RUN_GANGSTR:-0}"
 GANGSTR_BIN="${GANGSTR_BIN:-}"
 GANGSTR_REGIONS_BED="${GANGSTR_REGIONS_BED:-resources/repeats/prnp_orr.gangstr.bed}"
@@ -43,7 +41,6 @@ PRNP_TOTAL_REFERENCE_REPEATS="${PRNP_TOTAL_REFERENCE_REPEATS:-5}"
 PRNP_VARIABLE_REPEAT_OFFSET="${PRNP_VARIABLE_REPEAT_OFFSET:-3}"
 REPEAT_THREADS="${REPEAT_THREADS:-4}"
 ORR_MIN_READS="${ORR_MIN_READS:-10}"
-RUN_REVIEWER="${RUN_REVIEWER:-1}"
 FORCE="${FORCE:-0}"
 ARCHIVE_EXISTING_RUN="${ARCHIVE_EXISTING_RUN:-0}"
 ARCHIVE_RUN_LABEL="${ARCHIVE_RUN_LABEL:-}"
@@ -53,7 +50,6 @@ REPEAT_RESULTS_ROOT="$(normalize_path_setting "$REPEAT_RESULTS_ROOT")"
 REPEAT_REF_FASTA="$(normalize_path_setting "$REPEAT_REF_FASTA")"
 PRNP_ORR_BED="$(normalize_path_setting "$PRNP_ORR_BED")"
 PRNP_EH_CATALOG="$(normalize_path_setting "$PRNP_EH_CATALOG")"
-REVIEWER_BIN="$(normalize_path_setting "$REVIEWER_BIN")"
 GANGSTR_BIN="$(normalize_path_setting "$GANGSTR_BIN")"
 GANGSTR_REGIONS_BED="$(normalize_path_setting "$GANGSTR_REGIONS_BED")"
 
@@ -63,13 +59,11 @@ GANGSTR_REGIONS_BED="$(normalize_path_setting "$GANGSTR_REGIONS_BED")"
 
 RAW_ROOT="${REPEAT_RESULTS_ROOT}/raw/expansionhunter"
 GANGSTR_RAW_ROOT="${REPEAT_RESULTS_ROOT}/raw/gangstr"
-REVIEW_ROOT="${REPEAT_RESULTS_ROOT}/review/reviewer"
 LOG_ROOT="${REPEAT_RESULTS_ROOT}/logs"
 MANIFEST_TSV="${REPEAT_RESULTS_ROOT}/sample_manifest.tsv"
 RUN_SETTINGS_TSV="${REPEAT_RESULTS_ROOT}/run_settings.tsv"
 OLD_RUNS_ROOT="${REPEAT_RESULTS_ROOT}/old_runs"
 SAMPLE_CALLS_TSV="${REPEAT_RESULTS_ROOT}/sample_calls.tsv"
-SAMPLE_REVIEW_TSV="${REPEAT_RESULTS_ROOT}/sample_review.tsv"
 CANDIDATE_CALLS_TSV="${REPEAT_RESULTS_ROOT}/candidate_calls.tsv"
 COHORT_SUMMARY_TSV="${REPEAT_RESULTS_ROOT}/cohort_summary.tsv"
 SUBCLONAL_SUPPORT_TSV="${REPEAT_RESULTS_ROOT}/subclonal_read_support.tsv"
@@ -86,7 +80,6 @@ RUN_TARGETS=(
   "$MANIFEST_TSV"
   "$RUN_SETTINGS_TSV"
   "$SAMPLE_CALLS_TSV"
-  "$SAMPLE_REVIEW_TSV"
   "$CANDIDATE_CALLS_TSV"
   "$COHORT_SUMMARY_TSV"
   "$SUBCLONAL_SUPPORT_TSV"
@@ -94,7 +87,6 @@ RUN_TARGETS=(
   "$SOMATIC_SCREEN_TSV"
   "$RAW_ROOT"
   "$GANGSTR_RAW_ROOT"
-  "$REVIEW_ROOT"
   "$LOG_ROOT"
 )
 
@@ -160,15 +152,6 @@ normalize_path_setting() {
   echo "${value//\\\\/\/}"
 }
 
-find_conda_env_prefix() {
-  local env_name="$1"
-  # Resolve the on-disk prefix once so later path construction stays simple.
-  conda env list | awk -v env_name="$env_name" '
-    $1 == env_name { print $NF; found=1; exit }
-    END { if (!found) exit 1 }
-  '
-}
-
 config_file_loaded() {
   # Keep the provenance table explicit about whether local overrides were used.
   [[ -f "$CONFIG_FILE" ]]
@@ -182,37 +165,6 @@ capture_expansionhunter_version() {
     | grep -Eo 'ExpansionHunter v[0-9]+(\.[0-9]+)+' \
     | head -n 1 \
     || true
-}
-
-capture_reviewer_version() {
-  local version_output package_version
-
-  # Prefer the executable's own version output, but fall back to conda package
-  # metadata when REViewer is being resolved from a separate environment.
-  version_output="$("${REVIEWER_CMD[@]}" --version 2>&1 || true)"
-  package_version="$(
-    printf '%s\n' "$version_output" \
-      | grep -Eo 'REViewer v[0-9]+(\.[0-9]+)+' \
-      | head -n 1 \
-      || true
-  )"
-  if [[ -n "$package_version" ]]; then
-    printf '%s\n' "$package_version"
-    return 0
-  fi
-
-  if [[ -n "$REVIEWER_CONDA_ENV" ]] && command -v conda >/dev/null 2>&1; then
-    package_version="$(
-      conda list -n "$REVIEWER_CONDA_ENV" reviewer 2>/dev/null \
-        | awk '$1 == "reviewer" { print "REViewer v" $2; exit }'
-    )"
-    if [[ -n "$package_version" ]]; then
-      printf '%s\n' "$package_version"
-      return 0
-    fi
-  fi
-
-  printf '%s\n' "unknown"
 }
 
 capture_gangstr_version() {
@@ -344,12 +296,11 @@ archive_existing_run() {
 verify_latest_run() {
   local manifest_path="$1"
   local expected_count="$2"
-  local manifest_unique_count sample_calls_count sample_review_count
+  local manifest_unique_count sample_calls_count
   local subclonal_count gangstr_count somatic_screen_count
-  local sample_id group bam bai orr_reads sample_raw_dir sample_review_dir
-  local eh_prefix eh_vcf eh_json eh_realigned_bam review_prefix review_svg
+  local sample_id group bam bai orr_reads sample_raw_dir
+  local eh_prefix eh_vcf eh_json
   local gangstr_prefix gangstr_vcf
-  local review_metrics review_phasing
   local failures=()
 
   # The manifest is the canonical cohort definition for this run, so we check
@@ -363,45 +314,24 @@ verify_latest_run() {
     )
   fi
 
-  # For each manifest sample, confirm that the caller outputs exist and, when
-  # enabled, that REViewer produced the expected review artifacts.
+  # For each manifest sample, confirm that the caller outputs exist.
   while IFS=$'\t' read -r sample_id group bam bai orr_reads; do
     if [[ "$sample_id" == "sample_id" ]]; then
       continue
     fi
 
     sample_raw_dir="${RAW_ROOT}/${sample_id}"
-    sample_review_dir="${REVIEW_ROOT}/${sample_id}"
     eh_prefix="${sample_raw_dir}/${sample_id}"
     eh_vcf="${eh_prefix}.vcf"
     eh_json="${eh_prefix}.json"
-    eh_realigned_bam="${eh_prefix}_realigned.bam"
     gangstr_prefix="${GANGSTR_RAW_ROOT}/${sample_id}/${sample_id}"
     gangstr_vcf="${gangstr_prefix}.vcf"
-    review_prefix="${sample_review_dir}/${sample_id}.PRNP_ORR"
-    review_svg="${review_prefix}.PRNP_ORR.svg"
-    review_metrics="${review_prefix}.metrics.tsv"
-    review_phasing="${review_prefix}.phasing.tsv"
 
     if [[ ! -f "$eh_vcf" ]]; then
       failures+=("Missing ExpansionHunter VCF for ${sample_id}: ${eh_vcf}")
     fi
     if [[ ! -f "$eh_json" ]]; then
       failures+=("Missing ExpansionHunter JSON for ${sample_id}: ${eh_json}")
-    fi
-    if [[ "$RUN_REVIEWER" == "1" ]]; then
-      if [[ ! -f "$eh_realigned_bam" ]]; then
-        failures+=("Missing ExpansionHunter realigned BAM for ${sample_id}: ${eh_realigned_bam}")
-      fi
-      if [[ ! -f "$review_svg" ]]; then
-        failures+=("Missing REViewer SVG for ${sample_id}: ${review_svg}")
-      fi
-      if [[ ! -f "$review_metrics" ]]; then
-        failures+=("Missing REViewer metrics for ${sample_id}: ${review_metrics}")
-      fi
-      if [[ ! -f "$review_phasing" ]]; then
-        failures+=("Missing REViewer phasing table for ${sample_id}: ${review_phasing}")
-      fi
     fi
     if [[ "$RUN_GANGSTR" == "1" && ! -f "$gangstr_vcf" ]]; then
       failures+=("Missing GangSTR VCF for ${sample_id}: ${gangstr_vcf}")
@@ -413,7 +343,6 @@ verify_latest_run() {
   for target in \
     "$RUN_SETTINGS_TSV" \
     "$SAMPLE_CALLS_TSV" \
-    "$SAMPLE_REVIEW_TSV" \
     "$CANDIDATE_CALLS_TSV" \
     "$COHORT_SUMMARY_TSV" \
     "$SUBCLONAL_SUPPORT_TSV" \
@@ -433,17 +362,6 @@ verify_latest_run() {
     if [[ "$sample_calls_count" -ne "$manifest_unique_count" ]]; then
       failures+=(
         "sample_calls.tsv contains ${sample_calls_count} unique samples but manifest expects ${manifest_unique_count}."
-      )
-    fi
-  fi
-
-  if [[ -f "$SAMPLE_REVIEW_TSV" ]]; then
-    sample_review_count="$(
-      tail -n +2 "$SAMPLE_REVIEW_TSV" | cut -f1 | LC_ALL=C sort -u | wc -l | awk '{print $1}'
-    )"
-    if [[ "$sample_review_count" -ne "$manifest_unique_count" ]]; then
-      failures+=(
-        "sample_review.tsv contains ${sample_review_count} unique samples but manifest expects ${manifest_unique_count}."
       )
     fi
   fi
@@ -504,33 +422,6 @@ if [[ -z "${PYTHON_CMD:-}" ]]; then
   echo "Required command not found: python or python3" >&2
   exit 1
 fi
-REVIEWER_CMD=(REViewer)
-if [[ "$RUN_REVIEWER" == "1" ]]; then
-  # REViewer may live either in the active environment, a dedicated path, or a
-  # separate conda environment. Resolve that once up front before the long run.
-  if [[ -n "$REVIEWER_BIN" ]]; then
-    require_file "$REVIEWER_BIN"
-    REVIEWER_CMD=("$REVIEWER_BIN")
-  elif [[ -n "$REVIEWER_CONDA_ENV" ]]; then
-    require_cmd conda
-    REVIEWER_PREFIX="$(find_conda_env_prefix "$REVIEWER_CONDA_ENV")"
-    REVIEWER_BIN="${REVIEWER_PREFIX}/bin/REViewer"
-    require_file "$REVIEWER_BIN"
-    REVIEWER_CMD=("$REVIEWER_BIN")
-  elif command -v conda >/dev/null 2>&1 && find_conda_env_prefix "prnp-reviewer" >/dev/null 2>&1; then
-    # When no local repeat config is present, prefer the conventional dedicated
-    # reviewer environment if it exists on this machine.
-    REVIEWER_CONDA_ENV="prnp-reviewer"
-    REVIEWER_PREFIX="$(find_conda_env_prefix "$REVIEWER_CONDA_ENV")"
-    REVIEWER_BIN="${REVIEWER_PREFIX}/bin/REViewer"
-    require_file "$REVIEWER_BIN"
-    REVIEWER_CMD=("$REVIEWER_BIN")
-  else
-    require_cmd_with_hint \
-      REViewer \
-      "Install or point to REViewer, or set REVIEWER_CONDA_ENV=prnp-reviewer if it lives in a separate environment."
-  fi
-fi
 
 require_file "$REPEAT_REF_FASTA"
 require_file "${REPEAT_REF_FASTA}.fai"
@@ -565,7 +456,7 @@ fi
 
 mkdir -p "$REPEAT_RESULTS_ROOT"
 archive_existing_run
-mkdir -p "$RAW_ROOT" "$REVIEW_ROOT" "$LOG_ROOT"
+mkdir -p "$RAW_ROOT" "$LOG_ROOT"
 if [[ "$RUN_GANGSTR" == "1" ]]; then
   mkdir -p "$GANGSTR_RAW_ROOT"
 fi
@@ -650,9 +541,6 @@ MANIFEST_TMP=""
   echo -e "eh_catalog_sha256\t$(sha256sum "$PRNP_EH_CATALOG" | awk '{print $1}')"
   echo -e "repeat_threads\t$REPEAT_THREADS"
   echo -e "orr_min_reads\t$ORR_MIN_READS"
-  echo -e "run_reviewer\t$RUN_REVIEWER"
-  echo -e "reviewer_conda_env\t$REVIEWER_CONDA_ENV"
-  echo -e "reviewer_bin\t$REVIEWER_BIN"
   echo -e "run_gangstr\t$RUN_GANGSTR"
   echo -e "gangstr_bin\t${GANGSTR_BIN:-GangSTR}"
   echo -e "gangstr_regions_bed\t$GANGSTR_REGIONS_BED"
@@ -669,9 +557,6 @@ MANIFEST_TMP=""
   echo -e "prnp_variable_repeat_offset\t$PRNP_VARIABLE_REPEAT_OFFSET"
   echo -e "sample_count\t$SAMPLE_COUNT"
   echo -e "expansionhunter_version\t$(capture_expansionhunter_version || echo unknown)"
-  if [[ "$RUN_REVIEWER" == "1" ]]; then
-    echo -e "reviewer_version\t$(capture_reviewer_version)"
-  fi
   if [[ "$RUN_GANGSTR" == "1" ]]; then
     echo -e "gangstr_version\t$(capture_gangstr_version)"
   fi
@@ -680,7 +565,7 @@ MANIFEST_TMP=""
 } >"$RUN_SETTINGS_TSV"
 
 # ---------------------------------------------------------------------------
-# Run ExpansionHunter and optional REViewer for each manifest sample
+# Run ExpansionHunter and optional GangSTR for each manifest sample
 # ---------------------------------------------------------------------------
 
 while IFS=$'\t' read -r SAMPLE_ID GROUP BAM BAI ORR_READS <&3; do
@@ -689,29 +574,18 @@ while IFS=$'\t' read -r SAMPLE_ID GROUP BAM BAI ORR_READS <&3; do
   fi
 
   SAMPLE_RAW_DIR="${RAW_ROOT}/${SAMPLE_ID}"
-  SAMPLE_REVIEW_DIR="${REVIEW_ROOT}/${SAMPLE_ID}"
-  mkdir -p "$SAMPLE_RAW_DIR" "$SAMPLE_REVIEW_DIR"
+  mkdir -p "$SAMPLE_RAW_DIR"
 
   EH_PREFIX="${SAMPLE_RAW_DIR}/${SAMPLE_ID}"
   EH_VCF="${EH_PREFIX}.vcf"
   EH_JSON="${EH_PREFIX}.json"
-  EH_REALIGNED_BAM="${EH_PREFIX}_realigned.bam"
-  EH_REALIGNED_SORTED_BAM="${EH_PREFIX}_realigned.sorted.bam"
-  REVIEW_PREFIX="${SAMPLE_REVIEW_DIR}/${SAMPLE_ID}.PRNP_ORR"
-  REVIEW_SVG="${REVIEW_PREFIX}.PRNP_ORR.svg"
-  REVIEW_METRICS="${REVIEW_PREFIX}.metrics.tsv"
-  REVIEW_PHASING="${REVIEW_PREFIX}.phasing.tsv"
 
   # Reuse existing sample-level caller outputs unless FORCE=1. This makes
   # intentional resumptions cheap while still protecting fresh clean reruns.
   if [[
     "$FORCE" != "1" &&
     -f "$EH_VCF" &&
-    -f "$EH_JSON" &&
-    (
-      "$RUN_REVIEWER" != "1" ||
-      -f "$EH_REALIGNED_BAM"
-    )
+    -f "$EH_JSON"
   ]]; then
     echo "Skipping ExpansionHunter for $SAMPLE_ID (outputs exist)."
   else
@@ -726,44 +600,6 @@ while IFS=$'\t' read -r SAMPLE_ID GROUP BAM BAI ORR_READS <&3; do
       </dev/null \
       >"${LOG_ROOT}/${SAMPLE_ID}.expansionhunter.stdout.log" \
       2>"${LOG_ROOT}/${SAMPLE_ID}.expansionhunter.stderr.log"
-  fi
-
-  if [[ "$RUN_REVIEWER" == "1" ]]; then
-    # ExpansionHunter emits the realigned BAM that REViewer consumes. Treat its
-    # absence as a hard failure because downstream review would be incomplete.
-    if [[ ! -f "$EH_REALIGNED_BAM" ]]; then
-      echo "Expected realigned BAM missing for $SAMPLE_ID: $EH_REALIGNED_BAM" >&2
-      exit 1
-    fi
-
-    # Sort and index the realigned BAM once so REViewer gets a stable input.
-    if [[ "$FORCE" == "1" || ! -f "$EH_REALIGNED_SORTED_BAM" ]]; then
-      samtools sort -o "$EH_REALIGNED_SORTED_BAM" "$EH_REALIGNED_BAM"
-      samtools index "$EH_REALIGNED_SORTED_BAM"
-    fi
-
-    # Reuse completed review artifacts when possible; otherwise regenerate them
-    # from the current caller outputs.
-    if [[
-      "$FORCE" != "1" &&
-      -f "$REVIEW_SVG" &&
-      -f "$REVIEW_METRICS" &&
-      -f "$REVIEW_PHASING"
-    ]]; then
-      echo "Skipping REViewer for $SAMPLE_ID (outputs exist)."
-    else
-      echo "Running REViewer for $SAMPLE_ID"
-      "${REVIEWER_CMD[@]}" \
-        --reads "$EH_REALIGNED_SORTED_BAM" \
-        --vcf "$EH_VCF" \
-        --reference "$REPEAT_REF_FASTA" \
-        --catalog "$PRNP_EH_CATALOG" \
-        --locus PRNP_ORR \
-        --output-prefix "$REVIEW_PREFIX" \
-        </dev/null \
-        >"${LOG_ROOT}/${SAMPLE_ID}.reviewer.stdout.log" \
-        2>"${LOG_ROOT}/${SAMPLE_ID}.reviewer.stderr.log"
-    fi
   fi
 
   if [[ "$RUN_GANGSTR" == "1" ]]; then
@@ -813,8 +649,7 @@ done 3<"$MANIFEST_TSV"
   --manifest "$MANIFEST_TSV" \
   --results-root "$REPEAT_RESULTS_ROOT" \
   --reference-total-repeats "$PRNP_TOTAL_REFERENCE_REPEATS" \
-  --variable-repeat-offset "$PRNP_VARIABLE_REPEAT_OFFSET" \
-  --reviewer-enabled "$RUN_REVIEWER"
+  --variable-repeat-offset "$PRNP_VARIABLE_REPEAT_OFFSET"
 
 "$PYTHON_CMD" "$SUBCLONAL_PY" \
   --sample-calls "$SAMPLE_CALLS_TSV" \

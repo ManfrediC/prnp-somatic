@@ -58,7 +58,6 @@ For `src/repeats/01_run_prnp_orr.sh`, these are the main override variables:
 - `REPEAT_REF_FASTA`
 - `PRNP_ORR_BED`
 - `PRNP_EH_CATALOG`
-- `REVIEWER_CONDA_ENV`
 - `RUN_GANGSTR`
 - `GANGSTR_BIN`
 - `GANGSTR_REGIONS_BED`
@@ -70,7 +69,6 @@ For `src/repeats/01_run_prnp_orr.sh`, these are the main override variables:
 - `PRNP_VARIABLE_REPEAT_OFFSET`
 - `REPEAT_THREADS`
 - `ORR_MIN_READS`
-- `RUN_REVIEWER`
 - `FORCE`
 - `ARCHIVE_EXISTING_RUN`
 - `ARCHIVE_RUN_LABEL`
@@ -83,7 +81,6 @@ Recommended values:
 - `REPEAT_REF_FASTA="resources/chr2_chr4_chr20.fasta"`
 - `PRNP_ORR_BED="resources/prnp_orr.hg38.bed"`
 - `PRNP_EH_CATALOG="resources/repeats/prnp_orr.expansionhunter.json"`
-- `REVIEWER_CONDA_ENV="prnp-reviewer"`
 - `RUN_GANGSTR=0`
 - `GANGSTR_BIN=""`
 - `GANGSTR_REGIONS_BED="resources/repeats/prnp_orr.gangstr.bed"`
@@ -95,7 +92,6 @@ Recommended values:
 - `PRNP_VARIABLE_REPEAT_OFFSET=3`
 - `REPEAT_THREADS=4`
 - `ORR_MIN_READS=10`
-- `RUN_REVIEWER=1`
 - `FORCE=0`
 - `ARCHIVE_EXISTING_RUN=0`
 - `ARCHIVE_RUN_LABEL=""`

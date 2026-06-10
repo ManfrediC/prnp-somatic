@@ -54,9 +54,6 @@ def main() -> int:
     sample_calls_rows = {
         row["sample_id"]: row for row in read_tsv(args.results_root / "sample_calls.tsv")
     }
-    sample_review_rows = {
-        row["sample_id"]: row for row in read_tsv(args.results_root / "sample_review.tsv")
-    }
     subclonal_rows = {
         row["sample_id"]: row
         for row in read_tsv(args.results_root / "subclonal_read_support.tsv")
@@ -67,9 +64,8 @@ def main() -> int:
 
     output_rows: list[dict[str, str]] = []
     for sample_id, sample_call in sample_calls_rows.items():
-        # Pull together the high-level EH call, reviewer status, subclonal EH
-        # support, and GangSTR signal into one compact review row per sample.
-        sample_review = sample_review_rows[sample_id]
+        # Pull together the high-level EH call, subclonal EH support, and
+        # GangSTR signal into one compact review row per sample.
         subclonal = subclonal_rows[sample_id]
         gangstr = gangstr_rows[sample_id]
         output_rows.append(
@@ -79,8 +75,6 @@ def main() -> int:
                 "eh_interpretation": sample_call["interpretation"],
                 "eh_total_repeat_counts": sample_call["total_repeat_counts"],
                 "eh_locus_coverage": sample_call["LC"],
-                "review_artifact": sample_review["review_artifact"],
-                "review_status": sample_review["review_status"],
                 "spanning_contraction_like_reads": subclonal["spanning_contraction_like_reads"],
                 "spanning_contraction_like_fraction": subclonal["spanning_contraction_like_fraction"],
                 "spanning_expansion_like_reads": subclonal["spanning_expansion_like_reads"],
@@ -116,8 +110,6 @@ def main() -> int:
         "eh_interpretation",
         "eh_total_repeat_counts",
         "eh_locus_coverage",
-        "review_artifact",
-        "review_status",
         "spanning_contraction_like_reads",
         "spanning_contraction_like_fraction",
         "spanning_expansion_like_reads",

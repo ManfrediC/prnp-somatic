@@ -150,7 +150,6 @@ conda activate prnp-junctions
 ```bash
 conda env create -f env/repeats.environment.yml
 conda activate prnp-repeats
-conda env create -f env/reviewer.environment.yml
 ```
 
 ### 10. Run repeat workflow (`src/repeats`)
@@ -178,7 +177,6 @@ is archived instead of mixed with new outputs.
 Expected outputs:
 
 - `results/repeats/sample_calls.tsv`
-- `results/repeats/sample_review.tsv`
 - `results/repeats/candidate_calls.tsv`
 - `results/repeats/cohort_summary.tsv`
 - `results/repeats/subclonal_read_support.tsv`

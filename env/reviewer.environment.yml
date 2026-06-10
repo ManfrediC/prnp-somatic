@@ -1,7 +1,0 @@
-name: prnp-reviewer
-channels:
-  - conda-forge
-  - bioconda
-dependencies:
-  - python=3.10
-  - reviewer=0.2.7

@@ -22,10 +22,6 @@ conda activate prnp-repeats
 bash src/repeats/01_run_prnp_orr.sh
 ```
 
-If `REViewer` is installed in its own environment, set
-`REVIEWER_CONDA_ENV=prnp-reviewer` in `config/repeats.env` and the workflow
-will invoke it through `conda run`.
-
 If `GangSTR` is installed locally, set `RUN_GANGSTR=1` in `config/repeats.env`.
 The workflow will run GangSTR in `--targeted --nonuniform` mode against the
 mutable PRNP ORR repeat block and summarize its VCF output as an orthogonal
@@ -50,7 +46,6 @@ bash src/repeats/01_run_prnp_orr.sh
 
 - `results/repeats/sample_manifest.tsv`
 - `results/repeats/sample_calls.tsv`
-- `results/repeats/sample_review.tsv`
 - `results/repeats/candidate_calls.tsv`
 - `results/repeats/cohort_summary.tsv`
 - `results/repeats/subclonal_read_support.tsv`
@@ -59,7 +54,6 @@ bash src/repeats/01_run_prnp_orr.sh
 - `results/repeats/run_settings.tsv`
 - `results/repeats/raw/expansionhunter/`
 - `results/repeats/raw/gangstr/` (when enabled)
-- `results/repeats/review/reviewer/`
 - `results/repeats/logs/`
 - `results/repeats/old_runs/`
 
@@ -70,8 +64,6 @@ git:
 - `results/repeats/raw/expansionhunter/**/*.vcf`
 - `results/repeats/raw/gangstr/**/*.vcf`
 - `results/repeats/raw/gangstr/**/*.samplestats.tab`
-- `results/repeats/review/reviewer/**/*.metrics.tsv`
-- `results/repeats/review/reviewer/**/*.phasing.tsv`
 - `results/repeats/logs/*.log`
 - `results/repeats/manual/*.tsv`
 - `results/repeats/manual_cohort/*/samples/*.tsv`
@@ -79,7 +71,6 @@ git:
 The heavy artefacts stay local:
 
 - `results/repeats/raw/**/` realigned BAMs and indexes
-- `results/repeats/review/reviewer/**/*.svg`
 - `results/repeats/old_runs/`
 
 ## Manual Mosaic Review
@@ -183,12 +174,11 @@ make repeats_manual_filter_cjd
 
 - Existing live outputs are never mixed into a new run.
 - Set `ARCHIVE_EXISTING_RUN=1` to move the previous live run into `results/repeats/old_runs/` before starting again.
-- The workflow verifies that the manifest, per-sample caller outputs, reviewer outputs, and summary tables all cover the expected 32-sample cohort before reporting success.
+- The workflow verifies that the manifest, per-sample caller outputs, and summary tables all cover the expected 32-sample cohort before reporting success.
 
 ## Interpretation
 
 - `ExpansionHunter` is the primary caller.
-- `REViewer` images are generated for manual assessment.
 - `subclonal_read_support.tsv` ranks weak non-reference read tails from the
   ExpansionHunter JSON histograms.
 - `GangSTR` is an optional orthogonal local STR caller for the same locus, not

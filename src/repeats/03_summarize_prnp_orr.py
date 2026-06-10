@@ -9,8 +9,7 @@ import argparse
 import csv
 import json
 import re
-import sys
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 
 
@@ -26,7 +25,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--results-root", required=True, type=Path)
     parser.add_argument("--reference-total-repeats", required=True, type=int)
     parser.add_argument("--variable-repeat-offset", required=True, type=int)
-    parser.add_argument("--reviewer-enabled", choices=("0", "1"), default="1")
     return parser.parse_args()
 
 
@@ -246,32 +244,6 @@ def classify_sample(
     return row
 
 
-def reviewer_artifact(prefix: Path) -> str:
-    # Prefer a human-viewable image when available, while still tolerating runs
-    # where only one plot format was generated.
-    candidates = sorted(prefix.parent.glob(f"{prefix.name}*"))
-    for path in candidates:
-        if path.suffix.lower() in {".svg", ".png", ".pdf"}:
-            return str(path)
-    return ""
-
-
-def pick_reference_calibrators(
-    rows: list[dict[str, str]],
-) -> dict[str, set[str]]:
-    # The plan calls for reviewing a fixed subset of reference-like samples from
-    # each group to calibrate manual interpretation.
-    selected: dict[str, set[str]] = defaultdict(set)
-    by_group: dict[str, list[str]] = defaultdict(list)
-    for row in rows:
-        if row["interpretation"] == "reference":
-            by_group[row["group"]].append(row["sample_id"])
-    for group, sample_ids in by_group.items():
-        for sample_id in sorted(sample_ids)[:2]:
-            selected[group].add(sample_id)
-    return selected
-
-
 def write_tsv(path: Path, rows: list[dict[str, str]], fieldnames: list[str]) -> None:
     # Always create the parent directory so the summarizer can run against a
     # freshly prepared live results tree.
@@ -291,7 +263,6 @@ def main() -> int:
     args = parse_args()
     manifest_rows = read_manifest(args.manifest)
     raw_root = args.results_root / "raw" / "expansionhunter"
-    review_root = args.results_root / "review" / "reviewer"
 
     # Build the one-row-per-sample primary call table by combining the manifest,
     # VCF-derived genotype fields, JSON presence, and repeat interpretation.
@@ -300,7 +271,6 @@ def main() -> int:
         sample_id = manifest_row["sample_id"]
         sample_group = manifest_row["group"]
         sample_raw_dir = raw_root / sample_id
-        sample_review_dir = review_root / sample_id
         vcf_path = sample_raw_dir / f"{sample_id}.vcf"
         json_path = sample_raw_dir / f"{sample_id}.json"
         record = parse_sample_vcf(vcf_path)
@@ -334,51 +304,7 @@ def main() -> int:
             "VARID": record.get("info_VARID", ""),
         }
         row.update(classified)
-        row["review_artifact"] = reviewer_artifact(
-            sample_review_dir / f"{sample_id}.PRNP_ORR"
-        )
         sample_rows.append(row)
-
-    # Build the manual review queue. Candidates and uncertain calls are always
-    # reviewed, and a small reference subset from each group is added for
-    # calibration.
-    calibrators = pick_reference_calibrators(sample_rows)
-    review_rows: list[dict[str, str]] = []
-    for row in sample_rows:
-        review_reason = "none"
-        review_required = row["review_required"]
-        if row["interpretation"] in {"candidate_OPRI", "candidate_OPRD", "uncertain"}:
-            review_reason = row["interpretation"]
-            review_required = "yes"
-        elif row["sample_id"] in calibrators.get(row["group"], set()):
-            review_reason = "reference_calibration_subset"
-            review_required = "yes"
-
-        # Distinguish between "review was not requested" and "review artifact was
-        # never generated". In the current workflow REViewer images are created
-        # for all samples, but only a subset is queued for manual adjudication.
-        if review_required == "yes":
-            review_status = (
-                "not_reviewed"
-                if args.reviewer_enabled == "1" and row["review_artifact"]
-                else "not_generated"
-            )
-        elif args.reviewer_enabled == "1" and row["review_artifact"]:
-            review_status = "generated_not_requested"
-        else:
-            review_status = "not_generated"
-
-        review_rows.append(
-            {
-                "sample_id": row["sample_id"],
-                "group": row["group"],
-                "review_required": review_required,
-                "review_reason": review_reason,
-                "review_artifact": row["review_artifact"],
-                "review_status": review_status,
-                "review_notes": "none",
-            }
-        )
 
     # Candidate table is intentionally narrower than sample_calls.tsv: it keeps
     # only samples still computationally consistent with OPRI or OPRD.
@@ -455,16 +381,6 @@ def main() -> int:
         "delta_vs_reference",
         "interpretation",
         "review_required",
-        "review_artifact",
-    ]
-    review_fieldnames = [
-        "sample_id",
-        "group",
-        "review_required",
-        "review_reason",
-        "review_artifact",
-        "review_status",
-        "review_notes",
     ]
     summary_fieldnames = [
         "group",
@@ -476,7 +392,6 @@ def main() -> int:
 
     # Write all live-run summary artifacts expected by the shell workflow.
     write_tsv(args.results_root / "sample_calls.tsv", sample_rows, sample_fieldnames)
-    write_tsv(args.results_root / "sample_review.tsv", review_rows, review_fieldnames)
     write_tsv(args.results_root / "candidate_calls.tsv", candidate_rows, sample_fieldnames)
     write_tsv(args.results_root / "cohort_summary.tsv", summary_rows, summary_fieldnames)
     return 0

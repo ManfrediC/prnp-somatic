@@ -22,9 +22,6 @@ This directory contains Conda environment specifications used by the reproducibl
 - `repeats.environment.yml`:
   - dedicated `prnp-repeats` environment specification for ExpansionHunter, GangSTR, manual mosaic review, cohort summarization, and cohort filtering in the PRNP ORR workflow (`src/repeats`).
 
-- `reviewer.environment.yml`:
-  - dedicated `prnp-reviewer` environment specification for REViewer in the PRNP ORR workflow (`src/repeats`).
-
 ## Usage
 
 Run from repository root.
@@ -70,12 +67,6 @@ Create repeat workflow environment:
 ```bash
 conda env create -f env/repeats.environment.yml
 conda activate prnp-repeats
-```
-
-Create REViewer environment:
-
-```bash
-conda env create -f env/reviewer.environment.yml
 ```
 
 ## Notes
