@@ -13,10 +13,12 @@ out_root <- file.path(project_root, "results", "ddPCR", "scatterplots")
 positive_out_dir <- file.path(out_root, "lob_lod_positive")
 positive_individual_dir <- file.path(positive_out_dir, "individual_wells")
 positive_merged_dir <- file.path(positive_out_dir, "merged_samples")
+positive_legend_dir <- file.path(positive_out_dir, "legend")
 legacy_pooled_dir <- file.path(positive_out_dir, "pooled_samples")
 dir.create(out_root, recursive = TRUE, showWarnings = FALSE)
 dir.create(positive_individual_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(positive_merged_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(positive_legend_dir, recursive = TRUE, showWarnings = FALSE)
 
 # ---- import helper functions ----
 source(file.path(project_root, "src", "ddpcr", "ddpcr_raw_import_helpers.R"))
@@ -127,7 +129,7 @@ plot_well <- function(well_row) {
     axis_limits = axis_limits
   )
 
-  save_plot_outputs(plot, output_paths, width = 6, height = 5, dpi = 220)
+  save_plot_outputs(without_legend_keep_layout(plot), output_paths, width = 6, height = 5, dpi = 220)
 
   # The manifest doubles as an audit table for droplet counts, thresholds, and
   # source files used for each scatterplot.
@@ -269,6 +271,68 @@ plot_merged_sample <- function(sample_rows) {
       metadata_path = NA_character_,
       n_wells = n_distinct(droplets$well_plot_id),
       contributing_wells = paste(sort(unique(droplets$well_plot_id)), collapse = ";")
+    ),
+    plot_path_columns(output_paths)
+  )
+}
+
+# ---- legend component ----
+
+# Write one standalone legend component in the same local coordinate system as
+# the individual-well plots, so the SVG panel builder can place it directly.
+plot_lob_lod_legend <- function() {
+  output_paths <- plot_output_paths(positive_legend_dir, "lob_lod_positive_legend")
+  legend_droplets <- tibble(
+    x_amplitude = seq_along(plot_gate_levels),
+    y_amplitude = seq_along(plot_gate_levels),
+    gate = factor(plot_gate_levels, levels = plot_gate_levels)
+  )
+  legend_plot <- build_scatterplot(
+    droplets = legend_droplets,
+    thresholds = tibble(axis = character(), threshold = numeric(), threshold_source = character()),
+    mutation = "E200K",
+    title = "Legend"
+  )
+
+  save_plot_outputs(legend_only_keep_layout(legend_plot), output_paths, width = 6, height = 5, dpi = 220)
+
+  bind_cols(
+    tibble(
+      plot_kind = "legend",
+      positive_id = "lob_lod_positive_legend",
+      participant = NA_character_,
+      participant_display = NA_character_,
+      code = NA_character_,
+      brain_region = NA_character_,
+      brain_region_display = NA_character_,
+      mutation = "E200K",
+      replicate_index = NA_integer_,
+      replicate_label = NA_character_,
+      sample_id = NA_character_,
+      sample_key = NA_character_,
+      is_pooled = NA,
+      well_index = NA_integer_,
+      run_id = NA_character_,
+      run_date = as.Date(NA),
+      assay = "E200K",
+      well = NA_character_,
+      sample = NA_character_,
+      status = "written",
+      droplet_count = NA_integer_,
+      plotted_droplet_count = NA_integer_,
+      accepted_clustered_droplets = NA_integer_,
+      gated_or_unassigned_droplets = NA_integer_,
+      rejected_or_unassigned_droplets = NA_integer_,
+      rejected_droplet_count = NA_integer_,
+      x_threshold = NA_real_,
+      y_threshold = NA_real_,
+      x_threshold_source = NA_character_,
+      y_threshold_source = NA_character_,
+      threshold_details = NA_character_,
+      peak_path = NA_character_,
+      metadata_path = NA_character_,
+      n_wells = NA_integer_,
+      contributing_wells = NA_character_
     ),
     plot_path_columns(output_paths)
   )
@@ -437,6 +501,7 @@ if (dir.exists(legacy_pooled_dir)) {
 # current code and data.
 clean_plot_output_dir(positive_individual_dir)
 clean_plot_output_dir(positive_merged_dir)
+clean_plot_output_dir(positive_legend_dir)
 
 empty_plot_manifest <- tibble(
   plot_kind = character(),
@@ -499,9 +564,15 @@ merged_manifest <- if (nrow(selected_wells) > 0L) {
   empty_plot_manifest
 }
 
+legend_manifest <- if (nrow(selected_wells) > 0L) {
+  plot_lob_lod_legend()
+} else {
+  empty_plot_manifest
+}
+
 # Combine all manifest rows into the stable output order used by downstream
 # checks and review.
-plot_manifest <- bind_rows(individual_manifest, merged_manifest) %>%
+plot_manifest <- bind_rows(individual_manifest, merged_manifest, legend_manifest) %>%
   arrange(positive_id, plot_kind, run_date, well)
 
 # ---- manifest update ----
@@ -533,6 +604,7 @@ summary_lines <- c(
   paste0("Selected positive wells: ", nrow(selected_wells)),
   paste0("Individual well scatterplots written this run: ", sum(plot_manifest$plot_kind == "individual_well" & plot_manifest$status == "written")),
   paste0("Merged sample scatterplots written this run: ", sum(plot_manifest$plot_kind == "merged_sample" & plot_manifest$status == "written")),
+  paste0("Legend components written this run: ", sum(plot_manifest$plot_kind == "legend" & plot_manifest$status == "written")),
   paste0("Plot manifest rows: ", nrow(plot_manifest)),
   paste0("Scatterplot files present in manifest: ", sum(!is.na(plot_file_paths) & file.exists(plot_file_paths)))
 )

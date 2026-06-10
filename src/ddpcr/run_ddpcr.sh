@@ -16,6 +16,14 @@ run_r() {
   Rscript "$script_path" 2>&1 | tee "$log_dir/$log_name"
 }
 
+run_py() {
+  local script_path="$1"
+  local log_name
+  log_name="$(basename "$script_path" .py).log"
+  echo "==> python $script_path"
+  python "$script_path" 2>&1 | tee "$log_dir/$log_name"
+}
+
 run_r "$SCRIPT_DIR/create_snv_dataframe.R"
 run_r "$SCRIPT_DIR/figures/ddpcr_fractional_abundance.R"
 run_r "$SCRIPT_DIR/figures/ddpcr_fractional_abundance_pooled.R"
@@ -23,3 +31,4 @@ run_r "$SCRIPT_DIR/ddpcr_samples_results_tbl.R"
 run_r "$SCRIPT_DIR/ddpcr_sample_number.R"
 run_r "$SCRIPT_DIR/estimate_haploid_genomes_surveyed.R"
 run_r "$SCRIPT_DIR/figures/create_ddpcr_scatterplots.R"
+run_py "$SCRIPT_DIR/figures/build_ddpcr_gating_svg_panels.py"

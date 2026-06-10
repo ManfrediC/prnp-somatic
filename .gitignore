@@ -117,6 +117,8 @@ legacy/
 /results/ddPCR/umbrella/
 # Generated ddPCR scatterplot vectors are large and reproducible.
 /results/ddPCR/scatterplots/**/*.svg
+# Generated ddPCR panel vectors are large and reproducible.
+/results/ddPCR/panels/**/*.svg
 
 # Repeat workflow keeps text artefacts in git for cross-machine review, but
 # heavyweight realigned BAMs, REViewer SVGs, and archived runs stay local.

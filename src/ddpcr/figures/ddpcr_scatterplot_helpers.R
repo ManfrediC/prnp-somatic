@@ -5,6 +5,7 @@ library(stringr)
 library(tibble)
 library(jsonlite)
 library(ggplot2)
+library(grid)
 
 # Keep generated filenames readable while avoiding path-hostile characters.
 safe_file_component <- function(x) {
@@ -243,8 +244,8 @@ plot_output_paths <- function(output_dir, file_stem) {
 # Save each plot in the raster/vector formats used for review and manuscripts.
 save_plot_outputs <- function(plot, paths, width = 6, height = 5, dpi = 180) {
   ggsave(filename = paths[["png"]], plot = plot, width = width, height = height, dpi = dpi, bg = "white")
-  ggsave(filename = paths[["svg"]], plot = plot, width = width, height = height, device = grDevices::svg, bg = "white")
-  ggsave(filename = paths[["pdf"]], plot = plot, width = width, height = height, device = grDevices::pdf, bg = "white")
+  ggsave(filename = paths[["svg"]], plot = plot, width = width, height = height, device = grDevices::svg, bg = "transparent")
+  ggsave(filename = paths[["pdf"]], plot = plot, width = width, height = height, device = grDevices::pdf, bg = "transparent")
 }
 
 # Mirror the generated paths into the manifest column layout.
@@ -263,6 +264,34 @@ clean_plot_output_dir <- function(output_dir) {
   if (length(files) > 0L) {
     unlink(files)
   }
+}
+
+# Replace guide grobs with blanks while preserving their layout columns. This
+# keeps plot geometry stable for the downstream SVG panel assembly.
+without_legend_keep_layout <- function(plot) {
+  grob <- ggplotGrob(plot)
+  guide_indexes <- grep("^guide-box", grob$layout$name)
+  for (guide_index in guide_indexes) {
+    grob$grobs[[guide_index]] <- grid::nullGrob()
+  }
+  grob
+}
+
+# Keep only the ggplot guide in its original right-side layout slot so the
+# panel builder can place a single legend without extracting it from a plot.
+legend_only_keep_layout <- function(plot) {
+  grob <- ggplotGrob(plot)
+  guide_indexes <- grep("^guide-box", grob$layout$name)
+  if (length(guide_indexes) == 0L) {
+    stop("Could not find a ggplot guide box for the scatterplot legend")
+  }
+
+  for (index in seq_along(grob$grobs)) {
+    if (!index %in% guide_indexes) {
+      grob$grobs[[index]] <- grid::nullGrob()
+    }
+  }
+  grob
 }
 
 # Prefer consolidated manifests when present, but support reviewer workspaces
@@ -448,6 +477,11 @@ build_scatterplot <- function(
     theme(
       panel.grid.minor = element_blank(),
       legend.position = "right",
+      plot.background = element_rect(fill = "transparent", colour = NA),
+      panel.background = element_rect(fill = "transparent", colour = NA),
+      legend.background = element_rect(fill = "transparent", colour = NA),
+      legend.box.background = element_rect(fill = "transparent", colour = NA),
+      legend.key = element_rect(fill = "transparent", colour = NA),
       plot.title = element_text(size = 10),
       plot.subtitle = element_text(size = 8)
     )

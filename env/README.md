@@ -16,6 +16,9 @@ This directory contains Conda environment specifications used by the reproducibl
 - `ddpcr.environment.yml`:
   - dedicated `prnp-somatic-ddpcr` environment specification for the ddPCR workflow (`src/ddpcr`).
 
+- `ddpcr.figure-tools.env.example`:
+  - optional template for local figure-rendering tool paths, including Inkscape.
+
 - `repeats.environment.yml`:
   - dedicated `prnp-repeats` environment specification for ExpansionHunter, GangSTR, manual mosaic review, cohort summarization, and cohort filtering in the PRNP ORR workflow (`src/repeats`).
 
@@ -53,6 +56,14 @@ Create ddPCR workflow environment:
 conda env create -f env/ddpcr.environment.yml
 conda activate prnp-somatic-ddpcr
 ```
+
+Optional ddPCR figure tool paths:
+
+```bash
+cp env/ddpcr.figure-tools.env.example env/ddpcr.figure-tools.env
+```
+
+Then edit `env/ddpcr.figure-tools.env` if Inkscape is not discoverable on `PATH`.
 
 Create repeat workflow environment:
 

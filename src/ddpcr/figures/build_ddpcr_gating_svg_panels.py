@@ -8,21 +8,53 @@ import csv
 import re
 import shutil
 import subprocess
+from collections import defaultdict
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
 
+# ---- relative paths ----
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-POSITIVE_DIR = PROJECT_ROOT / "manuscript" / "figures" / "ddpcr_gating_lob_lod_positive"
+PANEL_DIR = PROJECT_ROOT / "results" / "ddPCR" / "panels"
+POSITIVE_SCATTERPLOT_DIR = PROJECT_ROOT / "results" / "ddPCR" / "scatterplots" / "lob_lod_positive"
+POSITIVE_MANIFEST = POSITIVE_SCATTERPLOT_DIR / "plot_manifest.csv"
 STRATEGY_DIR = PROJECT_ROOT / "manuscript" / "figures" / "ddpcr_gating_strategy"
+STRATEGY_MANIFEST = STRATEGY_DIR / "plot_manifest.csv"
+TOOL_ENV = PROJECT_ROOT / "env" / "ddpcr.figure-tools.env"
 
+# ---- SVG namespaces and path patterns ----
 SVG_NS = "http://www.w3.org/2000/svg"
 XLINK_NS = "http://www.w3.org/1999/xlink"
 ET.register_namespace("", SVG_NS)
 ET.register_namespace("xlink", XLINK_NS)
 
+# Match internal SVG references and the two absolute-path styles emitted by
+# Windows and WSL runs of the ddPCR figure workflow.
 URL_REF_RE = re.compile(r"url\(#([^)]+)\)")
+WSL_MOUNT_RE = re.compile(r"^/mnt/([A-Za-z])/(.*)$")
+WINDOWS_DRIVE_RE = re.compile(r"^([A-Za-z]):[\\/](.*)$")
+NUMBER_RE = re.compile(r"[-+]?(?:\d*\.\d+|\d+)(?:[eE][-+]?\d+)?")
 
+# ---- shared visual settings ----
+
+POSITIVE_PANEL_WIDTH = 1243.3007
+POSITIVE_PANEL_HEIGHT = 814.26233
+POSITIVE_PANEL_TITLE = "Individual wells supporting E200K-positive calls"
+POSITIVE_PANEL_TRANSFORMS = [
+    "matrix(1.03333,0,0,1.03333,0.45103926,41.8125)",
+    "matrix(1.03333,0,0,1.03333,398.45104,41.8125)",
+    "matrix(1.03333,0,0,1.03333,796.45104,41.8125)",
+    "matrix(1.03333,0,0,1.03333,0.45103926,441.8125)",
+    "matrix(1.03333,0,0,1.03333,398.45104,441.8125)",
+]
+POSITIVE_PANEL_LEGEND_TRANSFORM = "matrix(1.4835665,0,0,1.4835665,420.93552,367.84585)"
+POSITIVE_PANEL_LABELS = [
+    ("A", 12.951039, 67.8125),
+    ("B", 410.95105, 67.8125),
+    ("C", 808.95105, 67.8125),
+    ("D", 11.505727, 467.8125),
+    ("E", 410.96082, 467.8125),
+]
 # Keep legend colours in sync with the R scripts that generate the individual
 # gating SVGs.
 CLASS_COLOURS = {
@@ -35,11 +67,39 @@ CLASS_COLOURS = {
 }
 
 
+# ---- manifest input ----
+
 def read_manifest(path: Path) -> list[dict[str, str]]:
     """Read the R-generated plot manifest that lists individual panel SVGs."""
     with path.open(newline="", encoding="utf-8") as handle:
         return list(csv.DictReader(handle))
 
+
+# ---- local tool configuration ----
+
+def read_env_file(path: Path) -> dict[str, str]:
+    """Read a minimal KEY=VALUE env file without changing process state."""
+    values: dict[str, str] = {}
+    if not path.exists():
+        return values
+
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        values[key.strip()] = value.strip().strip("\"'")
+    return values
+
+
+def configured_inkscape_paths() -> list[str]:
+    """Return optional local Inkscape candidates from env/ddpcr.figure-tools.env."""
+    config = read_env_file(TOOL_ENV)
+    raw_paths = config.get("INKSCAPE_PATHS", "")
+    return [path.strip() for path in raw_paths.split(";") if path.strip()]
+
+
+# ---- low-level SVG drawing helpers ----
 
 def text(
     parent: ET.Element,
@@ -63,6 +123,30 @@ def text(
             "fill": fill,
         },
     )
+    node.text = value
+
+
+def styled_text(
+    parent: ET.Element,
+    x: float,
+    y: float,
+    value: str,
+    size: str,
+    weight: str = "bold",
+    style: str | None = None,
+) -> None:
+    """Add text with the accepted panel typography and Inkscape-facing style."""
+    attrs = {
+        "x": str(x),
+        "y": str(y),
+        "font-family": "Arial, Helvetica, sans-serif",
+        "font-size": size,
+        "font-weight": weight,
+        "fill": "#111827",
+    }
+    if style:
+        attrs["style"] = style
+    node = ET.SubElement(parent, f"{{{SVG_NS}}}text", attrs)
     node.text = value
 
 
@@ -106,8 +190,11 @@ def line(
     ET.SubElement(parent, f"{{{SVG_NS}}}line", attrs)
 
 
+# ---- shared legend ----
+
 def draw_strategy_legend(root: ET.Element, centre_x: float, y: float) -> None:
     """Draw the shared droplet-class and gate legend below strategy panels."""
+    # Keep the legend compact enough to sit below the 12-panel strategy grid.
     x = centre_x - 410
     text(root, x, y + 12, "Droplet class", size=12, weight="bold")
     class_items = list(CLASS_COLOURS.items())
@@ -130,6 +217,8 @@ def draw_strategy_legend(root: ET.Element, centre_x: float, y: float) -> None:
     text(root, gate_x + 102, y + 32, "Auto threshold", size=10)
 
 
+# ---- SVG embedding helpers ----
+
 def svg_viewbox(root: ET.Element) -> tuple[float, float, float, float]:
     """Return an SVG viewBox, falling back to width and height attributes."""
     view_box = root.attrib.get("viewBox")
@@ -145,6 +234,8 @@ def svg_viewbox(root: ET.Element) -> tuple[float, float, float, float]:
 def prefix_svg_ids(node: ET.Element, prefix: str) -> None:
     """Namespace embedded SVG IDs so repeated glyphs and clips do not collide."""
     for child in node.iter():
+        # ggplot-generated SVGs reuse IDs such as clip paths; prefixing avoids
+        # cross-panel references after multiple plots are combined.
         if "id" in child.attrib:
             child.attrib["id"] = f"{prefix}{child.attrib['id']}"
         for key, value in list(child.attrib.items()):
@@ -152,9 +243,128 @@ def prefix_svg_ids(node: ET.Element, prefix: str) -> None:
                 continue
             if isinstance(value, str):
                 value = URL_REF_RE.sub(lambda match: f"url(#{prefix}{match.group(1)})", value)
-                if value.startswith("#"):
+                xlink_href = f"{{{XLINK_NS}}}href"
+                if key in {"href", xlink_href} and value.startswith("#"):
                     value = f"#{prefix}{value[1:]}"
                 child.attrib[key] = value
+
+
+def is_droplet_path(node: ET.Element) -> bool:
+    """Recognise individual ggplot droplet paths from style and path shape."""
+    fill = node.attrib.get("fill")
+    stroke = node.attrib.get("stroke")
+    d = node.attrib.get("d", "")
+    return (
+        node.tag == f"{{{SVG_NS}}}path"
+        and node.attrib.get("stroke-width") == "0.0075"
+        and fill is not None
+        and fill == stroke
+        and " C " in d
+    )
+
+
+def droplet_style_key(node: ET.Element) -> tuple[tuple[str, str], ...]:
+    """Group droplet paths only when their visual style is identical."""
+    return tuple(sorted((key, value) for key, value in node.attrib.items() if key != "d"))
+
+
+def merge_droplet_paths(group: ET.Element) -> int:
+    """Merge same-style droplet paths into compound paths for faster editing."""
+    children = list(group)
+    buckets: dict[tuple[tuple[str, str], ...], list[tuple[int, ET.Element]]] = defaultdict(list)
+    for index, child in enumerate(children):
+        if is_droplet_path(child):
+            buckets[droplet_style_key(child)].append((index, child))
+
+    replacements: dict[int, ET.Element] = {}
+    skip_indexes: set[int] = set()
+    merged_count = 0
+    for items in buckets.values():
+        if len(items) < 2:
+            continue
+        first_index, first_path = items[0]
+        merged = copy.deepcopy(first_path)
+        merged.attrib["d"] = " ".join(path.attrib["d"].strip() for _, path in items)
+        merged.attrib["id"] = f"{group.attrib.get('id', 'panel')}_merged_droplets_{merged_count + 1}"
+        replacements[first_index] = merged
+        skip_indexes.update(index for index, _ in items[1:])
+        merged_count += 1
+
+    if replacements:
+        group[:] = [replacements.get(index, child) for index, child in enumerate(children) if index not in skip_indexes]
+    return merged_count
+
+
+def is_plot_border(node: ET.Element) -> bool:
+    """Recognise the ggplot plot-area border path by style and geometry."""
+    d = node.attrib.get("d", "")
+    values = [float(match.group(0)) for match in NUMBER_RE.finditer(d)]
+    x_values = values[0::2]
+    y_values = values[1::2]
+    width = max(x_values) - min(x_values) if x_values else 0.0
+    height = max(y_values) - min(y_values) if y_values else 0.0
+    return (
+        node.tag == f"{{{SVG_NS}}}path"
+        and node.attrib.get("fill") == "none"
+        and node.attrib.get("stroke") in {"rgb(20%, 20%, 20%)", "#333333"}
+        and " Z " in f" {d} "
+        and width > 200
+        and height > 200
+    )
+
+
+def ensure_plot_border_drawn_last(group: ET.Element) -> None:
+    """Keep the source plot border present and above merged droplets."""
+    parent = {child: parent_node for parent_node in group.iter() for child in parent_node}
+    borders = [child for child in group.iter(f"{{{SVG_NS}}}path") if is_plot_border(child)]
+    if len(borders) != 1:
+        raise RuntimeError(f"Expected exactly one plot border in {group.attrib.get('id')}; found {len(borders)}")
+    border = borders[0]
+    parent[border].remove(border)
+    group.append(border)
+
+
+def referenced_ids(root: ET.Element) -> set[str]:
+    """Collect SVG IDs still referenced after filtering."""
+    ids: set[str] = set()
+    xlink_href = f"{{{XLINK_NS}}}href"
+    for node in root.iter():
+        for key, value in node.attrib.items():
+            if key == "id" or not isinstance(value, str):
+                continue
+            ids.update(URL_REF_RE.findall(value))
+            if key in {"href", xlink_href} and value.startswith("#"):
+                ids.add(value[1:])
+    return ids
+
+
+def prune_unused_defs(root: ET.Element) -> int:
+    """Remove unused definitions after plot/legend filtering."""
+    used = referenced_ids(root)
+    removed = 0
+    for defs in list(root.iter(f"{{{SVG_NS}}}defs")):
+        kept = []
+        for child in list(defs):
+            child_id = child.attrib.get("id")
+            if child_id and child_id not in used:
+                removed += 1
+                continue
+            kept.append(child)
+        defs[:] = kept
+    return removed
+
+
+def append_source_svg(group: ET.Element, source_svg: Path, prefix: str) -> None:
+    """Copy one panel-ready ggplot SVG component into an editable group."""
+    source_root = ET.parse(source_svg).getroot()
+    copied = 0
+    for child in list(source_root):
+        cloned = copy.deepcopy(child)
+        prefix_svg_ids(cloned, prefix)
+        group.append(cloned)
+        copied += 1
+    if copied == 0:
+        raise RuntimeError(f"No SVG content copied from {source_svg}")
 
 
 def inline_svg(
@@ -169,10 +379,14 @@ def inline_svg(
     """Copy one source SVG into the output panel while preserving its aspect ratio."""
     source_root = ET.parse(source_svg).getroot()
     min_x, min_y, source_width, source_height = svg_viewbox(source_root)
+
+    # Fit the source plot into its cell without distorting axis geometry.
     scale = min(width / source_width, height / source_height)
     tx = x + (width - source_width * scale) / 2 - min_x * scale
     ty = y + (height - source_height * scale) / 2 - min_y * scale
 
+    # Copy the source SVG children rather than linking external files so the
+    # resulting manuscript panel is self-contained.
     wrapper = ET.SubElement(
         parent,
         f"{{{SVG_NS}}}g",
@@ -184,6 +398,89 @@ def inline_svg(
         wrapper.append(cloned)
 
 
+# ---- manifest path normalisation ----
+
+def manifest_svg_path(row: dict[str, str]) -> Path:
+    """Return the SVG path from either supported manifest schema."""
+    svg_path = row.get("output_svg_path") or row.get("svg_path")
+    if not svg_path:
+        raise ValueError(f"Manifest row has no SVG path: {row}")
+    path = Path(svg_path)
+    if path.exists():
+        return path
+
+    # Convert WSL manifests for Windows-side execution.
+    wsl_match = WSL_MOUNT_RE.match(svg_path)
+    if wsl_match:
+        drive, rest = wsl_match.groups()
+        windows_path = Path(f"{drive.upper()}:/{rest}")
+        if windows_path.exists():
+            return windows_path
+
+    # Convert Windows manifests for WSL-side execution.
+    windows_match = WINDOWS_DRIVE_RE.match(svg_path)
+    if windows_match:
+        drive, rest = windows_match.groups()
+        rest = rest.replace("\\", "/")
+        wsl_path = Path(f"/mnt/{drive.lower()}/{rest}")
+        if wsl_path.exists():
+            return wsl_path
+
+    return path
+
+
+def write_lob_lod_positive_panel(
+    rows: list[dict[str, str]],
+    legend_row: dict[str, str],
+    output_svg: Path,
+) -> Path:
+    """Build the accepted LoB/LoD panel from current ggplot source SVGs."""
+    if len(rows) != 5:
+        raise RuntimeError(f"Expected 5 LoB/LoD individual-well rows; found {len(rows)}")
+
+    output_svg.parent.mkdir(parents=True, exist_ok=True)
+    root = ET.Element(
+        f"{{{SVG_NS}}}svg",
+        {
+            "width": str(POSITIVE_PANEL_WIDTH),
+            "height": str(POSITIVE_PANEL_HEIGHT),
+            "viewBox": f"0 0 {POSITIVE_PANEL_WIDTH} {POSITIVE_PANEL_HEIGHT}",
+            "version": "1.1",
+        },
+    )
+
+    styled_text(root, 11.447133, 15.8125, POSITIVE_PANEL_TITLE, "22px")
+
+    for index, (row, transform) in enumerate(zip(rows, POSITIVE_PANEL_TRANSFORMS, strict=True), start=1):
+        group = ET.SubElement(
+            root,
+            f"{{{SVG_NS}}}g",
+            {"id": f"editable_panel_{index}", "transform": transform},
+        )
+        append_source_svg(group, manifest_svg_path(row), f"panel{index}_")
+        merge_droplet_paths(group)
+        ensure_plot_border_drawn_last(group)
+
+    legend_group = ET.SubElement(
+        root,
+        f"{{{SVG_NS}}}g",
+        {"id": "editable_panel_6", "transform": POSITIVE_PANEL_LEGEND_TRANSFORM},
+    )
+    append_source_svg(legend_group, manifest_svg_path(legend_row), "legend_")
+
+    for label, x, y in POSITIVE_PANEL_LABELS:
+        styled_text(root, x, y, label, "18px", style="font-size:21.3333px")
+
+    prune_unused_defs(root)
+
+    tmp_svg = output_svg.with_name(f".{output_svg.name}.tmp")
+    ET.ElementTree(root).write(str(tmp_svg), encoding="utf-8", xml_declaration=True)
+    tmp_svg.replace(output_svg)
+    return output_svg
+
+
+# ---- panel assembly ----
+
 def write_panel(
     rows: list[dict[str, str]],
     output_svg: Path,
@@ -192,8 +489,11 @@ def write_panel(
     cell_height: int,
     title: str,
     common_legend: str | None = None,
+    centre_incomplete_last_row: bool = False,
 ) -> Path:
     """Assemble a grid of individual SVG plots into one labelled panel."""
+    # Keep layout constants local so different panel types can share the same
+    # assembly machinery without hiding manuscript dimensions in globals.
     output_svg.parent.mkdir(parents=True, exist_ok=True)
     ncols = min(ncols, max(1, len(rows)))
     margin_x = 30
@@ -219,26 +519,40 @@ def write_panel(
     # Lay out source SVGs in reading order and add panel letters in the margin.
     for index, row in enumerate(rows):
         grid_row, grid_col = divmod(index, ncols)
-        x = margin_x + grid_col * (cell_width + gap_x)
+        row_count = min(ncols, len(rows) - grid_row * ncols)
+        row_offset = 0.0
+        # Five positive wells read better as a centred 3-over-2 panel.
+        if centre_incomplete_last_row and row_count < ncols:
+            row_offset = (ncols - row_count) * (cell_width + gap_x) / 2
+        x = margin_x + row_offset + grid_col * (cell_width + gap_x)
         y = margin_y + grid_row * (cell_height + gap_y)
         letter = chr(ord("A") + index)
-        inline_svg(root, Path(row["svg_path"]), x + 24, y, cell_width - 24, cell_height, f"p{index}_")
+        inline_svg(root, manifest_svg_path(row), x + 24, y, cell_width - 24, cell_height, f"p{index}_")
         text(root, x + 2, y + 24, letter, size=18, weight="bold")
 
     # Strategy panels use one shared legend to avoid repeating legends in every cell.
     if common_legend == "strategy":
         draw_strategy_legend(root, width / 2, height - legend_height + 10)
 
-    ET.ElementTree(root).write(output_svg, encoding="utf-8", xml_declaration=True)
+    # Write via a same-directory temporary file so large SVG panels are not
+    # left half-written if export is interrupted.
+    tmp_svg = output_svg.with_name(f".{output_svg.name}.tmp")
+    ET.ElementTree(root).write(str(tmp_svg), encoding="utf-8", xml_declaration=True)
+    tmp_svg.replace(output_svg)
     return output_svg
 
+
+# ---- PDF export ----
 
 def export_pdf(svg_path: Path) -> Path:
     """Export the assembled SVG panel to PDF using Inkscape."""
     pdf_path = svg_path.with_suffix(".pdf")
-    inkscape = shutil.which("inkscape") or "/usr/bin/inkscape"
-    if not Path(inkscape).exists():
-        raise RuntimeError("Inkscape is required to export PDF panels")
+    # Prefer PATH for portability, then fall back to local tool paths declared
+    # in the ignored env-side configuration file.
+    candidates = [shutil.which("inkscape"), *configured_inkscape_paths()]
+    inkscape = next((candidate for candidate in candidates if candidate and Path(candidate).exists()), None)
+    if not inkscape:
+        raise RuntimeError(f"Inkscape is required; add INKSCAPE_PATHS to {TOOL_ENV}")
     subprocess.run(
         [
             inkscape,
@@ -251,65 +565,94 @@ def export_pdf(svg_path: Path) -> Path:
     return pdf_path
 
 
-def sort_positive(rows: list[dict[str, str]], plot_kind: str) -> list[dict[str, str]]:
-    """Keep LoB+LoD+ panels in the R manifest order."""
-    selected = [row for row in rows if row["plot_kind"] == plot_kind]
-    return sorted(selected, key=lambda row: int(row["plot_order"]))
+# ---- row ordering ----
+
+def sort_positive_individual_scatterplots(rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    """Order LoB+LoD+ individual-well scatterplots by sample and replicate."""
+    # The scatterplot manifest also contains merged-sample rows; keep only the
+    # individual-well SVGs requested for the manuscript-facing panel.
+    selected = [
+        row
+        for row in rows
+        if row["plot_kind"] == "individual_well"
+        and row.get("status") == "written"
+        and manifest_svg_path(row).parent.name == "individual_wells"
+    ]
+    participant_order = {"CJD4": 0, "CJD21": 1}
+    return sorted(
+        selected,
+        key=lambda row: (
+            participant_order.get(row["participant"], 99),
+            row["positive_id"],
+            int(row["replicate_index"] or 0),
+            row["run_date"],
+            row["well"],
+        ),
+    )
+
+
+def positive_legend_row(rows: list[dict[str, str]]) -> dict[str, str]:
+    """Return the explicit legend component written by the R scatterplot step."""
+    selected = [
+        row
+        for row in rows
+        if row["plot_kind"] == "legend"
+        and row.get("status") == "written"
+        and manifest_svg_path(row).parent.name == "legend"
+    ]
+    if len(selected) != 1:
+        raise RuntimeError(f"Expected exactly one LoB/LoD legend row; found {len(selected)}")
+    return selected[0]
 
 
 def sort_strategy(rows: list[dict[str, str]]) -> list[dict[str, str]]:
     """Order control panels by mutation and gating stage."""
+    # Preserve the biological assay order and the control-to-final-gate story.
     assay_order = {"D178N": 0, "E200K": 1, "P102L": 2}
     stage_order = {"NTC": 0, "WT": 1, "Positive control": 2, "Final adjusted gate": 3}
     return sorted(rows, key=lambda row: (assay_order[row["assay"]], stage_order[row["stage"]]))
 
 
+# ---- command entry point ----
+
 def main() -> None:
     """Build all combined gating panels from individual plot manifests."""
-    # Load manifests written by the R figure-asset script.
-    positive_rows = read_manifest(POSITIVE_DIR / "plot_manifest.csv")
-    strategy_rows = read_manifest(STRATEGY_DIR / "plot_manifest.csv")
-    positive_merged = sort_positive(positive_rows, "merged")
-    positive_faceted = sort_positive(positive_rows, "faceted")
+    # Load manifests written by the R figure scripts.
+    positive_rows = read_manifest(POSITIVE_MANIFEST)
+    positive_individual = sort_positive_individual_scatterplots(positive_rows)
+    positive_legend = positive_legend_row(positive_rows) if positive_individual else None
 
     outputs = []
-    # Positive panels are only meaningful when both merged and faceted views exist.
-    if positive_merged and positive_faceted:
-        outputs.extend(
-            [
-                write_panel(
-                    positive_merged,
-                    POSITIVE_DIR / "ddpcr_lob_lod_positive_merged_panel.svg",
-                    ncols=3,
-                    cell_width=430,
-                    cell_height=395,
-                    title="LoB+LoD+ sample-region ddPCR gating: merged wells",
-                ),
-                write_panel(
-                    positive_faceted,
-                    POSITIVE_DIR / "ddpcr_lob_lod_positive_faceted_panel.svg",
-                    ncols=3,
-                    cell_width=430,
-                    cell_height=395,
-                    title="LoB+LoD+ sample-region ddPCR gating: contributing wells",
-                ),
-            ]
+    # Build the requested positive-well panel from the scatterplot outputs
+    # written under results/ddPCR.
+    if positive_individual:
+        outputs.append(
+            write_lob_lod_positive_panel(
+                positive_individual,
+                positive_legend,
+                PANEL_DIR / "ddpcr_lob_lod_positive_individual_wells_panel.svg",
+            )
         )
     else:
-        print("No LoB+LoD+ sample-region rows; skipping positive gating panels")
+        print("No written LoB+LoD+ individual-well scatterplot rows; skipping positive panel")
 
-    # The gating-strategy panel is always written because it comes from control wells.
-    outputs.append(
-        write_panel(
-            sort_strategy(strategy_rows),
-            STRATEGY_DIR / "ddpcr_gating_strategy_panel.svg",
-            ncols=4,
-            cell_width=345,
-            cell_height=315,
-            title="ddPCR gating strategy from QuantaSoft JSON thresholds",
-            common_legend="strategy",
-        ),
-    )
+    # Keep the older strategy panel available when its manifest has been
+    # generated, but do not block the requested LoB/LoD scatterplot panel on it.
+    if STRATEGY_MANIFEST.exists():
+        strategy_rows = read_manifest(STRATEGY_MANIFEST)
+        outputs.append(
+            write_panel(
+                sort_strategy(strategy_rows),
+                PANEL_DIR / "ddpcr_gating_strategy_panel.svg",
+                ncols=4,
+                cell_width=345,
+                cell_height=315,
+                title="ddPCR gating strategy from QuantaSoft JSON thresholds",
+                common_legend="strategy",
+            ),
+        )
+    else:
+        print(f"No strategy manifest at {STRATEGY_MANIFEST}; skipping strategy panel")
 
     # Export every assembled SVG to PDF and report both artefacts.
     for svg_path in outputs:

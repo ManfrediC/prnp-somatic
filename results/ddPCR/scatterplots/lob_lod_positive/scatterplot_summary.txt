@@ -4,5 +4,6 @@ LoB+/LoD+ sample rows after CJD30 E200K exclusion: 2
 Selected positive wells: 5
 Individual well scatterplots written this run: 5
 Merged sample scatterplots written this run: 2
-Plot manifest rows: 7
-Scatterplot files present in manifest: 21
+Legend components written this run: 1
+Plot manifest rows: 8
+Scatterplot files present in manifest: 24
