@@ -142,6 +142,12 @@ lod_df <- tibble(
   mutation = factor(names(lod_cut), levels = mutation_list),
   LoD = as.numeric(lod_cut)
 )
+label_df <- tibble(
+  mutation = factor(mutation_list, levels = mutation_list),
+  x = Inf,
+  y = max_y - 0.02,
+  label = mutation_list
+)
 
 # Stack all mutations into one manuscript-facing figure.
 combined_plot <- ggplot(
@@ -162,6 +168,15 @@ combined_plot <- ggplot(
   ) +
   geom_hline(data = lod_df, aes(yintercept = LoD), inherit.aes = FALSE,
              linetype = "dashed", linewidth = 0.5) +
+  geom_text(
+    data = label_df,
+    aes(x = x, y = y, label = label),
+    inherit.aes = FALSE,
+    hjust = 1,
+    vjust = 1,
+    size = 15,
+    fontface = "bold"
+  ) +
   facet_wrap(~mutation, ncol = 1) +
   coord_cartesian(ylim = c(0, max_y)) +
   scale_colour_manual(name = "Brain region", values = region_colours, labels = region_labels, drop = FALSE) +
@@ -175,9 +190,16 @@ combined_plot <- ggplot(
   ) +
   theme_bw(base_size = 8) +
   theme(
+    plot.title = element_text(size = 16),
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+    axis.text.y = element_text(size = 11),
+    axis.title.y = element_text(size = 12),
     panel.grid.minor = element_blank(),
-    legend.position = "right"
+    legend.position = "right",
+    legend.title = element_text(size = 11),
+    legend.text = element_text(size = 10),
+    strip.background = element_blank(),
+    strip.text = element_blank()
   )
 
 # Save the combined panel with the default right-side legend.
