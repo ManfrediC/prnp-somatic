@@ -18,6 +18,7 @@ snv_data <- readxl::read_excel(data_path)
 # reruns remain reproducible from the environment alone.
 lod_cut <- c(D178N = 0.056, E200K = 0.067, P102L = 0.13)
 mutation_list <- c("D178N", "E200K", "P102L")
+max_y <- 0.4
 target_mutation_panels <- strsplit(
   Sys.getenv("DDPCR_TARGET_MUTATION_PANELS", paste(mutation_list, collapse = ",")),
   ","
@@ -50,6 +51,9 @@ region_colours <- c(
   th = "#CC79A7"
 )
 
+# Shared dodge used by all point / CI layers so points and their intervals line up.
+point_dodge <- position_dodge(width = 0.6)
+
 # Build one mutation-specific sample-region plot.
 make_plot <- function(mut) {
   # Restrict to plotted rows and keep the historical CJD30 E200K exclusion
@@ -73,8 +77,14 @@ make_plot <- function(mut) {
   # Draw point estimates, confidence intervals, and the assay-specific LoD line
   # on the common percent fractional-abundance scale.
   ggplot(df, aes(x = participant, y = fractional_abundance, colour = brain_region)) +
-    geom_point(aes(shape = detected_above_LoB, size = is_pooled), position = position_dodge(width = 0.6), na.rm = TRUE) +
-    geom_errorbar(aes(ymin = ci_low, ymax = ci_high, group = brain_region), position = position_dodge(width = 0.6), width = 0, linewidth = 0.3, na.rm = TRUE) +
+    geom_point(
+      aes(shape = detected_above_LoB, size = is_pooled, group = brain_region),
+      position = point_dodge, na.rm = TRUE
+    ) +
+    geom_errorbar(
+      aes(ymin = ci_low, ymax = ci_high, group = brain_region),
+      position = point_dodge, width = 0, linewidth = 0.3, na.rm = TRUE
+    ) +
     geom_hline(yintercept = lod_cut[[mut]], linetype = "dashed", linewidth = 0.5) +
     coord_cartesian(ylim = c(0, y_max)) +
     scale_colour_manual(name = "Brain region", values = region_colours, labels = region_labels, drop = FALSE) +
@@ -138,13 +148,22 @@ combined_plot <- ggplot(
   combined_df,
   aes(x = participant, y = fractional_abundance, colour = brain_region)
 ) +
-  geom_point(aes(shape = detected_above_LoB, size = is_pooled),
-             position = position_dodge(width = 0.6), na.rm = TRUE) +
-  geom_errorbar(aes(ymin = ci_low, ymax = ci_high, group = brain_region),
-                position = position_dodge(width = 0.6), width = 0, linewidth = 0.3, na.rm = TRUE) +
+  geom_point(
+    aes(shape = detected_above_LoB, size = is_pooled, group = brain_region),
+    position = point_dodge,
+    na.rm = TRUE
+  ) +
+  geom_errorbar(
+    aes(ymin = ci_low, ymax = ci_high, group = brain_region),
+    position = point_dodge,
+    width = 0,
+    linewidth = 0.3,
+    na.rm = TRUE
+  ) +
   geom_hline(data = lod_df, aes(yintercept = LoD), inherit.aes = FALSE,
              linetype = "dashed", linewidth = 0.5) +
-  facet_wrap(~mutation, ncol = 1, scales = "free_y") +
+  facet_wrap(~mutation, ncol = 1) +
+  coord_cartesian(ylim = c(0, max_y)) +
   scale_colour_manual(name = "Brain region", values = region_colours, labels = region_labels, drop = FALSE) +
   scale_shape_manual(name = "Above LoB", values = c(`FALSE` = 1, `TRUE` = 16), labels = c("No", "Yes")) +
   scale_size_manual(name = "Pooled row", values = c(`FALSE` = 1.8, `TRUE` = 3.0), labels = c("No", "Yes")) +
