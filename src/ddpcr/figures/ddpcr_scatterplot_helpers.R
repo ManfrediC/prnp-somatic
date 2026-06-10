@@ -444,7 +444,10 @@ build_scatterplot <- function(
   called_point_size = 1,
   called_alpha = 0.9,
   unassigned_point_size = 0.5,
-  unassigned_alpha = 0.3
+  unassigned_alpha = 0.3,
+  plot_title_size = 10,
+  legend_title_size = 9,
+  legend_text_size = 8
 ) {
   plot_droplets <- droplets %>%
     filter(gate %in% called_gate_levels) %>%
@@ -482,7 +485,9 @@ build_scatterplot <- function(
       legend.background = element_rect(fill = "transparent", colour = NA),
       legend.box.background = element_rect(fill = "transparent", colour = NA),
       legend.key = element_rect(fill = "transparent", colour = NA),
-      plot.title = element_text(size = 10),
+      legend.title = element_text(size = legend_title_size),
+      legend.text = element_text(size = legend_text_size),
+      plot.title = element_text(size = plot_title_size),
       plot.subtitle = element_text(size = 8)
     )
 

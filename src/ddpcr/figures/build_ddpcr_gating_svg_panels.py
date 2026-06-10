@@ -39,7 +39,7 @@ NUMBER_RE = re.compile(r"[-+]?(?:\d*\.\d+|\d+)(?:[eE][-+]?\d+)?")
 
 POSITIVE_PANEL_WIDTH = 1243.3007
 POSITIVE_PANEL_HEIGHT = 814.26233
-POSITIVE_PANEL_TITLE = "Individual wells supporting E200K-positive calls"
+POSITIVE_PANEL_TITLE = "Samples with E200K-positive calls"
 POSITIVE_PANEL_TRANSFORMS = [
     "matrix(1.03333,0,0,1.03333,0.45103926,41.8125)",
     "matrix(1.03333,0,0,1.03333,398.45104,41.8125)",
@@ -55,6 +55,11 @@ POSITIVE_PANEL_LABELS = [
     ("D", 11.505727, 467.8125),
     ("E", 410.96082, 467.8125),
 ]
+POSITIVE_WELL_STATUS_LABEL_X = 287.58289
+POSITIVE_WELL_STATUS_LABEL_Y = 63.478531
+POSITIVE_WELL_STATUS_LABEL_SIZE = "14px"
+POSITIVE_WELL_STATUS_LABEL_LINE_HEIGHT = 22
+POSITIVE_WELL_STATUS_LABEL_STYLE = "font-size:18.0646px"
 # Keep legend colours in sync with the R scripts that generate the individual
 # gating SVGs.
 CLASS_COLOURS = {
@@ -143,6 +148,32 @@ def styled_text(
         "font-size": size,
         "font-weight": weight,
         "fill": "#111827",
+    }
+    if style:
+        attrs["style"] = style
+    node = ET.SubElement(parent, f"{{{SVG_NS}}}text", attrs)
+    node.text = value
+
+
+def right_aligned_text(
+    parent: ET.Element,
+    x: float,
+    y: float,
+    value: str,
+    size: str = "12px",
+    weight: str = "bold",
+    fill: str = "#111827",
+    style: str | None = None,
+) -> None:
+    """Add compact right-aligned SVG text for in-plot status labels."""
+    attrs = {
+        "x": f"{x:g}",
+        "y": f"{y:g}",
+        "font-family": "Arial, Helvetica, sans-serif",
+        "font-size": size,
+        "font-weight": weight,
+        "fill": fill,
+        "text-anchor": "end",
     }
     if style:
         attrs["style"] = style
@@ -398,6 +429,38 @@ def inline_svg(
         wrapper.append(cloned)
 
 
+# ---- LoB/LoD status labels ----
+
+def manifest_bool(row: dict[str, str], field: str) -> bool:
+    """Parse a required logical field from the R-written manifest."""
+    value = (row.get(field) or "").strip().lower()
+    if value in {"true", "t", "1", "yes"}:
+        return True
+    if value in {"false", "f", "0", "no"}:
+        return False
+    raise ValueError(f"Manifest row has no valid {field} value: {row}")
+
+
+def lob_lod_status_lines(row: dict[str, str]) -> tuple[str, str]:
+    """Return compact LoD/LoB status labels for one individual well."""
+    lod = "LoD+" if manifest_bool(row, "detected_above_LoD") else "LoD-"
+    lob = "LoB+" if manifest_bool(row, "detected_above_LoB") else "LoB-"
+    return lod, lob
+
+
+def add_lob_lod_status_label(group: ET.Element, row: dict[str, str]) -> None:
+    """Draw the individual well LoD/LoB call in source plot coordinates."""
+    for line_index, label in enumerate(lob_lod_status_lines(row)):
+        right_aligned_text(
+            group,
+            POSITIVE_WELL_STATUS_LABEL_X,
+            POSITIVE_WELL_STATUS_LABEL_Y + POSITIVE_WELL_STATUS_LABEL_LINE_HEIGHT * line_index,
+            label,
+            size=POSITIVE_WELL_STATUS_LABEL_SIZE,
+            style=POSITIVE_WELL_STATUS_LABEL_STYLE,
+        )
+
+
 # ---- manifest path normalisation ----
 
 def manifest_svg_path(row: dict[str, str]) -> Path:
@@ -459,6 +522,7 @@ def write_lob_lod_positive_panel(
         )
         append_source_svg(group, manifest_svg_path(row), f"panel{index}_")
         merge_droplet_paths(group)
+        add_lob_lod_status_label(group, row)
         ensure_plot_border_drawn_last(group)
 
     legend_group = ET.SubElement(

@@ -26,6 +26,109 @@ source(file.path(project_root, "src", "ddpcr", "ddpcr_raw_import_helpers.R"))
 # ---- shared scatterplot helpers ----
 source(file.path(project_root, "src", "ddpcr", "figures", "ddpcr_scatterplot_helpers.R"))
 
+# ---- individual well LoB/LoD calls ----
+
+mutation_list <- c("D178N", "E200K", "P102L")
+lod_cut <- c(D178N = 0.056, E200K = 0.067, P102L = 0.13)
+positive_scatterplot_x_max <- 6000
+
+well_lob_lod_calls <- function(raw_root) {
+  raw_rows <- read_ddpcr_raw_bigdata_from_database(raw_root)
+
+  snv_rows <- raw_rows %>%
+    select(
+      Date, Well, Sample, ExperimentType, Target,
+      AcceptedDroplets = `Accepted Droplets`,
+      Positives,
+      `Ch1+Ch2+`, `Ch1+Ch2-`, `Ch1-Ch2+`, `Ch1-Ch2-`
+    ) %>%
+    filter(Target %in% mutation_list)
+
+  blank_counts <- snv_rows %>%
+    mutate(
+      blank_sample = case_when(
+        str_detect(Sample, regex("WT", ignore_case = TRUE)) ~ "WT_control",
+        TRUE ~ NA_character_
+      )
+    ) %>%
+    filter(blank_sample == "WT_control", AcceptedDroplets >= 10000) %>%
+    group_by(plate = Date, assay = ExperimentType) %>%
+    summarise(
+      x_blank = sum(Positives, na.rm = TRUE),
+      n_blank = sum(AcceptedDroplets, na.rm = TRUE),
+      .groups = "drop"
+    ) %>%
+    mutate(p0_upper = binom::binom.confint(x_blank, n_blank, methods = "exact")$upper)
+
+  blank_pooled <- blank_counts %>%
+    select(plate, assay, p0_upper)
+
+  assay_fallback <- blank_counts %>%
+    group_by(assay) %>%
+    summarise(
+      x_blank = sum(x_blank),
+      n_blank = sum(n_blank),
+      .groups = "drop"
+    ) %>%
+    mutate(p0_upper_fallback = binom::binom.confint(x_blank, n_blank, methods = "exact")$upper) %>%
+    select(assay, p0_upper_fallback)
+
+  well_counts <- snv_rows %>%
+    mutate(
+      n_double_positive_droplets = as.numeric(`Ch1+Ch2+`),
+      n_ref_only_droplets = case_when(
+        ExperimentType == "P102L" ~ as.numeric(`Ch1-Ch2+`),
+        TRUE ~ as.numeric(`Ch1+Ch2-`)
+      ),
+      n_mut_only_droplets = case_when(
+        ExperimentType == "P102L" ~ as.numeric(`Ch1+Ch2-`),
+        TRUE ~ as.numeric(`Ch1-Ch2+`)
+      ),
+      n_ref_positive_droplets = n_double_positive_droplets + n_ref_only_droplets,
+      n_mut_positive_droplets = n_double_positive_droplets + n_mut_only_droplets
+    ) %>%
+    transmute(
+      run_date = as.Date(Date),
+      assay = ExperimentType,
+      well = Well,
+      n_total_droplets = as.numeric(AcceptedDroplets),
+      n_ref_positive_droplets,
+      n_mut_positive_droplets
+    )
+
+  well_fa <- purrr::pmap_dfr(
+    list(
+      ref_positive = well_counts$n_ref_positive_droplets,
+      ref_negative = well_counts$n_total_droplets - well_counts$n_ref_positive_droplets,
+      mut_positive = well_counts$n_mut_positive_droplets,
+      mut_negative = well_counts$n_total_droplets - well_counts$n_mut_positive_droplets,
+      total = well_counts$n_total_droplets
+    ),
+    fractional_abundance
+  )
+
+  bind_cols(well_counts, well_fa) %>%
+    left_join(blank_pooled, by = c("run_date" = "plate", "assay")) %>%
+    left_join(assay_fallback, by = "assay") %>%
+    mutate(
+      p0_use = coalesce(p0_upper, p0_upper_fallback, 0),
+      lob_count = stats::qbinom(0.95, size = n_total_droplets, prob = p0_use),
+      lob_fa = if_else(n_total_droplets > 0, 100 * lob_count / n_total_droplets, NA_real_),
+      detected_above_LoB = n_mut_positive_droplets > lob_count,
+      detected_above_LoD = ci_low > lod_cut[assay]
+    ) %>%
+    select(
+      run_date, assay, well,
+      individual_fractional_abundance = fractional_abundance,
+      individual_ci_low = ci_low,
+      individual_ci_high = ci_high,
+      individual_lob_count = lob_count,
+      individual_lob_fa = lob_fa,
+      detected_above_LoB,
+      detected_above_LoD
+    )
+}
+
 # ---- well plotter ----
 
 # Render one well and return the manifest row describing either the output file
@@ -73,6 +176,8 @@ plot_well <- function(well_row) {
         sample_id = well_row$sample_id,
         sample_key = well_row$sample_key,
         is_pooled = well_row$is_pooled,
+        detected_above_LoB = well_row$detected_above_LoB,
+        detected_above_LoD = well_row$detected_above_LoD,
         well_index = well_row$well_index,
         run_id = well_row$run_id,
         run_date = as.Date(well_row$run_date),
@@ -126,7 +231,8 @@ plot_well <- function(well_row) {
     thresholds = parsed$thresholds,
     mutation = well_row$mutation,
     title = paste(well_row$participant_display, well_row$brain_region_display, well_row$mutation, well_row$replicate_label),
-    axis_limits = axis_limits
+    axis_limits = axis_limits,
+    plot_title_size = 12
   )
 
   save_plot_outputs(without_legend_keep_layout(plot), output_paths, width = 6, height = 5, dpi = 220)
@@ -148,6 +254,8 @@ plot_well <- function(well_row) {
       sample_id = well_row$sample_id,
       sample_key = well_row$sample_key,
       is_pooled = well_row$is_pooled,
+      detected_above_LoB = well_row$detected_above_LoB,
+      detected_above_LoD = well_row$detected_above_LoD,
       well_index = well_row$well_index,
       run_id = well_row$run_id,
       run_date = as.Date(well_row$run_date),
@@ -249,6 +357,8 @@ plot_merged_sample <- function(sample_rows) {
       sample_id = row$sample_id,
       sample_key = row$sample_key,
       is_pooled = row$is_pooled,
+      detected_above_LoB = NA,
+      detected_above_LoD = NA,
       well_index = NA_integer_,
       run_id = NA_character_,
       run_date = as.Date(NA),
@@ -291,7 +401,9 @@ plot_lob_lod_legend <- function() {
     droplets = legend_droplets,
     thresholds = tibble(axis = character(), threshold = numeric(), threshold_source = character()),
     mutation = "E200K",
-    title = "Legend"
+    title = "Legend",
+    legend_title_size = 11,
+    legend_text_size = 10
   )
 
   save_plot_outputs(legend_only_keep_layout(legend_plot), output_paths, width = 6, height = 5, dpi = 220)
@@ -311,6 +423,8 @@ plot_lob_lod_legend <- function() {
       sample_id = NA_character_,
       sample_key = NA_character_,
       is_pooled = NA,
+      detected_above_LoB = NA,
+      detected_above_LoD = NA,
       well_index = NA_integer_,
       run_id = NA_character_,
       run_date = as.Date(NA),
@@ -359,6 +473,8 @@ active_wells <- read_ddpcr_manifest_table(raw_root, "sample_manifest.csv") %>%
 
 active_well_total <- nrow(active_wells)
 
+individual_well_calls <- well_lob_lod_calls(raw_root)
+
 # ---- positive sample selection ----
 
 sample_details <- readxl::read_excel(file.path(raw_root, "sample_details.xlsx")) %>%
@@ -404,7 +520,8 @@ selected_wells <- positive_samples %>%
     positive_id, participant, participant_display, code, brain_region,
     brain_region_display, mutation, sample_id,
     sample_key, is_pooled, fractional_abundance, ci_low, ci_high,
-    detected_above_LoB, detected_above_LoD
+    sample_detected_above_LoB = detected_above_LoB,
+    sample_detected_above_LoD = detected_above_LoD
   ) %>%
   inner_join(
     active_wells,
@@ -437,7 +554,17 @@ replicate_dates <- selected_wells %>%
   ungroup()
 
 selected_wells <- selected_wells %>%
-  left_join(replicate_dates, by = c("positive_id", "run_date"))
+  left_join(replicate_dates, by = c("positive_id", "run_date")) %>%
+  left_join(individual_well_calls, by = c("run_date", "assay", "well"))
+
+missing_individual_well_calls <- selected_wells %>%
+  filter(is.na(detected_above_LoB) | is.na(detected_above_LoD))
+if (nrow(missing_individual_well_calls) > 0L) {
+  stop(
+    "Could not calculate individual-well LoB/LoD calls for selected wells:\n",
+    paste(utils::capture.output(print(missing_individual_well_calls)), collapse = "\n")
+  )
+}
 
 # Compute shared axes for all wells belonging to one positive sample so
 # individual and merged plots are directly comparable.
@@ -457,7 +584,7 @@ compute_sample_axis_limits <- function(sample_rows) {
   tibble(
     positive_id = sample_rows$positive_id[[1]],
     x_min = x_limits[[1]],
-    x_max = x_limits[[2]],
+    x_max = positive_scatterplot_x_max,
     y_min = y_limits[[1]],
     y_max = y_limits[[2]]
   )
@@ -517,6 +644,8 @@ empty_plot_manifest <- tibble(
   sample_id = character(),
   sample_key = character(),
   is_pooled = logical(),
+  detected_above_LoB = logical(),
+  detected_above_LoD = logical(),
   well_index = integer(),
   run_id = character(),
   run_date = as.Date(character()),
@@ -583,9 +712,12 @@ readr::write_csv(
       positive_id, participant, participant_display, code, brain_region,
       brain_region_display, mutation, replicate_index, replicate_label, sample_id,
       sample_key, is_pooled,
+      detected_above_LoB, detected_above_LoD,
+      sample_detected_above_LoB, sample_detected_above_LoD,
+      individual_fractional_abundance, individual_ci_low, individual_ci_high,
+      individual_lob_count, individual_lob_fa,
       run_id, run_date, assay, well, sample, archive_contents_relative_dir,
       well_index, fractional_abundance, ci_low, ci_high,
-      detected_above_LoB, detected_above_LoD,
       x_min, x_max, y_min, y_max
     ),
   file.path(positive_out_dir, "selected_wells.csv")
