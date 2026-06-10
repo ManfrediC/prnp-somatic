@@ -12,6 +12,26 @@ dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 # Read the sample-region ddPCR table produced by the main ddPCR workflow.
 snv_data <- readxl::read_excel(data_path)
 
+save_pdf <- function(filename, plot, width, height, optional = FALSE) {
+  tryCatch(
+    ggsave(
+      filename = filename,
+      plot = plot,
+      device = grDevices::pdf,
+      width = width,
+      height = height,
+      dpi = 300
+    ),
+    error = function(err) {
+      if (!optional) {
+        stop(err)
+      }
+      warning("Skipped locked optional PDF output: ", filename, call. = FALSE)
+      invisible(FALSE)
+    }
+  )
+}
+
 # ---- plotting constants ----
 
 # Keep mutation ordering, LoD cut-offs, and requested panels explicit so single-panel
@@ -110,12 +130,12 @@ plots <- setNames(lapply(mutation_list, make_plot), mutation_list)
 
 # Write requested single-mutation panels.
 for (mut in target_mutation_panels) {
-  ggsave(
+  save_pdf(
     filename = file.path(out_dir, paste0("SNV_", mut, "_panel.pdf")),
     plot = plots[[mut]],
     width = 11,
     height = 4.5,
-    dpi = 300
+    optional = TRUE
   )
 }
 
@@ -203,16 +223,16 @@ combined_plot <- ggplot(
   )
 
 # Save the combined panel with the default right-side legend.
-ggsave(
+save_pdf(
   filename = file.path(out_dir, "SNV_all_mutations.pdf"),
   plot = combined_plot,
   width = 11,
   height = 12,
-  dpi = 300
+  optional = TRUE
 )
 
-# Write SVGs when svglite is available, otherwise remove stale vectors so
-# missing optional tooling is visible rather than silently preserving old output.
+# Write SVGs even when svglite is unavailable, using the base SVG device as
+# a stable fallback so both PDF and SVG outputs are always produced.
 save_svg_if_available <- function(plot, path, width, height) {
   if (requireNamespace("svglite", quietly = TRUE)) {
     ggsave(
@@ -220,11 +240,19 @@ save_svg_if_available <- function(plot, path, width, height) {
       plot = plot,
       width = width,
       height = height,
+      device = svglite::svglite,
       dpi = 300
     )
   } else {
-    unlink(path, force = TRUE)
-    warning("svglite is not installed; removed stale SVG output: ", path, call. = FALSE)
+    warning("svglite is not installed; writing SVG via grDevices::svg for ", path, call. = FALSE)
+    ggsave(
+      filename = path,
+      plot = plot,
+      width = width,
+      height = height,
+      device = grDevices::svg,
+      dpi = 300
+    )
   }
 }
 
@@ -243,12 +271,11 @@ legend_bottom_plot <- cowplot::plot_grid(
 )
 
 # Save the final combined panel as PDF and SVG.
-ggsave(
+save_pdf(
   filename = file.path(out_dir, "SNV_all_mutations_legend_bottom_final.pdf"),
   plot = legend_bottom_plot,
   width = 11,
-  height = 12,
-  dpi = 300
+  height = 12
 )
 
 save_svg_if_available(
@@ -259,20 +286,32 @@ save_svg_if_available(
 )
 
 # Write one plot per page for easier review of the individual mutation panels.
-write_multipage_pdf <- function(path, plots, width, height) {
-  pdf(path, width = width, height = height)
-  on.exit(dev.off(), add = TRUE)
-  for (plot in plots) {
-    print(plot)
-  }
-  invisible(TRUE)
+write_multipage_pdf <- function(path, plots, width, height, optional = FALSE) {
+  tryCatch(
+    {
+      pdf(path, width = width, height = height)
+      on.exit(dev.off(), add = TRUE)
+      for (plot in plots) {
+        print(plot)
+      }
+      invisible(TRUE)
+    },
+    error = function(err) {
+      if (!optional) {
+        stop(err)
+      }
+      warning("Skipped locked optional PDF output: ", path, call. = FALSE)
+      invisible(FALSE)
+    }
+  )
 }
 
 write_multipage_pdf(
   file.path(out_dir, "SNV_all_mutations_multipage.pdf"),
   plots,
   width = 11,
-  height = 4.5
+  height = 4.5,
+  optional = TRUE
 )
 
 # Record pooled rows that affect the sample-region figure so reviewers can audit

@@ -26,6 +26,7 @@ run_py() {
 
 run_r "$SCRIPT_DIR/create_snv_dataframe.R"
 run_r "$SCRIPT_DIR/figures/ddpcr_fractional_abundance.R"
+run_py "$SCRIPT_DIR/figures/fix_snv_all_mutations_legend_bottom_final_svg.py"
 run_r "$SCRIPT_DIR/figures/ddpcr_fractional_abundance_pooled.R"
 run_r "$SCRIPT_DIR/ddpcr_samples_results_tbl.R"
 run_r "$SCRIPT_DIR/ddpcr_sample_number.R"
