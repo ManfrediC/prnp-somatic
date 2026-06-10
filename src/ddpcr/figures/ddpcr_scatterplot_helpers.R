@@ -59,10 +59,10 @@ gate_colours <- c(
 # Build manuscript-facing legend labels for the active mutation.
 gate_labels_for_mutation <- function(mutation) {
   c(
-    wt_pos_mut_pos = paste0("Wildtype+ / ", mutation, "+"),
-    wt_pos_mut_neg = paste0("Wildtype+ / ", mutation, "-"),
-    wt_neg_mut_pos = paste0("Wildtype- / ", mutation, "+"),
-    wt_neg_mut_neg = paste0("Wildtype- / ", mutation, "-")
+    wt_pos_mut_pos = sprintf("Wildtype + / %-5s +", mutation),
+    wt_pos_mut_neg = sprintf("Wildtype + / %-5s -", mutation),
+    wt_neg_mut_pos = sprintf("Wildtype -  / %-5s +", mutation),
+    wt_neg_mut_neg = sprintf("Wildtype -  / %-5s -", mutation)
   )
 }
 
