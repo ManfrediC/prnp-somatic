@@ -41,6 +41,8 @@ NUMBER_RE = re.compile(r"[-+]?(?:\d*\.\d+|\d+)(?:[eE][-+]?\d+)?")
 POSITIVE_PANEL_WIDTH = 1243.3007
 POSITIVE_PANEL_HEIGHT = 814.26233
 POSITIVE_PANEL_WIDTH_MARGIN = 8
+STRATEGY_PANEL_LABEL_OFFSET_X = 4.0
+STRATEGY_PANEL_LABEL_OFFSET_Y = 20.8
 POSITIVE_PANEL_TRANSFORMS = [
     "matrix(1.03333,0,0,1.03333,0.45103926,41.8125)",
     "matrix(1.03333,0,0,1.03333,398.45104,41.8125)",
@@ -257,17 +259,17 @@ def svg_viewbox(root: ET.Element) -> tuple[float, float, float, float]:
     return 0.0, 0.0, width, height
 
 
-def parse_matrix(transform: str) -> tuple[float, float]:
-    """Return scale and translate-x for a pure matrix(a,0,0,a,e,f) transform."""
+def parse_matrix(transform: str) -> tuple[float, float, float]:
+    """Return scale and x/y translations for a pure matrix(a,0,0,a,e,f) transform."""
     values = [float(value.group(0)) for value in NUMBER_RE.finditer(transform)]
     if len(values) != 6:
         raise ValueError(f"Unexpected transform format: {transform}")
-    a, b, c, d, e, _ = values
+    a, b, c, d, e, f = values
     if abs(b) > 1e-9 or abs(c) > 1e-9:
         raise ValueError(f"Expected axis-aligned panel transform, got: {transform}")
     if abs(a - d) > 1e-9:
         raise ValueError(f"Expected uniform scale in panel transform, got: {transform}")
-    return a, e
+    return a, e, f
 
 
 def parse_finite_number(value: str) -> float | None:
@@ -350,7 +352,7 @@ def transformed_max_x(svg_path: Path, transform: str) -> float | None:
     """Estimate max x after applying a fixed-scale panel transform."""
     source_root = ET.parse(svg_path).getroot()
     local_max_x = svg_content_max_x(source_root)
-    scale, tx = parse_matrix(transform)
+    scale, tx, _ = parse_matrix(transform)
     return scale * local_max_x + tx
 
 
@@ -705,7 +707,14 @@ def write_panel(
         wrapper = inline_svg(root, manifest_svg_path(row), x + 24, y, cell_width - 24, cell_height, f"p{index}_")
         merge_droplet_paths(wrapper)
         ensure_plot_border_drawn_last(wrapper)
-        styled_text(root, x + 2, y + 24, letter, "18px", style="font-size:21.3333px")
+        transform = wrapper.attrib.get("transform", "matrix(1 0 0 1 0 0)")
+        _, panel_x, panel_y = parse_matrix(transform)
+        label_x = panel_x + STRATEGY_PANEL_LABEL_OFFSET_X
+        label_y = panel_y + STRATEGY_PANEL_LABEL_OFFSET_Y
+        if common_legend != "strategy":
+            label_x = x + 2
+            label_y = y + 24
+        styled_text(root, label_x, label_y, letter, "18px", style="font-size:21.3333px")
 
     # Strategy panels use one shared legend to avoid repeating legends in every cell.
     if common_legend == "strategy":

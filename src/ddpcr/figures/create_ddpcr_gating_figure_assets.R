@@ -36,6 +36,8 @@ region_labels <- c(
   th = "thalamus"
 )
 control_stage_order <- c("NTC", "WT", "Positive control", "Final adjusted gate")
+gate_threshold_tolerance <- 1e-6
+relaxed_gate_threshold_tolerance <- 100
 
 class_levels <- c(
   "Reference-only",
@@ -168,6 +170,38 @@ cluster_boundary_thresholds <- function(droplets) {
   )
 }
 
+# User-reviewed gates for edited QuantaSoft archives. These are deliberately
+# scoped to the exact runs whose .ddpcr files were corrected, so all other wells
+# retain the historical cluster-boundary fallback.
+provided_run_thresholds <- tribble(
+  ~run_id, ~assay, ~ch1_threshold, ~ch2_threshold,
+  "2020-11-24_SNV_D178N", "D178N", 1000, 2250,
+  "2020-11-05_SNV_E200K", "E200K", 1600, 2450,
+  "2021-02-17_SNV_P102L", "P102L", 2240, 2528
+)
+
+provided_final_gate_wells <- tribble(
+  ~run_id, ~assay, ~well,
+  "2020-11-24_SNV_D178N", "D178N", "B07",
+  "2020-11-05_SNV_E200K", "E200K", "D06",
+  "2021-02-17_SNV_P102L", "P102L", "E06"
+)
+
+provided_thresholds_for_well <- function(well_row) {
+  provided <- provided_run_thresholds %>%
+    filter(run_id == well_row$run_id, assay == well_row$assay)
+
+  if (nrow(provided) != 1L) {
+    return(NULL)
+  }
+
+  tibble(
+    channel = c("Ch1", "Ch2"),
+    threshold_type = "manual",
+    threshold = c(provided$ch1_threshold, provided$ch2_threshold)
+  )
+}
+
 # Convert QuantaSoft reference/mutant calls into manuscript droplet classes.
 class_from_calls <- function(ref_result, mut_result) {
   if (!all(c(ref_result, mut_result) %in% c("Negative", "Positive"))) {
@@ -270,7 +304,11 @@ read_well_droplets_for_plot <- function(well_row) {
 
   # Return droplets and threshold metadata together so plot and manifest writers
   # use the same parsed source.
-  thresholds <- cluster_boundary_thresholds(droplets) %>%
+  thresholds <- provided_thresholds_for_well(well_row)
+  if (is.null(thresholds)) {
+    thresholds <- cluster_boundary_thresholds(droplets)
+  }
+  thresholds <- thresholds %>%
     mutate(
       run_id = well_row$run_id,
       run_date = as.Date(well_row$run_date),
@@ -321,10 +359,17 @@ axis_limits <- function(droplets, thresholds) {
 }
 
 # Add cluster-boundary gate lines inferred from saved QuantaSoft calls.
-add_gate_layers <- function(plot, thresholds, limits, show_auto = TRUE, show_manual = TRUE) {
+add_gate_layers <- function(
+  plot,
+  thresholds,
+  limits,
+  show_gates = TRUE,
+  show_auto = TRUE,
+  show_manual = TRUE
+) {
   threshold_data <- thresholds %>%
     filter(!is.na(threshold), is.finite(threshold))
-  if (nrow(threshold_data) == 0L) {
+  if (!show_gates || nrow(threshold_data) == 0L) {
     return(plot)
   }
 
@@ -364,13 +409,18 @@ base_scatter_plot <- function(
   thresholds,
   title,
   subtitle,
+  mutation = NULL,
   limits,
   facet_by_well = FALSE,
   show_auto = TRUE,
   show_manual = TRUE,
+  show_gates = TRUE,
   show_legend = TRUE,
   plot_title_size = 9
 ) {
+  x_label <- if (!is.null(mutation) && isTRUE(nzchar(mutation))) paste0(mutation, " amplitude") else "Channel 1 amplitude"
+  y_label <- if (!is.null(mutation) && isTRUE(nzchar(mutation))) "Wildtype amplitude" else "Channel 2 amplitude"
+
   # Plot only called droplet clusters while preserving unassigned/rejected
   # droplets in parsed metadata for audit outputs.
   plot <- droplets %>%
@@ -388,8 +438,8 @@ base_scatter_plot <- function(
     labs(
       title = title,
       subtitle = subtitle,
-      x = "Channel 1 amplitude",
-      y = "Channel 2 amplitude"
+      x = x_label,
+      y = y_label
     ) +
     guides(
       colour = if (show_legend) guide_legend(override.aes = list(size = 2.0, alpha = 1)) else "none",
@@ -411,12 +461,271 @@ base_scatter_plot <- function(
     plot <- plot + facet_wrap(~well_label, ncol = 1)
   }
 
-  add_gate_layers(
+  plot <- add_gate_layers(
     plot = plot,
     thresholds = thresholds,
     limits = limits,
+    show_gates = show_gates,
     show_auto = show_auto,
     show_manual = show_manual
+  )
+  plot
+}
+
+is_real_control_sample <- function(sample_upper) {
+  str_detect(sample_upper, "^(?:CJD|CTRL|CONTROL)")
+}
+
+select_final_gate_control <- function(
+  assay_name,
+  run_id_value,
+  positive_thresholds,
+  candidate_wells,
+  tolerance = gate_threshold_tolerance,
+  relaxed_tolerance = relaxed_gate_threshold_tolerance
+) {
+  candidate_wells <- candidate_wells %>%
+    filter(assay == assay_name, run_id == run_id_value)
+
+  if (nrow(candidate_wells) == 0L) {
+    stop("No CJD/Ctrl candidate wells found for ", assay_name, " on plate ", run_id_value)
+  }
+
+  candidate_scores <- vector("list", 0L)
+  for (i in seq_len(nrow(candidate_wells))) {
+    candidate <- candidate_wells[i, ]
+    parsed <- tryCatch(
+      read_well_droplets_for_plot(candidate),
+      error = function(err) {
+        cat(
+          "Skipping candidate final-adjusted-gate well ",
+          candidate$well,
+          " for ",
+          assay_name,
+          " on plate ",
+          run_id_value,
+          " while checking gate compatibility: ",
+          conditionMessage(err),
+          "\n",
+          sep = ""
+        )
+        NULL
+      }
+    )
+    if (is.null(parsed)) {
+      next
+    }
+
+    ref_thresholds <- positive_thresholds %>%
+      filter(!is.na(threshold), is.finite(threshold), channel %in% c("Ch1", "Ch2")) %>%
+      arrange(channel, threshold)
+    cand_thresholds <- parsed$thresholds %>%
+      filter(!is.na(threshold), is.finite(threshold), channel %in% c("Ch1", "Ch2")) %>%
+      arrange(channel, threshold)
+
+    if (nrow(ref_thresholds) == 0L || nrow(cand_thresholds) == 0L) {
+      next
+    }
+    if (nrow(ref_thresholds) != nrow(cand_thresholds) || !all(ref_thresholds$channel == cand_thresholds$channel)) {
+      next
+    }
+
+    deltas <- abs(ref_thresholds$threshold - cand_thresholds$threshold)
+    compatible_ok <- all(deltas <= tolerance)
+    candidate_scores[[length(candidate_scores) + 1L]] <- candidate %>%
+      mutate(
+        final_gate_match_distance = max(deltas),
+        final_gate_match_mean_distance = mean(deltas),
+        final_gate_match_type = if_else(compatible_ok, "strict", "relaxed")
+      )
+    if (!compatible_ok) {
+      next
+    }
+  }
+
+  candidate_scores <- bind_rows(candidate_scores)
+  if (nrow(candidate_scores) == 0L) {
+    stop(
+      "No same-plate real CJD/Ctrl candidate with comparable Ch1/Ch2 thresholds for ",
+      assay_name,
+      " on plate ",
+      run_id_value
+    )
+  }
+
+  intended_final_gate <- provided_final_gate_wells %>%
+    filter(run_id == run_id_value, assay == assay_name)
+
+  selected <- if (nrow(intended_final_gate) == 1L) {
+    intended <- candidate_scores %>%
+      filter(
+        final_gate_match_type == "strict",
+        well == intended_final_gate$well[[1]]
+      )
+    if (nrow(intended) != 1L) {
+      stop(
+        "Intended final-adjusted-gate well ",
+        intended_final_gate$well[[1]],
+        " was not a strict compatible real CJD/Ctrl candidate for ",
+        assay_name,
+        " on plate ",
+        run_id_value
+      )
+    }
+    intended
+  } else if (any(candidate_scores$final_gate_match_type == "strict")) {
+    candidate_scores %>%
+      filter(final_gate_match_type == "strict") %>%
+      arrange(
+        desc(accepted_droplets),
+        sample,
+        well
+      ) %>%
+      slice_head(n = 1L)
+  } else {
+    relaxed <- candidate_scores %>%
+      filter(final_gate_match_type == "relaxed", final_gate_match_distance <= relaxed_tolerance) %>%
+      arrange(
+        final_gate_match_distance,
+        final_gate_match_mean_distance,
+        desc(accepted_droplets),
+        sample,
+        well
+      )
+    if (nrow(relaxed) == 0L) {
+      stop(
+        "No same-plate real CJD/Ctrl candidate was within relaxed gate matching for ",
+        assay_name,
+        " on plate ",
+        run_id_value
+      )
+    }
+    relaxed %>%
+      slice_head(n = 1L)
+  }
+
+  selected <- selected %>%
+    mutate(stage = "Final adjusted gate")
+
+  if (selected$final_gate_match_type %>% first() == "strict") {
+    selected_count <- nrow(candidate_scores %>% filter(final_gate_match_type == "strict"))
+    compatible_label <- paste0(
+      selected_count,
+      " strict threshold-matching candidate(s)"
+    )
+  } else {
+    compatible_label <- "0 strict threshold-matching candidate(s)"
+  }
+
+  cat(
+    "Final adjusted gate selected for ",
+    assay_name,
+    " on ",
+    run_id_value,
+    ": ",
+    compatible_label,
+    ", selected ",
+    selected$well,
+    " (sample ",
+    selected$sample,
+    "; match=",
+    selected$final_gate_match_type,
+    ", dmax=",
+    format(signif(selected$final_gate_match_distance, 3)),
+    ", dmean=",
+    format(signif(selected$final_gate_match_mean_distance, 3)),
+    ")\n",
+    sep = ""
+  )
+
+  selected
+}
+
+# Resolve complete control wells plus a compatible final-adjusted gate per assay.
+resolve_assay_control_set <- function(
+  assay_name,
+  control_runs_for_assay,
+  available_control_wells,
+  real_sample_control_wells,
+  tolerance = gate_threshold_tolerance
+) {
+  if (nrow(control_runs_for_assay) == 0L) {
+    stop("Could not identify complete control runs for assay ", assay_name)
+  }
+
+  for (i in seq_len(nrow(control_runs_for_assay))) {
+    run_id_value <- control_runs_for_assay$run_id[[i]]
+    controls <- available_control_wells %>%
+      filter(assay == assay_name, run_id == run_id_value, stage %in% control_stage_order[1:3]) %>%
+      group_by(stage) %>%
+      arrange(desc(accepted_droplets), sample, well, .by_group = TRUE) %>%
+      slice_head(n = 1L) %>%
+      ungroup()
+
+    if (nrow(controls) != length(control_stage_order[1:3])) {
+      next
+    }
+
+    positive_thresholds <- tryCatch(
+      {
+        positive_row <- controls %>% filter(stage == "Positive control")
+        if (nrow(positive_row) != 1L) {
+          stop("Expected one positive-control row for assay ", assay_name, " on run ", run_id_value)
+        }
+        read_well_droplets_for_plot(positive_row)$thresholds
+      },
+      error = function(err) {
+        cat(
+          "Skipping control run ",
+          run_id_value,
+          " for assay ",
+          assay_name,
+          ": ",
+          conditionMessage(err),
+          "\n",
+          sep = ""
+        )
+        NULL
+      }
+    )
+
+    if (is.null(positive_thresholds)) {
+      next
+    }
+
+    final_gate <- tryCatch(
+      select_final_gate_control(
+        assay_name = assay_name,
+        run_id_value = run_id_value,
+        positive_thresholds = positive_thresholds,
+        candidate_wells = real_sample_control_wells,
+        tolerance = tolerance
+      ),
+      error = function(err) {
+        cat(
+          "Control run ",
+          run_id_value,
+          " for assay ",
+          assay_name,
+          " has no same-plate compatible final-adjusted gate: ",
+          conditionMessage(err),
+          "\n",
+          sep = ""
+        )
+        NULL
+      }
+    )
+
+    if (is.null(final_gate)) {
+      next
+    }
+
+    return(bind_rows(controls, final_gate))
+  }
+
+  stop(
+    "Could not find a complete control run with a compatible same-plate final-adjusted gate for assay ",
+    assay_name
   )
 }
 
@@ -611,6 +920,7 @@ if (nrow(positive_rows) == 0L) {
       thresholds = thresholds %>% filter(threshold_type == "manual"),
       title = row$manuscript_label,
       subtitle = paste0(subtitle, "; merged droplets"),
+      mutation = row$mutation,
       limits = positive_limits,
       facet_by_well = FALSE,
       show_auto = FALSE,
@@ -624,6 +934,7 @@ if (nrow(positive_rows) == 0L) {
       thresholds = thresholds %>% filter(threshold_type == "manual"),
       title = row$manuscript_label,
       subtitle = paste0(subtitle, "; one facet per contributing well"),
+      mutation = row$mutation,
       limits = positive_limits,
       facet_by_well = TRUE,
       show_auto = FALSE,
@@ -677,22 +988,37 @@ readr::write_csv(
 
 # ---- gating strategy controls ----
 
-# Identify NTC, WT, and positive-control wells with usable raw JSON data.
-available_control_wells <- well_manifest %>%
+# Add manifest-derived paths so we can select both hard-coded control wells and
+# same-plate CJD/Ctrl candidate wells from one source table.
+well_manifest_with_paths <- well_manifest %>%
   mutate(
     sample_upper = str_to_upper(sample),
+    peak_path = file.path(raw_root, archive_contents_relative_dir, "PeakData", paste0(well, ".ddpeakjson")),
+    metadata_path = file.path(raw_root, archive_contents_relative_dir, "PeakMetaData", paste0(well, ".ddmetajson")),
+    has_peak_data = file.exists(peak_path),
+    has_metadata = file.exists(metadata_path)
+  )
+
+# Identify NTC, WT, and positive-control wells with usable raw JSON data.
+available_control_wells <- well_manifest_with_paths %>%
+  mutate(
     stage = case_when(
       str_detect(sample_upper, "NTC") ~ "NTC",
       str_detect(sample_upper, "^WT|[_-]WT|WT[_-]") ~ "WT",
       str_detect(sample_upper, "MUT") ~ "Positive control",
       TRUE ~ NA_character_
-    ),
-    peak_path = file.path(raw_root, archive_contents_relative_dir, "PeakData", paste0(well, ".ddpeakjson")),
-    metadata_path = file.path(raw_root, archive_contents_relative_dir, "PeakMetaData", paste0(well, ".ddmetajson")),
-    has_peak_data = file.exists(peak_path),
-    has_metadata = file.exists(metadata_path)
+    )
   ) %>%
   filter(!is.na(stage), has_peak_data, has_metadata)
+
+# Candidate final-adjusted-gate wells must be real CJD/Ctrl samples, not controls.
+real_sample_control_wells <- well_manifest_with_paths %>%
+  filter(
+    is_real_control_sample(sample_upper),
+    !str_detect(sample_upper, "NTC|[_-]WT|WT[_-]|MUT"),
+    has_peak_data,
+    has_metadata
+  )
 
 # Prefer control runs close to the positive-sample runs when positives exist.
 reference_dates <- if (nrow(positive_wells) > 0L) {
@@ -714,43 +1040,42 @@ control_runs <- available_control_wells %>%
   filter(complete) %>%
   arrange(match(assay, mutation_order), date_distance, desc(total_accepted), run_date)
 
-# Keep the highest-quality complete run for each mutation assay.
-selected_control_runs <- control_runs %>%
-  group_by(assay) %>%
-  slice_head(n = 1) %>%
-  ungroup()
-
-if (nrow(selected_control_runs) != length(mutation_order)) {
-  stop("Could not identify complete NTC/WT/positive-control sets for every assay")
-}
-
-# Select one representative well per assay/stage from the chosen runs.
-selected_controls <- selected_control_runs %>%
-  select(assay, run_id) %>%
-  left_join(
-    available_control_wells,
-    by = c("assay", "run_id")
-  ) %>%
-  filter(stage %in% control_stage_order[1:3]) %>%
-  group_by(assay, stage) %>%
-  arrange(desc(accepted_droplets), well, .by_group = TRUE) %>%
-  slice_head(n = 1) %>%
-  ungroup()
-
-# Reuse the positive-control well to show the final adjusted manual gate.
-final_gate_controls <- selected_controls %>%
-  filter(stage == "Positive control") %>%
-  mutate(stage = "Final adjusted gate")
-
-# Combine the raw control stages and final adjusted gate into plotting order.
-strategy_controls <- bind_rows(selected_controls, final_gate_controls) %>%
+# Resolve control rows and final-adjusted gate rows one assay at a time in
+# ranked run order.
+strategy_controls <- map_dfr(
+  mutation_order,
+  function(assay_name) {
+    resolve_assay_control_set(
+      assay_name = assay_name,
+      control_runs_for_assay = control_runs %>% filter(assay == assay_name),
+      available_control_wells = available_control_wells,
+      real_sample_control_wells = real_sample_control_wells
+    )
+  }
+) %>%
   mutate(
     stage = factor(stage, levels = control_stage_order),
     stage = as.character(stage)
   ) %>%
   arrange(match(assay, mutation_order), match(stage, control_stage_order))
 
-# Parse each selected control well once.
+if (nrow(strategy_controls) != length(mutation_order) * length(control_stage_order)) {
+  stop("Could not resolve all required control and final-adjusted gate rows")
+}
+
+if (
+  nrow(
+    semi_join(
+      filter(strategy_controls, stage == "Final adjusted gate"),
+      filter(strategy_controls, stage == "Positive control"),
+      by = c("assay", "run_id", "well", "sample")
+    )
+  ) > 0L
+) {
+  stop("Final adjusted gate selection duplicated a positive-control sample; expected a real CJD/Ctrl sample")
+}
+
+# Parse each selected control well once, including final adjusted gate rows.
 strategy_parsed <- strategy_controls %>%
   split(seq_len(nrow(.))) %>%
   map(function(row) {
@@ -794,9 +1119,11 @@ strategy_manifest <- map_dfr(seq_len(nrow(strategy_controls)), function(i) {
     thresholds = thresholds_to_plot,
     title = title,
     subtitle = NULL,
+    mutation = row$assay,
     limits = strategy_limits,
     facet_by_well = FALSE,
     show_auto = TRUE,
+    show_gates = row$stage != "NTC",
     show_manual = TRUE,
     show_legend = FALSE,
     plot_title_size = 11
