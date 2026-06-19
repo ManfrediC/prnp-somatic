@@ -174,7 +174,7 @@ cluster_boundary_thresholds <- function(droplets) {
 # scoped to the exact runs whose .ddpcr files were corrected, so all other wells
 # retain the historical cluster-boundary fallback.
 provided_run_thresholds <- tribble(
-  ~run_id, ~assay, ~ch1_threshold, ~ch2_threshold,
+  ~run_id, ~assay, ~physical_ch1_threshold, ~physical_ch2_threshold,
   "2020-11-24_SNV_D178N", "D178N", 1000, 2250,
   "2020-11-05_SNV_E200K", "E200K", 1600, 2450,
   "2021-02-17_SNV_P102L", "P102L", 2240, 2528
@@ -187,7 +187,14 @@ provided_final_gate_wells <- tribble(
   "2021-02-17_SNV_P102L", "P102L", "E06"
 )
 
-provided_thresholds_for_well <- function(well_row) {
+strategy_axis_overrides <- tribble(
+  ~assay, ~x_max, ~y_max,
+  "D178N", 6000, 7000,
+  "E200K", 6000, 10000,
+  "P102L", NA_real_, 7500
+)
+
+provided_thresholds_for_well <- function(well_row, mut_channel, ref_channel) {
   provided <- provided_run_thresholds %>%
     filter(run_id == well_row$run_id, assay == well_row$assay)
 
@@ -195,10 +202,21 @@ provided_thresholds_for_well <- function(well_row) {
     return(NULL)
   }
 
+  physical_thresholds <- c(
+    Ch1 = provided$physical_ch1_threshold,
+    Ch2 = provided$physical_ch2_threshold
+  )
+
+  # The provided gate coordinates are physical archive Ch1/Ch2 thresholds. The
+  # plot axes are semantic: mutant on x and WT/reference on y. Keep the legacy
+  # channel labels because downstream plot code treats Ch1 as x and Ch2 as y.
   tibble(
     channel = c("Ch1", "Ch2"),
     threshold_type = "manual",
-    threshold = c(provided$ch1_threshold, provided$ch2_threshold)
+    threshold = c(
+      physical_thresholds[[paste0("Ch", mut_channel)]],
+      physical_thresholds[[paste0("Ch", ref_channel)]]
+    )
   )
 }
 
@@ -237,7 +255,9 @@ read_well_droplets_for_plot <- function(well_row) {
   peak <- jsonlite::fromJSON(peak_path, simplifyVector = FALSE)
   metadata <- jsonlite::fromJSON(metadata_path, simplifyVector = FALSE)
 
-  # The amplitude arrays are the raw x/y coordinates for each droplet.
+  # The amplitude arrays are the raw physical-channel coordinates for each
+  # droplet. They are remapped below onto semantic plot axes: mutant on x and
+  # WT/reference on y.
   amplitudes <- peak$PeakInfo$Amplitudes
   if (is.null(amplitudes) || length(amplitudes) < 2L) {
     stop("Peak data does not contain two amplitude channels: ", peak_path)
@@ -254,21 +274,25 @@ read_well_droplets_for_plot <- function(well_row) {
   target_names <- vapply(targets, target_name, character(1))
   channels <- vapply(targets, target_channel, integer(1))
   selected_indices <- c(selected$ref, selected$mut)
-  ch1_idx <- selected_indices[channels[selected_indices] == 1L][1]
-  ch2_idx <- selected_indices[channels[selected_indices] == 2L][1]
-  if (is.na(ch1_idx) || is.na(ch2_idx)) {
-    stop("Could not map selected targets to Ch1 and Ch2 for ", well_row$run_id, " ", well_row$well)
+  ref_channel <- channels[[selected$ref]]
+  mut_channel <- channels[[selected$mut]]
+  if (
+    is.na(ref_channel) || is.na(mut_channel) ||
+      !ref_channel %in% seq_along(amplitudes) ||
+      !mut_channel %in% seq_along(amplitudes)
+  ) {
+    stop("Could not map selected WT and mutant targets to amplitude channels for ", well_row$run_id, " ", well_row$well)
   }
 
   # Start all droplets as rejected/unassigned, then fill class labels from the
   # saved cluster assignments.
-  ch1 <- as.numeric(amplitudes[[1]])
-  ch2 <- as.numeric(amplitudes[[2]])
-  droplet_count <- min(length(ch1), length(ch2))
+  mut_amplitude <- as.numeric(amplitudes[[mut_channel]])
+  ref_amplitude <- as.numeric(amplitudes[[ref_channel]])
+  droplet_count <- min(length(mut_amplitude), length(ref_amplitude))
   droplets <- tibble(
     droplet_index = seq.int(0L, droplet_count - 1L),
-    ch1_amplitude = ch1[seq_len(droplet_count)],
-    ch2_amplitude = ch2[seq_len(droplet_count)],
+    ch1_amplitude = mut_amplitude[seq_len(droplet_count)],
+    ch2_amplitude = ref_amplitude[seq_len(droplet_count)],
     ch1_call = NA_character_,
     ch2_call = NA_character_,
     droplet_class = "Rejected/unassigned"
@@ -297,14 +321,14 @@ read_well_droplets_for_plot <- function(well_row) {
 
     ref_result <- results[[selected$ref]]
     mut_result <- results[[selected$mut]]
-    droplets$ch1_call[row_indices] <- results[[ch1_idx]]
-    droplets$ch2_call[row_indices] <- results[[ch2_idx]]
+    droplets$ch1_call[row_indices] <- mut_result
+    droplets$ch2_call[row_indices] <- ref_result
     droplets$droplet_class[row_indices] <- class_from_calls(ref_result, mut_result)
   }
 
   # Return droplets and threshold metadata together so plot and manifest writers
   # use the same parsed source.
-  thresholds <- provided_thresholds_for_well(well_row)
+  thresholds <- provided_thresholds_for_well(well_row, mut_channel = mut_channel, ref_channel = ref_channel)
   if (is.null(thresholds)) {
     thresholds <- cluster_boundary_thresholds(droplets)
   }
@@ -341,14 +365,14 @@ read_well_droplets_for_plot <- function(well_row) {
 # ---- plot assembly helpers ----
 
 # Choose common axes with enough headroom for dense droplet clouds and gate lines.
-axis_limits <- function(droplets, thresholds) {
+axis_limits <- function(droplets, thresholds, droplet_quantile = 0.997) {
   x_candidate <- max(
-    quantile(droplets$ch1_amplitude, 0.997, na.rm = TRUE, names = FALSE),
+    quantile(droplets$ch1_amplitude, droplet_quantile, na.rm = TRUE, names = FALSE),
     thresholds$threshold[thresholds$channel == "Ch1"],
     na.rm = TRUE
   )
   y_candidate <- max(
-    quantile(droplets$ch2_amplitude, 0.997, na.rm = TRUE, names = FALSE),
+    quantile(droplets$ch2_amplitude, droplet_quantile, na.rm = TRUE, names = FALSE),
     thresholds$threshold[thresholds$channel == "Ch2"],
     na.rm = TRUE
   )
@@ -1101,8 +1125,28 @@ strategy_thresholds <- map_dfr(strategy_parsed, function(entry) {
     )
 })
 
-# Use one common axis frame for all gating-strategy panels.
-strategy_limits <- axis_limits(strategy_droplets, strategy_thresholds)
+# Use one common axis frame per mutation for gating-strategy panels. The
+# strategy plots are explanatory gate examples, so keep every accepted droplet
+# visible instead of trimming to a high quantile.
+strategy_limits_by_assay <- strategy_droplets %>%
+  split(.$assay) %>%
+  map(function(assay_droplets) {
+    assay_name <- unique(assay_droplets$assay)
+    assay_thresholds <- strategy_thresholds %>%
+      filter(assay == assay_name)
+    limits <- axis_limits(assay_droplets, assay_thresholds, droplet_quantile = 1)
+    override <- strategy_axis_overrides %>%
+      filter(assay == assay_name)
+    if (nrow(override) == 1L) {
+      if (!is.na(override$x_max)) {
+        limits$x[2] <- override$x_max
+      }
+      if (!is.na(override$y_max)) {
+        limits$y[2] <- override$y_max
+      }
+    }
+    limits
+  })
 
 # Render one control-stage asset per selected strategy row.
 strategy_manifest <- map_dfr(seq_len(nrow(strategy_controls)), function(i) {
@@ -1120,7 +1164,7 @@ strategy_manifest <- map_dfr(seq_len(nrow(strategy_controls)), function(i) {
     title = title,
     subtitle = NULL,
     mutation = row$assay,
-    limits = strategy_limits,
+    limits = strategy_limits_by_assay[[row$assay]],
     facet_by_well = FALSE,
     show_auto = TRUE,
     show_gates = row$stage != "NTC",
