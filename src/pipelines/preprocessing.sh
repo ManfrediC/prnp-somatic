@@ -6,10 +6,10 @@ set -euo pipefail
 # -----------------------
 # This array is the single run-selection switch for preprocessing batches.
 BATCHES=(
-  CJD_16_samples
-  CJD_8_samples
-  first_CJD_seq
-  sequencing_of_dilutions
+  cjd_case_batch_a
+  cjd_case_control_batch_b
+  cjd_case_control_batch_c
+  dilution_series
 )
 
 # -----------------------

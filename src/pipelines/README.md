@@ -74,11 +74,14 @@ These expected output paths are also listed in:
 
 - `config/preprocessing_samples.tsv` (committed; first four columns drive file lookup, optional `display_label` is metadata)
 - `config/preprocessing.env` (gitignored)
-- `raw/fastq/<batch_id>/...` (not committed)
+- `raw/fastq/<batch_id>/...` (not committed; batch IDs use reviewer-facing names)
 - `resources/` references (committed)
 
-The `first_CJD_seq` block in `config/preprocessing_samples.tsv` should include:
+The `cjd_case_batch_a` block in `config/preprocessing_samples.tsv` should include:
 `CJD1`, `CJD2`, `CJD6`, `CJD13`, `CJD22`, `CJD23`, `CJD25`, `CJD27`.
+
+FASTQ filenames are reviewer-facing aliases. The original sequencer filenames
+and hashes are preserved in `config/fastq_filename_manifest.tsv`.
 
 ### Outputs
 
