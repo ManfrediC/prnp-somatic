@@ -11,17 +11,6 @@ shopt -s nullglob
 # ------------------------------------------------------------
 
 # -----------------------
-# Batch selection (optional; controls are detected by BAM name)
-# -----------------------
-# Not used yet; kept only if you later want to restrict controls by batch.
-# BATCHES=(
-#   CJD_16_samples
-#   CJD_8_samples
-#   first_CJD_seq
-#   sequencing_of_dilutions
-# )
-
-# -----------------------
 # Defaults (override via env or ENV_FILE)
 # -----------------------
 DRY_RUN="${DRY_RUN:-0}"
