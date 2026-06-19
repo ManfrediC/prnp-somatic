@@ -71,7 +71,12 @@ CLASS_COLOURS = {
     "Mutant-only": "#CC79A7",
     "Double-negative": "#5684E9",
 }
-STRATEGY_PANEL_TITLE = "ddPCR gating strategy based on controls"
+STRATEGY_PANEL_TITLE = "Control-based ddPCR gating strategy for PRNP variant assays"
+STRATEGY_PANEL_TITLE_PARTS = [
+    ("Control-based ddPCR gating strategy for ", {}),
+    ("PRNP", {"font-style": "italic"}),
+    (" variant assays", {}),
+]
 
 
 # ---- manifest input ----
@@ -155,6 +160,33 @@ def styled_text(
         attrs["style"] = style
     node = ET.SubElement(parent, f"{{{SVG_NS}}}text", attrs)
     node.text = value
+
+
+def styled_text_parts(
+    parent: ET.Element,
+    x: float,
+    y: float,
+    parts: list[tuple[str, dict[str, str]]],
+    size: str,
+    weight: str = "bold",
+) -> None:
+    """Add one SVG text node with per-span styling for scientific names."""
+    node = ET.SubElement(
+        parent,
+        f"{{{SVG_NS}}}text",
+        {
+            "x": str(x),
+            "y": str(y),
+            "font-family": "Arial, Helvetica, sans-serif",
+            "font-size": size,
+            "font-weight": weight,
+            "fill": "#111827",
+            "{http://www.w3.org/XML/1998/namespace}space": "preserve",
+        },
+    )
+    for value, attrs in parts:
+        span = ET.SubElement(node, f"{{{SVG_NS}}}tspan", attrs)
+        span.text = value
 
 
 def right_aligned_text(
@@ -665,6 +697,7 @@ def write_panel(
     cell_width: int,
     cell_height: int,
     title: str,
+    title_parts: list[tuple[str, dict[str, str]]] | None = None,
     common_legend: str | None = None,
     centre_incomplete_last_row: bool = False,
 ) -> Path:
@@ -691,7 +724,10 @@ def write_panel(
             "version": "1.1",
         },
     )
-    styled_text(root, margin_x, 30, title, "22px")
+    if title_parts is None:
+        styled_text(root, margin_x, 30, title, "22px")
+    else:
+        styled_text_parts(root, margin_x, 30, title_parts, "22px")
 
     # Lay out source SVGs in reading order and add panel letters in the margin.
     for index, row in enumerate(rows):
@@ -836,6 +872,7 @@ def main() -> None:
                 cell_width=345,
                 cell_height=315,
                 title=STRATEGY_PANEL_TITLE,
+                title_parts=STRATEGY_PANEL_TITLE_PARTS,
                 common_legend="strategy",
             ),
         )

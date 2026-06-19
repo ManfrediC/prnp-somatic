@@ -88,8 +88,7 @@ make_plot <- function(mut) {
         levels = intersect(c(paste0("CJD", 1:200), paste0("Control", 1:200)), unique(participant))
       ),
       brain_region = factor(brain_region, levels = names(region_labels)),
-      detected_above_LoB = as.logical(detected_above_LoB),
-      is_pooled = as.logical(is_pooled)
+      detected_above_LoB = as.logical(detected_above_LoB)
     )
 
   y_max <- max(c(0.25, df$ci_high, lod_cut[[mut]]), na.rm = TRUE) * 1.08
@@ -98,7 +97,8 @@ make_plot <- function(mut) {
   # on the common percent fractional-abundance scale.
   ggplot(df, aes(x = participant, y = fractional_abundance, colour = brain_region)) +
     geom_point(
-      aes(shape = detected_above_LoB, size = is_pooled, group = brain_region),
+      aes(shape = detected_above_LoB, group = brain_region),
+      size = 2.0,
       position = point_dodge, na.rm = TRUE
     ) +
     geom_errorbar(
@@ -109,18 +109,26 @@ make_plot <- function(mut) {
     coord_cartesian(ylim = c(0, y_max)) +
     scale_colour_manual(name = "Brain region", values = region_colours, labels = region_labels, drop = FALSE) +
     scale_shape_manual(name = "Above LoB", values = c(`FALSE` = 1, `TRUE` = 16), labels = c("No", "Yes")) +
-    scale_size_manual(name = "Pooled row", values = c(`FALSE` = 1.8, `TRUE` = 3.0), labels = c("No", "Yes")) +
+    guides(
+      colour = guide_legend(order = 1, override.aes = list(shape = 16, size = 3)),
+      shape = guide_legend(order = 2, override.aes = list(size = 3))
+    ) +
     labs(
       title = paste(mut, "sample-region ddPCR"),
-      subtitle = "Pooled rows are marked larger; y-axis expands if pooled values exceed the old range",
       x = "Participant",
       y = paste0("Fractional abundance of ", mut, " allele (%)")
     ) +
-    theme_bw(base_size = 8) +
+    theme_bw(base_size = 10) +
     theme(
-      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+      axis.text.x = element_text(size = 9.5, angle = 90, vjust = 0.5, hjust = 1, margin = margin(t = 2)),
+      axis.text.y = element_text(size = 10),
+      axis.title.x = element_text(size = 12, margin = margin(t = 8)),
+      axis.title.y = element_text(size = 12, margin = margin(r = 6)),
       panel.grid.minor = element_blank(),
-      legend.position = "right"
+      legend.position = "right",
+      legend.title = element_text(size = 11),
+      legend.text = element_text(size = 10),
+      legend.spacing.y = grid::unit(5, "pt")
     )
 }
 
@@ -153,8 +161,7 @@ combined_df <- snv_data %>%
       levels = intersect(c(paste0("CJD", 1:200), paste0("Control", 1:200)), unique(participant))
     ),
     brain_region = factor(brain_region, levels = names(region_labels)),
-    detected_above_LoB = as.logical(detected_above_LoB),
-    is_pooled = as.logical(is_pooled)
+    detected_above_LoB = as.logical(detected_above_LoB)
   )
 
 # Store LoD cut-offs in a facetable data frame for per-panel horizontal lines.
@@ -175,7 +182,8 @@ combined_plot <- ggplot(
   aes(x = participant, y = fractional_abundance, colour = brain_region)
 ) +
   geom_point(
-    aes(shape = detected_above_LoB, size = is_pooled, group = brain_region),
+    aes(shape = detected_above_LoB, group = brain_region),
+    size = 2.0,
     position = point_dodge,
     na.rm = TRUE
   ) +
@@ -186,7 +194,7 @@ combined_plot <- ggplot(
     linewidth = 0.3,
     na.rm = TRUE
   ) +
-  geom_hline(data = lod_df, aes(yintercept = LoD), inherit.aes = FALSE,
+  geom_hline(data = lod_df, aes(yintercept = LoD),
              linetype = "dashed", linewidth = 0.5) +
   geom_text(
     data = label_df,
@@ -201,25 +209,32 @@ combined_plot <- ggplot(
   coord_cartesian(ylim = c(0, max_y)) +
   scale_colour_manual(name = "Brain region", values = region_colours, labels = region_labels, drop = FALSE) +
   scale_shape_manual(name = "Above LoB", values = c(`FALSE` = 1, `TRUE` = 16), labels = c("No", "Yes")) +
-  scale_size_manual(name = "Pooled row", values = c(`FALSE` = 1.8, `TRUE` = 3.0), labels = c("No", "Yes")) +
+  guides(
+    colour = guide_legend(order = 1, override.aes = list(shape = 16, size = 3)),
+    shape = guide_legend(order = 2, override.aes = list(size = 3))
+  ) +
   labs(
     title = "Sample-region ddPCR",
-    subtitle = "Pooled fractional abundance, confidence intervals, and LoB are on the same percent scale as LoD",
     x = "Participant",
     y = "Fractional abundance (%)"
   ) +
-  theme_bw(base_size = 8) +
+  theme_bw(base_size = 10) +
   theme(
     plot.title = element_text(size = 16),
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+    axis.text.x = element_text(size = 9.5, angle = 90, vjust = 0.5, hjust = 1, margin = margin(t = 2)),
     axis.text.y = element_text(size = 11),
+    axis.title.x = element_text(size = 12, margin = margin(t = 8)),
     axis.title.y = element_text(size = 12),
     panel.grid.minor = element_blank(),
     legend.position = "right",
     legend.title = element_text(size = 11),
     legend.text = element_text(size = 10),
+    legend.spacing.y = grid::unit(5, "pt"),
+    legend.spacing.x = grid::unit(24, "pt"),
     strip.background = element_blank(),
-    strip.text = element_blank()
+    strip.background.x = element_blank(),
+    strip.text = element_blank(),
+    strip.text.x = element_blank()
   )
 
 # Save the combined panel with the default right-side legend.
@@ -263,7 +278,10 @@ legend_bottom_plot <- cowplot::plot_grid(
     combined_plot +
       theme(
         legend.position = "bottom",
-        legend.box = "horizontal"
+        legend.box = "horizontal",
+        legend.direction = "horizontal",
+        legend.spacing.x = grid::unit(28, "pt"),
+        legend.box.spacing = grid::unit(8, "pt")
       )
   ),
   ncol = 1,
@@ -314,8 +332,8 @@ write_multipage_pdf(
   optional = TRUE
 )
 
-# Record pooled rows that affect the sample-region figure so reviewers can audit
-# the larger point markers separately from the plot.
+# Record pooled rows beside the figure so reviewers can audit the aggregated
+# sample-region rows separately from the plot.
 affected_rows <- snv_data %>%
   mutate(is_pooled = as.logical(is_pooled)) %>%
   filter(is_pooled) %>%
