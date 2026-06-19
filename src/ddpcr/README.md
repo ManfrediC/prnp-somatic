@@ -7,17 +7,20 @@ canonical CSV exports, layout workbooks, and raw provenance manifests.
 
 ## Scripts
 
+- `run_ddpcr.sh`
 - `create_snv_dataframe.R`
 - `ddpcr_raw_import_helpers.R`
-- `figures/ddpcr_fractional_abundance.R`
-- `figures/ddpcr_fractional_abundance_pooled.R`
 - `ddpcr_samples_results_tbl.R`
 - `ddpcr_sample_number.R`
 - `estimate_haploid_genomes_surveyed.R`
+- `figures/ddpcr_fractional_abundance.R`
+- `figures/ddpcr_fractional_abundance_pooled.R`
 - `figures/build_ddpcr_gating_svg_panels.py`
 - `figures/create_ddpcr_gating_figure_assets.R`
 - `figures/create_ddpcr_scatterplots.R`
 - `figures/ddpcr_scatterplot_helpers.R`
+- `figures/fix_snv_all_mutations_legend_bottom_final_svg.py`
+- `figures/fix_snv_pooled_all_mutations_one_legend_svg.py`
 
 ## Inputs
 
@@ -66,11 +69,12 @@ Written to `results/ddPCR/`:
 - `validation/`
 - `scatterplots/`
 - `haploid_genomes_surveyed/`
+- `logs/`
 
 The workflow also updates ddPCR-related manuscript tables and figures under
 `manuscript/tables` and `manuscript/figures`.
 
-### Output File Meanings
+### Main output meanings
 
 - `SNV_data_final.xlsx`:
   - main long-format analysis table produced by the ddPCR workflow (sample/assay-level SNV results used for downstream interpretation).
@@ -92,7 +96,6 @@ The workflow also updates ddPCR-related manuscript tables and figures under
 
 - `haploid_genomes_surveyed/`:
   - dedicated supplementary output directory containing sample-region, participant-pooled, participant-review TeX, and run-summary outputs for droplet counts and Poisson-corrected haploid genome-equivalent estimates.
-  - cohort-level pooled droplet summaries are not emitted.
 
 These expected output paths are also listed in:
 

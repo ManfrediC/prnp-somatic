@@ -68,7 +68,8 @@ Required inputs must be placed as follows:
 
 See `README` files in the respective directories for details on the required files.
 
-Raw data can be obtained from `[link to be provided]`.
+Data can be obtained for academic purposes upon reasonable request to the
+repository owner.
 
 ### 4. Create environment for ddPCR scripts
 
@@ -253,7 +254,7 @@ Detailed workflow docs:
 - `src/pipelines/README.md`
 - `manuscript/README.md`
 
-### 11. Makefile commands (optional wrappers)
+### 13. Makefile commands (optional wrappers)
 
 As an alternative to executing the pipelines individually, it's possible to run each part of the project using `Makefile`.
 
@@ -266,13 +267,13 @@ make help
 Run main workflows:
 
 - `make ddpcr` (requires active env: `prnp-somatic-ddpcr`)
-- `make snv` (requires active env: `prnp-somatic`)
+- `make snv` (requires active env: `prnp-somatic`; runs the Stage-12 publication-path wrapper)
 - `make repeats` (requires active env: `prnp-repeats`)
 - `make repeats_manual_controls` (requires active env: `prnp-repeats`)
 - `make repeats_manual_cjd` (requires active env: `prnp-repeats`)
 - `make repeats_manual_filter_cjd` (requires active env: `prnp-repeats`)
 - `make junctions` (requires active env: `prnp-junctions`)
-- `make all` (runs ddPCR + SNV + junctions via `conda run`; expects envs `prnp-somatic-ddpcr`, `prnp-somatic`, and `prnp-junctions`)
+- `make all` (runs ddPCR + SNV Stage-12 wrapper + junctions via `conda run`; expects envs `prnp-somatic-ddpcr`, `prnp-somatic`, and `prnp-junctions`)
 
 Run integrity checks:
 
@@ -285,6 +286,7 @@ Toolchain and QC helpers:
 - `make toolchain_lock` (writes `doc/tool_versions.lock.txt`)
 - `make qc_validate` (validate manifest inputs)
 - `make qc_metrics` (compute sequencing metrics TSV under `results/sequencing_qc/`)
+- `make dna_quality` (build DNA-quality evidence table under `results/dna_quality/`)
 - `make clean_qc` (remove the canonical sequencing QC output directory)
 - `make print_qc_paths` (print resolved QC file paths)
 - `make preprocessing_preflight` (wrapper for `src/pipelines/preflight_preprocessing.sh`)
@@ -305,9 +307,6 @@ Raw data and sequencing pipeline outputs are gitignored, to account for GitHub s
 - pipeline/junction outputs: `results/**` (ignored except tracked placeholders)
 
 Generated runtime index sidecars are also ignored (for example `resources/junctions/*.fa.{amb,ann,bwt,pac,sa}`).
-
-## Conda environment
-- Analyses were performed using the `Conda` environments defined in `env/environment.yml`.
 
 ## Data availability
 Data can be obtained for academic purposes upon reasonable request to the repository owner.
