@@ -1,7 +1,7 @@
 # A117V Spike-In Source Audit
 
 Checked on: 2026-05-21
-Scope: Checkpoint 1 of `doc/plans/a117v_spike_in_remediation_plan.md`
+Scope: Checkpoint 1 of `plans/a117v_spike_in_remediation_plan.md`
 
 ## Purpose
 

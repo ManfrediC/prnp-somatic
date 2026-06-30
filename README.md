@@ -13,10 +13,10 @@ The Reproduction Guide below details required inputs, environment setup and expe
 ## Repository structure
 - `src/` reusable code (Shell/Python/R)
 - `config/` configuration templates and sample manifests
+- `reproducibility/` final-output manifests, checksums, provenance notes and repository maintenance checks
 - `resources/` small static artefacts tracked in git (BEDs, schemas). Larger resources must be downloaded manually
 - `results/` outputs *not tracked* (date-stamped runs)
 - `env/` container/environment definitions
-- `doc/` notes, reproducibility manifests and repository maintenance checks
 - `manuscript/` manuscript artefact generation
 
 ## Root files
@@ -42,13 +42,17 @@ cd prnp-somatic
 
 Before running workflows, use:
 
-- `doc/reproducibility/tooling_and_reference_provenance.md`
+- `reproducibility/tooling_and_reference_provenance.md`
 
 This document lists:
 
 - required reference resources and their source/provenance
 - required CLI/R tools and version context
 - environment-specific package notes (including junction and ddPCR dependencies)
+
+The remaining reproducibility manifests and checks are summarised in:
+
+- `reproducibility/README.md`
 
 Funcotator resource acquisition, layout and datasource details are documented in:
 
@@ -237,13 +241,13 @@ Expected outputs:
 ### 12. Verify final outputs
 
 ```bash
-bash doc/reproducibility/verify_output_checksums.sh --mode check
+bash reproducibility/verify_output_checksums.sh --mode check
 ```
 
 Expected manifest/checksum files:
 
-- `doc/reproducibility/final_outputs_manifest.tsv`
-- `doc/reproducibility/final_outputs.sha256`
+- `reproducibility/final_outputs_manifest.tsv`
+- `reproducibility/final_outputs.sha256`
 
 Detailed workflow docs:
 
@@ -281,7 +285,7 @@ Run integrity checks:
 Toolchain and QC helpers:
 
 - `make versions` (quick local tool-version report)
-- `make toolchain_lock` (writes `doc/tool_versions.lock.txt`)
+- `make toolchain_lock` (writes `reproducibility/tool_versions.lock.txt`)
 - `make qc_metrics` (compute sequencing metrics TSV under `results/sequencing_qc/`)
 - `make dna_quality` (build DNA-quality evidence table under `results/dna_quality/`)
 - `make clean_qc` (remove the canonical sequencing QC output directory)
@@ -316,6 +320,6 @@ Sequencing FASTQ files have been uploaded to NCBI SRA.
   submitted samples
 - Release date: 2027-07-30, or with release of linked data
 - Per-sample accession and FASTQ filename map:
-  `doc/reproducibility/sra_accessions.tsv`
+  `reproducibility/sra_accessions.tsv`
 - SRA experiment and run accessions: pending; these will be added to the
   accession map once assigned

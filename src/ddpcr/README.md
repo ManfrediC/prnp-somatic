@@ -99,7 +99,7 @@ The workflow also updates ddPCR-related manuscript tables and figures under
 
 These expected output paths are also listed in:
 
-- `doc/reproducibility/final_outputs_manifest.tsv`
+- `reproducibility/final_outputs_manifest.tsv`
 
 ## R packages
 

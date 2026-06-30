@@ -60,7 +60,7 @@ Final expected results-table output:
 
 These expected output paths are also listed in:
 
-- `doc/reproducibility/final_outputs_manifest.tsv`
+- `reproducibility/final_outputs_manifest.tsv`
 
 ## Config Overrides
 

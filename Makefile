@@ -80,10 +80,10 @@ versions:
 
 toolchain_lock:
 	@set -eu
-	@mkdir -p doc
+	@mkdir -p reproducibility
 	# Persist a single, greppable snapshot of the current toolchain.
-	@$(MAKE) -s versions > doc/tool_versions.lock.txt
-	@echo "Wrote: doc/tool_versions.lock.txt"
+	@$(MAKE) -s versions > reproducibility/tool_versions.lock.txt
+	@echo "Wrote: reproducibility/tool_versions.lock.txt"
 
 # -------------------------------------------------------------------
 # Conda guardrail (non-base env required; optional exact name check)
@@ -177,7 +177,7 @@ all:
 check: REQUIRED_CONDA_ENV=prnp-somatic
 check: check_conda verify_resources
 	# Validate tracked final-output checksums after resource integrity checks.
-	@bash doc/reproducibility/verify_output_checksums.sh --mode check
+	@bash reproducibility/verify_output_checksums.sh --mode check
 
 # -------------------------------------------------------------------
 # QC helpers

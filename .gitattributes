@@ -3,7 +3,7 @@
 *.sh  text eol=lf
 *.py  text eol=lf
 *.tsv text eol=lf
-doc/inventory.tsv -text
+reproducibility/inventory.tsv -text
 
 .gitattributes text eol=lf
 *.html linguist-detectable=false

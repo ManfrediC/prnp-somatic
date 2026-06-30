@@ -2,8 +2,8 @@
 # Generate or verify checksums for declared final outputs.
 #
 # Source of truth:
-# - manifest: doc/reproducibility/final_outputs_manifest.tsv
-# - checksums: doc/reproducibility/final_outputs.sha256
+# - manifest: reproducibility/final_outputs_manifest.tsv
+# - checksums: reproducibility/final_outputs.sha256
 #
 # Behaviour:
 # - in write mode, computes checksums for present outputs and writes checksum file
@@ -11,11 +11,11 @@
 # - fails fast if any manifest entry marked required=yes is missing
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
-MANIFEST="doc/reproducibility/final_outputs_manifest.tsv"
-CHECKSUMS="doc/reproducibility/final_outputs.sha256"
+MANIFEST="reproducibility/final_outputs_manifest.tsv"
+CHECKSUMS="reproducibility/final_outputs.sha256"
 MODE="write"
 
 while [[ $# -gt 0 ]]; do

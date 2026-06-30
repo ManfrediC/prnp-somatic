@@ -4,7 +4,7 @@
 Create a script inventory for active (non-legacy) code under src/.
 
 Output:
-- doc/inventory.tsv
+- reproducibility/inventory.tsv
 
 Current scope:
 - include script-like files in src/
@@ -18,10 +18,10 @@ import hashlib
 from pathlib import Path
 from datetime import datetime, timezone
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_DIR = REPO_ROOT / "src"
 LEGACY_DIR = SRC_DIR / "legacy"
-OUT_PATH = REPO_ROOT / "doc" / "inventory.tsv"
+OUT_PATH = REPO_ROOT / "reproducibility" / "inventory.tsv"
 
 EXT_TO_LANG = {
     ".py": "python",

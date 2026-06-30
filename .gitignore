@@ -1,24 +1,20 @@
-# root
-AGENTS.md
-CONTINUITY.md
-MEMORY.md
+# Local project state
+/AGENTS.md
+/CONTINUITY.md
+/MEMORY.md
+/JOURNAL.md
+/journal/
+/plans/
+/notes/
+/scratch/
+/tmp/
 
-# env
-*.env
+# Secrets and local environment files
+.env
 .env.*
-env/ssh.auth.env
+*.env
 *.openssh
-
-# plans, notes and scratch
-doc/repeat_notes
-doc/dna_quality
-doc/papers/
-doc/tmp
-/scratch
-
-# journal
-doc/journal
-doc/journal/JOURNAL.md
+env/ssh.auth.env
 
 # OS/editor cruft
 .DS_Store
@@ -34,7 +30,6 @@ __pycache__/
 *.pyc
 .venv/
 .venv*/
-.env
 
 # R
 .Rhistory
@@ -47,7 +42,15 @@ __pycache__/
 .Rlibs/
 .so
 
-# Large bioinformatics artefacts (never commit)
+# Generic logs and build sidecars
+v*.log
+*.log.*
+nohup.out
+*.aux
+/Carta_PRNP.log
+/figures_with_legends.log
+
+# Large bioinformatics artefacts
 *.fastq
 *.fastq.gz
 *.fq.gz
@@ -62,6 +65,8 @@ __pycache__/
 *.bcf
 *.sam
 *.metrics
+
+# Large generated media and archives
 *.pdf
 *.png
 *.jpg
@@ -70,7 +75,7 @@ __pycache__/
 *.tar
 *.tar.gz
 
-# Large reference resources (do not commit)
+# Large reference resources; small hand-authored descriptors stay trackable.
 resources/*.fa
 resources/*.fa.gz
 resources/*.fasta
@@ -80,14 +85,10 @@ resources/*.vcf.gz
 resources/*.vcf.gz.tbi
 resources/*.vcf.idx
 resources/*.gtf.gz
-
-# If you keep indexes with big VCFs, ignore those too
 resources/*.tbi
 resources/*.idx
 resources/funcotator_data_somatic/
 resources/backup/funcotator_excluded_datasources/
-
-# Keep small, hand-authored resource descriptors
 !resources/README.md
 !resources/backup/README.md
 !resources/*.bed
@@ -102,27 +103,27 @@ resources/junctions/*.fa.bwt
 resources/junctions/*.fa.pac
 resources/junctions/*.fa.sa
 
-# Data policy (large inputs remain untracked)
-data/raw/
-data/fastq/
-data/bam/
-data/cram/
-data/vcf/
-legacy/
+# Raw/private input data
+/raw/fastq/
+/raw/dna_quality/
+/raw/ddpcr/*
+!/raw/ddpcr/
+!/raw/ddpcr/README.md
+/raw/ddpcr_lod/*
+!/raw/ddpcr_lod/
+!/raw/ddpcr_lod/README.md
+/raw/ddpcr_original/
+/deposition/
 
-# Results are tracked by default; large artefacts are still ignored by the
-# global patterns above (e.g. *.bam, *.bai, *.cram, *.vcf, *.fastq, *.pdf, *.png).
-# Allow placeholders to remain tracked
-!data/.gitkeep
+# Generated outputs kept local unless explicitly tracked already.
 /results/ddPCR/dpcp/
 /results/ddPCR/umbrella/
-# Generated ddPCR scatterplot vectors are large and reproducible.
+/results/ddPCR/logs/
 /results/ddPCR/scatterplots/**/*.svg
-# Generated ddPCR panel vectors are large and reproducible.
 /results/ddPCR/panels/**/*.svg
 
-# Repeat workflow keeps text artefacts in git for cross-machine review, but
-# heavyweight realigned BAMs, REViewer SVGs, and archived runs stay local.
+# Repeat workflow: keep text artefacts trackable, but ignore heavy review data
+# and archived runs.
 results/repeats/raw/*
 !results/repeats/raw/expansionhunter/
 !results/repeats/raw/expansionhunter/**/
@@ -142,53 +143,20 @@ results/repeats/logs/*
 !results/repeats/logs/*.log
 results/repeats/old_runs/
 
-# Manual mosaic review keeps TSV artefacts in git, but archived runs above stay
-# local because they are much larger and easy to regenerate.
+# Manual repeat-review TSV artefacts can be tracked; per-sample bulk folders stay
+# local.
 results/repeats/manual/*
 !results/repeats/manual/*.tsv
 results/repeats/manual_cohort/*/samples/*
 !results/repeats/manual_cohort/*/samples/*.tsv
 
-# Logs
-v*.log
-*.log.*
-nohup.out
-/results/ddPCR/logs/
-
-# LaTeX build sidecars
-*.aux
-/Carta_PRNP.log
-/figures_with_legends.log
-
-# Raw input data (large; keep out of git)
-/raw/fastq/
-/raw/dna_quality/
-/raw/ddpcr/*
-!/raw/ddpcr/
-!/raw/ddpcr/README.md
-/raw/ddpcr_lod/*
-!/raw/ddpcr_lod/
-!/raw/ddpcr_lod/README.md
-/raw/ddpcr_original/
-/deposition/
-/src/tools/export_ddpcr_archives.py
-/src/tools/docx_tooling/
-
-# Pipeline run outputs (large; keep out of git)
+# Runtime run directories and local pipeline config
 /runs/*
 !/runs/README.md
 /run/
-config/preprocessing.env
-config/junctions.env
 
-# Personal journal notes and plans
-doc/plans/
-doc/notes/
-doc/JOURNAL.md
-doc/reproducibility/a117v_reviewer_defensibility_package.md
+# Private reproducibility support memo
+/reproducibility/a117v_reviewer_defensibility_package.md
 
-# Manuscript workspace (temporarily excluded from version control)
-/manuscript
-
-# Tests
-/tests
+# Manuscript workspace
+/manuscript/

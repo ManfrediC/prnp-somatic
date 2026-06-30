@@ -67,7 +67,7 @@ bash src/pipelines/run_cjd_dilutions_variant_qc_with_pon.sh
 
 These expected output paths are also listed in:
 
-- `doc/reproducibility/final_outputs_manifest.tsv`
+- `reproducibility/final_outputs_manifest.tsv`
 
 ## Preprocessing
 
