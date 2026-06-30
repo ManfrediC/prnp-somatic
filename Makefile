@@ -177,7 +177,7 @@ all:
 check: REQUIRED_CONDA_ENV=prnp-somatic
 check: check_conda verify_resources
 	# Validate tracked final-output checksums after resource integrity checks.
-	@bash bin/verify_output_checksums.sh --mode check
+	@bash doc/reproducibility/verify_output_checksums.sh --mode check
 
 # -------------------------------------------------------------------
 # QC helpers

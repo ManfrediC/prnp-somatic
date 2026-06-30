@@ -7,7 +7,7 @@ Use this checklist immediately before final reproducibility commit/tag.
 - Regenerate active script inventory:
 
 ```bash
-python3 bin/make_inventory.py
+python3 doc/reproducibility/make_inventory.py
 ```
 
 - Review and stage inventory update:
@@ -18,13 +18,13 @@ python3 bin/make_inventory.py
 - Recompute checksums (if any outputs changed):
 
 ```bash
-bash bin/verify_output_checksums.sh --mode write
+bash doc/reproducibility/verify_output_checksums.sh --mode write
 ```
 
 - Verify checksums:
 
 ```bash
-bash bin/verify_output_checksums.sh --mode check
+bash doc/reproducibility/verify_output_checksums.sh --mode check
 ```
 
 ## Documentation consistency

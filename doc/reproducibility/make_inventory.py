@@ -18,7 +18,7 @@ import hashlib
 from pathlib import Path
 from datetime import datetime, timezone
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_DIR = REPO_ROOT / "src"
 LEGACY_DIR = SRC_DIR / "legacy"
 OUT_PATH = REPO_ROOT / "doc" / "inventory.tsv"
@@ -57,7 +57,7 @@ def main() -> None:
 
         # Keep a stable row schema; use NA placeholders to avoid trailing TSV whitespace.
         rows.append({
-            "relpath": str(p.relative_to(REPO_ROOT)),
+            "relpath": p.relative_to(REPO_ROOT).as_posix(),
             "language": lang,
             "size_bytes": str(stat.st_size),
             "mtime_utc": mtime_utc,

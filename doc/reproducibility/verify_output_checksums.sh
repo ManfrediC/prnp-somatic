@@ -11,7 +11,7 @@
 # - fails fast if any manifest entry marked required=yes is missing
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_ROOT"
 
 MANIFEST="doc/reproducibility/final_outputs_manifest.tsv"

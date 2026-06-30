@@ -11,13 +11,12 @@ This repository contains the reproducible analysis workflows used in the *PRNP* 
 The Reproduction Guide below details required inputs, environment setup and expected outputs.
 
 ## Repository structure
-- `bin/` command-line entrypoints / wrappers
 - `src/` reusable code (Shell/Python/R)
 - `config/` configuration templates and sample manifests
 - `resources/` small static artefacts tracked in git (BEDs, schemas). Larger resources must be downloaded manually
 - `results/` outputs *not tracked* (date-stamped runs)
 - `env/` container/environment definitions
-- `doc/` notes and documentation
+- `doc/` notes, reproducibility manifests and repository maintenance checks
 - `manuscript/` manuscript artefact generation
 
 ## Root files
@@ -238,7 +237,7 @@ Expected outputs:
 ### 12. Verify final outputs
 
 ```bash
-bash bin/verify_output_checksums.sh --mode check
+bash doc/reproducibility/verify_output_checksums.sh --mode check
 ```
 
 Expected manifest/checksum files:
