@@ -5,6 +5,7 @@ Configuration files are repo-relative unless an absolute path is supplied.
 ## Tracked files
 
 - `preprocessing_samples.tsv`: preprocessing sample manifest (`batch_id`, `sample_id`, `r1`, `r2`, optional `display_label`).
+- `sample_manifest.tsv`: analysis sample manifest used by final variant and sequencing-QC table scripts (`sample_id`, `group`, `batch`, `input_dir`, `display_label`).
 - `fastq_filename_manifest.tsv`: reviewer-facing FASTQ aliases mapped back to original sequencer filenames and hashes.
 - `preprocessing.env.example`: SNV/preprocessing and Mutect2 configuration template.
 - `junctions.env.example`: exon-exon junction workflow configuration template.

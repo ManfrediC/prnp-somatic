@@ -13,9 +13,8 @@ The Reproduction Guide below details required inputs, environment setup and expe
 ## Repository structure
 - `bin/` command-line entrypoints / wrappers
 - `src/` reusable code (Shell/Python/R)
-- `config/` configuration templates
+- `config/` configuration templates and sample manifests
 - `resources/` small static artefacts tracked in git (BEDs, schemas). Larger resources must be downloaded manually
-- `authoritative_files/` manifests and sequencing-metrics validation utilities
 - `results/` outputs *not tracked* (date-stamped runs)
 - `env/` container/environment definitions
 - `doc/` notes and documentation
@@ -284,7 +283,6 @@ Toolchain and QC helpers:
 
 - `make versions` (quick local tool-version report)
 - `make toolchain_lock` (writes `doc/tool_versions.lock.txt`)
-- `make qc_validate` (validate manifest inputs)
 - `make qc_metrics` (compute sequencing metrics TSV under `results/sequencing_qc/`)
 - `make dna_quality` (build DNA-quality evidence table under `results/dna_quality/`)
 - `make clean_qc` (remove the canonical sequencing QC output directory)

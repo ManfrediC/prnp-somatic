@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Generate per-sample sequencing QC metrics from the authoritative manifest.
+Generate per-sample sequencing QC metrics from the sample manifest.
 
 Input:
-- authoritative_files/manifest.tsv (or PRNP_MANIFEST)
+- config/sample_manifest.tsv (or PRNP_MANIFEST)
 - resources BED/FASTA paths (or PRNP_* env overrides)
 
 Output:
@@ -38,11 +38,12 @@ def env_path(var: str, default: Path) -> Path:
     v = os.environ.get(var)
     return Path(v).expanduser().resolve() if v else default
 
-AUTH_DIR = REPO_ROOT / "authoritative_files"
+CONFIG_DIR = REPO_ROOT / "config"
+SCRIPT_DIR = HERE.parent
 RES_DIR = REPO_ROOT / "resources"
 
-MANIFEST = env_path("PRNP_MANIFEST", AUTH_DIR / "manifest.tsv")
-SCHEMA_HEADER_FILE = env_path("PRNP_SCHEMA", AUTH_DIR / "sequencing_metrics_per_sample.schema.tsv")
+MANIFEST = env_path("PRNP_MANIFEST", CONFIG_DIR / "sample_manifest.tsv")
+SCHEMA_HEADER_FILE = env_path("PRNP_SCHEMA", SCRIPT_DIR / "sequencing_metrics_per_sample.schema.tsv")
 
 TARGETS_BED = env_path("PRNP_TARGETS_BED", RES_DIR / "targets.bed")
 CODING_BED = env_path("PRNP_CODING_BED", RES_DIR / "prnp_coding.bed")

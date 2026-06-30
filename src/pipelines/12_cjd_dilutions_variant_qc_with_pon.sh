@@ -86,7 +86,7 @@ WITH_PON_VARIANT_QC_METRICS_SUBDIR="${WITH_PON_VARIANT_QC_METRICS_SUBDIR:-readco
 WITH_PON_VARIANT_QC_RESULTS_ROOT="${WITH_PON_VARIANT_QC_RESULTS_ROOT:-results/mutect2_cjd_dilutions_with_pon/variant_qc}"
 WITH_PON_VARIANT_QC_R_SCRIPT="${WITH_PON_VARIANT_QC_R_SCRIPT:-src/pipelines/12_cjd_dilutions_variant_table_qc_with_pon.R}"
 MANUAL_POP_FREQ_TSV="${MANUAL_POP_FREQ_TSV:-resources/annotations/manual_population_freq.tsv}"
-SAMPLE_MANIFEST_TSV="${SAMPLE_MANIFEST_TSV:-${PRNP_MANIFEST:-authoritative_files/manifest.tsv}}"
+SAMPLE_MANIFEST_TSV="${SAMPLE_MANIFEST_TSV:-${PRNP_MANIFEST:-config/sample_manifest.tsv}}"
 
 
 to_abs() {

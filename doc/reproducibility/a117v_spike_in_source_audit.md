@@ -141,8 +141,7 @@ as aliases, rather than rewriting raw provenance labels.
 Current repo registry rows checked:
 
 - `config/preprocessing_samples.tsv`
-- `authoritative_files/manifest.tsv`
-- `authoritative_files/manifest_qc.tsv`
+- `config/sample_manifest.tsv`
 
 These files currently use the raw aliases `NA99A1_undil`, `NA99A1_1to5`, and
 `NA995A05_undil`. They have not yet been remediated.

@@ -37,6 +37,7 @@ bash src/pipelines/run_cjd_dilutions_variant_qc_with_pon.sh
 - `runs/mutect2_cjd_dilutions_with_pon/cjd/readcount_qc/metrics/*`
 - `runs/mutect2_cjd_dilutions_with_pon/dilutions/readcount_qc/metrics/*`
 - `resources/annotations/manual_population_freq.tsv`
+- `config/sample_manifest.tsv`
 - optional overrides in `config/preprocessing.env` (or exported environment variables)
 
 ### Command
@@ -280,6 +281,7 @@ Additional keys used by PoN creation:
 - `WITH_PON_VARIANT_QC_RESULTS_ROOT`
 - `WITH_PON_VARIANT_QC_R_SCRIPT`
 - `DILUTION_SAMPLES`
+- `SAMPLE_MANIFEST_TSV` or `PRNP_MANIFEST`
 
 ### Funcotator files required
 

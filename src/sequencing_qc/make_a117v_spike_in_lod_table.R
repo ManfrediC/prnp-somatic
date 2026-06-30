@@ -21,7 +21,7 @@ legacy_csv <- Sys.getenv(
 
 manifest_tsv <- Sys.getenv(
   "PRNP_MANIFEST",
-  unset = file.path(repo_root, "authoritative_files", "manifest.tsv")
+  unset = file.path(repo_root, "config", "sample_manifest.tsv")
 )
 
 results_csv <- Sys.getenv(

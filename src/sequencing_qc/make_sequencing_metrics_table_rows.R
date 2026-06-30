@@ -28,7 +28,7 @@ rows_tex <- Sys.getenv(
 
 sample_manifest_tsv <- Sys.getenv(
   "PRNP_MANIFEST",
-  unset = file.path(repo_root, "authoritative_files", "manifest.tsv")
+  unset = file.path(repo_root, "config", "sample_manifest.tsv")
 )
 
 ## ---- define the manuscript-facing spike-in rows ----

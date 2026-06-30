@@ -101,7 +101,7 @@ output_dir <- get_arg(parsed, "output-dir", required = TRUE)
 sample_manifest_path <- get_arg(
   parsed,
   "sample-manifest",
-  Sys.getenv("PRNP_MANIFEST", file.path("authoritative_files", "manifest.tsv"))
+  Sys.getenv("PRNP_MANIFEST", file.path("config", "sample_manifest.tsv"))
 )
 
 enable_aaf_filter <- parse_bool(get_arg(parsed, "enable-aaf-filter", "1"), "enable-aaf-filter")

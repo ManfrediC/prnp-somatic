@@ -55,25 +55,30 @@ def main() -> None:
         stat = p.stat()
         mtime_utc = datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat()
 
-        # Keep a stable row schema so downstream curation can fill blanks in-place.
+        # Keep a stable row schema; use NA placeholders to avoid trailing TSV whitespace.
         rows.append({
             "relpath": str(p.relative_to(REPO_ROOT)),
             "language": lang,
             "size_bytes": str(stat.st_size),
             "mtime_utc": mtime_utc,
             "sha256": sha256_file(p),
-            "purpose": "",
-            "inputs": "",
-            "outputs": "",
-            "deps/tools": "",
-            "notes": "",
+            "purpose": "NA",
+            "inputs": "NA",
+            "outputs": "NA",
+            "deps/tools": "NA",
+            "notes": "NA",
         })
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     with OUT_PATH.open("w", newline="", encoding="utf-8") as f:
         if not rows:
             raise SystemExit(f"No scripts discovered under {SRC_DIR} (excluding {LEGACY_DIR})")
-        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()), delimiter="\t")
+        w = csv.DictWriter(
+            f,
+            fieldnames=list(rows[0].keys()),
+            delimiter="\t",
+            lineterminator="\n",
+        )
         w.writeheader()
         w.writerows(rows)
 
