@@ -1,8 +1,0 @@
-check,passed
-four_polygons_per_assay,TRUE
-finite_polygon_vertices,TRUE
-count_rows_for_complete_wells,TRUE
-all_count_rows_ok,TRUE
-control_validation_present,TRUE
-plot_droplets_written,TRUE
-polygon_plots_exist,TRUE

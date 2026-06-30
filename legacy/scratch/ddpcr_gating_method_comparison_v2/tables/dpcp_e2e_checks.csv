@@ -1,9 +1,0 @@
-check,passed
-all_methods_present,TRUE
-well_count_rows_complete,TRUE
-reader_validation_passed,TRUE
-native_status_present,TRUE
-control_validation_present,TRUE
-adapter_comparison_complete,TRUE
-failed_rows_have_messages,TRUE
-plot_sample_present,TRUE

@@ -1,1 +1,0 @@
-In order to force Mutect2 to examine reads for a specific variant, we need a VCF file that contains the variant. Here, such files are created using bcftools.

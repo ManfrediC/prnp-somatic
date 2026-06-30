@@ -1,4 +1,0 @@
-method_id,method_variant,classifier,template_mode,random_seed
-ddPCRclust_template_native,"native template workflow, full ensemble",ddPCRclust_template,full,20260606
-ddPCRclust_template_fast,"native template workflow, fast density mode",ddPCRclust_template,fast,20260606
-ddPCRclust_control_projected,control-projected sensitivity using ddPCRclust input geometry,control_projected,NA,20260606

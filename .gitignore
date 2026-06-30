@@ -189,3 +189,6 @@ doc/reproducibility/a117v_reviewer_defensibility_package.md
 
 # Manuscript workspace (temporarily excluded from version control)
 /manuscript
+
+# Tests
+/tests

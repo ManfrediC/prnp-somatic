@@ -1,9 +1,0 @@
-current_name	latex_id	image_file
-Figure 1	fig:prnp-mosaic	manuscript/legacy/figures/mosaicism_models/brain-damage-combined.pdf
-Figure 2	fig:dna-purification-protocol	manuscript/legacy/figures/purification_protocol/purification-overview-paper.pdf
-Figure 3	fig:snv-detection-workflow	manuscript/figures/snv_flowchart/snv_flowchart_tikz.pdf
-Figure 4	fig:RT-QuIC	manuscript/legacy/figures/rt-quic/unseeded.pdf; manuscript/legacy/figures/rt-quic/CJD_CB.pdf; manuscript/legacy/figures/rt-quic/noninfect_CB.pdf; manuscript/legacy/figures/rt-quic/CJD_Trizol_RNA.pdf; manuscript/legacy/figures/rt-quic/CJD_deko_DNA.pdf; manuscript/legacy/figures/rt-quic/noninfect_DNA.pdf
-Figure 5	fig:LoD-summary	manuscript/figures/ddpcr_lod/D178N_LoD_concentration.pdf; manuscript/figures/ddpcr_lod/D178N_fraction.pdf; manuscript/figures/ddpcr_lod/E200K_LoD_concentration.pdf; manuscript/figures/ddpcr_lod/E200K_fraction.pdf; manuscript/figures/ddpcr_lod/P102L_LoD_concentration.pdf; manuscript/figures/ddpcr_lod/P102L_fraction.pdf
-Figure 6	fig:ddpcr-mutant-allele-frequencies	manuscript/figures/ddpcr_fractional_abundance/SNV_all_mutations_legend_bottom_final.pdf
-Figure 7	fig:snv-lollipop	manuscript/figures/snv_lollipop/SNV_lollipop_final.pdf
-Supplementary Figure 1	fig:ddpcr-pooled-participant-analysis	manuscript/figures/ddpcr_fractional_abundance_pooled/SNV_pooled_all_mutations_one_legend.pdf

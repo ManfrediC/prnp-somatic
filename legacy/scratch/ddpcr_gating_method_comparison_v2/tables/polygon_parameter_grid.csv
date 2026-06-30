@@ -1,2 +1,0 @@
-method_id,method_variant,min_hull_points,polygon_expansion,ellipse_fallback_points,random_seed
-polygon_control_hull_gates,control-derived convex-hull polygon gates,30,1.03,48,20260606

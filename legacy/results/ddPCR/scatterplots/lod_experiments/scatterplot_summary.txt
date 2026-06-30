@@ -1,7 +1,0 @@
-LoD raw root: /mnt/c/Projects/prnp-somatic/raw/ddpcr_lod
-LoD assay runs selected: 3
-Selected LoD physical wells: 44
-Individual LoD scatterplots written this run: 44
-Plot manifest rows: 44
-Scatterplot files present in manifest: 132
-Known LoD runs present: 2020-09-11_SNV_D178N;2020-10-08_SNV_E200K;2021-01-25_SNV_P102L

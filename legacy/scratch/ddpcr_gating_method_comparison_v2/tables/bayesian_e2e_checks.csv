@@ -1,8 +1,0 @@
-check,passed
-all_methods_present,TRUE
-well_count_rows_complete,TRUE
-finite_class_parameters,TRUE
-priors_sum_to_one,TRUE
-posterior_rows_sum_to_one,TRUE
-control_validation_present,TRUE
-plot_sample_present,TRUE
