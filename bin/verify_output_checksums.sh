@@ -5,7 +5,7 @@
 # - manifest: doc/reproducibility/final_outputs_manifest.tsv
 # - checksums: doc/reproducibility/final_outputs.sha256
 #
-# Behavior:
+# Behaviour:
 # - in write mode, computes checksums for present outputs and writes checksum file
 # - in check mode, recomputes checksums and diffs against stored checksum file
 # - fails fast if any manifest entry marked required=yes is missing

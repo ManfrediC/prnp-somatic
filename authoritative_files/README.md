@@ -8,7 +8,7 @@ sample-level QC metrics are generated", this is the reference location.
 
 - define the canonical sample inventory (`manifest.tsv`)
 - validate whether expected BAM/BAI/metrics files exist (`validate_manifest.sh`)
-- produce a validated manifest with resolved paths (`manifest_qc.tsv`)
+- produce a local validated manifest with resolved paths (`manifest_qc.tsv`)
 - compute per-sample sequencing QC metrics in a stable schema (`compute_sequencing_metrics.py`)
 
 ## File Guide
@@ -28,12 +28,7 @@ sample-level QC metrics are generated", this is the reference location.
     - `<sample_id>.bwa.picard.markedDup.recal.bam` (`long`)
   - verifies `.bai` index presence
   - requires Picard metrics only for `long` BAM style
-  - writes `manifest_qc.tsv`
-
-- `manifest_qc.tsv`
-  - generated validation report with resolved paths and per-row error flags
-  - carries `display_label` through from `manifest.tsv` for labelled spike-in rows
-  - intended for quick inspection and fail-fast checks in automation
+  - writes `manifest_qc.tsv` as a local, generated report
 
 - `compute_sequencing_metrics.py`
   - computes read/depth/on-target metrics from BAM + BED inputs
@@ -63,6 +58,8 @@ python3 authoritative_files/compute_sequencing_metrics.py \
 ## Notes
 
 - Current manifest convention points `input_dir` to `results/final_bam` for active samples.
+- `manifest_qc.tsv` is generated locally and ignored because resolved BAM paths
+  depend on the machine where validation is run.
 - A117V spike-in manuscript labels are recorded in `display_label`:
   `NA99A1_undil` -> `A117V low` and `NA995A05_undil` -> `A117V high`.
 - The validator fails when required files are missing, so it can be used as a preflight gate.

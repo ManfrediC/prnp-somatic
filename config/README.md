@@ -4,11 +4,8 @@ Configuration files are repo-relative unless an absolute path is supplied.
 
 ## Tracked files
 
-- `config.example.yaml`: generic configuration template.
-- `config.local.yaml`: repository-local configuration snapshot.
 - `preprocessing_samples.tsv`: preprocessing sample manifest (`batch_id`, `sample_id`, `r1`, `r2`, optional `display_label`).
 - `fastq_filename_manifest.tsv`: reviewer-facing FASTQ aliases mapped back to original sequencer filenames and hashes.
-- `dna_quality_sample_alias_overrides.tsv`: alias overrides for the DNA-quality evidence table.
 - `preprocessing.env.example`: SNV/preprocessing and Mutect2 configuration template.
 - `junctions.env.example`: exon-exon junction workflow configuration template.
 - `repeats.env.example`: PRNP ORR repeat workflow configuration template.

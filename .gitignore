@@ -155,6 +155,9 @@ v*.log
 nohup.out
 /results/ddPCR/logs/
 
+# Generated validation reports
+authoritative_files/manifest_qc.tsv
+
 # LaTeX build sidecars
 *.aux
 /Carta_PRNP.log
