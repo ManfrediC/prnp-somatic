@@ -309,4 +309,16 @@ Raw data and sequencing pipeline outputs are gitignored, to account for GitHub s
 Generated runtime index sidecars are also ignored (for example `resources/junctions/*.fa.{amb,ann,bwt,pac,sa}`).
 
 ## Data availability
-Data can be obtained for academic purposes upon reasonable request to the repository owner.
+
+Sequencing FASTQ files have been uploaded to NCBI SRA.
+
+- BioProject: `PRJNA1484136`
+  (<http://www.ncbi.nlm.nih.gov/bioproject/1484136>)
+- SRA submission: `SUB16298068`
+- BioSample accessions: `SAMN61220231` through `SAMN61220265` for the 35
+  submitted samples
+- Release date: 2027-07-30, or with release of linked data
+- Per-sample accession and FASTQ filename map:
+  `doc/reproducibility/sra_accessions.tsv`
+- SRA experiment and run accessions: pending; these will be added to the
+  accession map once assigned
