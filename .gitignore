@@ -154,6 +154,11 @@ v*.log
 nohup.out
 /results/ddPCR/logs/
 
+# LaTeX build sidecars
+*.aux
+/Carta_PRNP.log
+/figures_with_legends.log
+
 # Raw input data (large; keep out of git)
 /raw/fastq/
 /raw/dna_quality/
@@ -164,6 +169,7 @@ nohup.out
 !/raw/ddpcr_lod/
 !/raw/ddpcr_lod/README.md
 /raw/ddpcr_original/
+/deposition/
 /src/tools/export_ddpcr_archives.py
 /src/tools/docx_tooling/
 
