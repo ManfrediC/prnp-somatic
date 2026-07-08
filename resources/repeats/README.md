@@ -25,8 +25,8 @@ workflows in this repository.
 - The GangSTR BED targets only the mutable `R2` block, which is `2` reference
   copies of the canonical `24 bp` repeat motif in the hg38 PRNP ORR sequence.
 - `prnp_orr_manual_panel.tsv` is consumed by
-  `src/repeats/06_manual_mosaic_prnp_orr.py` and
-  `src/repeats/07_run_manual_mosaic_prnp_orr_cohort.py`.
+  `src/repeats/manual_mosaic_prnp_orr.py` and
+  `src/repeats/run_manual_mosaic_prnp_orr_cohort.py`.
 - The manual panel `evidence_tier` column distinguishes exact published human
   architectures from explicit representative copy-number models used only for
   conservative synthetic rescoring.

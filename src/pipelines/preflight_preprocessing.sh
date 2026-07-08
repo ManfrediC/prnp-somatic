@@ -57,14 +57,14 @@ else
 fi
 
 # Defaults: if they are not explicitly set in the env, use the following
-ADAPTERS_FA="${ADAPTERS_FA:-resources/TruSeq3-PE.fa}"
-DBSNP_VCF="${DBSNP_VCF:-resources/dbsnp_146.hg38.vcf.gz}"
+ADAPTERS_FA="${ADAPTERS_FA:-resources/adapters/TruSeq3-PE.fa}"
+DBSNP_VCF="${DBSNP_VCF:-resources/known_sites/dbsnp_146.hg38.vcf.gz}"
 FASTQ_DIR="${FASTQ_DIR:-raw/fastq}"
 FINAL_BAM_DIR="${FINAL_BAM_DIR:-results/final_bam}"
 JAVA_MEM_GB="${JAVA_MEM_GB:-8}"
-MILLS_VCF="${MILLS_VCF:-resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz}"
-REF_DICT="${REF_DICT:-resources/chr2_chr4_chr20.dict}"
-REF_FASTA="${REF_FASTA:-resources/chr2_chr4_chr20.fasta}"
+MILLS_VCF="${MILLS_VCF:-resources/known_sites/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz}"
+REF_DICT="${REF_DICT:-resources/references/snv/chr2_chr4_chr20.dict}"
+REF_FASTA="${REF_FASTA:-resources/references/snv/chr2_chr4_chr20.fasta}"
 RUNS_DIR="${RUNS_DIR:-runs/preprocessing}"
 SAMPLES_TSV="${SAMPLES_TSV:-config/preprocessing_samples.tsv}"
 THREADS="${THREADS:-8}"

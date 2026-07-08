@@ -61,9 +61,9 @@ if [[ "$MUTECT2_WITH_PON_OUT_ROOT" == run/* ]]; then
 fi
 
 FINAL_BAM_DIR="${FINAL_BAM_DIR:-results/final_bam}"
-REF_FASTA="${REF_FASTA:-resources/chr2_chr4_chr20.fasta}"
-INTERVALS="${INTERVALS:-resources/capture_targets.interval_list}"
-GNOMAD_VCF="${GNOMAD_VCF:-resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz}"
+REF_FASTA="${REF_FASTA:-resources/references/snv/chr2_chr4_chr20.fasta}"
+INTERVALS="${INTERVALS:-resources/intervals/capture_targets.interval_list}"
+GNOMAD_VCF="${GNOMAD_VCF:-resources/population/somatic-hg38_af-only-gnomad.hg38.vcf.gz}"
 PON_VCF="${PON_VCF:-results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz}"
 
 # Dilution order uses raw BAM/sample IDs for reproducibility and stable output ordering.

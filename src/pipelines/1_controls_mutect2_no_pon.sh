@@ -58,12 +58,12 @@ fi
 
 OUT_ROOT="${OUT_ROOT:-$MUTECT2_CONTROLS_OUT_ROOT}"
 
-REF_FASTA="${REF_FASTA:-resources/chr2_chr4_chr20.fasta}"
-INTERVALS="${INTERVALS:-resources/capture_targets.interval_list}"
+REF_FASTA="${REF_FASTA:-resources/references/snv/chr2_chr4_chr20.fasta}"
+INTERVALS="${INTERVALS:-resources/intervals/capture_targets.interval_list}"
 
 # Paper text says �resource bundle�; Mutect2 tumour-only typically uses gnomAD AF-only.
 # If you haven't added it to resources yet, set GNOMAD_VCF in your env.
-GNOMAD_VCF="${GNOMAD_VCF:-resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz}"
+GNOMAD_VCF="${GNOMAD_VCF:-resources/population/somatic-hg38_af-only-gnomad.hg38.vcf.gz}"
 
 mkdir -p "$OUT_ROOT/vcf" "$OUT_ROOT/f1r2"
 

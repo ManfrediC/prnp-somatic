@@ -8,10 +8,10 @@ BAMs in `results/final_bam`.
 
 - `results/final_bam/CJD*.bam`
 - `results/final_bam/Ctrl*.bam`
-- `resources/prnp_orr.hg38.bed`
+- `resources/repeats/prnp_orr.hg38.bed`
 - `resources/repeats/prnp_orr.expansionhunter.json`
 - `resources/repeats/prnp_orr.gangstr.bed` (optional orthogonal caller target)
-- `resources/chr2_chr4_chr20.fasta`
+- `resources/references/snv/chr2_chr4_chr20.fasta`
 
 ## Main entrypoint
 
@@ -82,7 +82,7 @@ from the existing alignment, use:
 conda activate prnp-repeats
 python3 src/repeats/06_manual_mosaic_prnp_orr.py \
   --bam results/final_bam/CJD1.bam \
-  --reference-fasta resources/chr2_chr4_chr20.fasta \
+  --reference-fasta resources/references/snv/chr2_chr4_chr20.fasta \
   --output-prefix results/repeats/manual/CJD1 \
   --sample-calls-tsv results/repeats/sample_calls.tsv \
   --gangstr-calls-tsv results/repeats/gangstr_calls.tsv

@@ -193,7 +193,7 @@ Optional one-sample manual mosaic review:
 conda activate prnp-repeats
 python3 src/repeats/06_manual_mosaic_prnp_orr.py \
   --bam results/final_bam/CJD1.bam \
-  --reference-fasta resources/chr2_chr4_chr20.fasta \
+  --reference-fasta resources/references/snv/chr2_chr4_chr20.fasta \
   --output-prefix results/repeats/manual/CJD1 \
   --sample-calls-tsv results/repeats/sample_calls.tsv \
   --gangstr-calls-tsv results/repeats/gangstr_calls.tsv

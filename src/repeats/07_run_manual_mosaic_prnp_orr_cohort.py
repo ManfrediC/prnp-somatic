@@ -30,7 +30,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--reference-fasta",
-        default=Path("resources/chr2_chr4_chr20.fasta"),
+        default=Path("resources/references/snv/chr2_chr4_chr20.fasta"),
         type=Path,
         help="Reference FASTA used by the alignments.",
     )

@@ -74,7 +74,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--region-bed",
-        default=Path("resources/prnp_orr.hg38.bed"),
+        default=Path("resources/repeats/prnp_orr.hg38.bed"),
         type=Path,
         help="BED with the full PRNP ORR interval.",
     )

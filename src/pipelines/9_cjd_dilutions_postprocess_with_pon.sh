@@ -67,10 +67,10 @@ fi
 OUT_ROOT="${OUT_ROOT:-$MUTECT2_WITH_PON_POSTPROCESS_ROOT}"
 WITH_PON_GROUPS="${WITH_PON_GROUPS:-cjd dilutions}"
 
-REF_FASTA="${REF_FASTA:-resources/chr2_chr4_chr20.fasta}"
-INTERVALS="${INTERVALS:-resources/capture_targets.interval_list}"
-FUNCOTATOR_DS="${FUNCOTATOR_DS:-resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38}"
-GNOMAD_AF_VCF="${GNOMAD_AF_VCF:-resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz}"
+REF_FASTA="${REF_FASTA:-resources/references/snv/chr2_chr4_chr20.fasta}"
+INTERVALS="${INTERVALS:-resources/intervals/capture_targets.interval_list}"
+FUNCOTATOR_DS="${FUNCOTATOR_DS:-resources/funcotator/funcotator_dataSources.v1.8.hg38.20230908s/hg38}"
+GNOMAD_AF_VCF="${GNOMAD_AF_VCF:-resources/population/somatic-hg38_af-only-gnomad.hg38.vcf.gz}"
 
 to_abs() {
   local p="$1"

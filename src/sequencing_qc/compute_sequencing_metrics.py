@@ -45,9 +45,12 @@ RES_DIR = REPO_ROOT / "resources"
 MANIFEST = env_path("PRNP_MANIFEST", CONFIG_DIR / "sample_manifest.tsv")
 SCHEMA_HEADER_FILE = env_path("PRNP_SCHEMA", SCRIPT_DIR / "sequencing_metrics_per_sample.schema.tsv")
 
-TARGETS_BED = env_path("PRNP_TARGETS_BED", RES_DIR / "targets.bed")
-CODING_BED = env_path("PRNP_CODING_BED", RES_DIR / "prnp_coding.bed")
-REFERENCE_FASTA = env_path("PRNP_REFERENCE_FASTA", RES_DIR / "chr2_chr4_chr20.fasta")
+TARGETS_BED = env_path("PRNP_TARGETS_BED", RES_DIR / "intervals" / "targets.bed")
+CODING_BED = env_path("PRNP_CODING_BED", RES_DIR / "intervals" / "prnp_coding.bed")
+REFERENCE_FASTA = env_path(
+    "PRNP_REFERENCE_FASTA",
+    RES_DIR / "references" / "snv" / "chr2_chr4_chr20.fasta",
+)
 
 # Thresholds (must match schema)
 COV_THR_X = (100, 500, 1250)

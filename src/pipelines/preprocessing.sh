@@ -37,10 +37,10 @@ if [[ "$RUNS_DIR" == run/* ]]; then
   RUNS_DIR="runs/${RUNS_DIR#run/}"
 fi
 
-REF_FASTA="${REF_FASTA:-resources/chr2_chr4_chr20.fasta}"
-DBSNP_VCF="${DBSNP_VCF:-resources/dbsnp_146.hg38.vcf.gz}"
-MILLS_VCF="${MILLS_VCF:-resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz}"
-ADAPTERS_FA="${ADAPTERS_FA:-resources/TruSeq3-PE.fa}"
+REF_FASTA="${REF_FASTA:-resources/references/snv/chr2_chr4_chr20.fasta}"
+DBSNP_VCF="${DBSNP_VCF:-resources/known_sites/dbsnp_146.hg38.vcf.gz}"
+MILLS_VCF="${MILLS_VCF:-resources/known_sites/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz}"
+ADAPTERS_FA="${ADAPTERS_FA:-resources/adapters/TruSeq3-PE.fa}"
 
 # Convert relative paths to absolute paths
 # Keep path normalisation centralised so downstream commands always see absolute inputs.

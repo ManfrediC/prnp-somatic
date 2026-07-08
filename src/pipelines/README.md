@@ -76,7 +76,7 @@ These expected output paths are also listed in:
 - `config/preprocessing_samples.tsv` (committed; first four columns drive file lookup, optional `display_label` is metadata)
 - `config/preprocessing.env` (gitignored)
 - `raw/fastq/<batch_id>/...` (not committed; batch IDs use reviewer-facing names)
-- `resources/` references (committed)
+- `resources/` references (small files committed; large references local)
 
 The `cjd_case_batch_a` block in `config/preprocessing_samples.tsv` should include:
 `CJD1`, `CJD2`, `CJD6`, `CJD13`, `CJD22`, `CJD23`, `CJD25`, `CJD27`.
@@ -289,7 +289,7 @@ Additional keys used by PoN creation:
 
 Recommended value:
 
-- `resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
+- `resources/funcotator/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
 
 Expected contents under that directory include source folders such as:
 
@@ -310,7 +310,7 @@ datasource tree to avoid requester-pays bucket access during Funcotator.
 
 Recommended value:
 
-- `resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz`
+- `resources/population/somatic-hg38_af-only-gnomad.hg38.vcf.gz`
 
 The corresponding index (`.tbi` or `.csi`) must be present.
 

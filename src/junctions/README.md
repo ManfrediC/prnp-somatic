@@ -15,8 +15,8 @@ Paths are repo-relative and resolve from repository root.
 
 Defaults are repo-relative and resolved from script location.
 
-- `resources/Homo_sapiens.GRCh38.110.gtf.gz`
-- `resources/hg38.fa`
+- `resources/references/hg38/Homo_sapiens.GRCh38.110.gtf.gz`
+- `resources/references/hg38/hg38.fa`
 - `results/final_bam/*.bam` (for `03_process_bam.sh`)
 
 ## Command

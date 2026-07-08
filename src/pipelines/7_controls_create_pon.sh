@@ -62,7 +62,7 @@ PON_MERGED_VCF="${PON_MERGED_VCF:-$PON_OUTPUT_ROOT/controls_multisample.filtered
 PON_VCF="${PON_VCF:-$PON_OUTPUT_ROOT/CJD_controls_PoN.vcf.gz}"
 PON_CONTROLS="${PON_CONTROLS:-Ctrl1 Ctrl2 Ctrl3 Ctrl4 Ctrl5 Ctrl7}"
 
-REF_FASTA="${REF_FASTA:-resources/chr2_chr4_chr20.fasta}"
+REF_FASTA="${REF_FASTA:-resources/references/snv/chr2_chr4_chr20.fasta}"
 
 to_abs() {
   local p="$1"

@@ -1,43 +1,39 @@
 # Resources
 
-This directory contains reference files used by the reproducible workflows.
+This directory contains workflow reference files. Small project-specific files are
+committed; large public references and generated indexes stay local and are
+reconstructed or downloaded as described in
+`reproducibility/tooling_and_reference_provenance.md`.
 
-Use `resources/INDEX.tsv` as the canonical inventory of resource files, workflow scope, provenance notes, and tracking status.
+Use `resources/INDEX.tsv` as the canonical file inventory.
 
-## Policy
+## Folder Map
 
-- Keep script paths stable under `resources/`.
-- Treat files in `resources/junctions/` (`prnp_junctions.fa`, `PRNP.pad1kb.hg38.bed`) as committed reference artefacts for the junction workflow.
-- Treat `resources/prnp_orr.hg38.bed` as the committed canonical ORR interval for repeat-analysis workflows.
-- Treat BWA index sidecars for `resources/junctions/prnp_junctions.fa` (`.amb`, `.ann`, `.bwt`, `.pac`, `.sa`) as runtime-generated files.
-- Configure pipeline scripts via `config/preprocessing.env` and `config/junctions.env` when local overrides are needed.
+- `adapters/`: small adapter FASTA used by preprocessing.
+- `annotations/`: small manual annotation tables.
+- `funcotator/`: local Funcotator datasource tree.
+- `intervals/`: capture and coding BED/interval files.
+- `junctions/`: committed junction reference FASTA/BED plus local BWA indexes.
+- `known_sites/`: local dbSNP and Mills/1000G VCF resources.
+- `population/`: local gnomAD AF-only and optional 1000G PoN resources.
+- `references/hg38/`: local whole-genome hg38 FASTA/GTF plus small sidecars.
+- `references/snv/`: local chr2/chr4/chr20 subset FASTA plus small sidecars.
+- `repeats/`: committed PRNP ORR repeat workflow resources.
 
-## Canonical paths used by current workflows
+## Git Policy
 
-- SNV pipeline subset reference FASTA: `resources/chr2_chr4_chr20.fasta`
-- SNV pipeline dbSNP: `resources/dbsnp_146.hg38.vcf.gz`
-- SNV pipeline Mills indels: `resources/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz`
-- SNV pipeline gnomAD AF-only: `resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz`
-- SNV pipeline manual annotation table: `resources/annotations/manual_population_freq.tsv`
-- Repeat workflow ORR BED: `resources/prnp_orr.hg38.bed`
-- Repeat workflow GangSTR BED: `resources/repeats/prnp_orr.gangstr.bed`
-- Repeat workflow manual mosaic panel: `resources/repeats/prnp_orr_manual_panel.tsv`
-- SNV pipeline Funcotator datasource root: `resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38`
-- Junction workflow GTF: `resources/Homo_sapiens.GRCh38.110.gtf.gz`
-- Junction workflow reference FASTA: `resources/hg38.fa`
-- Junction workflow generated reference files: `resources/junctions/prnp_junctions.fa`, `resources/junctions/PRNP.pad1kb.hg38.bed`
+- Tracked: small hand-authored or project-specific resources, documentation,
+  adapter FASTA, BED/interval files, repeat catalogues, `.dict`, and `.fai`.
+- Local ignored: large FASTA, GTF, VCF, VCF index, and Funcotator datasource
+  files.
+- Generated ignored: BWA sidecars (`.amb`, `.ann`, `.bwt`, `.pac`, `.sa`).
 
-## Canonical file forms
+## Verification
 
-- Keep `hg38.fa` as the canonical junction FASTA path.
-- Use `somatic-hg38_1000g_pon.hg38.vcf.gz` (plus index) for PoN resource VCF usage.
-
-## Integrity checks
-
-From repository root:
+From the repository root:
 
 ```bash
 make verify_resources
 ```
 
-This validates checksums listed in `resources/SHA256SUMS.txt`.
+This checks `resources/SHA256SUMS.txt` against the files present locally.

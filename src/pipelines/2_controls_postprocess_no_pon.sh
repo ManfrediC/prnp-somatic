@@ -70,9 +70,9 @@ NORM_DIR="${NORM_DIR:-$OUT_ROOT/norm}"
 ANNOT_DIR="${ANNOT_DIR:-$OUT_ROOT/annot}"
 ANNOT_GNOMAD_DIR="${ANNOT_GNOMAD_DIR:-$OUT_ROOT/annot_with_gnomad}"
 
-REF_FASTA="${REF_FASTA:-resources/chr2_chr4_chr20.fasta}"
-FUNCOTATOR_DS="${FUNCOTATOR_DS:-resources/funcotator_data_somatic/funcotator_dataSources.v1.8.hg38.20230908s/hg38}"
-GNOMAD_AF_VCF="${GNOMAD_AF_VCF:-resources/somatic-hg38_af-only-gnomad.hg38.vcf.gz}"
+REF_FASTA="${REF_FASTA:-resources/references/snv/chr2_chr4_chr20.fasta}"
+FUNCOTATOR_DS="${FUNCOTATOR_DS:-resources/funcotator/funcotator_dataSources.v1.8.hg38.20230908s/hg38}"
+GNOMAD_AF_VCF="${GNOMAD_AF_VCF:-resources/population/somatic-hg38_af-only-gnomad.hg38.vcf.gz}"
 
 to_abs() {
   local p="$1"

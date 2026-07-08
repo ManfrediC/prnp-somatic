@@ -25,8 +25,8 @@ fi
 
 REPEAT_BAM_DIR="${REPEAT_BAM_DIR:-results/final_bam}"
 REPEAT_RESULTS_ROOT="${REPEAT_RESULTS_ROOT:-results/repeats}"
-REPEAT_REF_FASTA="${REPEAT_REF_FASTA:-resources/chr2_chr4_chr20.fasta}"
-PRNP_ORR_BED="${PRNP_ORR_BED:-resources/prnp_orr.hg38.bed}"
+REPEAT_REF_FASTA="${REPEAT_REF_FASTA:-resources/references/snv/chr2_chr4_chr20.fasta}"
+PRNP_ORR_BED="${PRNP_ORR_BED:-resources/repeats/prnp_orr.hg38.bed}"
 PRNP_EH_CATALOG="${PRNP_EH_CATALOG:-resources/repeats/prnp_orr.expansionhunter.json}"
 RUN_GANGSTR="${RUN_GANGSTR:-0}"
 GANGSTR_BIN="${GANGSTR_BIN:-}"
