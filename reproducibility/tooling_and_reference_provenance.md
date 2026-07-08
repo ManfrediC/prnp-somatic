@@ -1,7 +1,7 @@
 # Tooling and Reference Provenance
 
-Checked on: 2026-03-06
-Scope: `src/ddpcr`, `src/junctions`, `src/pipelines`
+Checked on: 2026-07-08
+Scope: `src/ddpcr`, `src/junctions`, `src/pipelines`, `src/repeats`
 
 ## Required CLI tools and versions
 
@@ -89,6 +89,7 @@ Place them at the exact repo-relative paths shown below.
 - `resources/population/somatic-hg38_af-only-gnomad.hg38.vcf.gz` and index
   - Obtain from: `gs://gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf.gz`
   - Required index: `resources/population/somatic-hg38_af-only-gnomad.hg38.vcf.gz.tbi` (or `.csi`)
+  - Optional legacy sidecar if present locally: `resources/population/somatic-hg38_af-only-gnomad.hg38.vcf.idx`; active scripts require `.tbi` or `.csi`, not `.idx`
 - `resources/population/somatic-hg38_1000g_pon.hg38.vcf.gz` and index (optional, only if using provided PoN resource file)
   - Obtain from: `gs://gatk-best-practices/somatic-hg38/1000g_pon.hg38.vcf.gz`
   - Required index: `resources/population/somatic-hg38_1000g_pon.hg38.vcf.gz.tbi` (or `.csi`)
@@ -109,6 +110,13 @@ Place them at the exact repo-relative paths shown below.
   - `resources/junctions/prnp_junctions.fa.pac`
   - `resources/junctions/prnp_junctions.fa.sa`
   - Obtain: generated automatically by `src/junctions/03_process_bam.sh` via `bwa index` (do not download manually).
+
+### Repeat workflow (`src/repeats`)
+
+- No additional untracked repeat-reference files are required beyond
+  `resources/references/snv/chr2_chr4_chr20.fasta` and its sidecars.
+- Repeat catalogue, BED, and manual panel files are tracked under
+  `resources/repeats/`.
 
 ## Notes
 
