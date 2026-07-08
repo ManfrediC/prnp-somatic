@@ -83,13 +83,16 @@ resources/references/snv/*.fasta.bwt
 resources/references/snv/*.fasta.pac
 resources/references/snv/*.fasta.sa
 resources/references/hg38/*.fa
+resources/references/hg38/*.fa.gz
 resources/references/hg38/*.gtf.gz
 resources/known_sites/*.vcf.gz
 resources/known_sites/*.vcf.gz.tbi
 resources/population/*.vcf.gz
 resources/population/*.vcf.gz.tbi
 resources/population/*.vcf.idx
+resources/population/*.vcf
 resources/funcotator/
+resources/annotations/dataset.tsv
 resources/backup/funcotator_excluded_datasources/
 !resources/README.md
 !resources/INDEX.tsv
@@ -98,7 +101,7 @@ resources/backup/funcotator_excluded_datasources/
 !resources/adapters/TruSeq3-PE.fa
 !resources/annotations/
 !resources/annotations/README.md
-!resources/annotations/*.tsv
+!resources/annotations/manual_population_freq.tsv
 !resources/intervals/
 !resources/intervals/*.bed
 !resources/intervals/*.interval_list
