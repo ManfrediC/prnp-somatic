@@ -1,8 +1,9 @@
 # Reproducibility
 
 This directory contains the small, tracked files used to check and document the
-repository's reproducibility state. It is for manifests, checksums, provenance
-notes and finalisation utilities, not primary analysis code.
+repository's reproducibility state. It is for manifests, checksums and
+provenance notes, not primary analysis code or private reviewer-response
+material.
 
 ## Key Files
 
@@ -12,18 +13,12 @@ notes and finalisation utilities, not primary analysis code.
 - `final_outputs.sha256`: checksums for declared final outputs.
 - `sra_accessions.tsv`: submitted SRA/BioSample accession map.
 - `data_availability.md`: reviewer-facing data availability summary.
-- `inventory.tsv`: active script inventory under `src/`.
-- `finalization_checklist.md`: short pre-freeze checklist.
+- `inventory.tsv`: maintainer-side active script inventory under `src/`.
+- `make_inventory.py`: optional helper for regenerating `inventory.tsv`.
 
 ## Utilities
 
 Run commands from the repository root.
-
-Regenerate the active script inventory:
-
-```bash
-python3 reproducibility/make_inventory.py
-```
 
 Verify final-output checksums:
 
@@ -35,4 +30,10 @@ Refresh checksums only after intentionally changing final outputs:
 
 ```bash
 bash reproducibility/verify_output_checksums.sh --mode write
+```
+
+Regenerate the maintainer inventory when active scripts change:
+
+```bash
+python3 reproducibility/make_inventory.py
 ```

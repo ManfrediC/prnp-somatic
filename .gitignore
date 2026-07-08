@@ -181,8 +181,8 @@ results/repeats/manual_cohort/*/samples/*
 !/runs/README.md
 /run/
 
-# Private reproducibility support memo
-/reproducibility/a117v_reviewer_defensibility_package.md
+# Local finalisation notes
+/finalization_checklist.md
 
 # Manuscript workspace
 /manuscript/
