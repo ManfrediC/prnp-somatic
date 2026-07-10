@@ -18,14 +18,15 @@ bash src/pipelines/run_cjd_dilutions_variant_qc_with_pon.sh
 - `2_controls_postprocess_no_pon.sh`: controls-only post-processing (Stages 2-7)
 - `3_controls_readcount_qc_no_pon.sh`: controls-only read/base quality metrics from annotated variants
 - `5_controls_variant_qc_no_pon.sh`: controls-only variant table extraction and QC filtering (shell entry point)
-- `6_controls_variant_table_qc_no_pon.R`: R implementation of table integration and QC filters
+- `6_controls_variant_table_qc_no_pon.R`: thin no-PoN R entrypoint for table integration and QC
 - `7_controls_create_pon.sh`: controls-only Panel of Normals (PoN) creation from filtered control VCFs
 - `8_cjd_dilutions_mutect2_with_pon.sh`: Mutect2 tumour-only with PoN for CJD and dilution BAMs
 - `9_cjd_dilutions_postprocess_with_pon.sh`: post-processing for CJD+dilutions with PoN (orientation/filtering/annotation)
 - `10_cjd_dilutions_readcount_qc_with_pon.sh`: readcount extraction (BED/BAM dedup/bam-readcount) for CJD+dilutions
 - `11_cjd_dilutions_readcount_to_tsv_with_pon.sh`: convert readcount text outputs to per-allele TSV metrics
 - `12_cjd_dilutions_variant_qc_with_pon.sh`: SelectVariants + VariantsToTable + R QC entry point for CJD+dilutions
-- `12_cjd_dilutions_variant_table_qc_with_pon.R`: R implementation of table integration and QC filters (with PoN)
+- `12_cjd_dilutions_variant_table_qc_with_pon.R`: thin with-PoN R entrypoint for table integration and QC
+- `variant_table_qc_common.R`: shared variant-table import, annotation, joining, filtering, and audit implementation
 - `run_cjd_dilutions_variant_qc_with_pon.sh`: single wrapper entrypoint for the Stage-12 publication-path regeneration in this repo
 
 ## Stage-12 Publication Path
