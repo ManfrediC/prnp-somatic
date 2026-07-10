@@ -45,6 +45,31 @@ FORCE="${FORCE:-0}"
 ARCHIVE_EXISTING_RUN="${ARCHIVE_EXISTING_RUN:-0}"
 ARCHIVE_RUN_LABEL="${ARCHIVE_RUN_LABEL:-}"
 EXPECTED_SAMPLE_COUNT="${EXPECTED_SAMPLE_COUNT:-32}"
+
+normalize_path_setting() {
+  # Support Windows-style absolute paths when the workflow is launched from WSL.
+  local value="$1"
+  local normalized
+
+  if [[ -z "$value" ]]; then
+    echo ""
+    return 0
+  fi
+
+  # Quick pass for common Windows drive-letter paths like C:\path\to\file.
+  if [[ "$value" == [A-Za-z]:\\* ]]; then
+    if command -v wslpath >/dev/null 2>&1; then
+      normalized="$(wslpath -u "$value")"
+      echo "$normalized"
+      return 0
+    fi
+  fi
+
+  # Replace backslashes for any remaining Windows-style path separators.
+  echo "${value//\\//}"
+}
+
+# Normalise configured paths before constructing any derived output paths.
 REPEAT_BAM_DIR="$(normalize_path_setting "$REPEAT_BAM_DIR")"
 REPEAT_RESULTS_ROOT="$(normalize_path_setting "$REPEAT_RESULTS_ROOT")"
 REPEAT_REF_FASTA="$(normalize_path_setting "$REPEAT_REF_FASTA")"
@@ -90,6 +115,17 @@ RUN_TARGETS=(
   "$LOG_ROOT"
 )
 
+if [[ "${1:-}" == "--preflight" ]]; then
+  printf 'repeat_bam_dir\t%s\n' "$REPEAT_BAM_DIR"
+  printf 'repeat_results_root\t%s\n' "$REPEAT_RESULTS_ROOT"
+  printf 'repeat_ref_fasta\t%s\n' "$REPEAT_REF_FASTA"
+  printf 'prnp_orr_bed\t%s\n' "$PRNP_ORR_BED"
+  printf 'prnp_eh_catalog\t%s\n' "$PRNP_EH_CATALOG"
+  printf 'gangstr_bin\t%s\n' "$GANGSTR_BIN"
+  printf 'gangstr_regions_bed\t%s\n' "$GANGSTR_REGIONS_BED"
+  exit 0
+fi
+
 # ---------------------------------------------------------------------------
 # Basic helper functions
 # ---------------------------------------------------------------------------
@@ -127,29 +163,6 @@ resolve_python_cmd() {
     return 0
   fi
   return 1
-}
-
-normalize_path_setting() {
-  # Support Windows-style absolute paths when the workflow is launched from WSL.
-  local value="$1"
-  local normalized
-
-  if [[ -z "$value" ]]; then
-    echo ""
-    return 0
-  fi
-
-  # Quick pass for common Windows drive-letter paths like C:\path\to\file.
-  if [[ "$value" =~ ^[A-Za-z]:\\\\ ]]; then
-    if command -v wslpath >/dev/null 2>&1; then
-      normalized="$(wslpath -u "$value")"
-      echo "$normalized"
-      return 0
-    fi
-  fi
-
-  # Replace backslashes for any remaining Windows-style path separators.
-  echo "${value//\\\\/\/}"
 }
 
 config_file_loaded() {
