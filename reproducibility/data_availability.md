@@ -19,11 +19,11 @@ accessions were not included in the processed portal export available locally;
 the table records that limitation explicitly rather than implying that the SRR
 accessions are still pending.
 
-Raw and project-derived ddPCR data have been uploaded to an unpublished Zenodo
-draft with reserved DOI `10.5281/zenodo.21227118`. The draft contains 18 files,
-is embargoed until 2027-07-30, and should be released earlier if the preprint or
-manuscript is published first. The DOI becomes registered when the Zenodo
-record is published.
+Raw and project-derived ddPCR data have been published in Zenodo under version
+DOI [`10.5281/zenodo.21227118`](https://doi.org/10.5281/zenodo.21227118). The
+record contains 18 files, embargoed until 2027-07-30 with earlier release if the
+preprint or manuscript is published first. The all-versions DOI is
+[`10.5281/zenodo.21227117`](https://doi.org/10.5281/zenodo.21227117).
 
 Processed analysis outputs and expected reproducibility artefacts are listed in
 `final_outputs_manifest.tsv`, with checksums in `final_outputs.sha256`.

@@ -325,9 +325,10 @@ Sequencing FASTQ files have been uploaded to NCBI SRA.
 - All 35 SRA run accessions are recorded in the accession map; SRX experiment
   accessions were not included in the processed portal export available locally
 
-Raw and project-derived ddPCR data have been uploaded to Zenodo:
+Raw and project-derived ddPCR data have been published on Zenodo:
 
-- DOI: `10.5281/zenodo.21227118`
+- Version DOI: [`10.5281/zenodo.21227118`](https://doi.org/10.5281/zenodo.21227118)
+- All-versions DOI: [`10.5281/zenodo.21227117`](https://doi.org/10.5281/zenodo.21227117)
 - Embargo: 2027-07-30, with earlier release if the preprint or manuscript is
   published first
-- The DOI will become registered when the Zenodo record is published
+- The record metadata and DOI are public; the 18 files remain embargoed
