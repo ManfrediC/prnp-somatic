@@ -314,12 +314,20 @@ Generated runtime index sidecars are also ignored (for example `resources/juncti
 Sequencing FASTQ files have been uploaded to NCBI SRA.
 
 - BioProject: `PRJNA1484136`
-  (<http://www.ncbi.nlm.nih.gov/bioproject/1484136>)
+  (<https://www.ncbi.nlm.nih.gov/bioproject/1484136>)
 - SRA submission: `SUB16298068`
+- SRA study: `SRP714079`
 - BioSample accessions: `SAMN61220231` through `SAMN61220265` for the 35
   submitted samples
-- Release date: 2027-07-30, or with release of linked data
+- Release: 2027-07-30 or upon publication, whichever is first
 - Per-sample accession and FASTQ filename map:
   `reproducibility/sra_accessions.tsv`
-- SRA experiment and run accessions: pending; these will be added to the
-  accession map once assigned
+- All 35 SRA run accessions are recorded in the accession map; SRX experiment
+  accessions were not included in the processed portal export available locally
+
+Raw and project-derived ddPCR data have been uploaded to Zenodo:
+
+- DOI: `10.5281/zenodo.21227118`
+- Embargo: 2027-07-30, with earlier release if the preprint or manuscript is
+  published first
+- The DOI will become registered when the Zenodo record is published

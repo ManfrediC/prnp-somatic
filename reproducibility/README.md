@@ -11,7 +11,7 @@ material.
   and package-context notes.
 - `final_outputs_manifest.tsv`: final outputs expected from the workflows.
 - `final_outputs.sha256`: checksums for declared final outputs.
-- `sra_accessions.tsv`: submitted SRA/BioSample accession map.
+- `sra_accessions.tsv`: processed SRA study/BioSample/run accession map.
 - `data_availability.md`: reviewer-facing data availability summary.
 - `inventory.tsv`: maintainer-side active script inventory under `src/`.
 - `make_inventory.py`: optional helper for regenerating `inventory.tsv`.
