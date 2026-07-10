@@ -59,7 +59,6 @@ fi
 # Defaults: if they are not explicitly set in the env, use the following
 ADAPTERS_FA="${ADAPTERS_FA:-resources/adapters/TruSeq3-PE.fa}"
 DBSNP_VCF="${DBSNP_VCF:-resources/known_sites/dbsnp_146.hg38.vcf.gz}"
-FASTQ_DIR="${FASTQ_DIR:-raw/fastq}"
 FINAL_BAM_DIR="${FINAL_BAM_DIR:-results/final_bam}"
 JAVA_MEM_GB="${JAVA_MEM_GB:-8}"
 MILLS_VCF="${MILLS_VCF:-resources/known_sites/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz}"
@@ -105,7 +104,6 @@ print_summary() {
   echo "Repo root:        $REPO_ROOT"
   echo "Env file:         $ENV_FILE"
   echo "Samples TSV:      $SAMPLES_TSV"
-  echo "FASTQ_DIR:        $FASTQ_DIR"
   echo "RUNS_DIR:         $RUNS_DIR"
   echo "FINAL_BAM_DIR:    $FINAL_BAM_DIR"
   echo "REF_FASTA:        $REF_FASTA"

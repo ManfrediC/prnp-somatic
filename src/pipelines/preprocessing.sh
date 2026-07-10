@@ -24,7 +24,6 @@ source "$ENV_FILE"
 
 # Defaults (if not set in preprocessing.env)
 SAMPLES_TSV="${SAMPLES_TSV:-config/preprocessing_samples.tsv}"
-FASTQ_DIR="${FASTQ_DIR:-raw/fastq}"
 RUNS_DIR="${RUNS_DIR:-runs/preprocessing}"
 FINAL_BAM_DIR="${FINAL_BAM_DIR:-results/final_bam}"
 THREADS="${THREADS:-8}"
@@ -58,18 +57,6 @@ TRIMM_STRING="ILLUMINACLIP:${ADAPTERS_FA}:1:30:10 LEADING:10 TRAILING:10 SLIDING
 
 # make final BAM directory
 mkdir -p "$FINAL_BAM_DIR"
-
-# -----------------------
-# Minimal helper
-# -----------------------
-run() {
-  # DRY_RUN prints the resolved command exactly as it would execute.
-  if [[ "$DRY_RUN" == "1" ]]; then
-    echo "+ $*"
-  else
-    eval "$@"
-  fi
-}
 
 # -----------------------
 # Main loop
@@ -106,7 +93,6 @@ tail -n +2 "$SAMPLES_TSV" | grep -v '^#' | while IFS=$'\t' read -r batch sample 
   # Build sample path and log directory
   sample_dir="$RUNS_DIR/$batch/$sample"
   log_dir="$sample_dir/logs"
-  mkdir -p "$log_dir"
 
   # Define filenames to be used inside sample_dir
   trim_r1="$sample_dir/${sample}.R1.trimmed.fastq.gz"
@@ -134,19 +120,6 @@ tail -n +2 "$SAMPLES_TSV" | grep -v '^#' | while IFS=$'\t' read -r batch sample 
     continue
   fi
 
-  # Write per-sample metadata file (updated each run)
-  {
-    echo "timestamp: $(date -Is)"
-    echo "repo_root: $REPO_ROOT"
-    echo "batch_id: $batch"
-    echo "sample_id: $sample"
-    echo "r1: $r1"
-    echo "r2: $r2"
-    echo "threads: $THREADS"
-    echo "java_mem_gb: $JAVA_MEM_GB"
-    echo "git_commit: $(git -C "$REPO_ROOT" rev-parse HEAD 2>/dev/null || echo NA)"
-  } > "$sample_dir/RUN_META.txt"
-  
   # Progress message for the terminal
   echo "== $batch / $sample =="
 
@@ -157,11 +130,13 @@ tail -n +2 "$SAMPLES_TSV" | grep -v '^#' | while IFS=$'\t' read -r batch sample 
     continue
   fi
   
-  # log directory and creation
+  # Create the run directory only when the sample will actually be processed.
   mkdir -p "$log_dir"
 
+  # Write per-sample metadata once, immediately before processing starts.
   {
     echo "timestamp: $(date -Is)"
+    echo "repo_root: $REPO_ROOT"
     echo "batch_id: $batch"
     echo "sample_id: $sample"
     echo "r1: $r1"
