@@ -81,19 +81,33 @@ def read_sample_rows(path: Path) -> list[dict[str, str]]:
 def build_row(sample_row: dict[str, str]) -> dict[str, str]:
     sample_id = sample_row["sample_id"]
     json_path = Path(sample_row["json_path"])
-    # The JSON carries the per-read histograms that are not easy to recover
-    # from the compact cohort TSVs alone.
-    with json_path.open(encoding="utf-8") as handle:
-        payload = json.load(handle)
+    json_status = sample_row.get("json_status", "")
 
-    variant = payload["LocusResults"]["PRNP_ORR"]["Variants"]["PRNP_ORR_MIDDLE_R2_BLOCK"]
+    if json_status != "ok":
+        raise RuntimeError(
+            f"ExpansionHunter JSON is not usable for {sample_id}: "
+            f"status={json_status or 'unknown'}, path={json_path}"
+        )
 
-    # ExpansionHunter exposes separate spanning, flanking, and in-repeat
-    # support tracks. Keep all three because weak non-reference tails may only
-    # be visible in one track.
-    spanning_counts = parse_count_histogram(variant["CountsOfSpanningReads"])
-    flanking_counts = parse_count_histogram(variant["CountsOfFlankingReads"])
-    inrepeat_counts = parse_count_histogram(variant["CountsOfInrepeatReads"])
+    # The JSON carries the per-read histograms.
+    try:
+        with json_path.open(encoding="utf-8") as handle:
+            payload = json.load(handle)
+
+        variant = payload["LocusResults"]["PRNP_ORR"]["Variants"][
+            "PRNP_ORR_MIDDLE_R2_BLOCK"
+        ]
+
+        # ExpansionHunter exposes separate spanning, flanking, and in-repeat
+        # support tracks. Keep all three because weak non-reference tails may only
+        # be visible in one track.
+        spanning_counts = parse_count_histogram(variant["CountsOfSpanningReads"])
+        flanking_counts = parse_count_histogram(variant["CountsOfFlankingReads"])
+        inrepeat_counts = parse_count_histogram(variant["CountsOfInrepeatReads"])
+    except (OSError, json.JSONDecodeError, KeyError, TypeError) as exc:
+        raise RuntimeError(
+            f"Invalid ExpansionHunter JSON structure for {sample_id}: {json_path}"
+        ) from exc
 
     spanning_total = sum(spanning_counts.values())
     flanking_total = sum(flanking_counts.values())
