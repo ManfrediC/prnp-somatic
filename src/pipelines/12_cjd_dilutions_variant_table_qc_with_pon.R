@@ -442,14 +442,17 @@ filtered_table <- filtered_table %>%
 filtered_table <- filtered_table %>%
   filter(is.na(population_frequency) | population_frequency < max_pop_freq)
 
-# TEMPORARY (manual-check need): disable application of the AAF filter.
-# if (enable_aaf_filter) {
-#   filtered_final <- filtered_table %>%
-#     filter(!is.na(AAF), AAF > aaf_threshold)
-# } else {
-#   filtered_final <- filtered_table
-# }
-filtered_final <- filtered_table
+if (enable_aaf_filter) {
+  filtered_final <- filtered_table %>%
+    filter(!is.na(AAF), AAF > aaf_threshold)
+} else {
+  filtered_final <- filtered_table
+}
+
+if (enable_aaf_filter &&
+    any(is.na(filtered_final$AAF) | filtered_final$AAF <= aaf_threshold)) {
+  fail("AAF filter contract violated after filtering")
+}
 
 # inspect rows that were filtered out
 filtered_out <- anti_join(
@@ -484,10 +487,15 @@ step4 <- step3 %>%
   filter(is.na(population_frequency) | population_frequency < max_pop_freq)
 n4 <- nrow(step4)
 
-# TEMPORARY (manual-check need): keep AAF step unfiltered in sequential counts.
-step5 <- step4
-n5 <- n4
-step5_label <- paste0("AAF filter temporarily disabled (configured threshold would be > ", aaf_threshold, ")")
+if (enable_aaf_filter) {
+  step5 <- step4 %>% filter(!is.na(AAF), AAF > aaf_threshold)
+  n5 <- nrow(step5)
+  step5_label <- paste0("AAF > ", aaf_threshold)
+} else {
+  step5 <- step4
+  n5 <- n4
+  step5_label <- "AAF filter disabled"
+}
 
 filter_counts <- tibble(
   step = c(
@@ -514,7 +522,7 @@ settings <- tibble(
     "sample_manifest"
   ),
   value = c(
-    as.character(enable_aaf_filter), "FALSE (temporary override)", as.character(aaf_threshold), as.character(min_alt_count), as.character(min_dp),
+    as.character(enable_aaf_filter), as.character(enable_aaf_filter), as.character(aaf_threshold), as.character(min_alt_count), as.character(min_dp),
     as.character(min_strand_alt), as.character(min_mean_bq), as.character(min_mean_mq), as.character(max_pop_freq), as.character(max_binom_p),
     sample_manifest_path
   )
