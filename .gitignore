@@ -3,6 +3,7 @@
 /CONTINUITY.md
 /MEMORY.md
 /JOURNAL.md
+/doc/
 /journal/
 /plans/
 /notes/
@@ -148,7 +149,7 @@ resources/junctions/*.fa.sa
 /results/ddPCR/scatterplots/**/*.svg
 /results/ddPCR/panels/**/*.svg
 
-# Repeat workflow: keep text artefacts trackable, but ignore heavy review data
+# Repeat workflow: keep text artefacts trackable, but ignore review data
 # and archived runs.
 results/repeats/raw/*
 !results/repeats/raw/expansionhunter/
@@ -160,11 +161,7 @@ results/repeats/raw/*
 !results/repeats/raw/gangstr/**/*.vcf
 !results/repeats/raw/gangstr/**/*.tab
 results/repeats/review/*
-!results/repeats/review/reviewer/
-!results/repeats/review/reviewer/**/
-results/repeats/review/reviewer/**/*.svg
-!results/repeats/review/reviewer/**/*.metrics.tsv
-!results/repeats/review/reviewer/**/*.phasing.tsv
+results/repeats/reviewer/
 results/repeats/logs/*
 !results/repeats/logs/*.log
 results/repeats/old_runs/
