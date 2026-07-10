@@ -21,10 +21,23 @@ get_script_dir <- function() {
 
 script_dir <- get_script_dir()
 repo_root <- normalizePath(file.path(script_dir, "..", ".."), winslash = "/", mustWork = TRUE)
-data_dir <- file.path(repo_root, "resources")
+reference_dir <- file.path(repo_root, "resources", "references", "hg38")
 
-gtf_file <- file.path(data_dir, "Homo_sapiens.GRCh38.110.gtf.gz")
-fasta_file <- file.path(data_dir, "hg38.fa")
+gtf_file <- Sys.getenv(
+  "PRNP_JUNCTION_GTF",
+  unset = file.path(reference_dir, "Homo_sapiens.GRCh38.110.gtf.gz")
+)
+fasta_file <- Sys.getenv(
+  "PRNP_JUNCTION_FASTA",
+  unset = file.path(reference_dir, "hg38.fa")
+)
+
+if (!file.exists(gtf_file)) {
+  stop("GTF not found: ", gtf_file)
+}
+if (!file.exists(fasta_file)) {
+  stop("Reference FASTA not found: ", fasta_file)
+}
 
 # PRNP transcripts of interest
 prnp_tx <- c("ENST00000379440",

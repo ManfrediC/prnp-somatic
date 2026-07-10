@@ -17,10 +17,18 @@ get_script_dir <- function() {
 
 script_dir <- get_script_dir()
 repo_root <- normalizePath(file.path(script_dir, "..", ".."), winslash = "/", mustWork = TRUE)
-input_dir <- file.path(repo_root, "resources")
+reference_dir <- file.path(repo_root, "resources", "references", "hg38")
 output_dir <- file.path(repo_root, "resources", "junctions")
 
-gtf <- file.path(input_dir, "Homo_sapiens.GRCh38.110.gtf.gz")
+gtf <- Sys.getenv(
+  "PRNP_JUNCTION_GTF",
+  unset = file.path(reference_dir, "Homo_sapiens.GRCh38.110.gtf.gz")
+)
+
+if (!file.exists(gtf)) {
+  stop("GTF not found: ", gtf)
+}
+
 bed <- file.path(output_dir, "PRNP.pad1kb.hg38.bed")
 dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
 

@@ -72,6 +72,7 @@ You can override defaults via environment variables:
 - `OUTDIR`
 - `THREADS`
 - `PRNP_JUNCTION_GTF`
+- `PRNP_JUNCTION_FASTA`
 - `PRNP_JUNCTION_ALIGN_DIR`
 - `PRNP_JUNCTION_COUNT_DIR`
 - `PRNP_JUNCTION_COUNTS_FILE`

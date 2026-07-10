@@ -20,7 +20,13 @@ get_script_dir <- function() {
 
 script_dir <- get_script_dir()
 repo_root <- normalizePath(file.path(script_dir, "..", ".."), winslash = "/", mustWork = TRUE)
-default_gtf <- file.path(repo_root, "resources", "Homo_sapiens.GRCh38.110.gtf.gz")
+default_gtf <- file.path(
+  repo_root,
+  "resources",
+  "references",
+  "hg38",
+  "Homo_sapiens.GRCh38.110.gtf.gz"
+)
 
 GTF      <- Sys.getenv("PRNP_JUNCTION_GTF", unset = default_gtf)
 JUNC_DIR <- Sys.getenv("PRNP_JUNCTION_ALIGN_DIR", unset = file.path(repo_root, "results", "junctions", "junction_align"))
