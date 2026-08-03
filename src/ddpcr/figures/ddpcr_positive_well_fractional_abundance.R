@@ -12,7 +12,7 @@
 # Outputs:
 #   manuscript/figures/ddpcr_e200k_positive_well_fa/ddpcr_e200k_positive_well_fa.{pdf,svg}
 #   manuscript/tables/ddpcr_e200k_positive_well_results/ddpcr_e200k_positive_well_results.csv
-#   manuscript/tables/ddpcr_e200k_positive_well_results/ddpcr_e200k_positive_well_results_rows.tex
+#   manuscript/tables/supplement/table_ddpcr_e200k_positive_well_results.tex
 
 library(tidyverse)
 library(readxl)
@@ -20,8 +20,10 @@ library(readxl)
 project_root <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
 fig_dir <- file.path(project_root, "manuscript", "figures", "ddpcr_e200k_positive_well_fa")
 tab_dir <- file.path(project_root, "manuscript", "tables", "ddpcr_e200k_positive_well_results")
+supplement_tab_dir <- file.path(project_root, "manuscript", "tables", "supplement")
 dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(tab_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(supplement_tab_dir, recursive = TRUE, showWarnings = FALSE)
 
 lod_e200k <- 0.067  # E200K assay limit of detection (% FA), as in create_snv_dataframe.R
 
@@ -39,16 +41,21 @@ wells <- read_csv(
   file.path(project_root, "results", "ddPCR", "scatterplots", "lob_lod_positive", "selected_wells.csv"),
   show_col_types = FALSE
 ) %>%
+  filter(
+    mutation == "E200K",
+    paste(participant_display, brain_region) %in% c("CJD4 ps", "CJD21 th")
+  ) %>%
   rename(pooled_fa = fractional_abundance, pooled_ci_low = ci_low, pooled_ci_high = ci_high) %>%
   transmute(
     participant = participant_display,
     brain_region,
     sample = paste(participant_display, brain_region_display),
     replicate = as.character(replicate_index),
-    run_id, run_date, well,
+    run_id, run_date = as.Date(run_date), well,
     fa = individual_fractional_abundance,
     ci_low = individual_ci_low,
     ci_high = individual_ci_high,
+    lob_count = individual_lob_count,
     lob_fa = individual_lob_fa,
     above_lob = detected_above_LoB,
     above_lod = detected_above_LoD,
@@ -64,12 +71,21 @@ well_counts <- read_csv(
   filter(target_role == "mutant") %>%
   select(run_id, well, accepted = accepted_droplets, positives)
 
-wells <- wells %>% left_join(well_counts, by = c("run_id", "well"))
+wells <- wells %>%
+  left_join(
+    well_counts,
+    by = c("run_id", "well"),
+    relationship = "many-to-one"
+  )
 
 # ---- pooled sample-level data ------------------------------------------------
 
 pooled <- read_excel(file.path(project_root, "results", "ddPCR", "SNV_data_final.xlsx")) %>%
-  filter(mutation == "E200K", paste(participant, brain_region) %in% c("CJD4 ps", "CJD21 th")) %>%
+  filter(
+    mutation == "E200K",
+    is_pooled,
+    paste(participant, brain_region) %in% c("CJD4 ps", "CJD21 th")
+  ) %>%
   transmute(
     participant,
     brain_region,
@@ -80,32 +96,47 @@ pooled <- read_excel(file.path(project_root, "results", "ddPCR", "SNV_data_final
     accepted = n_total_droplets,
     positives = n_mut_droplets,
     fa = fractional_abundance,
-    ci_low, ci_high, lob_fa,
+    ci_low, ci_high, lob_count, lob_fa,
     above_lob = detected_above_LoB,
     above_lod = detected_above_LoD
   )
 
 # ---- cross-checks ------------------------------------------------------------
 
-# Row counts and complete droplet data.
-stopifnot(nrow(wells) == 5L, nrow(pooled) == 2L, !any(is.na(wells$accepted)))
+expected_preparation_counts <- c("CJD4 pons" = 3L, "CJD21 thalamus" = 2L)
+preparation_counts <- table(wells$sample)
 
-# Per-well droplet counts must sum to the pooled sample totals.
+stopifnot(
+  nrow(wells) == 5L,
+  nrow(pooled) == 2L,
+  setequal(names(preparation_counts), names(expected_preparation_counts)),
+  setequal(pooled$sample, names(expected_preparation_counts)),
+  all(as.integer(preparation_counts[names(expected_preparation_counts)]) == expected_preparation_counts),
+  !any(c(wells$participant, pooled$participant) == "CJD30"),
+  n_distinct(wells$run_id, wells$well) == nrow(wells),
+  !anyNA(wells %>% select(run_id, run_date, well, accepted, positives, fa, ci_low, ci_high, lob_count, lob_fa, above_lob, above_lod)),
+  !anyNA(pooled %>% select(accepted, positives, fa, ci_low, ci_high, lob_count, lob_fa, above_lob, above_lod)),
+  all(near(wells$lob_fa, 100 * wells$lob_count / wells$accepted)),
+  all(wells$above_lob == (wells$positives > wells$lob_count)),
+  all(wells$above_lod == (wells$ci_low > lod_e200k)),
+  all(near(pooled$lob_fa, 100 * pooled$lob_count / pooled$accepted)),
+  all(pooled$above_lob == (pooled$positives > pooled$lob_count)),
+  all(pooled$above_lod == (pooled$ci_low > lod_e200k))
+)
+
 sums_ok <- wells %>%
   group_by(sample) %>%
-  summarise(well_accepted = sum(accepted), well_positives = sum(positives), .groups = "drop") %>%
-  inner_join(pooled, by = "sample") %>%
-  summarise(ok = all(well_accepted == accepted & well_positives == positives)) %>%
-  pull(ok)
-stopifnot(sums_ok)
+  summarise(accepted = sum(accepted), positives = sum(positives), .groups = "drop") %>%
+  inner_join(pooled, by = c("sample", "accepted", "positives")) %>%
+  nrow() == 2L
 
-# The pooled estimates carried in selected_wells.csv must match SNV_data_final.xlsx.
 pooled_ok <- wells %>%
   distinct(sample, pooled_fa, pooled_ci_low, pooled_ci_high) %>%
   inner_join(pooled, by = "sample") %>%
   summarise(ok = all(near(pooled_fa, fa) & near(pooled_ci_low, ci_low) & near(pooled_ci_high, ci_high))) %>%
   pull(ok)
-stopifnot(pooled_ok)
+
+stopifnot(sums_ok, pooled_ok)
 
 wells <- wells %>% select(-pooled_fa, -pooled_ci_low, -pooled_ci_high)
 
@@ -185,32 +216,67 @@ if (requireNamespace("svglite", quietly = TRUE)) {
   )
 }
 
-# ---- table data: CSV + lean TeX rows ------------------------------------------
+# ---- table data: audit CSV + complete TeX ------------------------------------
 
-# Machine-readable table (5 well rows + 2 pooled rows).
-table_data <- measurements %>%
+# Machine-readable table: all five independent preparations followed by the
+# two pooled sample-region summaries. Run date, well ID and LoB count are kept
+# in the CSV for direct auditing but are omitted from the publication table.
+table_data <- bind_rows(
+  wells %>%
+    mutate(
+      measurement = "preparation",
+      preparation_index = as.integer(replicate)
+    ),
+  pooled %>%
+    mutate(
+      measurement = "pooled",
+      preparation_index = NA_integer_
+    )
+) %>%
+  mutate(
+    measurement = factor(measurement, levels = c("preparation", "pooled")),
+    sample = factor(sample, levels = names(expected_preparation_counts))
+  ) %>%
+  arrange(measurement, sample, preparation_index) %>%
   transmute(
     participant,
     brain_region = recode(brain_region, !!!region_labels),
-    measurement = if_else(replicate == "Pooled", "pooled", "well"),
-    replicate_index = if_else(replicate == "Pooled", NA_integer_, as.integer(as.character(replicate))),
-    accepted_droplets = accepted,
-    mut_positive_droplets = positives,
+    measurement = as.character(measurement),
+    preparation_index,
+    run_date,
+    well,
+    accepted_droplets = as.integer(accepted),
+    mut_positive_droplets = as.integer(positives),
     fa_pct = round(fa, 3),
     ci_low_pct = round(ci_low, 3),
     ci_high_pct = round(ci_high, 3),
+    lob_count = as.integer(lob_count),
     lob_fa_pct = round(lob_fa, 3),
-    above_lob, above_lod
+    above_lob,
+    above_lod
   )
+
+stopifnot(
+  nrow(table_data) == 7L,
+  sum(table_data$measurement == "preparation") == 5L,
+  sum(table_data$measurement == "pooled") == 2L
+)
+
 write_csv(table_data, file.path(tab_dir, "ddpcr_e200k_positive_well_results.csv"))
 
-# Lean TeX rows: one `a & b & ... \\` line per row, with a section marker
-# before the pooled block. Formatting is added by the styling step.
-format_row <- function(row, replicate_label) {
+format_count <- function(value) {
+  format(as.integer(value), big.mark = ",", scientific = FALSE, trim = TRUE)
+}
+
+format_tex_row <- function(row, preparation_label) {
   paste0(
+    "\\rule{0pt}{1.2em}",
     paste(
-      row$participant, row$brain_region, replicate_label,
-      row$accepted_droplets, row$mut_positive_droplets,
+      row$participant,
+      row$brain_region,
+      preparation_label,
+      format_count(row$accepted_droplets),
+      format_count(row$mut_positive_droplets),
       sprintf("%.3f", row$fa_pct),
       sprintf("%.3f--%.3f", row$ci_low_pct, row$ci_high_pct),
       sprintf("%.3f", row$lob_fa_pct),
@@ -222,24 +288,94 @@ format_row <- function(row, replicate_label) {
   )
 }
 
-well_data <- table_data %>% filter(measurement == "well")
+preparation_data <- table_data %>% filter(measurement == "preparation")
 pooled_data <- table_data %>% filter(measurement == "pooled")
 
-well_rows <- vapply(
-  seq_len(nrow(well_data)),
-  function(i) format_row(well_data[i, ], as.character(well_data$replicate_index[i])),
+preparation_rows <- vapply(
+  seq_len(nrow(preparation_data)),
+  function(i) {
+    format_tex_row(
+      preparation_data[i, ],
+      as.character(preparation_data$preparation_index[i])
+    )
+  },
   character(1)
 )
 pooled_rows <- vapply(
   seq_len(nrow(pooled_data)),
-  function(i) format_row(pooled_data[i, ], "pooled"),
+  function(i) format_tex_row(pooled_data[i, ], "Pooled"),
   character(1)
 )
 
+column_spec <- "cccccccccc"
+
+caption_text <- paste0(
+  "\\textbf{Detailed ddPCR results for the E200K-positive samples CJD4 pons ",
+  "and CJD21 thalamus.} Preparation rows report individual ddPCR wells from ",
+  "independent DNA preparations; pooled rows combine all preparations from ",
+  "one sample-region. FA: fractional abundance of the E200K allele; 95\\% CI: ",
+  "Poisson-based confidence interval; LoB FA: measurement-specific limit of ",
+  "blank on the FA scale. The LoB criterion is met when the mutant-positive ",
+  "droplet count exceeds the 95th percentile of expected blank noise; the LoD ",
+  "criterion is met when the lower 95\\% CI bound exceeds the E200K limit of ",
+  "detection (0.067\\%). CJD30, the germline E200K carrier, is not included. ",
+  "Abbreviations: FA, fractional abundance; CI, confidence interval; LoB, ",
+  "limit of blank; LoD, limit of detection."
+)
+
+table_tex <- c(
+  "% Auto-generated by src/ddpcr/figures/ddpcr_positive_well_fractional_abundance.R",
+  "\\begin{table}[htbp]",
+  "\t\\ra{1.0}",
+  "\t\\centering",
+  "\t{\\normalsize",
+  "\t\t\\begin{adjustbox}{max width=\\textwidth}",
+  paste0("\t\t\t\\begin{tabular}{", column_spec, "}"),
+  "\t\t\t\t\\toprule[2pt]",
+  paste0(
+    "\t\t\t\t\\multirow{2}{*}[-0.6ex]{\\textbf{Sample}} & ",
+    "\\multirow{2}{*}[-0.6ex]{\\makecell{\\textbf{Brain}\\\\\\textbf{region}}} & ",
+    "\\multirow{2}{*}[-0.6ex]{\\textbf{Preparation}} & ",
+    "\\multicolumn{2}{c}{\\textbf{Droplets}} & ",
+    "\\multicolumn{3}{c}{\\textbf{Fractional abundance (\\%)}} & ",
+    "\\multicolumn{2}{c}{\\textbf{Criteria passed}} \\\\"
+  ),
+  "\t\t\t\t\\cmidrule(lr){4-5}\\cmidrule(lr){6-8}\\cmidrule(lr){9-10}",
+  paste0(
+    "\t\t\t\t& & & \\textbf{Accepted} & ",
+    "\\makecell{\\textbf{E200K}\\\\\\textbf{positive}} & ",
+    "\\textbf{Estimate} & \\textbf{95\\% CI} & \\textbf{LoB} & ",
+    "\\textbf{LoB} & \\textbf{LoD} \\\\"
+  ),
+  "\t\t\t\t\\midrule",
+  paste0("\t\t\t\t", preparation_rows),
+  "\t\t\t\t\\addlinespace[2pt]",
+  paste0("\t\t\t\t", pooled_rows),
+  "\t\t\t\t\\bottomrule[2pt]",
+  "\t\t\t\\end{tabular}",
+  "\t\t\\end{adjustbox}",
+  "\t}",
+  "",
+  "\t\\vspace{0.5em}",
+  "",
+  "\t\\begin{adjustbox}{max width=\\textwidth}",
+  "\t\t\\begin{minipage}{\\linewidth}",
+  paste0("\t\t\t\\caption{", caption_text, "}"),
+  "\t\t\t\\label{tab:ddpcr_e200k_positive_well_results}",
+  "\t\t\\end{minipage}",
+  "\t\\end{adjustbox}",
+  "",
+  "\\end{table}",
+  "",
+  "\\clearpage"
+)
+
 writeLines(
-  c(well_rows, "%%SECTION:pooled%%", pooled_rows),
-  file.path(tab_dir, "ddpcr_e200k_positive_well_results_rows.tex"),
+  table_tex,
+  file.path(supplement_tab_dir, "table_ddpcr_e200k_positive_well_results.tex"),
   useBytes = TRUE
 )
 
-cat("Wrote figure and table outputs to manuscript/figures/ddpcr_e200k_positive_well_fa and manuscript/tables/ddpcr_e200k_positive_well_results\n")
+cat(
+  "Wrote E200K positive-well figure, audit CSV and complete supplementary Table S5 TeX\n"
+)
