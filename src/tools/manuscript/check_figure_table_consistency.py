@@ -47,10 +47,13 @@ MAIN_TABLE_SOURCES = [
 SUPPLEMENT_TABLE_SOURCES = [
     "manuscript/tables/supplement/table_dna_quality_evidence.tex",
     "manuscript/tables/supplement/table_ddpcr_participant_haploid_genomes.tex",
-    "manuscript/tables/ddpcr_sample_results/ddpcr_results_by_region_table.tex",
     "manuscript/tables/supplement/table_prnp_orr_repeat_tool_summary.tex",
     "manuscript/tables/supplement/table_ddpcr_e200k_positive_well_results.tex",
 ]
+EXTERNAL_SUPPLEMENT_TABLE_ASSETS = {
+    "Supplementary Table S3": "manuscript/tables/supplement/ddPCR_results_by_region_S3.xlsx",
+}
+SUPPLEMENT_TABLE_BUNDLE_LABELS = ["Table S1", "Table S2", "Table S4", "Table S5"]
 
 EXPECTED_WRAPPERS = {
     "manuscript/figures/all_figures_main.tex": MAIN_FIGURE_SOURCES,
@@ -234,6 +237,14 @@ def check_provenance(root: Path, crosswalk_rows: list[dict[str, str]], errors: l
                 )
 
 
+def check_external_supplement_assets(root: Path, errors: list[str]) -> None:
+    """Check supplementary tables delivered outside the combined TeX bundle."""
+    for reference, raw_path in EXTERNAL_SUPPLEMENT_TABLE_ASSETS.items():
+        path = normalise_repo_path(root, raw_path)
+        if not path.is_file() or path.stat().st_size == 0:
+            errors.append(f"Missing or empty external asset for {reference}: {raw_path}")
+
+
 def referenced_assets(root: Path, entry_points: list[str]) -> tuple[set[Path], list[str]]:
     tex_seen: set[Path] = set()
     assets: set[Path] = set()
@@ -342,6 +353,7 @@ def check(root: Path) -> list[str]:
             errors.append("Table 3 crosswalk row does not name its generator")
 
     check_provenance(root, rows, errors)
+    check_external_supplement_assets(root, errors)
 
     for wrapper, expected in EXPECTED_WRAPPERS.items():
         actual = [normalise_repo_path(root, raw).as_posix().replace(root.as_posix() + "/", "") for raw in input_paths(root / wrapper)]
@@ -383,7 +395,7 @@ def check(root: Path) -> list[str]:
 
     bundle_checks = [
         (root / "manuscript/figures/all_figures_with_legends/figures_with_legends.pdf", [f"Figure {i}" for i in range(1, 9)] + [f"Figure S{i}" for i in range(1, 5)]),
-        (root / "manuscript/tables/all_tables_with_legends/all_tables.pdf", [f"Table {i}" for i in range(1, 8)] + [f"Table S{i}" for i in range(1, 6)]),
+        (root / "manuscript/tables/all_tables_with_legends/all_tables.pdf", [f"Table {i}" for i in range(1, 8)] + SUPPLEMENT_TABLE_BUNDLE_LABELS),
     ]
     for pdf, expected in bundle_checks:
         if not pdf.is_file() or pdf.stat().st_size == 0:

@@ -36,6 +36,8 @@ manuscript-source	manuscript/figures/main/figure_mosaicism_models.tex	yes	Figure
 manuscript-source	manuscript/figures/main/figure_dna_purification_protocol.tex	yes	Figure 2 source
 manuscript-source	manuscript/figures/main/figure_snv_detection_workflow.tex	yes	Figure 3 source
 manuscript-source	manuscript/figures/main/figure_rt_quic_decontamination.tex	yes	Figure 4 source
+manuscript-source	manuscript/figures/rt-quic/build_rt_quic_trace_crops.py	yes	Figure 4 deterministic lossless crop generator
+manuscript-source	manuscript/figures/rt-quic/rt_quic_vector_text_panels.tex	yes	Figure 4 vector-text panel renderer
 manuscript-source	manuscript/figures/main/figure_ddpcr_lod_summary.tex	yes	Figure 5 source
 manuscript-source	manuscript/figures/main/figure_ddpcr_e200k_positive_wells.tex	yes	Figure 6 source
 manuscript-source	manuscript/figures/main/figure_ddpcr_mutant_allele_frequencies.tex	yes	Figure 7 source
@@ -66,15 +68,22 @@ manuscript-asset	manuscript/figures/ddpcr_gating_panels/ddpcr_gating_strategy_pa
 manuscript-asset	manuscript/figures/ddpcr_gating_panels/ddpcr_gating_strategy_panel.pdf	yes	canonical Figure S2 panel PDF
 manuscript-asset	manuscript/figures/ddpcr_gating_panels/ddpcr_lob_lod_positive_individual_wells_panel.svg	yes	canonical Figure 6 panel source
 manuscript-asset	manuscript/figures/ddpcr_gating_panels/ddpcr_lob_lod_positive_individual_wells_panel.pdf	yes	canonical Figure 6 panel PDF
-manuscript-asset	manuscript/figures/mosaicism_models/brain-damage-combined.pdf	yes	Figure 1 input asset
+manuscript-asset	manuscript/figures/mosaicism_models/mosaicism_models.pdf	yes	Figure 1 input asset
 manuscript-asset	manuscript/figures/purification_protocol/purification-overview-paper.pdf	yes	Figure 2 input asset
 manuscript-asset	manuscript/figures/snv_flowchart/snv_flowchart_tikz.pdf	yes	Figure 3 input asset
 manuscript-asset	manuscript/figures/rt-quic/unseeded.pdf	yes	Figure 4 input asset
 manuscript-asset	manuscript/figures/rt-quic/CJD_CB.pdf	yes	Figure 4 input asset
 manuscript-asset	manuscript/figures/rt-quic/noninfect_CB.pdf	yes	Figure 4 input asset
-manuscript-asset	manuscript/figures/rt-quic/CJD_Trizol_RNA.pdf	yes	Figure 4 input asset
 manuscript-asset	manuscript/figures/rt-quic/CJD_deko_DNA.pdf	yes	Figure 4 input asset
 manuscript-asset	manuscript/figures/rt-quic/noninfect_DNA.pdf	yes	Figure 4 input asset
+manuscript-asset	manuscript/figures/rt-quic/trace_crops/unseeded.png	yes	Figure 4 lossless trace crop
+manuscript-asset	manuscript/figures/rt-quic/trace_crops/CJD_CB.png	yes	Figure 4 lossless trace crop
+manuscript-asset	manuscript/figures/rt-quic/trace_crops/noninfect_CB.png	yes	Figure 4 lossless trace crop
+manuscript-asset	manuscript/figures/rt-quic/trace_crops/CJD_deko_DNA.png	yes	Figure 4 lossless trace crop
+manuscript-asset	manuscript/figures/rt-quic/trace_crops/noninfect_DNA.png	yes	Figure 4 lossless trace crop
+manuscript-asset	manuscript/figures/rt-quic/trace_crops/rt_quic_trace_crops.tsv	yes	Figure 4 crop audit manifest
+manuscript-asset	manuscript/figures/rt-quic/rt_quic_vector_text_panels.pdf	yes	Figure 4 hybrid vector-text panel asset
+manuscript-backup	manuscript/figures/rt-quic/backup/figure_rt_quic_decontamination_raster_original.pdf	yes	Pre-vectorisation Figure 4 backup
 manuscript-asset	manuscript/figures/ddpcr_lod/D178N_LoD_concentration.pdf	yes	Figure 5 input asset
 manuscript-asset	manuscript/figures/ddpcr_lod/vaf/D178N_fraction_vaf.pdf	yes	Figure 5 input asset
 manuscript-asset	manuscript/figures/ddpcr_lod/E200K_LoD_concentration.pdf	yes	Figure 5 input asset

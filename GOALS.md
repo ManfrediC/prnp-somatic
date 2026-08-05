@@ -301,3 +301,171 @@ Stop conditions:
   and checksum write/check passed.
 - No commit was created; the worktree remains pending user review and explicit
   commit permission.
+
+## Current goal - Figure 4 selectable vector text - 2026-08-05
+
+Outcome:
+
+- Rebuild Figure 4 from the five existing raster RT-QuIC panels so that all
+  visible axis titles and tick labels are selectable vector text.
+- Preserve the coloured traces as lossless raster crops at a measured effective
+  resolution of at least 300 ppi in the final figures bundle.
+- Preserve the current Figure 4 as an explicit PDF backup and leave every
+  original source panel unchanged.
+
+Verification surface:
+
+- Five lossless trace-only crops match exact pixel slices of the embedded source
+  images; no OCR, resampling, sharpening or scientific-data reconstruction.
+- The generated hybrid panel PDF has five pages, embedded fonts, selectable
+  axis text and no Type 3/unembedded fonts introduced by the change.
+- `pdfimages -list` reports at least 300 x/y ppi for all five Figure 4 traces
+  in the final 12-page figures bundle.
+- The Figure 4 caption, subcaptions, labels, layout and scientific traces are
+  unchanged; the combined bundle remains 12 pages and passes the manuscript
+  consistency checker.
+- The canonical DOCX and all original RT-QuIC PDFs retain their baseline
+  SHA-256 hashes.
+
+Constraints and boundaries:
+
+- Do not alter the canonical DOCX, source data, plotted values or captions.
+- Keep the existing user-owned changes in the reproducibility checksum and
+  manifest files; update them only with targeted, reviewed edits.
+- Keep the current raster Figure 4 in
+  `manuscript/figures/rt-quic/backup/figure_rt_quic_decontamination_raster_original.pdf`.
+- Leave all changes uncommitted until the user explicitly authorises a commit.
+
+Stop conditions:
+
+- A crop would remove or obscure a trace, or its data-coordinate mapping is
+  uncertain.
+- The final raster content cannot meet 300 ppi without unacceptable layout or
+  legibility loss.
+- Selectable text, embedded-font or full-bundle verification fails.
+
+Completion evidence - 2026-08-05:
+
+- The five crop outputs match the verified source SHA-256/dimensions and retain
+  the traces without raster labels or axis spines.
+- The five-page hybrid panel PDF and the canonical 12-page figures bundle were
+  both compiled twice with portable MiKTeX. Page 4 exposes selectable axis
+  labels and uses embedded Type 1 fonts; trace effective resolutions are
+  303.1--318.8 ppi.
+- The original RT-QuIC PDFs, unused CJD Trizol RNA PDF and canonical DOCX
+  retain their baseline SHA-256 hashes. The raster Figure 4 backup remains at
+  `manuscript/figures/rt-quic/backup/figure_rt_quic_decontamination_raster_original.pdf`.
+- All 12 rendered bundle pages and Figure 4 at 300 dpi were visually checked;
+  the manuscript consistency checker and global checksum write/check passed.
+- The alignment correction uses one 29.4 x 26.3 mm plot rectangle and identical
+  standalone page bounds for all five panels; the subplot upper edges now align
+  in the final rendered Figure 4. The minimum final trace resolution is
+  303.2 ppi.
+- No files were staged or committed.
+
+## Supplementary ddPCR panel labels and typography - 2026-08-05
+
+Outcome:
+
+- Make Supplementary Figure S2 explicitly map panels A--D to D178N,
+  E--H to E200K and I--L to P102L, with the four gating stages identified.
+- Add visible A--C labels to Supplementary Figure S3 for D178N, E200K and
+  P102L.
+- Increase plot-source typography so both figures are legible at their final
+  manuscript size without changing plotted data, gates or thresholds.
+
+Verification surface:
+
+- Rebuild both figure assets and the complete supplementary-figure bundle from
+  their canonical sources.
+- Confirm the panel letters and caption mappings agree with the plotted order.
+- Inspect final rendered pages for legibility, clipping and overlap; confirm
+  fonts are embedded and figure content remains vector-based.
+- Run the manuscript consistency checker and verify the ddPCR source workbooks
+  and canonical DOCX retain their baseline hashes.
+
+Constraints and boundaries:
+
+- Preserve all current user-owned Figure 4 and reproducibility changes.
+- Do not change assay ordering, selected wells, thresholds, VAF values,
+  confidence intervals or LoB/LoD classifications.
+- Leave all changes uncommitted.
+
+Completion evidence:
+
+- The dedicated S2 generator wrote 12 ordered source plots: four stages each
+  for D178N, E200K and P102L. The assembled SVG contains A--L exactly once and
+  the caption now states both assay and stage mappings.
+- The S3 source writes visible A--C labels for D178N, E200K and P102L and uses
+  Cairo PDF output so Arial fonts are embedded and subsetted.
+- Both final pages were rendered at 200 dpi and visually inspected. All panel
+  letters, titles, ticks, axes and legends are legible, with no clipping or
+  overlap.
+- Portable MiKTeX produced a 12-page bundle twice. A later canonical-PDF file
+  lock prevented another in-place rebuild after generated-preview cleanup, so
+  the latest sources were built twice in `C:\tmp`; raster hashes for pages 10
+  and 11 matched the canonical bundle exactly.
+- The consistency checker and diff checks passed. The ddPCR source workbooks,
+  canonical DOCX and unrelated Figure 6 asset retained their baseline hashes.
+
+## Current goal - Figure 8 plot and legend labels - 2026-08-05
+
+Outcome:
+
+- Add a visible `VAF (%)` y-axis label and label the dashed threshold line
+  `LoD (0.81%)` in Figure 8.
+- State that the horizontal coordinates use GRCh38 and replace `Node colour`
+  with `Point colour` in the Figure 8 legend.
+
+Verification surface:
+
+- The canonical SVG contains each requested plot label exactly once as vector
+  text, and the generated PDF displays both labels without clipping or overlap.
+- The Figure 8 legend contains `GRCh38 genomic coordinates`, `Point colour`,
+  and `Vertical axis: VAF (%)`, with the obsolete wording absent.
+- The lollipop data CSV and all four plotted head-path hashes remain unchanged.
+- The figures bundle remains 12 pages, Figure 8 renders cleanly at final page
+  size, and the manuscript consistency and checksum checks pass.
+
+Constraints and boundaries:
+
+- Do not alter the canonical DOCX, source data, variant positions, VAF values,
+  colours, point geometry, exon track or any other figure caption.
+- Preserve existing user-owned worktree changes and leave this work
+  uncommitted unless the user explicitly authorises a commit.
+
+Stop conditions:
+
+- Either requested plot label cannot be positioned legibly without changing
+  the scientific plot geometry.
+- Regeneration changes the lollipop data or any plotted head path.
+
+Completion evidence:
+
+- The canonical SVG and PDF contain selectable `VAF (%)` and `LoD (0.81%)`
+  text exactly once. The y-axis title has dedicated left canvas padding, and
+  the LoD label is bold and separated from the dashed line.
+- The Figure 8 legend now uses `Point colour`, specifies GRCh38 genomic
+  coordinates and describes the vertical axis as `VAF (%)`.
+- The lollipop data CSV retained SHA-256
+  `dea0cc99e0123cae0151723a4dc27bbda35dfc909f14f6a7b5ba52537d4c807f`,
+  the reviewed template retained SHA-256
+  `6bc3b7f6b1e7295e037de6105d102252cf1b87406fa57a0410ed2cd25bf80f8a`,
+  and all four plotted head-path hashes remained unchanged.
+- The 12-page figures bundle compiled twice with portable MiKTeX. Figure 8
+  was rendered at final page size and inspected without clipping, overlap or
+  caption-layout defects. The manuscript consistency checker passed.
+- All five Figure 8 checksum entries match their current files. The global
+  checksum verifier remains blocked only by an unrelated pre-existing stale
+  checksum for `manuscript/config/figure_table_crosswalk.tsv`.
+- No files were staged or committed.
+
+Final refinement status:
+
+- `VAF (%)` now uses explicit 12 px Arial, matching the rendered cap height of
+  the `Exon1` key. The right edges of `LoD (0.81%)` and `CJD23` align within
+  0.0005 SVG units in the canonical standalone SVG/PDF.
+- A twice-compiled 12-page bundle candidate at
+  `tmp/pdfs/figure8-alignment-bundle/figures_with_legends.pdf` passed text and
+  visual inspection. Adobe Acrobat currently holds the canonical combined PDF
+  open, so replacing and checksumming that one file remains pending.
