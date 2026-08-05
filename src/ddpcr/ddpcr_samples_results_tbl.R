@@ -5,7 +5,9 @@ project_root <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
 input_path <- file.path(project_root, "results", "ddPCR", "SNV_data_final.xlsx")
 previous_results_dir <- file.path(project_root, "legacy", "results", "ddpcr", "2026-06-finalisation", "previous_official")
 current_input_path <- file.path(previous_results_dir, "SNV_data_final.xlsx")
-output_dir <- file.path(project_root, "manuscript", "tables", "ddpcr_sample_results")
+default_output_dir <- file.path(project_root, "manuscript", "tables", "ddpcr_sample_results")
+output_dir <- Sys.getenv("PRNP_SAMPLE_RESULTS_OUTPUT_DIR", unset = default_output_dir)
+output_dir <- normalizePath(output_dir, winslash = "/", mustWork = FALSE)
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 lod_cut <- c(D178N = 0.056, E200K = 0.067, P102L = 0.13)
@@ -92,6 +94,29 @@ write_html_table <- function(table_data, mask_data, output_path) {
   writeLines(html, output_path)
 }
 
+write_region_xlsx <- function(table_data, mask_data, output_path) {
+  wb <- openxlsx::createWorkbook()
+  ws <- openxlsx::addWorksheet(wb, "ddPCR by region")
+  openxlsx::writeData(wb, ws, table_data, headerStyle = openxlsx::createStyle(textDecoration = "bold"))
+  grey_style <- openxlsx::createStyle(fgFill = "#e5e7eb")
+  for (col in names(mask_data)) {
+    if (!col %in% names(table_data)) next
+    col_idx <- which(names(table_data) == col)
+    masked_rows <- which(as_true_flag(mask_data[[col]]))
+    if (length(masked_rows) > 0L) {
+      openxlsx::addStyle(
+        wb, ws, style = grey_style,
+        rows = masked_rows + 1L,
+        cols = rep.int(col_idx, length(masked_rows)),
+        gridExpand = FALSE
+      )
+    }
+  }
+  openxlsx::freezePane(wb, ws, firstActiveRow = 2L, firstActiveCol = 1L)
+  openxlsx::setColWidths(wb, ws, cols = seq_along(table_data), widths = "auto")
+  openxlsx::saveWorkbook(wb, output_path, overwrite = TRUE)
+}
+
 escape_latex <- function(x) {
   x <- as.character(x)
   x[is.na(x)] <- "NA"
@@ -109,12 +134,12 @@ escape_latex <- function(x) {
 write_region_tex_table <- function(table_data, mask_data, output_path, caption, label, compact = FALSE) {
   region_cols <- setdiff(names(table_data), c("participant", "histotype", "mutation"))
   region_headers <- c(
-    `basal ganglia` = "Basal ganglia (FA, 95\\% CI)",
-    cerebellum = "Cerebellum (FA, 95\\% CI)",
-    hippocampus = "Hippocampus (FA, 95\\% CI)",
-    `frontal cortex` = "Frontal cortex (FA, 95\\% CI)",
-    `substantia nigra` = "Substantia nigra (FA, 95\\% CI)",
-    thalamus = "Thalamus (FA, 95\\% CI)"
+    `basal ganglia` = "Basal ganglia (VAF, 95\\% CI)",
+    cerebellum = "Cerebellum (VAF, 95\\% CI)",
+    hippocampus = "Hippocampus (VAF, 95\\% CI)",
+    `frontal cortex` = "Frontal cortex (VAF, 95\\% CI)",
+    `substantia nigra` = "Substantia nigra (VAF, 95\\% CI)",
+    thalamus = "Thalamus (VAF, 95\\% CI)"
   )
   header <- c(
     "Participant",
@@ -280,15 +305,21 @@ write_region_tex_table(
   mytable,
   lob_mask,
   file.path(output_dir, "ddpcr_results_by_region_table.tex"),
-  "ddPCR results by brain region. Shaded cells show FA above the limit of blank.",
+  "ddPCR results by brain region. Shaded cells show VAF above the limit of blank.",
   "tab:ddpcr_results_by_region"
 )
+
+supplement_xlsx_path <- file.path(
+  project_root, "manuscript", "tables", "supplement",
+  "ddPCR_results_by_region_S3.xlsx"
+)
+write_region_xlsx(mytable, lob_mask, supplement_xlsx_path)
 
 write_region_tex_table(
   mytable,
   lob_mask,
   file.path(output_dir, "ddpcr_results_table.tex"),
-  "ddPCR sample-region results. Shaded cells show FA above the limit of blank.",
+  "ddPCR sample-region results. Shaded cells show VAF above the limit of blank.",
   "tab:ddpcr_results_complete",
   compact = TRUE
 )
@@ -302,3 +333,22 @@ readr::write_csv(
   pooled_rows,
   file.path(output_dir, "sample_region_pooled_rows.csv")
 )
+
+generated_outputs <- c(
+  file.path(output_dir, "ddPCR_results_by_region.csv"),
+  file.path(output_dir, "ddPCR_results_by_region_mask.csv"),
+  file.path(output_dir, "ddPCR_results_by_region.html"),
+  file.path(output_dir, "ddpcr_results_by_region_table.tex"),
+  file.path(output_dir, "ddpcr_results_table.tex"),
+  file.path(output_dir, "sample_region_pooled_rows.csv"),
+  supplement_xlsx_path
+)
+
+missing_or_empty <- generated_outputs[
+  !file.exists(generated_outputs) |
+    is.na(file.info(generated_outputs)$size) |
+    file.info(generated_outputs)$size <= 0
+]
+if (length(missing_or_empty) > 0L) {
+  stop("Regional ddPCR output is missing or empty: ", paste(missing_or_empty, collapse = ", "))
+}

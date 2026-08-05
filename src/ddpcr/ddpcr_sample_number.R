@@ -157,15 +157,6 @@ write_sample_overview_tex <- function(.data, output_path) {
   writeLines(lines, output_path, useBytes = TRUE)
 }
 
-write_sample_overview_wrapper <- function(output_path) {
-  lines <- c(
-    "% Source table snippet with legend and formatting:",
-    "% manuscript/tables/ddpcr_sample_number/ddpcr_sample_number.tex",
-    "\\input{manuscript/tables/ddpcr_sample_number/ddpcr_sample_number.tex}"
-  )
-  writeLines(lines, output_path, useBytes = TRUE)
-}
-
 ensure_mutation_cols <- function(.data, prefix) {
   for (mutation in mutation_order) {
     col <- paste0(prefix, mutation)
@@ -345,9 +336,6 @@ readr::write_csv(
 )
 write_basic_tex(summary_tex, file.path(output_dir, "ddpcr_sample_number_basic.tex"))
 write_sample_overview_tex(summary_tex, file.path(output_dir, "ddpcr_sample_number.tex"))
-write_sample_overview_wrapper(
-  file.path(project_root, "manuscript", "tables", "supplement", "table_ddpcr_sample_overview.tex")
-)
 write_html_table(
   summary_tex,
   file.path(output_dir, "ddPCR_sample_number.html"),
@@ -362,3 +350,18 @@ readr::write_csv(
   pass_rows,
   file.path(output_dir, "sample_region_lob_lod_pass_rows.csv")
 )
+
+generated_outputs <- c(
+  file.path(output_dir, "ddPCR_sample_number.csv"),
+  file.path(output_dir, "ddpcr_sample_number.tex"),
+  file.path(output_dir, "ddPCR_sample_number.html"),
+  file.path(output_dir, "sample_region_lob_lod_pass_rows.csv")
+)
+missing_or_empty <- generated_outputs[
+  !file.exists(generated_outputs) |
+    is.na(file.info(generated_outputs)$size) |
+    file.info(generated_outputs)$size <= 0
+]
+if (length(missing_or_empty) > 0L) {
+  stop("ddPCR sample-number output is missing or empty: ", paste(missing_or_empty, collapse = ", "))
+}

@@ -25,12 +25,12 @@ run_py() {
 }
 
 run_r "$SCRIPT_DIR/create_snv_dataframe.R"
-run_r "$SCRIPT_DIR/figures/ddpcr_fractional_abundance.R"
-run_py "$SCRIPT_DIR/figures/fix_snv_all_mutations_legend_bottom_final_svg.py"
-run_r "$SCRIPT_DIR/figures/ddpcr_fractional_abundance_pooled.R"
+run_r "$REPO_ROOT/manuscript/figures/ddpcr_fractional_abundance_vaf/ddpcr_fractional_abundance.R"
+run_py "$REPO_ROOT/manuscript/figures/ddpcr_fractional_abundance_vaf/fix_snv_all_mutations_legend_bottom_final_svg.py"
+run_r "$REPO_ROOT/manuscript/figures/ddpcr_fractional_abundance_pooled_vaf/ddpcr_fractional_abundance_pooled.R"
 run_r "$SCRIPT_DIR/ddpcr_samples_results_tbl.R"
 run_r "$SCRIPT_DIR/ddpcr_sample_number.R"
 run_r "$SCRIPT_DIR/estimate_haploid_genomes_surveyed.R"
-run_r "$SCRIPT_DIR/figures/create_ddpcr_scatterplots.R"
-run_r "$SCRIPT_DIR/figures/ddpcr_positive_well_fractional_abundance.R"
-run_py "$SCRIPT_DIR/figures/build_ddpcr_gating_svg_panels.py"
+run_r "$REPO_ROOT/manuscript/figures/ddpcr_gating_panels/create_ddpcr_scatterplots.R"
+run_r "$REPO_ROOT/manuscript/figures/ddpcr_e200k_positive_well_vaf/ddpcr_positive_well_fractional_abundance.R"
+run_py "$REPO_ROOT/manuscript/figures/ddpcr_gating_panels/build_ddpcr_gating_svg_panels.py"

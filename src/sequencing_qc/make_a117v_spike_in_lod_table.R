@@ -255,70 +255,86 @@ replace_embedded_a117v_table <- function(path, table_lines) {
   writeBin(charToRaw(updated), con = path)
 }
 
-if (!file.exists(legacy_csv)) {
-  stop("A117V source CSV does not exist: ", legacy_csv)
-}
-
-legacy <- read.csv(
-  legacy_csv,
-  header = TRUE,
-  stringsAsFactors = FALSE,
-  colClasses = "character",
-  check.names = FALSE
-)
-
-missing_legacy_cols <- setdiff(required_legacy_cols, names(legacy))
-if (length(missing_legacy_cols) > 0L) {
-  stop("A117V source CSV is missing required column(s): ", paste(missing_legacy_cols, collapse = ", "))
-}
-
-legacy_idx <- match(sample_map$legacy_label, legacy[["Sample"]])
-if (any(is.na(legacy_idx))) {
-  stop("A117V source CSV is missing expected legacy label(s): ", paste(sample_map$legacy_label[is.na(legacy_idx)], collapse = ", "))
-}
-
-selected <- legacy[legacy_idx, , drop = FALSE]
 labels <- load_manifest_labels(manifest_tsv, sample_map$sample_id)
 
-depth <- as_numeric_col(selected[["Read Depth (DP)"]], "Read Depth (DP)")
-alt_count <- as_numeric_col(selected[["ALT Count"]], "ALT Count")
-ref_count <- as_numeric_col(selected[["REF Count"]], "REF Count")
-vaf_percent <- alt_count / depth * 100
-legacy_vaf <- as_numeric_col(selected[["AAF (%)"]], "AAF (%)")
-if (any(abs(vaf_percent - legacy_vaf) > 1e-9)) {
-  stop("Calculated VAF does not match the legacy AAF (%) source values")
+if (file.exists(legacy_csv)) {
+  legacy <- read.csv(
+    legacy_csv,
+    header = TRUE,
+    stringsAsFactors = FALSE,
+    colClasses = "character",
+    check.names = FALSE
+  )
+
+  missing_legacy_cols <- setdiff(required_legacy_cols, names(legacy))
+  if (length(missing_legacy_cols) > 0L) {
+    stop("A117V source CSV is missing required column(s): ", paste(missing_legacy_cols, collapse = ", "))
+  }
+
+  legacy_idx <- match(sample_map$legacy_label, legacy[["Sample"]])
+  if (any(is.na(legacy_idx))) {
+    stop("A117V source CSV is missing expected legacy label(s): ", paste(sample_map$legacy_label[is.na(legacy_idx)], collapse = ", "))
+  }
+
+  selected <- legacy[legacy_idx, , drop = FALSE]
+  depth <- as_numeric_col(selected[["Read Depth (DP)"]], "Read Depth (DP)")
+  alt_count <- as_numeric_col(selected[["ALT Count"]], "ALT Count")
+  ref_count <- as_numeric_col(selected[["REF Count"]], "REF Count")
+  vaf_percent <- alt_count / depth * 100
+  legacy_vaf <- as_numeric_col(selected[["AAF (%)"]], "AAF (%)")
+  if (any(abs(vaf_percent - legacy_vaf) > 1e-9)) {
+    stop("Calculated VAF does not match the legacy AAF (%) source values")
+  }
+
+  ci <- t(mapply(exact_ci_percent, alt_count, depth))
+  out <- data.frame(
+    sample_id = sample_map$sample_id,
+    display_label = unname(labels),
+    legacy_label = sample_map$legacy_label,
+    variant = selected[["Variant"]],
+    dbsnp_id = selected[["dbSNP ID"]],
+    chromosome = selected[["Chromosome"]],
+    position = as_numeric_col(selected[["Position"]], "Position"),
+    ref = selected[["REF"]],
+    alt = selected[["ALT"]],
+    mutation_type = selected[["Mutation Type"]],
+    read_depth_dp = depth,
+    ref_count = ref_count,
+    alt_count = alt_count,
+    vaf_percent = vaf_percent,
+    vaf_ci_lower_percent = ci[, 1],
+    vaf_ci_upper_percent = ci[, 2],
+    vaf_ci_method = "Exact binomial (Clopper-Pearson)",
+    base_quality = as_numeric_col(selected[["Base Quality"]], "Base Quality"),
+    mapping_quality = as_numeric_col(selected[["Mapping Quality"]], "Mapping Quality"),
+    ref_forward_count = as_numeric_col(selected[["REF Forward Count"]], "REF Forward Count"),
+    ref_reverse_count = as_numeric_col(selected[["REF Reverse Count"]], "REF Reverse Count"),
+    alt_forward_count = as_numeric_col(selected[["ALT Forward Count"]], "ALT Forward Count"),
+    alt_reverse_count = as_numeric_col(selected[["ALT Reverse Count"]], "ALT Reverse Count"),
+    source_table = source_table_rel,
+    stringsAsFactors = FALSE,
+    check.names = FALSE
+  )
+} else if (file.exists(results_csv)) {
+  message("Legacy A117V source is absent; reusing the verified generated CSV: ", results_csv)
+  # Keep nucleotide fields as literal bases.  Base letters such as `T` are
+  # otherwise coerced to logical TRUE by read.csv's type inference while the
+  # numeric columns should retain their numeric output representation.
+  out <- read.csv(
+    results_csv,
+    stringsAsFactors = FALSE,
+    colClasses = c(ref = "character", alt = "character"),
+    check.names = FALSE
+  )
+  required_output_cols <- c("sample_id", "legacy_label", "display_label", "variant", "dbsnp_id", "chromosome", "position", "ref", "alt", "mutation_type", "read_depth_dp", "ref_count", "alt_count", "vaf_percent", "vaf_ci_lower_percent", "vaf_ci_upper_percent", "vaf_ci_method", "base_quality", "mapping_quality", "ref_forward_count", "ref_reverse_count", "alt_forward_count", "alt_reverse_count", "source_table")
+  missing_output_cols <- setdiff(required_output_cols, names(out))
+  if (length(missing_output_cols) > 0L) {
+    stop("Verified A117V CSV is missing required column(s): ", paste(missing_output_cols, collapse = ", "))
+  }
+  out$display_label <- unname(labels[as.character(out$sample_id)])
+} else {
+  stop("A117V source CSV does not exist: ", legacy_csv, " and no verified generated CSV exists at ", results_csv)
 }
-
-ci <- t(mapply(exact_ci_percent, alt_count, depth))
-
-out <- data.frame(
-  sample_id = sample_map$sample_id,
-  display_label = unname(labels),
-  legacy_label = sample_map$legacy_label,
-  variant = selected[["Variant"]],
-  dbsnp_id = selected[["dbSNP ID"]],
-  chromosome = selected[["Chromosome"]],
-  position = as_numeric_col(selected[["Position"]], "Position"),
-  ref = selected[["REF"]],
-  alt = selected[["ALT"]],
-  mutation_type = selected[["Mutation Type"]],
-  read_depth_dp = depth,
-  ref_count = ref_count,
-  alt_count = alt_count,
-  vaf_percent = vaf_percent,
-  vaf_ci_lower_percent = ci[, 1],
-  vaf_ci_upper_percent = ci[, 2],
-  vaf_ci_method = "Exact binomial (Clopper-Pearson)",
-  base_quality = as_numeric_col(selected[["Base Quality"]], "Base Quality"),
-  mapping_quality = as_numeric_col(selected[["Mapping Quality"]], "Mapping Quality"),
-  ref_forward_count = as_numeric_col(selected[["REF Forward Count"]], "REF Forward Count"),
-  ref_reverse_count = as_numeric_col(selected[["REF Reverse Count"]], "REF Reverse Count"),
-  alt_forward_count = as_numeric_col(selected[["ALT Forward Count"]], "ALT Forward Count"),
-  alt_reverse_count = as_numeric_col(selected[["ALT Reverse Count"]], "ALT Reverse Count"),
-  source_table = source_table_rel,
-  stringsAsFactors = FALSE,
-  check.names = FALSE
-)
 
 dir.create(dirname(results_csv), showWarnings = FALSE, recursive = TRUE)
 dir.create(dirname(main_tex), showWarnings = FALSE, recursive = TRUE)
@@ -328,9 +344,6 @@ write.csv(out, file = results_csv, row.names = FALSE, quote = TRUE)
 
 table_lines <- render_table(out)
 writeLines(table_lines, con = main_tex, useBytes = TRUE)
-replace_embedded_a117v_table(all_tables_tex, table_lines)
-
 cat("Wrote:\n")
 cat("  ", results_csv, "\n", sep = "")
 cat("  ", main_tex, "\n", sep = "")
-cat("  ", all_tables_tex, "\n", sep = "")

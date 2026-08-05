@@ -13,8 +13,10 @@ material.
 - `final_outputs.sha256`: checksums for declared final outputs.
 - `sra_accessions.tsv`: processed SRA study/BioSample/run accession map.
 - `data_availability.md`: reviewer-facing data availability summary.
-- `inventory.tsv`: maintainer-side active script inventory under `src/`.
-- `make_inventory.py`: optional helper for regenerating `inventory.tsv`.
+- `inventory.tsv`: maintainer-side inventory of active analysis scripts under
+  `src/` and canonical manuscript-artifact scripts under `manuscript/figures/`.
+- `make_inventory.py`: helper for regenerating `inventory.tsv` while excluding
+  legacy and historical figure directories.
 
 ## Utilities
 
