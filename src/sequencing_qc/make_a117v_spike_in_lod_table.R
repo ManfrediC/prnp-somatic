@@ -14,9 +14,9 @@ get_script_dir <- function() {
 script_dir <- get_script_dir()
 repo_root <- normalizePath(file.path(script_dir, "..", ".."), winslash = "/", mustWork = TRUE)
 
-legacy_csv <- Sys.getenv(
-  "PRNP_A117V_LEGACY_CSV",
-  unset = file.path(repo_root, "legacy", "src", "windows", "2025-05-03_dilution_QC_analysis", "A117V_table.csv")
+source_csv <- Sys.getenv(
+  "PRNP_A117V_SOURCE_CSV",
+  unset = file.path(repo_root, "manuscript", "tables", "a117v_spike_in_lod_source", "A117V_table.csv")
 )
 
 manifest_tsv <- Sys.getenv(
@@ -39,7 +39,7 @@ all_tables_tex <- Sys.getenv(
   unset = file.path(repo_root, "manuscript", "tables", "all_tables_with_legends", "all_tables.tex")
 )
 
-source_table_rel <- "legacy/src/windows/2025-05-03_dilution_QC_analysis/A117V_table.csv"
+source_table_rel <- "manuscript/tables/a117v_spike_in_lod_source/A117V_table.csv"
 
 required_legacy_cols <- c(
   "Sample",
@@ -257,9 +257,9 @@ replace_embedded_a117v_table <- function(path, table_lines) {
 
 labels <- load_manifest_labels(manifest_tsv, sample_map$sample_id)
 
-if (file.exists(legacy_csv)) {
+if (file.exists(source_csv)) {
   legacy <- read.csv(
-    legacy_csv,
+    source_csv,
     header = TRUE,
     stringsAsFactors = FALSE,
     colClasses = "character",
@@ -315,25 +315,8 @@ if (file.exists(legacy_csv)) {
     stringsAsFactors = FALSE,
     check.names = FALSE
   )
-} else if (file.exists(results_csv)) {
-  message("Legacy A117V source is absent; reusing the verified generated CSV: ", results_csv)
-  # Keep nucleotide fields as literal bases.  Base letters such as `T` are
-  # otherwise coerced to logical TRUE by read.csv's type inference while the
-  # numeric columns should retain their numeric output representation.
-  out <- read.csv(
-    results_csv,
-    stringsAsFactors = FALSE,
-    colClasses = c(ref = "character", alt = "character"),
-    check.names = FALSE
-  )
-  required_output_cols <- c("sample_id", "legacy_label", "display_label", "variant", "dbsnp_id", "chromosome", "position", "ref", "alt", "mutation_type", "read_depth_dp", "ref_count", "alt_count", "vaf_percent", "vaf_ci_lower_percent", "vaf_ci_upper_percent", "vaf_ci_method", "base_quality", "mapping_quality", "ref_forward_count", "ref_reverse_count", "alt_forward_count", "alt_reverse_count", "source_table")
-  missing_output_cols <- setdiff(required_output_cols, names(out))
-  if (length(missing_output_cols) > 0L) {
-    stop("Verified A117V CSV is missing required column(s): ", paste(missing_output_cols, collapse = ", "))
-  }
-  out$display_label <- unname(labels[as.character(out$sample_id)])
 } else {
-  stop("A117V source CSV does not exist: ", legacy_csv, " and no verified generated CSV exists at ", results_csv)
+  stop("A117V source CSV does not exist: ", source_csv)
 }
 
 dir.create(dirname(results_csv), showWarnings = FALSE, recursive = TRUE)
