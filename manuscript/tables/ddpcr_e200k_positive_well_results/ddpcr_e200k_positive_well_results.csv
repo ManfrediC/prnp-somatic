@@ -1,8 +1,0 @@
-participant,brain_region,measurement,preparation_index,run_date,well,accepted_droplets,mut_positive_droplets,fa_pct,ci_low_pct,ci_high_pct,lob_count,lob_fa_pct,above_lob,above_lod
-CJD4,pons,preparation,1,2020-10-12,D05,12986,10,0.046,0.022,0.084,23,0.177,FALSE,FALSE
-CJD4,pons,preparation,2,2021-04-06,E05,14869,317,0.615,0.548,0.689,17,0.114,TRUE,TRUE
-CJD4,pons,preparation,3,2021-05-10,D11,15239,15,0.03,0.017,0.049,20,0.131,FALSE,FALSE
-CJD21,thalamus,preparation,1,2021-04-06,G02,13191,76,0.229,0.18,0.287,15,0.114,TRUE,TRUE
-CJD21,thalamus,preparation,2,2021-05-10,F12,17624,8,0.019,0.008,0.038,23,0.131,FALSE,FALSE
-CJD4,pons,pooled,NA,NA,NA,43094,342,0.314,0.281,0.349,66,0.153,TRUE,TRUE
-CJD21,thalamus,pooled,NA,NA,NA,30815,84,0.113,0.09,0.139,37,0.12,TRUE,TRUE
