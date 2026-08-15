@@ -219,7 +219,7 @@ table_lines <- c(
   "  \\vspace{0.5em}",
   paste0(
     "  \\caption{\\textbf{Sequencing quality metrics and \\textit{PRNP} coding-region coverage}.",
-    " For each sample, the table reports primary mapped reads, on-target read fraction, coverage statistics across the \\textit{PRNP} coding region, including mean depth, P20 depth (20th percentile depth), Fold-80 (mean/P20; an indicator of coverage uniformity) and the percentage of coding bases covered at $\\geq$100\\xfold and $\\geq$500\\xfold.}"
+    " For each sample, the table reports primary mapped reads, on-target read fraction, coverage statistics across the \\textit{PRNP} coding region, including mean depth, P20 depth (20th percentile depth), Fold-80 (mean/P20; an indicator of coverage uniformity) and the percentage of coding bases covered at $\\geq$100\\xfold{} and $\\geq$500\\xfold.}"
   ),
   "  \\label{tab:sequencing_metrics}",
   "\\end{table}",
