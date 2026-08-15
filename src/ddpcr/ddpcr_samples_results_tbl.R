@@ -13,14 +13,13 @@ dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 lod_cut <- c(D178N = 0.056, E200K = 0.067, P102L = 0.13)
 region_labels <- c(
   bg = "basal ganglia",
+  bs = "brainstem",
   cb = "cerebellum",
   fr = "frontal cortex",
   hc = "hippocampus",
-  ps = "pons",
-  sn = "substantia nigra",
   th = "thalamus"
 )
-region_list <- unname(region_labels[c("bg", "cb", "hc", "fr", "sn", "th")])
+region_list <- unname(region_labels[c("bg", "bs", "cb", "hc", "fr", "th")])
 
 as_true_flag <- function(x) {
   if (is.logical(x)) {
@@ -135,10 +134,10 @@ write_region_tex_table <- function(table_data, mask_data, output_path, caption, 
   region_cols <- setdiff(names(table_data), c("participant", "histotype", "mutation"))
   region_headers <- c(
     `basal ganglia` = "Basal ganglia (VAF, 95\\% CI)",
+    brainstem = "Brainstem (VAF, 95\\% CI)",
     cerebellum = "Cerebellum (VAF, 95\\% CI)",
     hippocampus = "Hippocampus (VAF, 95\\% CI)",
     `frontal cortex` = "Frontal cortex (VAF, 95\\% CI)",
-    `substantia nigra` = "Substantia nigra (VAF, 95\\% CI)",
     thalamus = "Thalamus (VAF, 95\\% CI)"
   )
   header <- c(
@@ -265,7 +264,6 @@ if (file.exists(current_input_path)) {
 }
 
 table_base <- df %>%
-  filter(brain_region != "pons") %>%
   mutate(
     across(where(is.numeric), ~ round(.x, 3)),
     participant = factor(participant, levels = participant_order(participant)),

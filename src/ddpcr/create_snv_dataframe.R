@@ -182,22 +182,20 @@ data.mut          <- subset(data.mut, !(Sample %in% control_samples))
 # harmonise sample names
 # -------------------------------------
 
-#some Sample strings end in "-bg" instead of "_bg" etc, replace hyphen (and "pons")
+#some Sample strings end in "-bg" instead of "_bg" etc, replace hyphen
 #also change Bologna brain region designators to our naming system
+#midbrain, substantia nigra, and pons are all grouped as brainstem (bs)
 data.mut$Sample %<>%
   gsub("-bg", "_bg", .) %>%
   gsub("-cb", "_cb", .) %>%
   gsub("-fr", "_fr", .) %>%
   gsub("-hc", "_hc", .) %>%
-  gsub("-sn", "_sn", .) %>%
   gsub("-th", "_th", .) %>%
-  gsub("-pons", "_ps", .) %>%
-  gsub("_pons", "_ps", .) %>%
+  gsub("[-_](sn|mb|mdb|pons)$", "_bs", .) %>%
   gsub("-cau", "_bg", .) %>%
   gsub("-ce", "_cb", .) %>%
   gsub("-fc", "_fr", .) %>%
-  gsub("-hip", "_hc", .) %>%
-  gsub("-mdb", "_sn", .)
+  gsub("-hip", "_hc", .)
 
 # --------------------------------------------------------
 # pool droplets (only affects samples with multiple runs)
