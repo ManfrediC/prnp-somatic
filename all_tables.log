@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5 Portable) (preloaded format=pdflatex 2026.8.4)  4 AUG 2026 13:39
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5 Portable) (preloaded format=pdflatex 2026.8.4)  20 AUG 2026 17:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -541,73 +541,63 @@ pdftex/pdftex.map}]) (manuscript/tables/main/table_ddpcr_lod_quantification.tex
 (manuscript/tables/main/table_a117v_spike_in_lod.tex [4])
 (manuscript/tables/main/table_sequencing_metrics.tex [5])
 (manuscript/tables/main/table_prnp_somatic_snv_summary.tex
-Overfull \hbox (11.59377pt too wide) in paragraph at lines 23--23
+Overfull \hbox (11.59377pt too wide) in paragraph at lines 24--24
  []|\OT1/cmr/bx/n/10 Chromosome| 
  []
 
 
-Overfull \hbox (3.4997pt too wide) in paragraph at lines 23--23
+Overfull \hbox (3.4997pt too wide) in paragraph at lines 24--24
  []|\OT1/cmr/bx/n/10 REF| 
  []
 
 
-Overfull \hbox (2.73581pt too wide) in paragraph at lines 23--23
+Overfull \hbox (2.73581pt too wide) in paragraph at lines 24--24
  []|\OT1/cmr/bx/n/10 ALT| 
  []
 
 
-Overfull \hbox (1.64876pt too wide) in paragraph at lines 23--23
+Overfull \hbox (1.64876pt too wide) in paragraph at lines 24--24
  []|\OT1/cmr/bx/n/10 Mutation 
  []
 
 
-Overfull \hbox (4.78412pt too wide) in paragraph at lines 23--23
+Overfull \hbox (4.78412pt too wide) in paragraph at lines 24--24
  []|\OT1/cmr/bx/n/10 Mapping 
  []
 
-[6
 
+Underfull \hbox (badness 10000) in paragraph at lines 5--34
 
+ []
 
-
-
-
-]) (manuscript/tables/main/table_prnp_junction_metrics.tex [7]))
+[6]) (manuscript/tables/main/table_prnp_junction_metrics.tex [7]))
 (manuscript/tables/all_tables_supplement.tex
 (manuscript/tables/supplement/table_dna_quality_evidence.tex [8])
 (manuscript/tables/supplement/table_ddpcr_participant_haploid_genomes.tex
-[9]) (manuscript/tables/ddpcr_sample_results/ddpcr_results_by_region_table.tex
-
-LaTeX Warning: Float too large for page by 123.83694pt on input line 130.
-
-[10]) (manuscript/tables/supplement/table_prnp_orr_repeat_tool_summary.tex
+[9]) (manuscript/tables/supplement/table_prnp_orr_repeat_tool_summary.tex
 Overfull \vbox (7.2001pt too high) detected at line 58
  []
 
-[11]) (manuscript/tables/supplement/table_ddpcr_e200k_positive_well_results.tex
-[12
+[10]) (manuscript/tables/supplement/table_ddpcr_e200k_positive_well_results.tex
 
+Underfull \hbox (badness 10000) in paragraph at lines 7--26
 
+ []
 
-
-
-
-
-
-])) (all_tables.aux)
+[11])) (all_tables.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-06-18>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 10820 strings out of 467510
- 249185 string characters out of 5396141
- 752803 words of memory out of 5000000
- 39890 multiletter control sequences out of 15000+600000
+ 10810 strings out of 467510
+ 248600 string characters out of 5396141
+ 746760 words of memory out of 5000000
+ 39885 multiletter control sequences out of 15000+600000
  632481 words of font info for 56 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 86i,18n,117p,1229b,624s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 86i,20n,117p,1325b,658s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/Manfredi/Documents/Codex/tools/miktex-portable/texmfs/install/fonts
 /type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/Manfredi/Documents/Codex/tools/m
 iktex-portable/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx8.pfb><C:/User
@@ -627,9 +617,9 @@ rtable/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/Manfre
 di/Documents/Codex/tools/miktex-portable/texmfs/install/fonts/type1/public/amsf
 onts/cm/cmti10.pfb><C:/Users/Manfredi/Documents/Codex/tools/miktex-portable/tex
 mfs/install/fonts/type1/public/amsfonts/cm/cmti8.pfb>
-Output written on all_tables.pdf (12 pages, 215203 bytes).
+Output written on all_tables.pdf (11 pages, 208731 bytes).
 PDF statistics:
- 106 PDF objects out of 1000 (max. 8388607)
+ 103 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
