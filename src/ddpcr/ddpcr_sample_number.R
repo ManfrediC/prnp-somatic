@@ -148,7 +148,7 @@ write_sample_overview_tex <- function(.data, output_path) {
     "\\bottomrule[2pt]",
     "\\end{tabular}",
     "\\end{adjustbox}",
-    "\\caption{\\textbf{Overview of ddPCR single-nucleotide variant analysis.} Purified brain DNA from $31$ CJD and $8$ control individuals was analysed. The table shows the number of sample-regions passing ddPCR quality control overall and per assay, together with the maximum estimated VAF for \\dn, \\ek and \\pl. VAFs are reported as percentages. The \\textit{LoB/LoD pass} column lists assays in which at least one sample-region met the prespecified calling criterion, defined as a lower 95\\% confidence bound exceeding both the limit of blank (LoB) and the limit of detection (LoD). \\textit{None} indicates that no non-germline mosaic call met this criterion. CJD30 was germline heterozygous for \\ek; its \\ek value is marked with an asterisk and was excluded from aggregate \\ek mosaicism summaries.}",
+    "\\caption{\\textbf{Overview of ddPCR single-nucleotide variant analysis.} Purified brain DNA from $31$ CJD and $8$ control individuals was analysed. The table shows the number of sample-regions that passed ddPCR quality control overall and per assay, together with the maximum estimated VAF for \\dn, \\ek and \\pl. VAFs are reported as percentages. The \\textit{LoB/LoD pass} column indicates whether at least one sample-region met the two calling criteria: the observed mutant-positive droplet count exceeded the sample-specific LoB count, and the lower 95\\% confidence bound of the VAF exceeded the assay-specific LoD. \\textit{None} indicates that no non-germline mosaic call met this criterion. CJD30 was germline heterozygous for \\ek and was excluded from \\ek mosaicism summaries.}",
     "\\label{tab:ddPCR-results}",
     "\\end{table}",
     "",
@@ -277,7 +277,13 @@ build_summary <- function(ddpcr) {
     ) %>%
     ungroup() %>%
     left_join(group_lob_lod_status, by = "group") %>%
-    mutate(`LoB+LoD pass` = replace_na(`LoB+LoD pass`, "None")) %>%
+    mutate(
+      `LoB+LoD pass` = if_else(
+        name %in% c("All CJD", "All controls"),
+        "",
+        replace_na(`LoB+LoD pass`, "None")
+      )
+    ) %>%
     select(
       name,
       analysed_samples,
