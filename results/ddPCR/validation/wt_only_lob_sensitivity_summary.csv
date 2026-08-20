@@ -1,0 +1,3 @@
+level,n_rows,n_lob_count_changed,n_lob_count_lower_with_wt_only,n_lob_count_higher_with_wt_only,wt_plus_ntc_lob_positive,wt_only_lob_positive,n_lob_flag_changed,wt_plus_ntc_lod_lob_positive,wt_only_lod_lob_positive,n_lod_lob_flag_changed
+sample_region,669,648,0,648,164,44,120,8,8,0
+participant_pooled,116,112,0,112,26,2,24,1,1,0
