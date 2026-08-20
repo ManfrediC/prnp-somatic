@@ -114,6 +114,9 @@ if (!file.exists(sample_details_path)) {
   stop("Missing metadata file: ", sample_details_path)
 }
 
+# Load the shared accepted-droplet quality-control threshold.
+source(file.path(project_root, "src", "ddpcr", "ddpcr_qc_config.R"))
+
 # Load helpers that import and validate the raw ddPCR database exports.
 source(file.path(project_root, "src", "ddpcr", "ddpcr_raw_import_helpers.R"))
 
@@ -169,6 +172,11 @@ data.mut$Sample <- data.mut$Sample %>%
 
 #remove messy sample
 data.mut <- subset(data.mut, Sample != "17-31_hc mixed with 17-32_cb")
+
+# Apply the accepted-droplet QC rule once before controls and biological wells
+# are separated or any well counts are pooled.
+data.mut <- data.mut %>%
+  filter(AcceptedDroplets >= DDPCR_MIN_ACCEPTED_DROPLETS)
 
 # -------------------------------------
 # split into controls vs analysis set
@@ -288,10 +296,9 @@ merged <- counts %>%
 # contain genomic DNA background without the targeted mutation.
 lob_blank_samples <- "WT_control"
 
-# 1) Build blank table (QC: >=10,000 droplets) from WT control wells
+# 1) Build the blank table from the already QC-filtered WT control wells
 blanks <- data.mut.controls %>%
   filter(Target %in% mutation.list, Sample %in% lob_blank_samples) %>% # WT genomic blank wells
-  filter(AcceptedDroplets >= 10000) %>% # only wells with at least 10,000 accepted droplets
   transmute(plate = Date,
             assay = ExperimentType,
             n = AcceptedDroplets,

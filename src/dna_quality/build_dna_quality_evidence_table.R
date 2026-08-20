@@ -13,6 +13,10 @@ SEQUENCING_TSV <- "results/sequencing_qc/sequencing_metrics_per_sample.tsv"
 OUTPUT_PATH <- "results/dna_quality/sample_quality_evidence_table.tsv"
 LATEX_OUTPUT_PATH <- "manuscript/tables/supplement/table_dna_quality_evidence.tex"
 
+# Reuse the ddPCR accepted-droplet threshold for the downstream pooled-row
+# review status. Per-well enforcement happens in the main ddPCR workflow.
+source("src/ddpcr/ddpcr_qc_config.R")
+
 # -------------------------------------------------------------------------
 # Basic readers
 # -------------------------------------------------------------------------
@@ -440,7 +444,7 @@ build_ddpcr_summary <- function(sample_ids) {
       sample_id = sample_id,
       ddpcr_max_fr_accepted_droplets = max_droplets,
       ddpcr_amplification_review_status =
-        if (!is.na(max_droplets) && max_droplets >= 10000) "pass" else "review",
+        if (!is.na(max_droplets) && max_droplets >= DDPCR_MIN_ACCEPTED_DROPLETS) "pass" else "review",
       stringsAsFactors = FALSE
     )
   })
@@ -543,7 +547,8 @@ compose_notes <- function(row) {
   # Accumulate short review notes without hiding which evidence layer is missing.
   notes <- character()
 
-  # ddPCR review usually means missing frontal linkage or accepted droplets <10000.
+  # ddPCR review usually means missing frontal linkage or a pooled accepted-
+  # droplet count below the configured review cutoff.
   if (row$ddpcr_amplification_review_status == "review") {
     notes <- c(notes, "ddPCR frontal accepted-droplet linkage needs review")
   }

@@ -28,10 +28,10 @@ src/ddpcr/create_snv_dataframe.R
 # - Fallback: assay-wide p0 if a plate lacks blanks
 # --------------------------------------------------------
 
-# 1) Build blank table (QC: >=10,000 droplets) from your controls object
+# 1) Build blank table (QC: >=8,000 droplets) from your controls object
 blanks <- data.mut.controls %>%
   filter(Target %in% mutation.list, Sample %in% c("WT_control","NTC")) %>% # only blank/control wells
-  filter(AcceptedDroplets >= 10000) %>% # only wells with at least 10,000 accepted droplets
+  filter(AcceptedDroplets >= 8000) %>% # only wells with at least 8,000 accepted droplets
   transmute(plate = Date,
             assay = ExperimentType,
             n = AcceptedDroplets,
@@ -54,10 +54,10 @@ blanks <- data.mut.controls %>%
 # contain genomic DNA background without the targeted mutation.
 lob_blank_samples <- "WT_control"
 
-# 1) Build blank table (QC: >=10,000 droplets) from WT control wells
+# 1) Build blank table (QC: >=8,000 droplets) from WT control wells
 blanks <- data.mut.controls %>%
   filter(Target %in% mutation.list, Sample %in% lob_blank_samples) %>% # WT genomic blank wells
-  filter(AcceptedDroplets >= 10000) %>% # only wells with at least 10,000 accepted droplets
+  filter(AcceptedDroplets >= 8000) %>% # only wells with at least 8,000 accepted droplets
   transmute(plate = Date,
             assay = ExperimentType,
             n = AcceptedDroplets,

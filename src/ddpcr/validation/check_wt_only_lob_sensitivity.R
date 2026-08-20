@@ -37,7 +37,6 @@ sys.source(main_script_path, envir = analysis_env)
 build_lob_outputs <- function(blank_samples, label) {
   blanks <- analysis_env$data.mut.controls %>%
     filter(Target %in% analysis_env$mutation.list, Sample %in% blank_samples) %>%
-    filter(AcceptedDroplets >= 10000) %>%
     transmute(
       plate = Date,
       assay = ExperimentType,
