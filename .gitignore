@@ -10,6 +10,7 @@
 /notes/
 /scratch/
 /tmp/
+/audit/
 
 # Secrets and local environment files
 .env
