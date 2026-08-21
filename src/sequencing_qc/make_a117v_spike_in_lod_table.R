@@ -205,10 +205,9 @@ render_table <- function(table_data) {
     "  \\vspace{0.5em}",
     paste0(
       "  \\caption{\\textbf{A117V spike-in analysis for targeted-sequencing sensitivity assessment.} ",
-      "\\textbf{A117V high} denotes the higher-input sample; its observed VAF was 1.32\\% (exact 95\\% binomial CI of 1.07--1.62\\%). ",
-      "\\textbf{A117V low} denotes the lower-input sample; its observed VAF was 0.81\\% (exact 95\\% binomial CI of 0.57--1.13\\%). ",
-      "Exact binomial confidence intervals were calculated by the Clopper--Pearson method using ALT count as x and read depth as n. ",
-      "\\textbf{A117V low} was used as the conservative LoD anchor for downstream somatic calling.}"
+      "\\textbf{A117V high}: higher-input sample (observed VAF: 1.32\\%, exact 95\\% binomial CI: 1.07--1.62\\%). ",
+      "\\textbf{A117V low}: lower-input sample (observed VAF: 0.81\\%, exact 95\\% binomial CI: 0.57--1.13\\%). ",
+      "\\textbf{A117V low} was used as a conservative LoD for downstream somatic calling.}"
     ),
     "  \\label{tab:a117v_spike_in_lod}",
     "\\end{table}",

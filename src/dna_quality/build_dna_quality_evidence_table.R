@@ -716,9 +716,9 @@ write_latex_table <- function(table, path) {
     "  }",
     "  \\vspace{0.5em}",
     paste0(
-      "  \\caption{\\textbf{Sample-level DNA quality and downstream performance evidence.}",
-      " For each sequenced CJD and control frontal-cortex sample, the table summarises pre-capture TapeStation fragment metrics, submission-QC concentration, ddPCR accepted-droplet counts, and downstream \\textit{PRNP} coding-region sequencing coverage.",
-      " The final column indicates whether the sample showed both ddPCR evidence of amplifiable DNA and successful targeted sequencing evidence across the \\textit{PRNP} coding region.",
+      "  \\caption{\\textbf{Sample-level DNA quality and downstream performance.}",
+      " For each sequenced CJD and control frontal-cortex sample, pre-capture TapeStation fragment metrics, submission-QC concentration, ddPCR accepted-droplet counts, and downstream \\textit{PRNP} coding-region sequencing coverage are summarised.",
+      " ``ddPCR + sequencing'' indicates whether DNA could be amplified by ddPCR and targeted sequencing was possible.",
       " In summary, DNA extracted using the decontamination and purification protocol was sufficiently preserved and amplifiable in ddPCR and targeted \\textit{PRNP} capture sequencing.}"
     ),
     "  \\label{tab:dna_quality_evidence}",
