@@ -51,13 +51,13 @@ src/tools/docx_tooling/create_ddpcr_manuscript_edit_manifest.py	python	3745	2026
 src/tools/docx_tooling/validate_ddpcr_manuscript_docx.py	python	3400	2026-08-15T11:53:19.878212+00:00	b5b2daf6f48d8c4a8e7da5393465a5bd0ed591a7d20d0a362524c456b47d07b3	NA	NA	NA	NA	NA
 src/tools/export_ddpcr_archives.py	python	56923	2026-08-15T11:53:19.879211+00:00	72ead70a9a7990f89e03f28724191b64fa7d0aeb49424f0cf73cd51d6e2e7ee9	NA	NA	NA	NA	NA
 src/tools/manuscript/check_figure_table_consistency.py	python	19999	2026-08-15T11:53:19.881212+00:00	e9ce26e791d0af5412212c87a4406bee1cc07372c7e855d5681a98abbcd2b2cf	NA	NA	NA	NA	NA
-manuscript/figures/ddpcr_e200k_positive_well_vaf/ddpcr_positive_well_fractional_abundance.R	r	21933	2026-08-20T18:09:10.003511+00:00	e472769b12be8bdccfed1a27916d66a6c27f682222074051ac29dcbdcb1c17a8	NA	NA	NA	NA	NA
+manuscript/figures/ddpcr_e200k_positive_well_vaf/ddpcr_positive_well_fractional_abundance.R	r	21972	2026-08-21T12:37:31.317592+00:00	de261d2a8e423a8b061014a6164ea45053ca3528cc548862b9894a75f8dc0d76	NA	NA	NA	NA	NA
 manuscript/figures/ddpcr_fractional_abundance/ddpcr_fractional_abundance.R	r	8406	2026-08-03T17:56:23.959935+00:00	c94330d5831bd860babd8afbe68f169349dc21939976a1279f2f6028ca15c914	NA	NA	NA	NA	NA
 manuscript/figures/ddpcr_fractional_abundance_pooled/ddpcr_fractional_abundance_pooled.R	r	3998	2026-08-03T17:56:30.203282+00:00	02d522fa93bd2cbda50b4d41a94abfec04a6a59995161889c8d8dd6901f2da02	NA	NA	NA	NA	NA
 manuscript/figures/ddpcr_fractional_abundance_pooled_vaf/ddpcr_fractional_abundance_pooled.R	r	11019	2026-08-05T16:52:06.953116+00:00	cf1898d82f3a40fad5ad8177e2e83a815aa00886d50089983b43aabdccdb4e8f	NA	NA	NA	NA	NA
 manuscript/figures/ddpcr_fractional_abundance_vaf/ddpcr_fractional_abundance.R	r	11131	2026-08-15T11:50:10.166867+00:00	93d408bfbbd0345a5fc2a664d6466058c813f13735c74cebbcfa9ee26265a1c3	NA	NA	NA	NA	NA
 manuscript/figures/ddpcr_fractional_abundance_vaf/fix_snv_all_mutations_legend_bottom_final_svg.py	python	16920	2026-08-03T19:00:43.251204+00:00	43fbcd855d344eeea7d7bd4980b4255ffab78c4bf5bf0b6cabcf4fb5fd64ba4f	NA	NA	NA	NA	NA
-manuscript/figures/ddpcr_gating_panels/build_ddpcr_gating_svg_panels.py	python	35087	2026-08-15T11:50:10.169868+00:00	08740c24521bafa197de63c34dce2c2ddb7b6f0675bef6e050c2676e37871fcf	NA	NA	NA	NA	NA
+manuscript/figures/ddpcr_gating_panels/build_ddpcr_gating_svg_panels.py	python	36708	2026-08-21T12:30:50.544180+00:00	e81674c09cce95b6036f67a872612dda161cd4970749a8c31eed1cb031b98bc2	NA	NA	NA	NA	NA
 manuscript/figures/ddpcr_gating_panels/create_ddpcr_scatterplots.R	r	27925	2026-08-20T17:08:55.710233+00:00	1ec718cb7dbca3d2a0b516b0d1d001f8ad5678da47694e18db34f4e919a3cf7b	NA	NA	NA	NA	NA
 manuscript/figures/ddpcr_gating_panels/ddpcr_scatterplot_helpers.R	r	18918	2026-08-15T11:50:10.170868+00:00	0dfb4264dc0f5600941c79e838fd4cfcb3fe6f2ea742c95296661675e35011cc	NA	NA	NA	NA	NA
 manuscript/figures/ddpcr_lod/ddpcr_lod_plots_e200k.R	r	7186	2026-08-03T19:01:27.358010+00:00	9c3405c89a21019dd0b93859845e2f1e8ac70c24734fcd04034963efe61a5af8	NA	NA	NA	NA	NA
