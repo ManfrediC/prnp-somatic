@@ -38,14 +38,14 @@ manuscript-source	manuscript/figures/main/figure_snv_detection_workflow.tex	yes	
 manuscript-source	manuscript/figures/main/figure_rt_quic_decontamination.tex	yes	Figure 4 source
 manuscript-source	manuscript/figures/rt-quic/build_rt_quic_trace_crops.py	yes	Figure 4 deterministic lossless crop generator
 manuscript-source	manuscript/figures/rt-quic/rt_quic_vector_text_panels.tex	yes	Figure 4 vector-text panel renderer
-manuscript-source	manuscript/figures/main/figure_ddpcr_lod_summary.tex	yes	Figure 5 source
+manuscript-source	manuscript/figures/main/figure_ddpcr_mutant_allele_frequencies.tex	yes	Figure 5 source
 manuscript-source	manuscript/figures/main/figure_ddpcr_e200k_positive_wells.tex	yes	Figure 6 source
-manuscript-source	manuscript/figures/main/figure_ddpcr_mutant_allele_frequencies.tex	yes	Figure 7 source
+manuscript-source	manuscript/figures/main/figure_ddpcr_e200k_positive_well_vaf.tex	yes	Figure 7 source
 manuscript-source	manuscript/figures/main/figure_snv_lollipop_variants.tex	yes	Figure 8 source
 manuscript-source	manuscript/figures/supplement/figure_control4_gdna_screentape.tex	yes	Supplementary Figure S1 source
 manuscript-source	manuscript/figures/supplement/figure_ddpcr_gating_strategy.tex	yes	Supplementary Figure S2 source
 manuscript-source	manuscript/figures/supplement/figure_ddpcr_pooled_participant_analysis.tex	yes	Supplementary Figure S3 source
-manuscript-source	manuscript/figures/supplement/figure_ddpcr_e200k_positive_wells.tex	yes	Supplementary Figure S4 source
+manuscript-source	manuscript/figures/supplement/figure_ddpcr_lod_summary.tex	yes	Supplementary Figure S4 source
 manuscript-source	manuscript/tables/main/table_patient_cohort_overview.tex	yes	Table 1 source
 manuscript-source	manuscript/tables/main/table_ddpcr_lod_quantification.tex	yes	Table 2 generated source
 manuscript-source	manuscript/tables/ddpcr_sample_number/ddpcr_sample_number.tex	yes	Table 3 generated source
@@ -84,14 +84,14 @@ manuscript-asset	manuscript/figures/rt-quic/trace_crops/noninfect_DNA.png	yes	Fi
 manuscript-asset	manuscript/figures/rt-quic/trace_crops/rt_quic_trace_crops.tsv	yes	Figure 4 crop audit manifest
 manuscript-asset	manuscript/figures/rt-quic/rt_quic_vector_text_panels.pdf	yes	Figure 4 hybrid vector-text panel asset
 manuscript-backup	manuscript/figures/rt-quic/backup/figure_rt_quic_decontamination_raster_original.pdf	yes	Pre-vectorisation Figure 4 backup
-manuscript-asset	manuscript/figures/ddpcr_lod/D178N_LoD_concentration.pdf	yes	Figure 5 input asset
-manuscript-asset	manuscript/figures/ddpcr_lod/vaf/D178N_fraction_vaf.pdf	yes	Figure 5 input asset
-manuscript-asset	manuscript/figures/ddpcr_lod/E200K_LoD_concentration.pdf	yes	Figure 5 input asset
-manuscript-asset	manuscript/figures/ddpcr_lod/vaf/E200K_fraction_vaf.pdf	yes	Figure 5 input asset
-manuscript-asset	manuscript/figures/ddpcr_lod/P102L_LoD_concentration.pdf	yes	Figure 5 input asset
-manuscript-asset	manuscript/figures/ddpcr_lod/vaf/P102L_fraction_vaf.pdf	yes	Figure 5 input asset
-manuscript-asset	manuscript/figures/ddpcr_fractional_abundance_vaf/SNV_all_mutations_legend_bottom_final.pdf	yes	Figure 7 input asset
+manuscript-asset	manuscript/figures/ddpcr_lod/D178N_LoD_concentration.pdf	yes	Supplementary Figure S4 input asset
+manuscript-asset	manuscript/figures/ddpcr_lod/vaf/D178N_fraction_vaf.pdf	yes	Supplementary Figure S4 input asset
+manuscript-asset	manuscript/figures/ddpcr_lod/E200K_LoD_concentration.pdf	yes	Supplementary Figure S4 input asset
+manuscript-asset	manuscript/figures/ddpcr_lod/vaf/E200K_fraction_vaf.pdf	yes	Supplementary Figure S4 input asset
+manuscript-asset	manuscript/figures/ddpcr_lod/P102L_LoD_concentration.pdf	yes	Supplementary Figure S4 input asset
+manuscript-asset	manuscript/figures/ddpcr_lod/vaf/P102L_fraction_vaf.pdf	yes	Supplementary Figure S4 input asset
+manuscript-asset	manuscript/figures/ddpcr_fractional_abundance_vaf/SNV_all_mutations_legend_bottom_final.pdf	yes	Figure 5 input asset
 manuscript-asset	manuscript/figures/snv_lollipop/SNV_lollipop.pdf	yes	Figure 8 input asset
 manuscript-asset	manuscript/figures/gdna_tape/control4_gdna_screentape.pdf	yes	Supplementary Figure S1 input asset
 manuscript-asset	manuscript/figures/ddpcr_fractional_abundance_pooled_vaf/SNV_pooled_all_mutations_one_legend.pdf	yes	Supplementary Figure S3 input asset
-manuscript-asset	manuscript/figures/ddpcr_e200k_positive_well_vaf/ddpcr_e200k_positive_well_vaf.pdf	yes	Supplementary Figure S4 input asset
+manuscript-asset	manuscript/figures/ddpcr_e200k_positive_well_vaf/ddpcr_e200k_positive_well_vaf.pdf	yes	Figure 7 input asset

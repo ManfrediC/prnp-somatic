@@ -24,16 +24,16 @@ MAIN_FIGURE_SOURCES = [
     "manuscript/figures/main/figure_dna_purification_protocol.tex",
     "manuscript/figures/main/figure_snv_detection_workflow.tex",
     "manuscript/figures/main/figure_rt_quic_decontamination.tex",
-    "manuscript/figures/main/figure_ddpcr_lod_summary.tex",
-    "manuscript/figures/main/figure_ddpcr_e200k_positive_wells.tex",
     "manuscript/figures/main/figure_ddpcr_mutant_allele_frequencies.tex",
+    "manuscript/figures/main/figure_ddpcr_e200k_positive_wells.tex",
+    "manuscript/figures/main/figure_ddpcr_e200k_positive_well_vaf.tex",
     "manuscript/figures/main/figure_snv_lollipop_variants.tex",
 ]
 SUPPLEMENT_FIGURE_SOURCES = [
     "manuscript/figures/supplement/figure_control4_gdna_screentape.tex",
     "manuscript/figures/supplement/figure_ddpcr_gating_strategy.tex",
     "manuscript/figures/supplement/figure_ddpcr_pooled_participant_analysis.tex",
-    "manuscript/figures/supplement/figure_ddpcr_e200k_positive_wells.tex",
+    "manuscript/figures/supplement/figure_ddpcr_lod_summary.tex",
 ]
 MAIN_TABLE_SOURCES = [
     "manuscript/tables/main/table_patient_cohort_overview.tex",
