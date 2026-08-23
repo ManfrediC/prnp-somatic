@@ -15,6 +15,9 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
+from generate_caption_list import OUTPUT_PATH as CAPTION_CATALOGUE_PATH
+from generate_caption_list import build_caption_catalogue
+
 
 FIGURES = [f"Figure {i}" for i in range(1, 9)] + [f"Supplementary Figure S{i}" for i in range(1, 5)]
 TABLES = [f"Table {i}" for i in range(1, 8)] + [f"Supplementary Table S{i}" for i in range(1, 6)]
@@ -245,6 +248,21 @@ def check_external_supplement_assets(root: Path, errors: list[str]) -> None:
             errors.append(f"Missing or empty external asset for {reference}: {raw_path}")
 
 
+def check_caption_catalogue(root: Path, errors: list[str]) -> None:
+    """Check that the plain-text catalogue matches the canonical captions."""
+    path = root / CAPTION_CATALOGUE_PATH
+    try:
+        expected = build_caption_catalogue(root).encode("utf-8")
+    except (KeyError, OSError, ValueError) as exc:
+        errors.append(f"Could not generate caption catalogue: {exc}")
+        return
+    if not path.is_file() or path.read_bytes() != expected:
+        errors.append(
+            "Caption catalogue is stale; run "
+            "src/tools/manuscript/generate_caption_list.py"
+        )
+
+
 def referenced_assets(root: Path, entry_points: list[str]) -> tuple[set[Path], list[str]]:
     tex_seen: set[Path] = set()
     assets: set[Path] = set()
@@ -354,6 +372,7 @@ def check(root: Path) -> list[str]:
 
     check_provenance(root, rows, errors)
     check_external_supplement_assets(root, errors)
+    check_caption_catalogue(root, errors)
 
     for wrapper, expected in EXPECTED_WRAPPERS.items():
         actual = [normalise_repo_path(root, raw).as_posix().replace(root.as_posix() + "/", "") for raw in input_paths(root / wrapper)]
