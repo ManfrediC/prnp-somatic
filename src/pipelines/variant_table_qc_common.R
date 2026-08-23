@@ -84,6 +84,25 @@ first_numeric_from_list <- function(x) {
   )
 }
 
+curate_dbsnp_ids <- function(dbsnp_id_raw, manual_freq) {
+  required_cols <- c("dbsnp_id", "notes")
+  missing_cols <- setdiff(required_cols, colnames(manual_freq))
+  if (length(missing_cols) > 0L) {
+    fail(paste0(
+      "Manual frequency table is missing dbSNP curation column(s): ",
+      paste(missing_cols, collapse = ", ")
+    ))
+  }
+
+  invalid_ids <- manual_freq$dbsnp_id[
+    !is.na(manual_freq$dbsnp_id) &
+      manual_freq$notes == "invalid_or_unresolved_id"
+  ]
+  curated <- dbsnp_id_raw
+  curated[!is.na(curated) & curated %in% invalid_ids] <- NA_character_
+  curated
+}
+
 parse_variant_table_qc_cli <- function(args, sample_manifest_default = NULL) {
   parsed <- parse_cli_args(args)
   sample_manifest_path <- NULL
@@ -296,7 +315,8 @@ run_variant_table_qc <- function(
     filter(gene %in% c("PRNP", "TTN", "TET2")) %>%
     mutate(
       location_relative = word(FUNCOTATION_PRIMARY, 6, sep = fixed("|")),
-      dbsnp_id = str_extract(FUNCOTATION_PRIMARY, "rs\\d+"),
+      dbsnp_id_raw = str_extract(FUNCOTATION_PRIMARY, "rs\\d+"),
+      dbsnp_id = dbsnp_id_raw,
       mutation_type = str_extract(
         FUNCOTATION_PRIMARY,
         paste0(
@@ -346,7 +366,6 @@ run_variant_table_qc <- function(
 
   summary_table <- summary_table %>%
     mutate(
-      dbsnp_id = if_else(dbsnp_id == "rs996098774", NA_character_, dbsnp_id),
       REF = toupper(REF),
       ALT = toupper(ALT),
       variant_id = str_c(str_remove(CHROM, "^chr"), POS, REF, ALT, sep = "-")
@@ -365,6 +384,10 @@ run_variant_table_qc <- function(
       notes = col_character()
     ),
     show_col_types = FALSE
+  )
+  summary_table$dbsnp_id <- curate_dbsnp_ids(
+    summary_table$dbsnp_id_raw,
+    manual_freq
   )
   manual_by_dbsnp <- manual_freq %>%
     filter(!is.na(dbsnp_id), dbsnp_id != "") %>%
@@ -601,24 +624,28 @@ run_variant_table_qc <- function(
     )
   }
 
-  write_tsv(summary_table, file.path(output_dir, "summary_combined_variants.tsv"), na = "")
-  write_tsv(filtered_final, file.path(output_dir, "filtered_variants.tsv"), na = "")
+  summary_export <- summary_table %>% select(-dbsnp_id_raw)
+  filtered_export <- filtered_final %>% select(-dbsnp_id_raw)
+  filtered_out_export <- filtered_out %>% select(-dbsnp_id_raw)
+
+  write_tsv(summary_export, file.path(output_dir, "summary_combined_variants.tsv"), na = "")
+  write_tsv(filtered_export, file.path(output_dir, "filtered_variants.tsv"), na = "")
   write_tsv(
     filtered_final %>% filter(gene == "PRNP"),
     file.path(output_dir, "filtered_prnp_variants.tsv"),
     na = ""
   )
-  write_tsv(filtered_out, file.path(output_dir, "filtered_out_variants.tsv"), na = "")
+  write_tsv(filtered_out_export, file.path(output_dir, "filtered_out_variants.tsv"), na = "")
   write_tsv(filter_counts, file.path(output_dir, "filter_counts.tsv"), na = "")
   write_tsv(settings, file.path(output_dir, "run_settings.tsv"), na = "")
   write_tsv(
-    filtered_final,
+    filtered_export,
     file.path(output_dir, paste0("final_", output_prefix, "_variants.tsv")),
     na = ""
   )
   for (gene_name in c("PRNP", "TET2", "TTN")) {
     write_tsv(
-      summary_table %>% filter(gene == gene_name),
+      summary_export %>% filter(gene == gene_name),
       file.path(output_dir, paste0(output_prefix, "_", gene_name, "_PASS.tsv")),
       na = ""
     )

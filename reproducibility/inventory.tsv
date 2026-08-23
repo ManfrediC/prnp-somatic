@@ -32,7 +32,7 @@ src/pipelines/9_cjd_dilutions_postprocess_with_pon.sh	bash	11867	2026-08-15T11:5
 src/pipelines/preflight_preprocessing.sh	bash	6628	2026-08-15T11:53:19.859216+00:00	b4ce015132530165637966de658ea3a4ee0631c32eea255d7ef7c583efc1d977	NA	NA	NA	NA	NA
 src/pipelines/preprocessing.sh	bash	8085	2026-08-15T11:53:19.859216+00:00	735def2350f3c853ce51b724b445608bcedb2e292f0dfb6703c96f73e699eb8d	NA	NA	NA	NA	NA
 src/pipelines/run_cjd_dilutions_variant_qc_with_pon.sh	bash	305	2026-08-15T11:53:19.860213+00:00	c38721b2d64f33a7ae7dac8570369b5e59b5693daaadf31a1159e93cf1a4f719	NA	NA	NA	NA	NA
-src/pipelines/variant_table_qc_common.R	r	21018	2026-08-15T11:53:19.861247+00:00	de9c22cc2d7bc6e4784366ae6b5ab946adf9c2ecc3cfaa872d63311b1cf343cb	NA	NA	NA	NA	NA
+src/pipelines/variant_table_qc_common.R	r	21821	2026-08-23T11:22:37.748595+00:00	50e68b21caba53c6fc9b35f591c1a0eefc92e7a7e88eaf34ff9f54d7322b60ef	NA	NA	NA	NA	NA
 src/repeats/01_run_prnp_orr.sh	bash	24382	2026-08-15T11:53:19.862212+00:00	880d31dc7b9c5c0806d1a96431cc1a56cabad66d4a77b94762ac4252dd4f9c3a	NA	NA	NA	NA	NA
 src/repeats/02_inspect_prnp_orr_subclonal.py	python	10869	2026-08-15T11:53:19.863211+00:00	24ef4942b711049779c40dbd0002064dd88b65afc2c015adfa67b21f8f289e8b	NA	NA	NA	NA	NA
 src/repeats/03_summarize_prnp_orr.py	python	15244	2026-08-15T11:53:19.863211+00:00	ce4a2b5cc22015be5c1de7c2c009c5a590769c4029d19df332c75a83a200fdbc	NA	NA	NA	NA	NA
