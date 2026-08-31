@@ -1,0 +1,25 @@
+key	value
+stage	candidates_only
+donor_sample	A100_1to2
+wt_sample	NA100_undil
+min_dp	100
+min_gq	30
+min_donor_ad	10
+het_min_af	0.3
+het_max_af	0.7
+hom_alt_min_af	0.9
+max_wt_alt	2
+max_wt_af	0.001
+command	/home/manfredi/miniforge3/envs/prnp-spikein/bin/python src2/spikein/2_define_markers.py
+python_version	3.10.21
+samtools_version	samtools 1.20
+reference_command	samtools faidx /mnt/c/Projects/prnp-somatic/resources/references/snv/chr2_chr4_chr20.fasta chr2:178739142-178741921 chr20:4686135-4701605 chr4:105233898-105237351
+capture_reference_sha256	d85ff797a111ef3a4fee384d7c5c99080213d87f48f9a9d2a81eb9fb97e67a11
+sha256:src2/spikein/2_define_markers.py	0059b63308953ec23af5b3dc08daf5ae2e6d4f48005d5598a7a517f4baa30318
+sha256:results2/spikein/discovery/joint.vcf.gz	0b486298050ed11a4a218b7fcaef471dae8fda726da9f42e861018c342f92e77
+sha256:src2/spikein/samples.tsv	6ff6d3176be295ff74d26f30c8cf9fb4de38f47600c04840839eca875a0c4e5a
+sha256:resources/intervals/capture_targets.interval_list	677a94392c4f9b923c1126eb325a9741522cb56c04b3d99fd23f280739c9ed35
+sha256:results/sequencing_qc/a117v_spike_in_lod_table.csv	72c856ec0be1e8062d8570cda5e1acb3942561ddf7cc84f5d5e38ee8308b638c
+sha256:results2/spikein/discovery/run_settings.tsv	788923c49f9c136caa617860c8160075f6793a2e49cbcc316328df49a27d4fb0
+reference	resources/references/snv/chr2_chr4_chr20.fasta
+reference_sha256_source	results2/spikein/discovery/run_settings.tsv
