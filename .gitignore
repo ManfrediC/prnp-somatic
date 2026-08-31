@@ -11,6 +11,7 @@
 /scratch/
 /tmp/
 /audit/
+/PRNP_numerical_audit.json
 
 # Secrets and local environment files
 .env
