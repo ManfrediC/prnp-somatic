@@ -6,15 +6,33 @@ and outputs confined to `results2/spikein/`. Existing inputs are read-only.
 
 ## Current step
 
-The sample manifest, source genotyping, candidate selection and pure-source
-read-count collection are implemented and have run. Final marker selection,
-mixture counting/calling and recovery tables are not implemented yet.
+The sample manifest, source genotyping, candidate selection, pure-source
+read-count collection and parsing are implemented and have run. Final marker
+selection, mixture counting/calling and recovery tables are not implemented yet.
 Source genotyping completed successfully on 2026-08-31;
 all four VCFs and their indexes passed the script's readability and sample checks.
 The full console log is `results2/spikein/logs/source_genotyping_console.log`;
 VCFs, `run.log` and `run_settings.tsv` are under `results2/spikein/discovery/`.
 Candidate selection found eight other SNPs plus A117V. Direct counts are available
 for all nine sites in both pure samples; technical QC and marker finalisation remain.
+
+The WT background rule is now ALT VAF at most 0.001, with no separate maximum
+ALT-read count. All other thresholds remain unchanged, including minimum ALT
+support in donor and mixtures. Stage 2 uses AD-based AF; direct-count review
+uses ALT divided by summed A/C/G/T counts. WT ALT counts remain in the tables.
+
+The stage-2 rerun is under `results2/spikein/discovery/candidates_wt_vaf_only/`.
+Previous outputs, including `candidates_wt_alt4/`, retain their original settings.
+Both candidate tables are byte-identical: eight provisional other SNPs plus A117V.
+The updated `pure_source_qc_review.tsv` reuses stage 3's raw counts: four other
+SNPs pass, four still fail base quality, and A117V passes separately. All reviewed
+measurements match the previous review and raw counts; only WT AF was reapplied,
+with other QC decisions retained. No eligibility decision changed.
+
+This is a review, not a final informative marker set. Only stage 2 was rerun for
+this threshold change; no BAM recount, later-stage implementation or mixture
+analysis was performed. Log: `results2/spikein/logs/wt_vaf_only_rerun.log`.
+The parser added in the side conversation applies no thresholds and is unaffected.
 
 The manifest records the four user-confirmed roles. `A100_1to2` is the pure
 heterozygous donor despite its name. Fractions are provenance metadata only;
@@ -203,5 +221,36 @@ single-end mapping quality. Counts, ordinary mapping quality, base quality and
 strand counts are unaffected. Omit that optional metric or mark it unavailable
 in the later parser; see the source check in `doc/spikein_plan.md`.
 
-The separate parser, technical QC and A117V identity validation are not yet
-implemented. No final marker set or mixture results have been produced.
+The separate parser is implemented below. Technical QC and A117V identity
+validation remain for the next step. No final marker set or mixture results
+have been produced.
+
+## Read-count conversion
+
+`4_readcount_to_tsv.py` adapts the existing parser to the two pure samples in
+the manifest. Run in WSL from the repository root:
+
+```bash
+python -B src2/spikein/4_readcount_to_tsv.py
+```
+
+It reads stage 3's raw files and writes one `<sample>_metrics.tsv` per sample
+under `results2/spikein/readcount_qc/pure/metrics/`. An existing output directory
+is refused; `--output-dir` can select a fresh directory under `results2/spikein`.
+
+Each allele row contains `CHROM`, `POS`, `REF`, reported `DEPTH`, `ACGT_DEPTH`,
+`BASE`, `COUNT`, `MEAN_BQ`, `MEAN_MQ`, `FWD` and `REV`. `ACGT_DEPTH` is the sum of
+A/C/G/T observations for later SNV VAF calculation; it excludes N and indel
+events. Reference and allele bases are upper case. Zero-count alleles are
+retained with mean qualities recorded as `NA`.
+
+Quality labels follow the
+[bam-readcount 1.0.1 output definition](https://github.com/genome/bam-readcount/blob/v1.0.1/README.md#output):
+the raw mapping-quality field precedes base quality. The unavailable optional
+single-end mapping quality and unused metrics are omitted. This stage performs
+no marker selection, VAF filtering or technical QC and does not read BAMs.
+
+The conversion ran in WSL and produced 55 donor and 54 WT allele rows, covering
+all nine sites in each sample. Every exported field was checked against the
+raw counts. A repeat invocation refused to overwrite the tables. The run and
+verification log is `results2/spikein/logs/readcount_conversion.log`.
