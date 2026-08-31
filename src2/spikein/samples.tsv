@@ -1,0 +1,5 @@
+role	sample_id	bam	donor_fraction	fraction_provenance
+pure_donor	A100_1to2	results/final_bam/A100_1to2.bam	1	User-confirmed pure heterozygous A117V source; do not infer dilution from the filename.
+pure_wt	NA100_undil	results/final_bam/NA100_undil.bam	0	User-confirmed pure wild-type source.
+high	NA995A05_undil	results/final_bam/NA995A05_undil.bam	0.04784688995215311	10/209 from manuscript/reproducibility/a117v/a117v_spike_in_source_audit.md; worksheet coefficient 0.05 is not a normalised fraction.
+low	NA99A1_undil	results/final_bam/NA99A1_undil.bam	NA	manuscript/reproducibility/a117v/a117v_spike_in_source_audit.md does not establish an unambiguous source-DNA fraction for the 1% label.

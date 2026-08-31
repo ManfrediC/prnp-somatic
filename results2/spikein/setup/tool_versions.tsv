@@ -1,0 +1,24 @@
+component	command	executable	exit_code	status	version_or_detail
+platform	platform.platform()	/home/manfredi/miniforge3/envs/prnp-spikein/bin/python	0	PASS	Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39
+environment	CONDA_PREFIX	/home/manfredi/miniforge3/envs/prnp-spikein	0	PASS	prnp-spikein
+conda	/home/manfredi/miniforge3/bin/conda --version	/home/manfredi/miniforge3/bin/conda	0	PASS	conda 26.3.2
+python	python --version	/home/manfredi/miniforge3/envs/prnp-spikein/bin/python	0	PASS	Python 3.10.21
+java	java -version	/home/manfredi/miniforge3/envs/prnp-spikein/bin/java	0	PASS	"openjdk version ""17.0.13-internal"" 2024-10-15 | OpenJDK Runtime Environment (build 17.0.13-internal+0-adhoc..src) | OpenJDK 64-Bit Server VM (build 17.0.13-internal+0-adhoc..src, mixed mode, sharing)"
+samtools	samtools --version	/home/manfredi/miniforge3/envs/prnp-spikein/bin/samtools	0	PASS	samtools 1.20 | Using htslib 1.20 | Copyright (C) 2024 Genome Research Ltd. | Samtools compilation details:
+bcftools	bcftools --version	/home/manfredi/miniforge3/envs/prnp-spikein/bin/bcftools	0	PASS	bcftools 1.20 | Using htslib 1.20 | Copyright (C) 2024 Genome Research Ltd. | License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+tabix	tabix --version	/home/manfredi/miniforge3/envs/prnp-spikein/bin/tabix	0	PASS	tabix (htslib) 1.20 | Copyright (C) 2024 Genome Research Ltd.
+bgzip	bgzip --version	/home/manfredi/miniforge3/envs/prnp-spikein/bin/bgzip	0	PASS	bgzip (htslib) 1.20 | Copyright (C) 2024 Genome Research Ltd.
+bam-readcount	bam-readcount -v	/home/manfredi/miniforge3/envs/prnp-spikein/bin/bam-readcount	1	PASS	bam-readcount version: 1.0.1-unstable-8-c7c76e6-dirty (commit c7c76e6-dirty)
+gatk	gatk --version	/home/manfredi/miniforge3/envs/prnp-spikein/bin/gatk	0	PASS	The Genome Analysis Toolkit (GATK) v4.5.0.0 | HTSJDK Version: 4.1.0 | Picard Version: 3.1.1
+gatk_HaplotypeCaller	gatk HaplotypeCaller --help	/home/manfredi/miniforge3/envs/prnp-spikein/bin/gatk	0	PASS	Help loaded; required options present: --emit-ref-confidence, --sample-ploidy, --max-reads-per-alignment-start, --intervals
+gatk_CombineGVCFs	gatk CombineGVCFs --help	/home/manfredi/miniforge3/envs/prnp-spikein/bin/gatk	0	PASS	Help loaded; required options present: --variant, --reference
+gatk_GenotypeGVCFs	gatk GenotypeGVCFs --help	/home/manfredi/miniforge3/envs/prnp-spikein/bin/gatk	0	PASS	Help loaded; required options present: --variant, --reference
+gatk_Mutect2	gatk Mutect2 --help	/home/manfredi/miniforge3/envs/prnp-spikein/bin/gatk	0	PASS	Help loaded; required options present: --germline-resource, --panel-of-normals, --f1r2-tar-gz
+gatk_LearnReadOrientationModel	gatk LearnReadOrientationModel --help	/home/manfredi/miniforge3/envs/prnp-spikein/bin/gatk	0	PASS	Help loaded; required options present: --num-em-iterations
+gatk_FilterMutectCalls	gatk FilterMutectCalls --help	/home/manfredi/miniforge3/envs/prnp-spikein/bin/gatk	0	PASS	Help loaded; required options present: --orientation-bias-artifact-priors, --stats
+ldd_samtools	ldd /home/manfredi/miniforge3/envs/prnp-spikein/bin/samtools	/usr/bin/ldd	0	PASS	No missing linked libraries
+ldd_bcftools	ldd /home/manfredi/miniforge3/envs/prnp-spikein/bin/bcftools	/usr/bin/ldd	0	PASS	No missing linked libraries
+ldd_tabix	ldd /home/manfredi/miniforge3/envs/prnp-spikein/bin/tabix	/usr/bin/ldd	0	PASS	No missing linked libraries
+ldd_bgzip	ldd /home/manfredi/miniforge3/envs/prnp-spikein/bin/bgzip	/usr/bin/ldd	0	PASS	No missing linked libraries
+ldd_bam-readcount	ldd /home/manfredi/miniforge3/envs/prnp-spikein/bin/bam-readcount	/usr/bin/ldd	0	PASS	No missing linked libraries
+ldd_java	ldd /home/manfredi/miniforge3/envs/prnp-spikein/lib/jvm/bin/java	/usr/bin/ldd	0	PASS	No missing linked libraries at the resolved executable. Initial ldd on bin/java symlink reported libjli.so missing because of the symlink location; Java and all six GATK help commands ran successfully.
