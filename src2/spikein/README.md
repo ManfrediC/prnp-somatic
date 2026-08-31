@@ -254,3 +254,18 @@ The conversion ran in WSL and produced 55 donor and 54 WT allele rows, covering
 all nine sites in each sample. Every exported field was checked against the
 raw counts. A repeat invocation refused to overwrite the tables. The run and
 verification log is `results2/spikein/logs/readcount_conversion.log`.
+
+## Marker finalisation draft
+
+`5_marker_recovery.py` is drafted but has not run. It reads only the latest
+provisional candidates and the two pure-source metrics tables. It independently
+applies the agreed direct-count criteria, including WT AF at most 0.001 with no
+WT ALT-count cap. The stage-2 genotype decision remains a prerequisite.
+
+A117V must be the single labelled control, be heterozygous in the donor and pass
+all pure-source checks. A later authorised run will write `marker_qc.tsv`, its
+passing subset `informative_markers.tsv`, and minimal settings under a fresh
+results2 directory. The informative table is hashed before any mixture is read.
+
+The draft has no mixture, caller or recovery-status logic. Syntax, dependency,
+adversarial and simplicity reviews passed. No final marker output exists yet.
