@@ -16,7 +16,6 @@ MIN_DONOR_AD = 10
 HET_MIN_AF = 0.30
 HET_MAX_AF = 0.70
 HOM_ALT_MIN_AF = 0.90
-MAX_WT_ALT = 2
 MAX_WT_AF = 0.001
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -67,7 +66,7 @@ def genotype_qc(donor, wt):
         if values["af"] is None:
             reasons.append(f"{role}_ad_unavailable")
 
-    # Require donor balance consistent with GT and minimal WT ALT support.
+    # Require donor balance consistent with GT and WT ALT AF at most 0.001.
     if donor["af"] is not None:
         if donor["alt_count"] < MIN_DONOR_AD:
             reasons.append("donor_alt_count")
@@ -76,7 +75,7 @@ def genotype_qc(donor, wt):
                 reasons.append("donor_heterozygous_balance")
         elif donor_gt == ["1", "1"] and donor["af"] < HOM_ALT_MIN_AF:
             reasons.append("donor_homozygous_alt_balance")
-    if wt["af"] is not None and (wt["alt_count"] > MAX_WT_ALT or wt["af"] > MAX_WT_AF):
+    if wt["af"] is not None and wt["af"] > MAX_WT_AF:
         reasons.append("wt_alt_support")
     return reasons
 
@@ -177,7 +176,7 @@ def main():
     settings = dict(donor_sample=samples["pure_donor"], wt_sample=samples["pure_wt"],
                     min_dp=MIN_DP, min_gq=MIN_GQ, min_donor_ad=MIN_DONOR_AD,
                     het_min_af=HET_MIN_AF, het_max_af=HET_MAX_AF, hom_alt_min_af=HOM_ALT_MIN_AF,
-                    max_wt_alt=MAX_WT_ALT, max_wt_af=MAX_WT_AF, command=shlex.join([sys.executable, *sys.argv]),
+                    max_wt_af=MAX_WT_AF, command=shlex.join([sys.executable, *sys.argv]),
                     git_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
                     stage1_settings=str(DISCOVERY_SETTINGS.relative_to(ROOT)),
                     stage1_settings_sha256=hashlib.sha256(DISCOVERY_SETTINGS.read_bytes()).hexdigest())

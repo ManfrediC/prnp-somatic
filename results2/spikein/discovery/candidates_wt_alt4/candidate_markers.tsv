@@ -1,0 +1,10 @@
+marker_id	chromosome	position	ref	alt	category	dbsnp_id	vcf_filter	reference_match	donor_gt	donor_gq	donor_dp	donor_ad	donor_ref_count	donor_alt_count	donor_af	wt_gt	wt_gq	wt_dp	wt_ad	wt_ref_count	wt_alt_count	wt_af	candidate_qc_pass	qc_reasons	validation_status
+chr2:178740453:C>T	chr2	178740453	C	T	other_snp	NA	.	True	0/1	99	7473	3794,3679	3794	3679	0.492305633614345	0/0	99	1124	1124,0	1124	0	0.0	True	none	pending_pure_read_counts
+chr20:4688888:G>A	chr20	4688888	G	A	other_snp	NA	.	True	0/1	99	6532	3252,3280	3252	3280	0.5021432945499081	0/0	99	3401	3401,0	3401	0	0.0	True	none	pending_pure_read_counts
+chr20:4690735:T>G	chr20	4690735	T	G	other_snp	NA	.	True	0/1	99	4484	2336,2148	2336	2148	0.4790365744870651	0/0	99	2895	2895,0	2895	0	0.0	True	none	pending_pure_read_counts
+chr20:4693455:G>A	chr20	4693455	G	A	other_snp	NA	.	True	0/1	99	5336	2697,2639	2697	2639	0.4945652173913043	0/0	99	1581	1581,0	1581	0	0.0	True	none	pending_pure_read_counts
+chr20:4699190:G>A	chr20	4699190	G	A	other_snp	NA	.	True	0/1	99	6659	3232,3427	3232	3427	0.5146418381138309	0/0	99	971	971,0	971	0	0.0	True	none	pending_pure_read_counts
+chr20:4699570:C>T	chr20	4699570	C	T	a117v_positive_control	rs74315402	.	True	0/1	99	5912	3068,2844	3068	2844	0.4810554803788904	0/0	99	971	971,0	971	0	0.0	True	none	pending_pure_read_counts
+chr20:4699571:A>G	chr20	4699571	A	G	other_snp	NA	.	True	0/1	99	5908	3064,2844	3064	2844	0.4813811780636425	0/0	99	971	971,0	971	0	0.0	True	none	pending_pure_read_counts
+chr20:4700664:A>G	chr20	4700664	A	G	other_snp	NA	.	True	0/1	99	7076	3628,3448	3628	3448	0.48728094968908986	0/0	99	1360	1360,0	1360	0	0.0	True	none	pending_pure_read_counts
+chr4:105235337:A>G	chr4	105235337	A	G	other_snp	NA	.	True	0/1	99	6849	3421,3428	3421	3428	0.5005110235070813	0/0	99	2072	2072,0	2072	0	0.0	True	none	pending_pure_read_counts

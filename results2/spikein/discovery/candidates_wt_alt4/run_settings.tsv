@@ -1,0 +1,15 @@
+key	value
+donor_sample	A100_1to2
+wt_sample	NA100_undil
+min_dp	100
+min_gq	30
+min_donor_ad	10
+het_min_af	0.3
+het_max_af	0.7
+hom_alt_min_af	0.9
+max_wt_alt	4
+max_wt_af	0.001
+command	/home/manfredi/miniforge3/envs/prnp-spikein/bin/python src2/spikein/2_define_markers.py --output-dir results2/spikein/discovery/candidates_wt_alt4
+git_commit	28d41148e075c96214ebe9326a3d194e62c07314
+stage1_settings	results2/spikein/discovery/run_settings.tsv
+stage1_settings_sha256	788923c49f9c136caa617860c8160075f6793a2e49cbcc316328df49a27d4fb0

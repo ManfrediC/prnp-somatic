@@ -1,0 +1,10 @@
+marker_id	category	candidate_qc_pass	donor_depth	donor_ref_count	donor_alt_count	donor_af	donor_alt_forward	donor_alt_reverse	donor_alt_mean_bq	donor_alt_mean_mq	wt_depth	wt_ref_count	wt_alt_count	wt_af	wt_ref_mean_bq	wt_ref_mean_mq	review_pass	review_reasons
+chr2:178740453:C>T	other_snp	True	7473	3796	3677	0.49203800347919174	1829	1848	22.68	60.0	5991	5987	4	0.0006676681689200467	17.53	60.0	False	wt REF mean BQ 17.53 < 20
+chr20:4688888:G>A	other_snp	True	6529	3254	3275	0.5016082095267269	1475	1800	22.46	60.0	5918	5917	1	0.00016897600540723216	21.42	60.0	True	All criteria met
+chr20:4690735:T>G	other_snp	True	4486	2339	2147	0.47860008916629515	1153	994	21.42	60.0	3848	3848	0	0.0	21.93	60.0	True	All criteria met
+chr20:4693455:G>A	other_snp	True	5425	2757	2666	0.49142857142857144	1356	1310	22.73	60.0	4372	4370	0	0.0	22.2	59.82	True	All criteria met
+chr20:4699190:G>A	other_snp	True	6658	3234	3423	0.514118353860018	1588	1835	22.83	60.0	5923	5922	0	0.0	17.3	60.0	False	wt REF mean BQ 17.30 < 20
+chr20:4699570:C>T	a117v_positive_control	True	5772	3075	2696	0.4670824670824671	1407	1289	21.8	60.0	5300	5300	0	0.0	21.4	60.0	True	All criteria met
+chr20:4699571:A>G	other_snp	True	5771	3072	2697	0.46733668341708545	1411	1286	20.42	60.0	5302	5302	0	0.0	22.48	60.0	True	All criteria met
+chr20:4700664:A>G	other_snp	True	7076	3630	3446	0.4869983041266252	1667	1779	17.27	60.0	6544	6543	1	0.0001528117359413203	22.92	60.0	False	donor ALT mean BQ 17.27 < 20
+chr4:105235337:A>G	other_snp	True	6848	3424	3424	0.5	1776	1648	17.02	60.0	5955	5955	0	0.0	22.73	60.0	False	donor ALT mean BQ 17.02 < 20
