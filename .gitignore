@@ -14,6 +14,7 @@
 /PRNP_numerical_audit.json
 /results2/spikein/**/*.log
 /results2/spikein/readcount_qc/pure_rerun/
+/results2/spikein/readcount_qc/pure/metrics_rerun/
 
 # Secrets and local environment files
 .env
