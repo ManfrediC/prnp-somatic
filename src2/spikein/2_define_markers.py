@@ -91,6 +91,7 @@ def write_tsv(path, header, rows):
 
 
 def parse_output_dir():
+    # Resolve the requested directory and keep all new output below results2/spikein.
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=Path("results2/spikein/discovery/candidates"))
     output = (ROOT / parser.parse_args().output_dir).resolve()
@@ -100,6 +101,7 @@ def parse_output_dir():
 
 
 def load_pure_samples():
+    # Match the two pure-source roles to the exact samples in the joint VCF.
     with MANIFEST.open() as handle:
         sources = [row for row in csv.DictReader(handle, delimiter="\t")
                    if row["role"] in ("pure_donor", "pure_wt")]
@@ -113,6 +115,7 @@ def load_pure_samples():
 
 
 def load_control_allele():
+    # Identify the single A117V control allele from the historical table.
     with A117V_SOURCE.open() as handle:
         controls = {(row["chromosome"], int(row["position"]), row["ref"], row["alt"], row["dbsnp_id"])
                     for row in csv.DictReader(handle) if row["variant"] == "A117V"}
@@ -122,6 +125,7 @@ def load_control_allele():
 
 
 def validate_reference(control):
+    # Validate every VCF REF and the control base against the indexed reference.
     control_chrom, control_position, control_ref, _, _ = control
     if not Path(str(REFERENCE) + ".fai").is_file():
         raise ValueError("The existing reference FASTA index is required")
@@ -134,6 +138,7 @@ def validate_reference(control):
 
 
 def query_candidate_audit(samples, control):
+    # Query unsplit records with donor fields followed by WT fields.
     control_chrom, control_position, control_ref, control_alt, control_rsid = control
     control_key = (control_chrom, control_position, control_ref, control_alt)
     query = ["bcftools", "query", "-s", f"{samples['pure_donor']},{samples['pure_wt']}",
@@ -143,6 +148,8 @@ def query_candidate_audit(samples, control):
         chrom, position, identifier, ref, alt, vcf_filter, donor_text, wt_text = line.split("\t")
         position = int(position)
         donor, wt = sample_fields(donor_text), sample_fields(wt_text)
+
+        # Classify the allele and retain every reason that prevents candidate selection.
         is_snv = ref in "ACGT" and alt in "ACGT" and len(ref) == len(alt) == 1 and ref != alt
         is_control = (chrom, position, ref, alt) == control_key
         reasons = genotype_qc(donor, wt)
@@ -152,6 +159,8 @@ def query_candidate_audit(samples, control):
         rsid = identifier if identifier != "." else None
         if is_control:
             category, rsid = "a117v_positive_control", control_rsid
+
+        # Keep the full evidence row for candidate selection and the audit table.
         row = {
             "marker_id": f"{chrom}:{position}:{ref}>{alt}",
             "chromosome": chrom, "position": position, "ref": ref, "alt": alt,
@@ -170,6 +179,7 @@ def query_candidate_audit(samples, control):
 
 
 def add_missing_control(audit, control):
+    # Add a placeholder so downstream read counting always includes A117V.
     control_chrom, control_position, control_ref, control_alt, control_rsid = control
     if not any(row["category"] == "a117v_positive_control" for row in audit):
         row = dict.fromkeys(HEADER)
