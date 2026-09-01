@@ -4,25 +4,23 @@
 import argparse
 import csv
 import hashlib
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
-
-# Use the marker set frozen by stage 5 and the raw counts written by stage 6.
+# Use the marker set by stage 5 and the raw counts written by stage 6.
 ROOT = Path(__file__).resolve().parents[2]
 MARKERS = ROOT / "results2/spikein/markers/informative_markers.tsv"
 MARKER_SETTINGS = ROOT / "results2/spikein/markers/run_settings.tsv"
 SAMPLES = ROOT / "src2/spikein/samples.tsv"
 READCOUNTS = ROOT / "results2/spikein/readcount_qc/mixtures/readcounts"
 
-# Apply the agreed read-level recovery thresholds.
+# Apply the agreed technical read-level recovery thresholds.
 MIN_DEPTH = 100
 MIN_ALT = 10
 MIN_ALT_STRAND = 3
 MIN_MEAN_BQ = 20
 MIN_MEAN_MQ = 20
-EXISTING_LOD = 0.0081
 
 
 def read_tsv(path):
@@ -36,10 +34,12 @@ def read_count_file(path):
     sites = {}
     with path.open(encoding="utf-8") as handle:
         for row in csv.reader(handle, delimiter="\t"):
+            # Separate the site fields from the per-allele measurements.
             chrom, position, ref, reported_depth, *fields = row
             alleles = {}
             for field in fields:
-                base, count, mq, bq, _, forward, reverse, *unused = field.split(":")
+                # Retain canonical bases and verify their strand counts.
+                base, count, mq, bq, _, forward, reverse, *_unused = field.split(":")
                 if base.upper() not in "ACGT":
                     continue
                 count, forward, reverse = int(count), int(forward), int(reverse)
@@ -50,6 +50,7 @@ def read_count_file(path):
                     "forward": forward, "reverse": reverse,
                 }
 
+            # Reject duplicate sites or incomplete A/C/G/T measurements.
             site = (chrom, int(position))
             if site in sites or set(alleles) != set("ACGT"):
                 raise ValueError(f"Invalid A/C/G/T records: {path}, {chrom}:{position}")
@@ -61,29 +62,30 @@ def read_count_file(path):
 
 
 def evaluate(marker, sample, site):
-    # Calculate counts, VAF and the separate read-level recovery statuses.
+    # Calculate counts, VAF and read-level recovery.
     ref, alt = marker["ref"].upper(), marker["alt"].upper()
     if site["ref"] != ref:
         raise ValueError(f"Reference mismatch: {marker['marker_id']}, {sample['sample_id']}")
 
+    # Use summed A/C/G/T counts as the denominator for direct VAF.
     ref_data, alt_data = site["alleles"][ref], site["alleles"][alt]
     depth = sum(allele["count"] for allele in site["alleles"].values())
     vaf = alt_data["count"] / depth if depth else "NA"
     evaluable = depth >= MIN_DEPTH
 
-    # Technical recovery is unavailable below the depth threshold.
+    # Read-level recovery is unavailable below the depth threshold.
     reasons = []
     if alt_data["count"] < MIN_ALT: reasons.append("alt_count")
     if alt_data["forward"] < MIN_ALT_STRAND: reasons.append("alt_forward")
     if alt_data["reverse"] < MIN_ALT_STRAND: reasons.append("alt_reverse")
     if alt_data["count"] and alt_data["mean_bq"] < MIN_MEAN_BQ: reasons.append("alt_mean_bq")
     if alt_data["count"] and alt_data["mean_mq"] < MIN_MEAN_MQ: reasons.append("alt_mean_mq")
-    technical_pass = not reasons if evaluable else "NA"
-    technical_reasons = ";".join(reasons) or "none"
+    recovered = not reasons if evaluable else "NA"
+    recovery_reasons = ";".join(reasons) or "none"
     if not evaluable:
-        technical_reasons = "insufficient_depth"
+        recovery_reasons = "insufficient_depth"
 
-    # Expected AF is available only when the source fraction is established.
+    # Expected AF is available only when the fraction is established.
     if sample["donor_fraction"] == "NA":
         expected_af = "NA"
     else:
@@ -102,9 +104,8 @@ def evaluate(marker, sample, site):
         "alt_mean_bq": alt_data["mean_bq"] if alt_data["count"] else "NA",
         "alt_mean_mq": alt_data["mean_mq"] if alt_data["count"] else "NA",
         "evaluable_at_depth": evaluable, "alt_read_present": alt_data["count"] > 0,
-        "technical_read_qc_pass": technical_pass,
-        "technical_qc_reasons": technical_reasons,
-        "above_existing_lod": vaf >= EXISTING_LOD if evaluable else "NA",
+        "read_level_recovered": recovered,
+        "recovery_failure_reasons": recovery_reasons,
     }
 
 
@@ -116,8 +117,32 @@ def write_tsv(path, rows):
         writer.writerows(rows)
 
 
+def derive_empirical_lod(rows):
+    # Use the lowest recovered marker VAF across both mixtures.
+    recovered_results = []
+    for result in rows:
+        if result["read_level_recovered"] is True:
+            recovered_results.append(result)
+    if not recovered_results:
+        raise ValueError("Cannot derive an empirical LoD without a recovered marker")
+    source = min(recovered_results, key=lambda result: result["alt_vaf"])
+    vaf = source["alt_vaf"]
+
+    # Retain the observation that defines the empirical value.
+    return {
+        "estimate": "minimum_observed_recovered_vaf",
+        "scope": "all_markers_across_high_and_low_mixtures",
+        "empirical_lod_vaf": f"{vaf:.10f}",
+        "supporting_marker": source["marker_id"],
+        "supporting_mixture": source["sample_role"],
+        "supporting_sample": source["sample_id"],
+        "alt_count": source["alt_count"],
+        "usable_depth": source["usable_depth"],
+    }
+
+
 def main():
-    # Confine new files to a fresh directory below results2/spikein.
+    # New files go to a fresh directory below results2/spikein.
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=Path("results2/spikein/read_recovery"))
     output = (ROOT / parser.parse_args().output_dir).resolve()
@@ -134,13 +159,13 @@ def main():
     if not markers or len(marker_sites) != len(markers):
         raise ValueError("Informative markers must be non-empty and have unique sites")
 
-    # Require the high and low mixture roles from the authoritative manifest.
+    # Require the high and low mixture roles from the manifest.
     samples = [row for row in read_tsv(SAMPLES) if row["role"] in ("high", "low")]
     samples.sort(key=lambda row: ("high", "low").index(row["role"]))
     if [row["role"] for row in samples] != ["high", "low"]:
         raise ValueError("Expected one high and one low mixture in samples.tsv")
 
-    # Evaluate every frozen marker in both mixtures.
+    # Evaluate every marker in both mixtures.
     counts = {}
     for sample in samples:
         path = READCOUNTS / f"{sample['sample_id']}.txt"
@@ -156,20 +181,28 @@ def main():
         for sample in samples:
             rows.append(evaluate(marker, sample, counts[sample["role"]][site]))
 
-    # Write mixture read recovery and concise run settings.
+    # Derive the empirical LoD from all recovered marker observations.
+    empirical_lod = derive_empirical_lod(rows)
+
+    # Write mixture recovery, the empirical LoD and concise run settings.
     output.mkdir(parents=True)
     write_tsv(output / "mixture_read_recovery.tsv", rows)
+    write_tsv(output / "empirical_lod.tsv", [empirical_lod])
+
+    # Record the fixed recovery thresholds separately from the derived LoD.
     run_settings = {
         "command": " ".join(sys.argv),
         "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         "informative_markers_sha256": marker_hash,
         "min_depth": MIN_DEPTH, "min_alt": MIN_ALT,
         "min_alt_strand": MIN_ALT_STRAND, "min_mean_bq": MIN_MEAN_BQ,
-        "min_mean_mq": MIN_MEAN_MQ, "existing_lod": EXISTING_LOD,
+        "min_mean_mq": MIN_MEAN_MQ,
     }
     write_tsv(output / "run_settings.tsv",
               [{"key": key, "value": value} for key, value in run_settings.items()])
     print(f"Evaluated {len(markers)} markers in both mixtures: {output}")
+    print(f"Empirical LoD: {empirical_lod['alt_count']}/{empirical_lod['usable_depth']} "
+          f"({100 * float(empirical_lod['empirical_lod_vaf']):.3f}%)")
 
 
 if __name__ == "__main__":

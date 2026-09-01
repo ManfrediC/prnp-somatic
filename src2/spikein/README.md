@@ -129,9 +129,10 @@ the moves and rechecked hashes are recorded in
 Actual calling and the script's output validation have now completed. Marker
 eligibility and the direct-read A117V identity check remain for the next stage.
 
-The later recovery comparator will be **VAF >= 0.0081**, including equality,
-as explicitly confirmed by the user. This first stage does not apply a VAF
-threshold or select informative markers.
+The previously proposed **VAF >= 0.0081** comparator has been superseded. The
+spike-in analysis now derives its empirical LoD from the minimum technically
+recovered marker VAF across the two mixtures, including A117V. This first stage
+does not apply a VAF threshold or select informative markers.
 
 ## Candidate selection
 
@@ -313,11 +314,12 @@ or complexity result for this stage.
 
 `7_mixture_read_recovery.py` is drafted to evaluate the frozen informative-marker
 set in the high and low mixture count tables. It applies the agreed depth,
-support, strand, base-quality, mapping-quality and existing-LoD thresholds,
-records expected AF where the source fraction is established, and keeps
-technical QC separate from the LoD comparison. It does not read BAMs, call
-variants or assign a final biological recovery interpretation.
+support, strand, base-quality and mapping-quality thresholds and records expected
+AF where the source fraction is established. After technical recovery is fixed,
+it derives the empirical LoD as the minimum recovered marker VAF across both
+mixtures, including A117V. The LoD is not applied back to the spike-in rows. The
+script does not read BAMs or call variants.
 
-An authorised run will write `mixture_read_recovery.tsv` and `run_settings.tsv`
-under a fresh `results2/spikein/read_recovery/` directory. No stage-7 output
-exists yet.
+An authorised run will write `mixture_read_recovery.tsv`, `empirical_lod.tsv`
+and `run_settings.tsv` under a fresh `results2/spikein/read_recovery/` directory.
+No stage-7 output exists yet.
