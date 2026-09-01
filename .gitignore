@@ -86,6 +86,7 @@ nohup.out
 /results2/spikein/filtermutectcalls/orientation/
 /results2/spikein/filtermutectcalls/work/
 /results2/spikein/filtermutectcalls/run.log
+/results2/sequencing2/
 
 # Large generated media and archives
 *.pdf

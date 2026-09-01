@@ -1,0 +1,23 @@
+name: prnp-sequencing2
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  # Match the original SNV pipeline environment with an isolated name.
+  - python=3.10
+  - pip
+  - samtools=1.20
+  - bcftools=1.20
+  - htslib=1.20
+  - bedtools=2.31.1
+  - bam-readcount=1.0.1
+  - fastqc=0.12.1
+  - multiqc=1.33
+  - openjdk=17
+  - gatk4=4.5.0.0
+  - r-base=4.3
+  - r-dplyr=1.1
+  - r-readr=2.1
+  - r-stringr=1.5
+  - r-tibble=3.2
+  - r-tidyr=1.3

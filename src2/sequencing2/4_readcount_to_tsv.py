@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+"""Flatten bam-readcount text output into per-allele TSV rows.
+
+Input rows contain one site followed by multiple allele blocks (A/C/G/T/indels).
+This parser emits one output row per allele block so downstream joins are simple.
+"""
+
+import argparse
+import csv
+import glob
+import os
+
+HEADER = [
+    "CHROM",
+    "POS",
+    "REF",
+    "BASE",
+    "COUNT",
+    "MEAN_BQ",
+    "MEAN_MQ",
+    "MEAN_POS",
+    "FWD",
+    "REV",
+    "FRAC",
+    "MMLQ",
+    "MEAN_READ_POS",
+    "FWD_BQ",
+    "REV_BQ",
+    "FRD",
+    "SB_RATIO",
+]
+
+
+def parse_bam_readcount(input_file: str, output_file: str) -> None:
+    # Convert one bam-readcount text file into one flattened TSV.
+    # Each emitted row represents one allele observation at one genomic site.
+    with (
+        open(input_file, "r", encoding="utf-8") as infile,
+        open(output_file, "w", newline="", encoding="utf-8") as outfile,
+    ):
+        reader = csv.reader(infile, delimiter="\t")
+        writer = csv.writer(outfile, delimiter="\t", lineterminator="\n")
+        writer.writerow(HEADER)
+
+        for row in reader:
+            # Skip comments/empty lines; data rows are expected to be tab-delimited.
+            if not row or row[0].startswith("#"):
+                continue
+
+            # bam-readcount leading site fields:
+            # 0=chromosome, 1=1-based position, 2=reference base, 3=depth.
+            chrom = row[0]
+            pos = row[1]
+            ref = row[2]
+
+            # row[4:] holds allele-specific payloads such as:
+            # A:count:meanBQ:meanMQ:...  C:count:meanBQ:meanMQ:...
+            for allele_field in row[4:]:
+                if not allele_field:
+                    continue
+                parts = allele_field.split(":")
+                base = parts[0]
+                metrics = parts[1:]
+
+                # Keep a stable column shape even if bam-readcount omits trailing
+                # metric fields (this occurs in some low-information rows).
+                if len(metrics) < 13:
+                    metrics += [""] * (13 - len(metrics))
+
+                out = [
+                    chrom,
+                    pos,
+                    ref,
+                    base,
+                    metrics[0],  # COUNT
+                    metrics[1],  # MEAN_BQ
+                    metrics[2],  # MEAN_MQ
+                    metrics[3],  # MEAN_POS
+                    metrics[4],  # FWD
+                    metrics[5],  # REV
+                    metrics[6],  # FRAC
+                    metrics[7],  # MMLQ
+                    metrics[8],  # MEAN_READ_POS
+                    metrics[9],  # FWD_BQ
+                    metrics[10],  # REV_BQ
+                    metrics[11],  # FRD
+                    metrics[12],  # SB_RATIO
+                ]
+                writer.writerow(out)
+
+
+def process_directory(input_dir: str, output_dir: str) -> int:
+    # Parse every *.txt readcount file in lexical order for deterministic output.
+    os.makedirs(output_dir, exist_ok=True)
+    input_files = sorted(glob.glob(os.path.join(input_dir, "*.txt")))
+
+    for input_file in input_files:
+        # Preserve sample naming from the source file stem.
+        sample_name = os.path.splitext(os.path.basename(input_file))[0]
+        output_path = os.path.join(output_dir, f"{sample_name}_metrics.tsv")
+        parse_bam_readcount(input_file, output_path)
+        print(f"Processed {input_file} -> {output_path}")
+
+    return len(input_files)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Convert bam-readcount output files into flat TSV metrics tables."
+    )
+    # Paths are explicit to keep the script portable
+    parser.add_argument(
+        "--input-dir", required=True, help="Directory containing *.txt readcount files"
+    )
+    parser.add_argument(
+        "--output-dir", required=True, help="Directory to write *_metrics.tsv files"
+    )
+    args = parser.parse_args()
+
+    n_files = process_directory(args.input_dir, args.output_dir)
+    print(f"Done. Processed {n_files} readcount file(s).")
+
+
+if __name__ == "__main__":
+    main()
