@@ -9,14 +9,15 @@ and outputs confined to `results2/spikein/`. Existing inputs are read-only.
 The sample manifest, source genotyping, candidate selection, pure-source
 read-count collection, parsing and marker finalisation are implemented and have
 run. The fixed set contains four other SNPs plus the separate A117V control.
-Stage 6 is drafted for raw mixture counting but has not run. No mixture counts,
-calls or recovery tables exist yet.
+Stage 6 raw mixture counting has run for the high and low mixtures. Stage 7 is
+drafted for read-level recovery calculation but has not run; no recovery table
+or recovery statuses exist yet.
 Source genotyping completed successfully on 2026-08-31;
 all four VCFs and their indexes passed the script's readability and sample checks.
 The full console log is `results2/spikein/logs/source_genotyping_console.log`;
 VCFs, `run.log` and `run_settings.tsv` are under `results2/spikein/discovery/`.
 Candidate selection found eight other SNPs plus A117V. Direct counts are available
-for all nine sites in both pure samples; technical QC and marker finalisation remain.
+for all nine sites in both pure samples; marker finalisation produced the fixed set.
 
 The WT background rule is now ALT VAF at most 0.001, with no separate maximum
 ALT-read count. All other thresholds remain unchanged, including minimum ALT
@@ -293,9 +294,9 @@ The default is a write-free dry run:
 bash src2/spikein/6_mixtures_fixed_site_readcount_qc.sh
 ```
 
-An authorised run will use `DRY_RUN=0` and write `sites.tsv`, raw counts and its
-log under a fresh `results2/spikein/readcount_qc/mixtures/` directory. It checks
-coordinates, reference bases and the depth cap. It does not parse counts or
+The authorised run completed on 2026-09-01 in 51.12 seconds and wrote `sites.tsv`
+and raw counts under `results2/spikein/readcount_qc/mixtures/`. It checked
+coordinates, reference bases and the depth cap. It did not parse counts or
 assign any recovery status. Bash syntax, ShellCheck and the real-input dry run
 passed; the dry-run log is
 `results2/spikein/logs/mixture_readcount_direct_bam_dry_run.log`.
