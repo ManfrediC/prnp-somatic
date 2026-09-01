@@ -77,6 +77,16 @@ nohup.out
 *.sam
 *.metrics
 
+# Spike-in Mutect2 runtime outputs; retain only small run settings and timings.
+/results2/spikein/mutect2/vcf/
+/results2/spikein/mutect2/f1r2/
+/results2/spikein/mutect2/work/
+/results2/spikein/mutect2/run.log
+/results2/spikein/filtermutectcalls/filtered/
+/results2/spikein/filtermutectcalls/orientation/
+/results2/spikein/filtermutectcalls/work/
+/results2/spikein/filtermutectcalls/run.log
+
 # Large generated media and archives
 *.pdf
 *.png
