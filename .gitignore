@@ -15,6 +15,9 @@
 /results2/spikein/**/*.log
 /results2/spikein/readcount_qc/pure_rerun/
 /results2/spikein/readcount_qc/pure/metrics_rerun/
+/results2/spikein/readcount_qc/mixtures_refactor_baseline/
+/results2/spikein/logs/mixture_readcount_refactor_baseline.time
+/src2/spikein/.6_mixtures_fixed_site_readcount_qc.before.sh
 
 # Secrets and local environment files
 .env
