@@ -4,10 +4,10 @@
 import argparse
 import csv
 import hashlib
-from pathlib import Path
 import shlex
 import subprocess
 import sys
+from pathlib import Path
 
 # Agreed thresholds; AF is ALT AD divided by total AD.
 MIN_DP = 100
@@ -46,8 +46,9 @@ def sample_fields(text):
             raise ValueError("Negative allele depth")
         if ref_count + alt_count > 0:
             af = alt_count / (ref_count + alt_count)
-    return dict(gt=gt, gq=None if gq == "." else int(gq), dp=None if dp == "." else int(dp),
-                ad=ad, ref_count=ref_count, alt_count=alt_count, af=af)
+    return {"gt": gt, "gq": None if gq == "." else int(gq),
+            "dp": None if dp == "." else int(dp), "ad": ad,
+            "ref_count": ref_count, "alt_count": alt_count, "af": af}
 
 
 def genotype_qc(donor, wt):
@@ -89,15 +90,16 @@ def write_tsv(path, header, rows):
             writer.writerow(["NA" if row[field] is None else row[field] for field in header])
 
 
-def main():
-    # Keep inputs fixed and write only to a new results2 directory.
+def parse_output_dir():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=Path("results2/spikein/discovery/candidates"))
     output = (ROOT / parser.parse_args().output_dir).resolve()
     if not output.is_relative_to(ROOT / "results2/spikein") or output.exists():
         raise ValueError("Use a new output directory below results2/spikein")
+    return output
 
-    # Check the full sample list before requesting donor-then-WT columns.
+
+def load_pure_samples():
     with MANIFEST.open() as handle:
         sources = [row for row in csv.DictReader(handle, delimiter="\t")
                    if row["role"] in ("pure_donor", "pure_wt")]
@@ -107,17 +109,20 @@ def main():
     vcf_samples = subprocess.check_output(["bcftools", "query", "-l", str(VCF)], text=True).splitlines()
     if len(vcf_samples) != 2 or set(vcf_samples) != set(samples.values()):
         raise ValueError("Joint VCF must contain exactly the pure donor and pure WT")
+    return samples
 
-    # Read the control allele, not historical mixture counts.
+
+def load_control_allele():
     with A117V_SOURCE.open() as handle:
         controls = {(row["chromosome"], int(row["position"]), row["ref"], row["alt"], row["dbsnp_id"])
                     for row in csv.DictReader(handle) if row["variant"] == "A117V"}
     if len(controls) != 1:
         raise ValueError("Historical A117V table must define one allele")
-    control_chrom, control_position, control_ref, control_alt, control_rsid = controls.pop()
-    control_key = (control_chrom, control_position, control_ref, control_alt)
+    return controls.pop()
 
-    # Check every original REF. Discard norm output; selection uses the unchanged VCF.
+
+def validate_reference(control):
+    control_chrom, control_position, control_ref, _, _ = control
     if not Path(str(REFERENCE) + ".fai").is_file():
         raise ValueError("The existing reference FASTA index is required")
     ref_check = ["bcftools", "norm", "-c", "e", "-f", str(REFERENCE), "-Ou", str(VCF)]
@@ -127,7 +132,10 @@ def main():
     if control_base != control_ref:
         raise ValueError("A117V disagrees with the reference")
 
-    # Stage 1 restricted this VCF to capture targets. Query it without splitting records.
+
+def query_candidate_audit(samples, control):
+    control_chrom, control_position, control_ref, control_alt, control_rsid = control
+    control_key = (control_chrom, control_position, control_ref, control_alt)
     query = ["bcftools", "query", "-s", f"{samples['pure_donor']},{samples['pure_wt']}",
              "-f", "%CHROM\t%POS\t%ID\t%REF\t%ALT\t%FILTER[\t%GT:%GQ:%DP:%AD]\n", str(VCF)]
     audit = []
@@ -158,8 +166,11 @@ def main():
             "validation_status": "pending_pure_read_counts" if not reasons or is_control else "excluded",
         }
         audit.append(row)
+    return audit
 
-    # A117V must still be counted if its exact VCF record is absent or fails QC.
+
+def add_missing_control(audit, control):
+    control_chrom, control_position, control_ref, control_alt, control_rsid = control
     if not any(row["category"] == "a117v_positive_control" for row in audit):
         row = dict.fromkeys(HEADER)
         row.update(marker_id=f"{control_chrom}:{control_position}:{control_ref}>{control_alt}",
@@ -169,17 +180,42 @@ def main():
                    validation_status="pending_pure_read_counts")
         audit.append(row)
 
+
+def main():
+    # Keep inputs fixed and write only to a new results2 directory.
+    output = parse_output_dir()
+
+    # Check the full sample list before requesting donor-then-WT columns.
+    samples = load_pure_samples()
+
+    # Read the control allele, not historical mixture counts.
+    control = load_control_allele()
+
+    # Check every original REF. Discard norm output; selection uses the unchanged VCF.
+    validate_reference(control)
+
+    # Stage 1 restricted this VCF to capture targets. Query it without splitting records.
+    audit = query_candidate_audit(samples, control)
+
+    # A117V must still be counted if its exact VCF record is absent or fails QC.
+    add_missing_control(audit, control)
+
     # Sort the tables; the counting stage will read coordinates from the candidate table.
     audit.sort(key=lambda row: (row["chromosome"], row["position"], row["ref"], row["alt"]))
     candidates = [row for row in audit if row["candidate_qc_pass"] or row["category"] == "a117v_positive_control"]
     # Record selection settings; stage 1 already holds detailed input and tool provenance.
-    settings = dict(donor_sample=samples["pure_donor"], wt_sample=samples["pure_wt"],
-                    min_dp=MIN_DP, min_gq=MIN_GQ, min_donor_ad=MIN_DONOR_AD,
-                    het_min_af=HET_MIN_AF, het_max_af=HET_MAX_AF, hom_alt_min_af=HOM_ALT_MIN_AF,
-                    max_wt_af=MAX_WT_AF, command=shlex.join([sys.executable, *sys.argv]),
-                    git_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
-                    stage1_settings=str(DISCOVERY_SETTINGS.relative_to(ROOT)),
-                    stage1_settings_sha256=hashlib.sha256(DISCOVERY_SETTINGS.read_bytes()).hexdigest())
+    settings = {
+        "donor_sample": samples["pure_donor"], "wt_sample": samples["pure_wt"],
+        "min_dp": MIN_DP, "min_gq": MIN_GQ, "min_donor_ad": MIN_DONOR_AD,
+        "het_min_af": HET_MIN_AF, "het_max_af": HET_MAX_AF,
+        "hom_alt_min_af": HOM_ALT_MIN_AF, "max_wt_af": MAX_WT_AF,
+        "command": shlex.join([sys.executable, *sys.argv]),
+        "git_commit": subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True,
+        ).strip(),
+        "stage1_settings": str(DISCOVERY_SETTINGS.relative_to(ROOT)),
+        "stage1_settings_sha256": hashlib.sha256(DISCOVERY_SETTINGS.read_bytes()).hexdigest(),
+    }
 
     # Write only after the input checks and provenance collection have succeeded.
     output.mkdir(parents=True)
