@@ -1,0 +1,9 @@
+key	value
+command	src2/spikein/7_mixture_read_recovery.py
+git_commit	9f1ca6ee8fdf0de8d6bf44d8b30db52abb3408ef
+informative_markers_sha256	56d5f63410fb338e610d14f200a9c9ea05507b11a3d6a1f92ac3d69c24557a8f
+min_depth	100
+min_alt	10
+min_alt_strand	3
+min_mean_bq	20
+min_mean_mq	20

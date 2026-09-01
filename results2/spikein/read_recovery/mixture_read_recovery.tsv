@@ -1,0 +1,11 @@
+marker_id	chromosome	position	ref	alt	category	sample_role	sample_id	expected_af	reported_depth	usable_depth	ref_count	alt_count	alt_vaf	alt_forward	alt_reverse	alt_mean_bq	alt_mean_mq	evaluable_at_depth	alt_read_present	read_level_recovered	recovery_failure_reasons
+chr20:4688888:G>A	chr20	4688888	G	A	other_snp	high	NA995A05_undil	0.02416128382939382	10151	10151	10035	116	0.011427445571864842	58	58	22.36	60.0	True	True	True	none
+chr20:4688888:G>A	chr20	4688888	G	A	other_snp	low	NA99A1_undil	NA	5206	5206	5169	37	0.007107184018440261	15	22	22.46	60.0	True	True	True	none
+chr20:4690735:T>G	chr20	4690735	T	G	other_snp	high	NA995A05_undil	0.02289952579743039	7189	7189	7117	71	0.009876199749617471	42	29	21.66	60.0	True	True	True	none
+chr20:4690735:T>G	chr20	4690735	T	G	other_snp	low	NA99A1_undil	NA	4347	4347	4311	36	0.008281573498964804	21	15	21.11	60.0	True	True	True	none
+chr20:4693455:G>A	chr20	4693455	G	A	other_snp	high	NA995A05_undil	0.02351332877648667	7870	7870	7780	90	0.011435832274459974	47	43	22.54	60.0	True	True	True	none
+chr20:4693455:G>A	chr20	4693455	G	A	other_snp	low	NA99A1_undil	NA	3891	3891	3865	26	0.006682086867129272	14	12	22.88	60.0	True	True	True	none
+chr20:4699570:C>T	chr20	4699570	C	T	a117v_positive_control	high	NA995A05_undil	0.02234844340107498	9354	9354	9225	128	0.013683985460765448	61	67	21.88	60.0	True	True	True	none
+chr20:4699570:C>T	chr20	4699570	C	T	a117v_positive_control	low	NA99A1_undil	NA	4303	4303	4270	33	0.007669068092028817	14	19	22.24	60.0	True	True	True	none
+chr20:4699571:A>G	chr20	4699571	A	G	other_snp	high	NA995A05_undil	0.022360606862061504	9343	9343	9213	129	0.01380712833137108	60	69	20.47	60.0	True	True	True	none
+chr20:4699571:A>G	chr20	4699571	A	G	other_snp	low	NA99A1_undil	NA	4320	4320	4285	34	0.00787037037037037	14	20	21.24	60.0	True	True	True	none

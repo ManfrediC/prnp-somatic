@@ -320,6 +320,9 @@ it derives the empirical LoD as the minimum recovered marker VAF across both
 mixtures, including A117V. The LoD is not applied back to the spike-in rows. The
 script does not read BAMs or call variants.
 
-An authorised run will write `mixture_read_recovery.tsv`, `empirical_lod.tsv`
-and `run_settings.tsv` under a fresh `results2/spikein/read_recovery/` directory.
-No stage-7 output exists yet.
+The authorised run completed on 2026-09-01 and wrote
+`mixture_read_recovery.tsv`, `empirical_lod.tsv` and `run_settings.tsv` under
+`results2/spikein/read_recovery/`. All ten marker-by-mixture observations passed
+the technical read-level criteria. The empirical LoD is 26/3,891 = 0.0066820869
+(0.668%), supported by chr20:4693455 G>A in the low mixture. Log:
+`results2/spikein/logs/mixture_read_recovery_console.log`.
