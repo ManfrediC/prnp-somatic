@@ -300,3 +300,16 @@ coordinates, reference bases and the depth cap. It did not parse counts or
 assign any recovery status. Bash syntax, ShellCheck and the real-input dry run
 passed; the dry-run log is
 `results2/spikein/logs/mixture_readcount_direct_bam_dry_run.log`.
+
+## Mixture read recovery
+
+`7_mixture_read_recovery.py` is drafted to evaluate the frozen informative-marker
+set in the high and low mixture count tables. It applies the agreed depth,
+support, strand, base-quality, mapping-quality and existing-LoD thresholds,
+records expected AF where the source fraction is established, and keeps
+technical QC separate from the LoD comparison. It does not read BAMs, call
+variants or assign a final biological recovery interpretation.
+
+An authorised run will write `mixture_read_recovery.tsv` and `run_settings.tsv`
+under a fresh `results2/spikein/read_recovery/` directory. No stage-7 output
+exists yet.
