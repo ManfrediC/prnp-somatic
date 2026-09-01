@@ -17,16 +17,11 @@ MARKERS="results2/spikein/discovery/candidates_revised/candidate_markers.tsv"
 REF_FASTA="resources/references/snv/chr2_chr4_chr20.fasta"
 OUT_ROOT="${OUT_ROOT:-results2/spikein/readcount_qc/pure}"
 DRY_RUN="${DRY_RUN:-1}"
-THREADS=4
 MAX_DEPTH=10000000
 export LC_ALL=C
 
-# Report failed checks and print commands before optional execution.
+# Report failed checks and print file-producing commands before execution.
 die() { echo "ERROR: $*" >&2; exit 1; }
-run() {
-  printf '+ %s\n' "$*"
-  [[ "$DRY_RUN" == "1" ]] || "$@"
-}
 run_to_file() {
   local out="$1"
   shift
@@ -34,25 +29,23 @@ run_to_file() {
   [[ "$DRY_RUN" == "1" ]] || "$@" > "$out"
 }
 
-# Check tools and inputs before creating any output.
+# Check the tool and inputs before creating any output.
 [[ "$#" -eq 0 ]] || die "Use DRY_RUN and OUT_ROOT, not positional arguments"
 [[ "$DRY_RUN" == "0" || "$DRY_RUN" == "1" ]] || die "DRY_RUN must be 0 or 1"
-for tool in samtools bam-readcount; do
-  command -v "$tool" >/dev/null || die "$tool not in PATH (activate prnp-spikein)"
-done
+command -v bam-readcount >/dev/null || die "bam-readcount not in PATH (activate prnp-spikein)"
 for input in Makefile "$SAMPLES_TSV" "$MARKERS" "$REF_FASTA" "$REF_FASTA.fai"; do
   [[ -s "$input" ]] || die "Missing input: $input"
 done
 
-# Keep all derived files below results2/spikein and refuse existing outputs.
+# Keep all new files below results2/spikein and refuse existing outputs.
 OUT_ROOT="$(realpath -m "$OUT_ROOT")"
 case "$OUT_ROOT" in
   "$REPO_ROOT/results2/spikein/"*) ;;
   *) die "OUT_ROOT must be a directory below results2/spikein" ;;
 esac
 [[ ! -e "$OUT_ROOT" ]] || die "Output directory already exists: $OUT_ROOT"
-WORK_DIR="$OUT_ROOT/work"
 READCOUNTS_DIR="$OUT_ROOT/readcounts"
+SITES="$OUT_ROOT/sites.tsv"
 
 # Require exactly one donor and one WT row, using roles rather than filenames.
 pure_samples="$(awk -F '\t' '$1 == "pure_donor" || $1 == "pure_wt" {
@@ -75,27 +68,24 @@ sites="$(awk -F '\t' 'BEGIN {OFS = "\t"}
 if [[ "$DRY_RUN" == "0" ]]; then
   mkdir -p "$(dirname "$OUT_ROOT")"
   mkdir "$OUT_ROOT"
-  mkdir "$WORK_DIR" "$READCOUNTS_DIR"
+  mkdir "$READCOUNTS_DIR"
   exec > >(tee "$OUT_ROOT/run.log") 2>&1
   git rev-parse HEAD
   sha256sum "$MARKERS" "$SAMPLES_TSV"
 fi
-run_to_file "$WORK_DIR/sites.tsv" printf '%s\n' "$sites"
+run_to_file "$SITES" printf '%s\n' "$sites"
 
-# Exclude reads already marked duplicate, retaining the original BAMs and BAIs.
-# Explicit quality/depth settings preserve the established counting convention.
+# Count directly from each original BAM. bam-readcount excludes flagged duplicates.
+# Explicit quality and depth settings preserve the established convention.
 while IFS=$'\t' read -r role sample bam; do
   echo "=== $role: $sample ==="
-  nodup_bam="$WORK_DIR/$sample.nodup.bam"
   counts="$READCOUNTS_DIR/$sample.txt"
-  run samtools view -@ "$THREADS" -b -F 0x400 -o "$nodup_bam" "$bam"
-  run samtools index -@ "$THREADS" "$nodup_bam"
   run_to_file "$counts" bam-readcount -q 0 -b 0 -d "$MAX_DEPTH" \
-    -f "$REF_FASTA" -l "$WORK_DIR/sites.tsv" "$nodup_bam"
+    -f "$REF_FASTA" -l "$SITES" "$bam"
 
   # Require every requested site exactly once.
   if [[ "$DRY_RUN" == "0" ]]; then
-    diff -u <(cut -f1,2 "$WORK_DIR/sites.tsv") <(cut -f1,2 "$counts" | sort) ||
+    diff -u <(cut -f1,2 "$SITES") <(cut -f1,2 "$counts" | sort) ||
       die "Read-count sites differ from requested sites for $role"
     awk -v cap="$MAX_DEPTH" '$4 >= cap {exit 1}' "$counts" ||
       die "Reported depth reached the bam-readcount cap for $role"
