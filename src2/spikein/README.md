@@ -335,7 +335,7 @@ gnomAD germline resource and allele-frequency prior as the existing pipeline.
 The final script sets `--initial-tumor-lod 0`, spike-in-only
 `--max-population-af 1.0` and `--max-reads-per-alignment-start 0`. Emission LOD
 3, activity-probability threshold 0.002 and all other caller parameters retain
-their GATK defaults. Its default output is `results2/spikein/mutect2_final/`.
+their GATK defaults. Its default output is `results2/spikein/mutect2/`.
 
 The default is a write-free dry run:
 
@@ -346,9 +346,13 @@ bash src2/spikein/8_mixtures_mutect2_with_pon.sh
 The completed run wrote raw VCFs, statistics and orientation data under
 `results2/spikein/mutect2/`. This stage does not run `FilterMutectCalls`, apply
 somatic filters or change the stage-7 recovery result and empirical LoD. The
-high and low VCFs contain 33 and 32 raw records, respectively. Mutect2 represents
-A117V and the adjacent fixed marker as one `CA` to `TG` record in both mixtures;
-later fixed-marker comparison must atomise this record before exact matching.
+high and low VCFs contain 63 and 38 raw records, respectively. After atomising
+compound records, Mutect2 emitted chr20:4693455 G>A, A117V and chr20:4699571
+A>G in both mixtures. It did not emit the other two fixed markers.
+
+All exploratory runs described below are preserved under
+`legacy/spikein_mutect2_exploration_2026-09-01/`, with their former
+repository-relative paths and SHA-256 hashes.
 
 An earlier separate uncapped comparison under
 `results2/spikein/mutect2_no_alignment_start_cap/` changed only the
@@ -416,6 +420,11 @@ each final stage-8 call and runs FilterMutectCalls with
 defaults. It writes through a temporary directory, validates both VCFs and
 publishes the completed output as
 `results2/spikein/filtermutectcalls/`.
+
+The final filtered VCFs retain all 63 high-mixture and 38 low-mixture raw
+records. Thirteen high-mixture records and ten low-mixture records pass. The
+same three fixed markers pass in both mixtures after atomisation; the other two
+remain absent because Mutect2 did not emit them.
 
 The exploratory Mutect2 and FilterMutectCalls runs, logs and comparison script
 are preserved under `legacy/spikein_mutect2_exploration_2026-09-01/`, with
