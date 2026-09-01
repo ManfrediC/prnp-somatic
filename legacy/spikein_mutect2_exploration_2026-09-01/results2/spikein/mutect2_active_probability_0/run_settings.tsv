@@ -1,0 +1,14 @@
+key	value
+reference	resources/references/snv/chr2_chr4_chr20.fasta
+intervals	resources/intervals/capture_targets.interval_list
+germline_resource	resources/population/somatic-hg38_af-only-gnomad.hg38.vcf.gz
+panel_of_normals	results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz
+af_of_alleles_not_in_resource	0.0000025
+initial_tumor_lod	0
+tumor_lod_to_emit	3
+active_probability_threshold	0
+max_population_af	1.0
+max_reads_per_alignment_start	0
+java_mem_gb	8
+informative_markers_sha256	56d5f63410fb338e610d14f200a9c9ea05507b11a3d6a1f92ac3d69c24557a8f
+git_commit	475e834e21f802d81210430a98459f58791591ce

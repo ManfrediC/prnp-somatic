@@ -1,0 +1,23 @@
+	Command being timed: "env DRY_RUN=0 ACTIVE_PROBABILITY_THRESHOLD=0.00002 TUMOR_LOD_TO_EMIT=3 OUT_ROOT=results2/spikein/mutect2_active_probability_0_00002 bash src2/spikein/8_mixtures_mutect2_with_pon.sh"
+	User time (seconds): 808.39
+	System time (seconds): 15.93
+	Percent of CPU this job got: 161%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 8:29.27
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3111920
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 83
+	Minor (reclaiming a frame) page faults: 1942747
+	Voluntary context switches: 151235
+	Involuntary context switches: 3450
+	Swaps: 0
+	File system inputs: 1421229
+	File system outputs: 680
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

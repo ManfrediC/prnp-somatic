@@ -1,0 +1,6 @@
+key	value
+input_root	results2/spikein/mutect2_initial0_emit3
+reference	resources/references/snv/chr2_chr4_chr20.fasta
+orientation_em_iterations	50
+filtermutectcalls_settings	original project settings
+git_commit	475e834e21f802d81210430a98459f58791591ce

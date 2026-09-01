@@ -1,0 +1,11 @@
+sample_role	sample_id	marker_id	category	raw_emitted	filter_status	mutect2_dp	mutect2_ad	mutect2_vaf	tlod
+high	NA995A05_undil	chr20:4688888:G>A	other_snp	False	NA	NA	NA	NA	NA
+high	NA995A05_undil	chr20:4690735:T>G	other_snp	False	NA	NA	NA	NA	NA
+high	NA995A05_undil	chr20:4693455:G>A	other_snp	True	clustered_events	7784	7694,90	0.01	65.29
+high	NA995A05_undil	chr20:4699570:C>T	a117v_positive_control	True	PASS	9439	9305,134	0.014	350.85
+high	NA995A05_undil	chr20:4699571:A>G	other_snp	True	PASS	9439	9305,134	0.014	350.85
+low	NA99A1_undil	chr20:4688888:G>A	other_snp	False	NA	NA	NA	NA	NA
+low	NA99A1_undil	chr20:4690735:T>G	other_snp	False	NA	NA	NA	NA	NA
+low	NA99A1_undil	chr20:4693455:G>A	other_snp	True	clustered_events	3871	3845,26	0.005556	14.27
+low	NA99A1_undil	chr20:4699570:C>T	a117v_positive_control	True	PASS	4343	4307,36	0.0076	88.95
+low	NA99A1_undil	chr20:4699571:A>G	other_snp	True	PASS	4343	4307,36	0.0076	88.95

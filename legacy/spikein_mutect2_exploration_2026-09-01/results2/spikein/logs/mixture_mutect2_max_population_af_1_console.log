@@ -1,0 +1,158 @@
+high	NA995A05_undil	results/final_bam/NA995A05_undil.bam
+low	NA99A1_undil	results/final_bam/NA99A1_undil.bam
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar --version
+The Genome Analysis Toolkit (GATK) v4.5.0.0
+HTSJDK Version: 4.1.0
+Picard Version: 3.1.1
+bcftools 1.20
+Using htslib 1.20
+Copyright (C) 2024 Genome Research Ltd.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+=== high: NA995A05_undil ===
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/work/tmp Mutect2 -R resources/references/snv/chr2_chr4_chr20.fasta -I results/final_bam/NA995A05_undil.bam -tumor-sample NA995A05_undil --panel-of-normals results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz --germline-resource resources/population/somatic-hg38_af-only-gnomad.hg38.vcf.gz --af-of-alleles-not-in-resource 0.0000025 --max-population-af 1.0 --f1r2-tar-gz /mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/f1r2/NA995A05_undil.f1r2.tar.gz --intervals resources/intervals/capture_targets.interval_list --tmp-dir /mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/work/tmp -O /mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/vcf/NA995A05_undil.raw.vcf.gz 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar Mutect2 -R resources/references/snv/chr2_chr4_chr20.fasta -I results/final_bam/NA995A05_undil.bam -tumor-sample NA995A05_undil --panel-of-normals results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz --germline-resource resources/population/somatic-hg38_af-only-gnomad.hg38.vcf.gz --af-of-alleles-not-in-resource 0.0000025 --max-population-af 1.0 --f1r2-tar-gz /mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/f1r2/NA995A05_undil.f1r2.tar.gz --intervals resources/intervals/capture_targets.interval_list --tmp-dir /mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/work/tmp -O /mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/vcf/NA995A05_undil.raw.vcf.gz
+14:12:31.417 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+14:12:31.688 INFO  Mutect2 - ------------------------------------------------------------
+14:12:31.690 INFO  Mutect2 - The Genome Analysis Toolkit (GATK) v4.5.0.0
+14:12:31.690 INFO  Mutect2 - For support and documentation go to https://software.broadinstitute.org/gatk/
+14:12:31.690 INFO  Mutect2 - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+14:12:31.691 INFO  Mutect2 - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+14:12:31.692 INFO  Mutect2 - Start Date/Time: September 1, 2026 at 2:12:31 PM CEST
+14:12:31.692 INFO  Mutect2 - ------------------------------------------------------------
+14:12:31.692 INFO  Mutect2 - ------------------------------------------------------------
+14:12:31.693 INFO  Mutect2 - HTSJDK Version: 4.1.0
+14:12:31.694 INFO  Mutect2 - Picard Version: 3.1.1
+14:12:31.694 INFO  Mutect2 - Built for Spark Version: 3.5.0
+14:12:31.694 INFO  Mutect2 - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+14:12:31.694 INFO  Mutect2 - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+14:12:31.695 INFO  Mutect2 - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+14:12:31.696 INFO  Mutect2 - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+14:12:31.696 INFO  Mutect2 - Deflater: IntelDeflater
+14:12:31.696 INFO  Mutect2 - Inflater: IntelInflater
+14:12:31.696 INFO  Mutect2 - GCS max retries/reopens: 20
+14:12:31.696 INFO  Mutect2 - Requester pays: disabled
+14:12:31.697 INFO  Mutect2 - Initializing engine
+14:12:31.958 INFO  FeatureManager - Using codec VCFCodec to read file file:///mnt/c/Projects/prnp-somatic/results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz
+14:12:32.039 INFO  FeatureManager - Using codec VCFCodec to read file file:///mnt/c/Projects/prnp-somatic/resources/population/somatic-hg38_af-only-gnomad.hg38.vcf.gz
+14:12:32.224 INFO  FeatureManager - Using codec IntervalListCodec to read file file:///mnt/c/Projects/prnp-somatic/resources/intervals/capture_targets.interval_list
+14:12:32.235 INFO  IntervalArgumentCollection - Processing 21705 bp from intervals
+14:12:32.256 INFO  Mutect2 - Done initializing engine
+14:12:32.273 INFO  NativeLibraryLoader - Loading libgkl_utils.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_utils.so
+14:12:32.288 INFO  NativeLibraryLoader - Loading libgkl_smithwaterman.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_smithwaterman.so
+14:12:32.308 INFO  SmithWatermanAligner - Using AVX accelerated SmithWaterman implementation
+14:12:32.321 INFO  NativeLibraryLoader - Loading libgkl_pairhmm_omp.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_pairhmm_omp.so
+14:12:32.383 INFO  IntelPairHmm - Flush-to-zero (FTZ) is enabled when running PairHMM
+14:12:32.384 INFO  IntelPairHmm - Available threads: 12
+14:12:32.384 INFO  IntelPairHmm - Requested threads: 4
+14:12:32.384 INFO  PairHMM - Using the OpenMP multi-threaded AVX-accelerated native PairHMM implementation
+14:12:32.473 INFO  ProgressMeter - Starting traversal
+14:12:32.473 INFO  ProgressMeter -        Current Locus  Elapsed Minutes     Regions Processed   Regions/Minute
+14:12:57.322 INFO  ProgressMeter -       chr2:178741391              0.4                    10             24.1
+14:13:23.868 INFO  ProgressMeter -        chr20:4690036              0.9                    30             35.0
+14:13:35.396 INFO  ProgressMeter -        chr20:4691592              1.0                    40             38.1
+14:13:50.905 INFO  ProgressMeter -        chr20:4693633              1.3                    50             38.3
+14:14:25.845 INFO  ProgressMeter -        chr20:4695096              1.9                    60             31.8
+14:14:46.820 INFO  ProgressMeter -        chr20:4697644              2.2                    70             31.3
+14:15:05.120 INFO  ProgressMeter -        chr20:4699943              2.5                    80             31.4
+14:15:26.706 INFO  ProgressMeter -       chr4:105235086              2.9                    90             31.0
+14:15:40.359 INFO  Mutect2 - 5288 read(s) filtered by: MappingQualityReadFilter 
+0 read(s) filtered by: MappingQualityAvailableReadFilter 
+0 read(s) filtered by: MappingQualityNotZeroReadFilter 
+0 read(s) filtered by: MappedReadFilter 
+0 read(s) filtered by: NotSecondaryAlignmentReadFilter 
+2302664 read(s) filtered by: NotDuplicateReadFilter 
+0 read(s) filtered by: PassesVendorQualityCheckReadFilter 
+0 read(s) filtered by: NonChimericOriginalAlignmentReadFilter 
+0 read(s) filtered by: NonZeroReferenceLengthAlignmentReadFilter 
+0 read(s) filtered by: ReadLengthReadFilter 
+0 read(s) filtered by: GoodCigarReadFilter 
+0 read(s) filtered by: WellformedReadFilter 
+2307952 total reads filtered out of 3663977 reads processed
+14:15:40.359 INFO  ProgressMeter -       chr4:105235086              3.1                    98             31.3
+14:15:40.359 INFO  ProgressMeter - Traversal complete. Processed 98 total regions in 3.1 minutes.
+14:15:40.598 INFO  VectorLoglessPairHMM - Time spent in setup for JNI call : 0.09695144300000001
+14:15:40.598 INFO  PairHMM - Total compute time in PairHMM computeLogLikelihoods() : 23.27859047
+14:15:40.598 INFO  SmithWatermanAligner - Total compute time in native Smith-Waterman : 0.17 sec
+14:15:40.600 INFO  Mutect2 - Shutting down engine
+[September 1, 2026 at 2:15:40 PM CEST] org.broadinstitute.hellbender.tools.walkers.mutect.Mutect2 done. Elapsed time: 3.15 minutes.
+Runtime.totalMemory()=2030043136
+Tool returned:
+SUCCESS
+=== low: NA99A1_undil ===
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/work/tmp Mutect2 -R resources/references/snv/chr2_chr4_chr20.fasta -I results/final_bam/NA99A1_undil.bam -tumor-sample NA99A1_undil --panel-of-normals results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz --germline-resource resources/population/somatic-hg38_af-only-gnomad.hg38.vcf.gz --af-of-alleles-not-in-resource 0.0000025 --max-population-af 1.0 --f1r2-tar-gz /mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/f1r2/NA99A1_undil.f1r2.tar.gz --intervals resources/intervals/capture_targets.interval_list --tmp-dir /mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/work/tmp -O /mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/vcf/NA99A1_undil.raw.vcf.gz 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar Mutect2 -R resources/references/snv/chr2_chr4_chr20.fasta -I results/final_bam/NA99A1_undil.bam -tumor-sample NA99A1_undil --panel-of-normals results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz --germline-resource resources/population/somatic-hg38_af-only-gnomad.hg38.vcf.gz --af-of-alleles-not-in-resource 0.0000025 --max-population-af 1.0 --f1r2-tar-gz /mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/f1r2/NA99A1_undil.f1r2.tar.gz --intervals resources/intervals/capture_targets.interval_list --tmp-dir /mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/work/tmp -O /mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/vcf/NA99A1_undil.raw.vcf.gz
+14:15:42.601 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+14:15:42.856 INFO  Mutect2 - ------------------------------------------------------------
+14:15:42.859 INFO  Mutect2 - The Genome Analysis Toolkit (GATK) v4.5.0.0
+14:15:42.860 INFO  Mutect2 - For support and documentation go to https://software.broadinstitute.org/gatk/
+14:15:42.860 INFO  Mutect2 - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+14:15:42.860 INFO  Mutect2 - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+14:15:42.860 INFO  Mutect2 - Start Date/Time: September 1, 2026 at 2:15:42 PM CEST
+14:15:42.861 INFO  Mutect2 - ------------------------------------------------------------
+14:15:42.861 INFO  Mutect2 - ------------------------------------------------------------
+14:15:42.862 INFO  Mutect2 - HTSJDK Version: 4.1.0
+14:15:42.862 INFO  Mutect2 - Picard Version: 3.1.1
+14:15:42.862 INFO  Mutect2 - Built for Spark Version: 3.5.0
+14:15:42.863 INFO  Mutect2 - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+14:15:42.873 INFO  Mutect2 - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+14:15:42.873 INFO  Mutect2 - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+14:15:42.873 INFO  Mutect2 - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+14:15:42.873 INFO  Mutect2 - Deflater: IntelDeflater
+14:15:42.874 INFO  Mutect2 - Inflater: IntelInflater
+14:15:42.874 INFO  Mutect2 - GCS max retries/reopens: 20
+14:15:42.874 INFO  Mutect2 - Requester pays: disabled
+14:15:42.875 INFO  Mutect2 - Initializing engine
+14:15:43.186 INFO  FeatureManager - Using codec VCFCodec to read file file:///mnt/c/Projects/prnp-somatic/results/mutect2_controls_pon/panel_of_normals/CJD_controls_PoN.vcf.gz
+14:15:43.267 INFO  FeatureManager - Using codec VCFCodec to read file file:///mnt/c/Projects/prnp-somatic/resources/population/somatic-hg38_af-only-gnomad.hg38.vcf.gz
+14:15:43.465 INFO  FeatureManager - Using codec IntervalListCodec to read file file:///mnt/c/Projects/prnp-somatic/resources/intervals/capture_targets.interval_list
+14:15:43.479 INFO  IntervalArgumentCollection - Processing 21705 bp from intervals
+14:15:43.510 INFO  Mutect2 - Done initializing engine
+14:15:43.527 INFO  NativeLibraryLoader - Loading libgkl_utils.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_utils.so
+14:15:43.541 INFO  NativeLibraryLoader - Loading libgkl_smithwaterman.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_smithwaterman.so
+14:15:43.563 INFO  SmithWatermanAligner - Using AVX accelerated SmithWaterman implementation
+14:15:43.577 INFO  NativeLibraryLoader - Loading libgkl_pairhmm_omp.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_pairhmm_omp.so
+14:15:43.643 INFO  IntelPairHmm - Flush-to-zero (FTZ) is enabled when running PairHMM
+14:15:43.644 INFO  IntelPairHmm - Available threads: 12
+14:15:43.644 INFO  IntelPairHmm - Requested threads: 4
+14:15:43.645 INFO  PairHMM - Using the OpenMP multi-threaded AVX-accelerated native PairHMM implementation
+14:15:43.836 INFO  ProgressMeter - Starting traversal
+14:15:43.836 INFO  ProgressMeter -        Current Locus  Elapsed Minutes     Regions Processed   Regions/Minute
+14:15:59.281 INFO  ProgressMeter -       chr2:178741842              0.3                    10             38.9
+14:16:19.401 INFO  ProgressMeter -        chr20:4690425              0.6                    30             50.6
+14:16:34.565 INFO  ProgressMeter -        chr20:4691917              0.8                    40             47.3
+14:16:56.045 INFO  ProgressMeter -        chr20:4695567              1.2                    60             49.9
+14:17:11.008 INFO  ProgressMeter -        chr20:4698244              1.5                    70             48.2
+14:17:22.652 INFO  ProgressMeter -        chr20:4700843              1.6                    80             48.6
+14:17:34.818 INFO  ProgressMeter -       chr4:105235998              1.8                    90             48.7
+14:17:40.152 INFO  Mutect2 - 2081 read(s) filtered by: MappingQualityReadFilter 
+0 read(s) filtered by: MappingQualityAvailableReadFilter 
+0 read(s) filtered by: MappingQualityNotZeroReadFilter 
+0 read(s) filtered by: MappedReadFilter 
+0 read(s) filtered by: NotSecondaryAlignmentReadFilter 
+1928443 read(s) filtered by: NotDuplicateReadFilter 
+0 read(s) filtered by: PassesVendorQualityCheckReadFilter 
+0 read(s) filtered by: NonChimericOriginalAlignmentReadFilter 
+0 read(s) filtered by: NonZeroReferenceLengthAlignmentReadFilter 
+0 read(s) filtered by: ReadLengthReadFilter 
+0 read(s) filtered by: GoodCigarReadFilter 
+0 read(s) filtered by: WellformedReadFilter 
+1930524 total reads filtered out of 2570025 reads processed
+14:17:40.152 INFO  ProgressMeter -       chr4:105235998              1.9                    94             48.5
+14:17:40.153 INFO  ProgressMeter - Traversal complete. Processed 94 total regions in 1.9 minutes.
+14:17:40.364 INFO  VectorLoglessPairHMM - Time spent in setup for JNI call : 0.087129543
+14:17:40.364 INFO  PairHMM - Total compute time in PairHMM computeLogLikelihoods() : 7.3084024460000006
+14:17:40.365 INFO  SmithWatermanAligner - Total compute time in native Smith-Waterman : 0.13 sec
+14:17:40.366 INFO  Mutect2 - Shutting down engine
+[September 1, 2026 at 2:17:40 PM CEST] org.broadinstitute.hellbender.tools.walkers.mutect.Mutect2 done. Elapsed time: 1.96 minutes.
+Runtime.totalMemory()=2516582400
+Tool returned:
+SUCCESS
+=== Mixture Mutect2 calling finished (DRY_RUN=0) ===

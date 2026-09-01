@@ -1,0 +1,11 @@
+sample_role	sample_id	total_records	original_pass_records	max_events_5_pass_records	added_pass_records	added_pass_alleles	added_pass_markers	added_pass_nonmarkers_with_pure_source_support	added_pass_nonmarkers_without_pure_source_support	marker_id	original_filter_status	max_events_5_filter_status
+high	NA995A05_undil	63	6	13	7	7	1	5	1	chr20:4688888:G>A	NA	NA
+high	NA995A05_undil	63	6	13	7	7	1	5	1	chr20:4690735:T>G	NA	NA
+high	NA995A05_undil	63	6	13	7	7	1	5	1	chr20:4693455:G>A	clustered_events	PASS
+high	NA995A05_undil	63	6	13	7	7	1	5	1	chr20:4699570:C>T	PASS	PASS
+high	NA995A05_undil	63	6	13	7	7	1	5	1	chr20:4699571:A>G	PASS	PASS
+low	NA99A1_undil	38	4	10	6	6	1	3	2	chr20:4688888:G>A	NA	NA
+low	NA99A1_undil	38	4	10	6	6	1	3	2	chr20:4690735:T>G	NA	NA
+low	NA99A1_undil	38	4	10	6	6	1	3	2	chr20:4693455:G>A	clustered_events	PASS
+low	NA99A1_undil	38	4	10	6	6	1	3	2	chr20:4699570:C>T	PASS	PASS
+low	NA99A1_undil	38	4	10	6	6	1	3	2	chr20:4699571:A>G	PASS	PASS

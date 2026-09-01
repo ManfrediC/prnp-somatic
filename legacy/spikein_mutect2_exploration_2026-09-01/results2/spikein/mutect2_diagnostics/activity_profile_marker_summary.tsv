@@ -1,0 +1,11 @@
+marker_id	marker_class	mixture	activity_max_population_af_1_no_alignment_start_cap	activity_genotype_germline_sites_true	activity_initial_tumor_lod_0	emitted_max_population_af_1_no_alignment_start_cap	emitted_genotype_germline_sites_true	emitted_initial_tumor_lod_0	forced_tlod	forced_dp	forced_alt_count
+chr20:4688888:G:A	other_snp	high	inactive	inactive	inactive	False	False	False	83.31	10111	116
+chr20:4688888:G:A	other_snp	low	inactive	inactive	inactive	False	False	False	20.81	5180	38
+chr20:4690735:T:G	other_snp	high	inactive	inactive	inactive	False	False	False	47.73	7161	72
+chr20:4690735:T:G	other_snp	low	inactive	inactive	inactive	False	False	False	20.03	4319	36
+chr20:4693455:G:A	other_snp	high	active	active	active	True	True	True	65.29	7784	90
+chr20:4693455:G:A	other_snp	low	inactive	inactive	active	False	False	True	14.35	3874	26
+chr20:4699570:C:T	a117v_positive_control	high	active	active	active	True	True	True	NA	NA	NA
+chr20:4699570:C:T	a117v_positive_control	low	active	active	active	True	True	True	NA	NA	NA
+chr20:4699571:A:G	other_snp	high	active	active	active	True	True	True	NA	NA	NA
+chr20:4699571:A:G	other_snp	low	active	active	active	True	True	True	NA	NA	NA

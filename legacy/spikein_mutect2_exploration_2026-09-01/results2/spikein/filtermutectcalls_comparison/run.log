@@ -1,0 +1,935 @@
+high	NA995A05_undil
+low	NA99A1_undil
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar --version
+The Genome Analysis Toolkit (GATK) v4.5.0.0
+HTSJDK Version: 4.1.0
+Picard Version: 3.1.1
+bcftools 1.20
+Using htslib 1.20
+Copyright (C) 2024 Genome Research Ltd.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+=== original_defaults / high: NA995A05_undil ===
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp LearnReadOrientationModel -I results2/spikein/mutect2/f1r2/NA995A05_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/original_defaults/NA995A05_undil.orientation.tar.gz --num-em-iterations 50 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar LearnReadOrientationModel -I results2/spikein/mutect2/f1r2/NA995A05_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/original_defaults/NA995A05_undil.orientation.tar.gz --num-em-iterations 50
+15:55:04.668 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:55:04.881 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:55:04.886 INFO  LearnReadOrientationModel - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:55:04.887 INFO  LearnReadOrientationModel - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:55:04.888 INFO  LearnReadOrientationModel - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:55:04.890 INFO  LearnReadOrientationModel - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:55:04.892 INFO  LearnReadOrientationModel - Start Date/Time: September 1, 2026 at 3:55:04 PM CEST
+15:55:04.893 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:55:04.895 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:55:04.898 INFO  LearnReadOrientationModel - HTSJDK Version: 4.1.0
+15:55:04.899 INFO  LearnReadOrientationModel - Picard Version: 3.1.1
+15:55:04.900 INFO  LearnReadOrientationModel - Built for Spark Version: 3.5.0
+15:55:04.901 INFO  LearnReadOrientationModel - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:55:04.903 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:55:04.903 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:55:04.904 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:55:04.905 INFO  LearnReadOrientationModel - Deflater: IntelDeflater
+15:55:04.906 INFO  LearnReadOrientationModel - Inflater: IntelInflater
+15:55:04.907 INFO  LearnReadOrientationModel - GCS max retries/reopens: 20
+15:55:04.908 INFO  LearnReadOrientationModel - Requester pays: disabled
+15:55:04.909 INFO  LearnReadOrientationModel - Initializing engine
+15:55:04.910 INFO  LearnReadOrientationModel - Done initializing engine
+15:55:04.919 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2/f1r2/NA995A05_undil.f1r2.tar.gz
+15:55:04.929 INFO  IOUtils - Extracting file: ./NA995A05_undil.alt_histogram
+15:55:04.949 INFO  IOUtils - Extracting file: ./NA995A05_undil.alt_table
+15:55:04.961 INFO  IOUtils - Extracting file: ./NA995A05_undil.ref_histogram
+15:55:05.400 INFO  LearnReadOrientationModel - Context AAC: with 370 ref and 316 alt examples, EM converged in 8 steps
+15:55:05.597 INFO  LearnReadOrientationModel - Context AAG: with 467 ref and 400 alt examples, EM converged in 7 steps
+15:55:05.789 INFO  LearnReadOrientationModel - Context AAT: with 542 ref and 491 alt examples, EM converged in 7 steps
+15:55:05.943 INFO  LearnReadOrientationModel - Context ACA: with 449 ref and 426 alt examples, EM converged in 7 steps
+15:55:06.076 INFO  LearnReadOrientationModel - Context ACC: with 294 ref and 255 alt examples, EM converged in 6 steps
+15:55:06.247 INFO  LearnReadOrientationModel - Context ACG: with 42 ref and 80 alt examples, EM converged in 9 steps
+15:55:06.370 INFO  LearnReadOrientationModel - Context ACT: with 404 ref and 245 alt examples, EM converged in 6 steps
+15:55:06.505 INFO  LearnReadOrientationModel - Context AGA: with 605 ref and 337 alt examples, EM converged in 6 steps
+15:55:06.641 INFO  LearnReadOrientationModel - Context AGC: with 354 ref and 297 alt examples, EM converged in 7 steps
+15:55:06.758 INFO  LearnReadOrientationModel - Context AGG: with 405 ref and 336 alt examples, EM converged in 6 steps
+15:55:06.894 INFO  LearnReadOrientationModel - Context ATA: with 400 ref and 320 alt examples, EM converged in 7 steps
+15:55:07.014 INFO  LearnReadOrientationModel - Context ATC: with 354 ref and 207 alt examples, EM converged in 6 steps
+15:55:07.134 INFO  LearnReadOrientationModel - Context ATG: with 519 ref and 291 alt examples, EM converged in 6 steps
+15:55:07.272 INFO  LearnReadOrientationModel - Context CAA: with 523 ref and 313 alt examples, EM converged in 7 steps
+15:55:07.395 INFO  LearnReadOrientationModel - Context CAC: with 377 ref and 278 alt examples, EM converged in 7 steps
+15:55:07.494 INFO  LearnReadOrientationModel - Context CAG: with 565 ref and 349 alt examples, EM converged in 6 steps
+15:55:07.611 INFO  LearnReadOrientationModel - Context CCA: with 359 ref and 446 alt examples, EM converged in 7 steps
+15:55:07.704 INFO  LearnReadOrientationModel - Context CCC: with 377 ref and 249 alt examples, EM converged in 6 steps
+15:55:07.842 INFO  LearnReadOrientationModel - Context CCG: with 109 ref and 85 alt examples, EM converged in 9 steps
+15:55:07.938 INFO  LearnReadOrientationModel - Context CGA: with 53 ref and 69 alt examples, EM converged in 7 steps
+15:55:08.061 INFO  LearnReadOrientationModel - Context CGC: with 127 ref and 65 alt examples, EM converged in 9 steps
+15:55:08.176 INFO  LearnReadOrientationModel - Context CTA: with 304 ref and 191 alt examples, EM converged in 8 steps
+15:55:08.257 INFO  LearnReadOrientationModel - Context CTC: with 432 ref and 276 alt examples, EM converged in 6 steps
+15:55:08.341 INFO  LearnReadOrientationModel - Context GAA: with 564 ref and 354 alt examples, EM converged in 6 steps
+15:55:08.426 INFO  LearnReadOrientationModel - Context GAC: with 217 ref and 199 alt examples, EM converged in 6 steps
+15:55:08.532 INFO  LearnReadOrientationModel - Context GCA: with 300 ref and 352 alt examples, EM converged in 7 steps
+15:55:08.617 INFO  LearnReadOrientationModel - Context GCC: with 281 ref and 254 alt examples, EM converged in 6 steps
+15:55:08.714 INFO  LearnReadOrientationModel - Context GGA: with 358 ref and 297 alt examples, EM converged in 7 steps
+15:55:08.818 INFO  LearnReadOrientationModel - Context GTA: with 255 ref and 185 alt examples, EM converged in 7 steps
+15:55:08.905 INFO  LearnReadOrientationModel - Context TAA: with 536 ref and 294 alt examples, EM converged in 6 steps
+15:55:09.007 INFO  LearnReadOrientationModel - Context TCA: with 462 ref and 422 alt examples, EM converged in 7 steps
+15:55:09.103 INFO  LearnReadOrientationModel - Context AAA: with 924 ref and 688 alt examples, EM converged in 6 steps
+15:55:09.148 INFO  LearnReadOrientationModel - Shutting down engine
+[September 1, 2026 at 3:55:09 PM CEST] org.broadinstitute.hellbender.tools.walkers.readorientation.LearnReadOrientationModel done. Elapsed time: 0.08 minutes.
+Runtime.totalMemory()=318767104
+Tool returned:
+SUCCESS
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2/vcf/NA995A05_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/original_defaults/NA995A05_undil.orientation.tar.gz --stats results2/spikein/mutect2/vcf/NA995A05_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/original_defaults/NA995A05_undil.filtered.vcf.gz 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2/vcf/NA995A05_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/original_defaults/NA995A05_undil.orientation.tar.gz --stats results2/spikein/mutect2/vcf/NA995A05_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/original_defaults/NA995A05_undil.filtered.vcf.gz
+15:55:14.582 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:55:15.022 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:55:15.036 INFO  FilterMutectCalls - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:55:15.039 INFO  FilterMutectCalls - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:55:15.063 INFO  FilterMutectCalls - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:55:15.089 INFO  FilterMutectCalls - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:55:15.098 INFO  FilterMutectCalls - Start Date/Time: September 1, 2026 at 3:55:14 PM CEST
+15:55:15.099 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:55:15.101 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:55:15.104 INFO  FilterMutectCalls - HTSJDK Version: 4.1.0
+15:55:15.106 INFO  FilterMutectCalls - Picard Version: 3.1.1
+15:55:15.107 INFO  FilterMutectCalls - Built for Spark Version: 3.5.0
+15:55:15.109 INFO  FilterMutectCalls - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:55:15.111 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:55:15.114 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:55:15.115 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:55:15.117 INFO  FilterMutectCalls - Deflater: IntelDeflater
+15:55:15.119 INFO  FilterMutectCalls - Inflater: IntelInflater
+15:55:15.120 INFO  FilterMutectCalls - GCS max retries/reopens: 20
+15:55:15.121 INFO  FilterMutectCalls - Requester pays: disabled
+15:55:15.123 INFO  FilterMutectCalls - Initializing engine
+15:55:15.664 INFO  FeatureManager - Using codec VCFCodec to read file file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2/vcf/NA995A05_undil.raw.vcf.gz
+15:55:15.762 INFO  FilterMutectCalls - Done initializing engine
+15:55:15.890 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/original_defaults/NA995A05_undil.orientation.tar.gz
+15:55:15.910 INFO  IOUtils - Extracting file: ./NA995A05_undil.orientation_priors
+15:55:16.019 INFO  ProgressMeter - Starting traversal
+15:55:16.020 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+15:55:16.022 INFO  FilterMutectCalls - Starting pass 0 through the variants
+15:55:16.460 INFO  FilterMutectCalls - Finished pass 0 through the variants
+15:55:16.504 INFO  FilterMutectCalls - Starting pass 1 through the variants
+15:55:16.729 INFO  FilterMutectCalls - Finished pass 1 through the variants
+15:55:16.747 INFO  FilterMutectCalls - Starting pass 2 through the variants
+15:55:16.985 INFO  FilterMutectCalls - Finished pass 2 through the variants
+15:55:16.987 INFO  FilterMutectCalls - Starting pass 3 through the variants
+15:55:17.291 INFO  FilterMutectCalls - Finished pass 3 through the variants
+15:55:17.317 INFO  FilterMutectCalls - No variants filtered by: AllowAllVariantsVariantFilter
+15:55:17.319 INFO  FilterMutectCalls - 0 read(s) filtered by: AllowAllReadsReadFilter 
+
+15:55:17.321 INFO  ProgressMeter -             unmapped              0.0                   132           6092.3
+15:55:17.323 INFO  ProgressMeter - Traversal complete. Processed 132 total variants in 0.0 minutes.
+15:55:17.400 INFO  FilterMutectCalls - Shutting down engine
+[September 1, 2026 at 3:55:17 PM CEST] org.broadinstitute.hellbender.tools.walkers.mutect.filtering.FilterMutectCalls done. Elapsed time: 0.05 minutes.
+Runtime.totalMemory()=142606336
+=== original_defaults / low: NA99A1_undil ===
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp LearnReadOrientationModel -I results2/spikein/mutect2/f1r2/NA99A1_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/original_defaults/NA99A1_undil.orientation.tar.gz --num-em-iterations 50 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar LearnReadOrientationModel -I results2/spikein/mutect2/f1r2/NA99A1_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/original_defaults/NA99A1_undil.orientation.tar.gz --num-em-iterations 50
+15:55:19.844 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:55:20.113 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:55:20.117 INFO  LearnReadOrientationModel - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:55:20.118 INFO  LearnReadOrientationModel - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:55:20.119 INFO  LearnReadOrientationModel - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:55:20.119 INFO  LearnReadOrientationModel - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:55:20.120 INFO  LearnReadOrientationModel - Start Date/Time: September 1, 2026 at 3:55:19 PM CEST
+15:55:20.121 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:55:20.121 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:55:20.123 INFO  LearnReadOrientationModel - HTSJDK Version: 4.1.0
+15:55:20.124 INFO  LearnReadOrientationModel - Picard Version: 3.1.1
+15:55:20.125 INFO  LearnReadOrientationModel - Built for Spark Version: 3.5.0
+15:55:20.126 INFO  LearnReadOrientationModel - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:55:20.127 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:55:20.128 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:55:20.128 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:55:20.129 INFO  LearnReadOrientationModel - Deflater: IntelDeflater
+15:55:20.130 INFO  LearnReadOrientationModel - Inflater: IntelInflater
+15:55:20.131 INFO  LearnReadOrientationModel - GCS max retries/reopens: 20
+15:55:20.132 INFO  LearnReadOrientationModel - Requester pays: disabled
+15:55:20.133 INFO  LearnReadOrientationModel - Initializing engine
+15:55:20.134 INFO  LearnReadOrientationModel - Done initializing engine
+15:55:20.143 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2/f1r2/NA99A1_undil.f1r2.tar.gz
+15:55:20.154 INFO  IOUtils - Extracting file: ./NA99A1_undil.alt_histogram
+15:55:20.177 INFO  IOUtils - Extracting file: ./NA99A1_undil.alt_table
+15:55:20.191 INFO  IOUtils - Extracting file: ./NA99A1_undil.ref_histogram
+15:55:20.735 INFO  LearnReadOrientationModel - Context AAC: with 452 ref and 234 alt examples, EM converged in 8 steps
+15:55:20.869 INFO  LearnReadOrientationModel - Context AAG: with 592 ref and 275 alt examples, EM converged in 6 steps
+15:55:20.998 INFO  LearnReadOrientationModel - Context AAT: with 686 ref and 347 alt examples, EM converged in 6 steps
+15:55:21.255 INFO  LearnReadOrientationModel - Context ACA: with 467 ref and 408 alt examples, EM converged in 8 steps
+15:55:21.433 INFO  LearnReadOrientationModel - Context ACC: with 308 ref and 241 alt examples, EM converged in 6 steps
+15:55:21.586 INFO  LearnReadOrientationModel - Context ACG: with 51 ref and 71 alt examples, EM converged in 8 steps
+15:55:21.697 INFO  LearnReadOrientationModel - Context ACT: with 430 ref and 219 alt examples, EM converged in 6 steps
+15:55:21.803 INFO  LearnReadOrientationModel - Context AGA: with 590 ref and 352 alt examples, EM converged in 6 steps
+15:55:21.907 INFO  LearnReadOrientationModel - Context AGC: with 389 ref and 262 alt examples, EM converged in 6 steps
+15:55:22.056 INFO  LearnReadOrientationModel - Context AGG: with 323 ref and 418 alt examples, EM converged in 9 steps
+15:55:22.146 INFO  LearnReadOrientationModel - Context ATA: with 479 ref and 241 alt examples, EM converged in 6 steps
+15:55:22.249 INFO  LearnReadOrientationModel - Context ATC: with 387 ref and 174 alt examples, EM converged in 6 steps
+15:55:22.331 INFO  LearnReadOrientationModel - Context ATG: with 585 ref and 225 alt examples, EM converged in 5 steps
+15:55:22.424 INFO  LearnReadOrientationModel - Context CAA: with 609 ref and 227 alt examples, EM converged in 6 steps
+15:55:22.515 INFO  LearnReadOrientationModel - Context CAC: with 467 ref and 188 alt examples, EM converged in 6 steps
+15:55:22.601 INFO  LearnReadOrientationModel - Context CAG: with 650 ref and 264 alt examples, EM converged in 6 steps
+15:55:22.731 INFO  LearnReadOrientationModel - Context CCA: with 290 ref and 515 alt examples, EM converged in 8 steps
+15:55:22.854 INFO  LearnReadOrientationModel - Context CCC: with 283 ref and 343 alt examples, EM converged in 8 steps
+15:55:22.986 INFO  LearnReadOrientationModel - Context CCG: with 102 ref and 92 alt examples, EM converged in 10 steps
+15:55:23.090 INFO  LearnReadOrientationModel - Context CGA: with 52 ref and 69 alt examples, EM converged in 8 steps
+15:55:23.227 INFO  LearnReadOrientationModel - Context CGC: with 123 ref and 69 alt examples, EM converged in 11 steps
+15:55:23.292 INFO  LearnReadOrientationModel - Context CTA: with 355 ref and 140 alt examples, EM converged in 5 steps
+15:55:23.371 INFO  LearnReadOrientationModel - Context CTC: with 483 ref and 225 alt examples, EM converged in 6 steps
+15:55:23.451 INFO  LearnReadOrientationModel - Context GAA: with 652 ref and 266 alt examples, EM converged in 6 steps
+15:55:23.529 INFO  LearnReadOrientationModel - Context GAC: with 278 ref and 138 alt examples, EM converged in 6 steps
+15:55:23.624 INFO  LearnReadOrientationModel - Context GCA: with 312 ref and 340 alt examples, EM converged in 7 steps
+15:55:23.751 INFO  LearnReadOrientationModel - Context GCC: with 273 ref and 262 alt examples, EM converged in 9 steps
+15:55:23.832 INFO  LearnReadOrientationModel - Context GGA: with 354 ref and 301 alt examples, EM converged in 6 steps
+15:55:23.909 INFO  LearnReadOrientationModel - Context GTA: with 279 ref and 161 alt examples, EM converged in 6 steps
+15:55:23.974 INFO  LearnReadOrientationModel - Context TAA: with 606 ref and 224 alt examples, EM converged in 5 steps
+15:55:24.057 INFO  LearnReadOrientationModel - Context TCA: with 457 ref and 427 alt examples, EM converged in 6 steps
+15:55:24.138 INFO  LearnReadOrientationModel - Context AAA: with 1081 ref and 531 alt examples, EM converged in 6 steps
+15:55:24.182 INFO  LearnReadOrientationModel - Shutting down engine
+[September 1, 2026 at 3:55:24 PM CEST] org.broadinstitute.hellbender.tools.walkers.readorientation.LearnReadOrientationModel done. Elapsed time: 0.07 minutes.
+Runtime.totalMemory()=318767104
+Tool returned:
+SUCCESS
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2/vcf/NA99A1_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/original_defaults/NA99A1_undil.orientation.tar.gz --stats results2/spikein/mutect2/vcf/NA99A1_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/original_defaults/NA99A1_undil.filtered.vcf.gz 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2/vcf/NA99A1_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/original_defaults/NA99A1_undil.orientation.tar.gz --stats results2/spikein/mutect2/vcf/NA99A1_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/original_defaults/NA99A1_undil.filtered.vcf.gz
+15:55:26.111 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:55:26.358 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:55:26.361 INFO  FilterMutectCalls - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:55:26.362 INFO  FilterMutectCalls - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:55:26.363 INFO  FilterMutectCalls - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:55:26.364 INFO  FilterMutectCalls - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:55:26.365 INFO  FilterMutectCalls - Start Date/Time: September 1, 2026 at 3:55:26 PM CEST
+15:55:26.366 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:55:26.367 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:55:26.369 INFO  FilterMutectCalls - HTSJDK Version: 4.1.0
+15:55:26.370 INFO  FilterMutectCalls - Picard Version: 3.1.1
+15:55:26.370 INFO  FilterMutectCalls - Built for Spark Version: 3.5.0
+15:55:26.371 INFO  FilterMutectCalls - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:55:26.373 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:55:26.374 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:55:26.375 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:55:26.376 INFO  FilterMutectCalls - Deflater: IntelDeflater
+15:55:26.376 INFO  FilterMutectCalls - Inflater: IntelInflater
+15:55:26.377 INFO  FilterMutectCalls - GCS max retries/reopens: 20
+15:55:26.378 INFO  FilterMutectCalls - Requester pays: disabled
+15:55:26.379 INFO  FilterMutectCalls - Initializing engine
+15:55:26.679 INFO  FeatureManager - Using codec VCFCodec to read file file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2/vcf/NA99A1_undil.raw.vcf.gz
+15:55:26.728 INFO  FilterMutectCalls - Done initializing engine
+15:55:26.798 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/original_defaults/NA99A1_undil.orientation.tar.gz
+15:55:26.809 INFO  IOUtils - Extracting file: ./NA99A1_undil.orientation_priors
+15:55:26.865 INFO  ProgressMeter - Starting traversal
+15:55:26.866 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+15:55:26.868 INFO  FilterMutectCalls - Starting pass 0 through the variants
+15:55:27.121 INFO  FilterMutectCalls - Finished pass 0 through the variants
+15:55:27.156 INFO  FilterMutectCalls - Starting pass 1 through the variants
+15:55:27.307 INFO  FilterMutectCalls - Finished pass 1 through the variants
+15:55:27.317 INFO  FilterMutectCalls - Starting pass 2 through the variants
+15:55:27.435 INFO  FilterMutectCalls - Finished pass 2 through the variants
+15:55:27.437 INFO  FilterMutectCalls - Starting pass 3 through the variants
+15:55:27.584 INFO  FilterMutectCalls - Finished pass 3 through the variants
+15:55:27.599 INFO  FilterMutectCalls - No variants filtered by: AllowAllVariantsVariantFilter
+15:55:27.601 INFO  FilterMutectCalls - 0 read(s) filtered by: AllowAllReadsReadFilter 
+
+15:55:27.602 INFO  ProgressMeter -             unmapped              0.0                   128          10449.0
+15:55:27.603 INFO  ProgressMeter - Traversal complete. Processed 128 total variants in 0.0 minutes.
+15:55:27.651 INFO  FilterMutectCalls - Shutting down engine
+[September 1, 2026 at 3:55:27 PM CEST] org.broadinstitute.hellbender.tools.walkers.mutect.filtering.FilterMutectCalls done. Elapsed time: 0.03 minutes.
+Runtime.totalMemory()=142606336
+=== no_alignment_start_cap / high: NA995A05_undil ===
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp LearnReadOrientationModel -I results2/spikein/mutect2_no_alignment_start_cap/f1r2/NA995A05_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/no_alignment_start_cap/NA995A05_undil.orientation.tar.gz --num-em-iterations 50 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar LearnReadOrientationModel -I results2/spikein/mutect2_no_alignment_start_cap/f1r2/NA995A05_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/no_alignment_start_cap/NA995A05_undil.orientation.tar.gz --num-em-iterations 50
+15:55:30.073 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:55:30.346 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:55:30.351 INFO  LearnReadOrientationModel - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:55:30.351 INFO  LearnReadOrientationModel - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:55:30.352 INFO  LearnReadOrientationModel - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:55:30.353 INFO  LearnReadOrientationModel - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:55:30.354 INFO  LearnReadOrientationModel - Start Date/Time: September 1, 2026 at 3:55:30 PM CEST
+15:55:30.354 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:55:30.355 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:55:30.357 INFO  LearnReadOrientationModel - HTSJDK Version: 4.1.0
+15:55:30.357 INFO  LearnReadOrientationModel - Picard Version: 3.1.1
+15:55:30.358 INFO  LearnReadOrientationModel - Built for Spark Version: 3.5.0
+15:55:30.360 INFO  LearnReadOrientationModel - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:55:30.361 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:55:30.362 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:55:30.363 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:55:30.364 INFO  LearnReadOrientationModel - Deflater: IntelDeflater
+15:55:30.364 INFO  LearnReadOrientationModel - Inflater: IntelInflater
+15:55:30.365 INFO  LearnReadOrientationModel - GCS max retries/reopens: 20
+15:55:30.367 INFO  LearnReadOrientationModel - Requester pays: disabled
+15:55:30.368 INFO  LearnReadOrientationModel - Initializing engine
+15:55:30.368 INFO  LearnReadOrientationModel - Done initializing engine
+15:55:30.377 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_no_alignment_start_cap/f1r2/NA995A05_undil.f1r2.tar.gz
+15:55:30.389 INFO  IOUtils - Extracting file: ./NA995A05_undil.alt_histogram
+15:55:30.411 INFO  IOUtils - Extracting file: ./NA995A05_undil.alt_table
+15:55:30.425 INFO  IOUtils - Extracting file: ./NA995A05_undil.ref_histogram
+15:55:31.030 INFO  LearnReadOrientationModel - Context AAC: with 295 ref and 391 alt examples, EM converged in 8 steps
+15:55:31.236 INFO  LearnReadOrientationModel - Context AAG: with 379 ref and 488 alt examples, EM converged in 7 steps
+15:55:31.473 INFO  LearnReadOrientationModel - Context AAT: with 450 ref and 583 alt examples, EM converged in 6 steps
+15:55:31.721 INFO  LearnReadOrientationModel - Context ACA: with 349 ref and 525 alt examples, EM converged in 7 steps
+15:55:31.825 INFO  LearnReadOrientationModel - Context ACC: with 238 ref and 311 alt examples, EM converged in 6 steps
+15:55:31.990 INFO  LearnReadOrientationModel - Context ACG: with 36 ref and 86 alt examples, EM converged in 10 steps
+15:55:32.080 INFO  LearnReadOrientationModel - Context ACT: with 330 ref and 320 alt examples, EM converged in 6 steps
+15:55:32.191 INFO  LearnReadOrientationModel - Context AGA: with 490 ref and 452 alt examples, EM converged in 7 steps
+15:55:32.298 INFO  LearnReadOrientationModel - Context AGC: with 303 ref and 348 alt examples, EM converged in 6 steps
+15:55:32.401 INFO  LearnReadOrientationModel - Context AGG: with 344 ref and 397 alt examples, EM converged in 6 steps
+15:55:32.563 INFO  LearnReadOrientationModel - Context ATA: with 337 ref and 383 alt examples, EM converged in 8 steps
+15:55:32.667 INFO  LearnReadOrientationModel - Context ATC: with 296 ref and 265 alt examples, EM converged in 6 steps
+15:55:32.806 INFO  LearnReadOrientationModel - Context ATG: with 431 ref and 379 alt examples, EM converged in 7 steps
+15:55:32.944 INFO  LearnReadOrientationModel - Context CAA: with 434 ref and 402 alt examples, EM converged in 7 steps
+15:55:33.079 INFO  LearnReadOrientationModel - Context CAC: with 304 ref and 351 alt examples, EM converged in 7 steps
+15:55:33.193 INFO  LearnReadOrientationModel - Context CAG: with 477 ref and 437 alt examples, EM converged in 7 steps
+15:55:33.314 INFO  LearnReadOrientationModel - Context CCA: with 272 ref and 533 alt examples, EM converged in 7 steps
+15:55:33.407 INFO  LearnReadOrientationModel - Context CCC: with 326 ref and 300 alt examples, EM converged in 6 steps
+15:55:33.522 INFO  LearnReadOrientationModel - Context CCG: with 105 ref and 89 alt examples, EM converged in 8 steps
+15:55:33.620 INFO  LearnReadOrientationModel - Context CGA: with 42 ref and 80 alt examples, EM converged in 7 steps
+15:55:33.747 INFO  LearnReadOrientationModel - Context CGC: with 116 ref and 76 alt examples, EM converged in 10 steps
+15:55:33.839 INFO  LearnReadOrientationModel - Context CTA: with 255 ref and 240 alt examples, EM converged in 7 steps
+15:55:33.925 INFO  LearnReadOrientationModel - Context CTC: with 351 ref and 357 alt examples, EM converged in 6 steps
+15:55:34.010 INFO  LearnReadOrientationModel - Context GAA: with 455 ref and 463 alt examples, EM converged in 6 steps
+15:55:34.095 INFO  LearnReadOrientationModel - Context GAC: with 168 ref and 248 alt examples, EM converged in 6 steps
+15:55:34.194 INFO  LearnReadOrientationModel - Context GCA: with 246 ref and 406 alt examples, EM converged in 7 steps
+15:55:34.277 INFO  LearnReadOrientationModel - Context GCC: with 247 ref and 288 alt examples, EM converged in 6 steps
+15:55:34.362 INFO  LearnReadOrientationModel - Context GGA: with 288 ref and 367 alt examples, EM converged in 6 steps
+15:55:34.469 INFO  LearnReadOrientationModel - Context GTA: with 210 ref and 230 alt examples, EM converged in 7 steps
+15:55:34.551 INFO  LearnReadOrientationModel - Context TAA: with 458 ref and 372 alt examples, EM converged in 6 steps
+15:55:34.652 INFO  LearnReadOrientationModel - Context TCA: with 354 ref and 530 alt examples, EM converged in 7 steps
+15:55:34.745 INFO  LearnReadOrientationModel - Context AAA: with 790 ref and 822 alt examples, EM converged in 6 steps
+15:55:34.787 INFO  LearnReadOrientationModel - Shutting down engine
+[September 1, 2026 at 3:55:34 PM CEST] org.broadinstitute.hellbender.tools.walkers.readorientation.LearnReadOrientationModel done. Elapsed time: 0.08 minutes.
+Runtime.totalMemory()=293601280
+Tool returned:
+SUCCESS
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2_no_alignment_start_cap/vcf/NA995A05_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/no_alignment_start_cap/NA995A05_undil.orientation.tar.gz --stats results2/spikein/mutect2_no_alignment_start_cap/vcf/NA995A05_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/no_alignment_start_cap/NA995A05_undil.filtered.vcf.gz 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2_no_alignment_start_cap/vcf/NA995A05_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/no_alignment_start_cap/NA995A05_undil.orientation.tar.gz --stats results2/spikein/mutect2_no_alignment_start_cap/vcf/NA995A05_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/no_alignment_start_cap/NA995A05_undil.filtered.vcf.gz
+15:55:36.686 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:55:36.988 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:55:36.992 INFO  FilterMutectCalls - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:55:36.994 INFO  FilterMutectCalls - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:55:36.994 INFO  FilterMutectCalls - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:55:36.995 INFO  FilterMutectCalls - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:55:36.996 INFO  FilterMutectCalls - Start Date/Time: September 1, 2026 at 3:55:36 PM CEST
+15:55:36.996 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:55:36.997 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:55:36.998 INFO  FilterMutectCalls - HTSJDK Version: 4.1.0
+15:55:36.999 INFO  FilterMutectCalls - Picard Version: 3.1.1
+15:55:37.000 INFO  FilterMutectCalls - Built for Spark Version: 3.5.0
+15:55:37.001 INFO  FilterMutectCalls - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:55:37.002 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:55:37.003 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:55:37.004 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:55:37.005 INFO  FilterMutectCalls - Deflater: IntelDeflater
+15:55:37.005 INFO  FilterMutectCalls - Inflater: IntelInflater
+15:55:37.006 INFO  FilterMutectCalls - GCS max retries/reopens: 20
+15:55:37.007 INFO  FilterMutectCalls - Requester pays: disabled
+15:55:37.008 INFO  FilterMutectCalls - Initializing engine
+15:55:37.306 INFO  FeatureManager - Using codec VCFCodec to read file file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_no_alignment_start_cap/vcf/NA995A05_undil.raw.vcf.gz
+15:55:37.364 INFO  FilterMutectCalls - Done initializing engine
+15:55:37.444 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/no_alignment_start_cap/NA995A05_undil.orientation.tar.gz
+15:55:37.454 INFO  IOUtils - Extracting file: ./NA995A05_undil.orientation_priors
+15:55:37.532 INFO  ProgressMeter - Starting traversal
+15:55:37.533 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+15:55:37.535 INFO  FilterMutectCalls - Starting pass 0 through the variants
+15:55:37.981 INFO  FilterMutectCalls - Finished pass 0 through the variants
+15:55:38.023 INFO  FilterMutectCalls - Starting pass 1 through the variants
+15:55:38.246 INFO  FilterMutectCalls - Finished pass 1 through the variants
+15:55:38.263 INFO  FilterMutectCalls - Starting pass 2 through the variants
+15:55:38.511 INFO  FilterMutectCalls - Finished pass 2 through the variants
+15:55:38.512 INFO  FilterMutectCalls - Starting pass 3 through the variants
+15:55:38.705 INFO  FilterMutectCalls - Finished pass 3 through the variants
+15:55:38.717 INFO  FilterMutectCalls - No variants filtered by: AllowAllVariantsVariantFilter
+15:55:38.719 INFO  FilterMutectCalls - 0 read(s) filtered by: AllowAllReadsReadFilter 
+
+15:55:38.720 INFO  ProgressMeter -             unmapped              0.0                   252          12748.7
+15:55:38.721 INFO  ProgressMeter - Traversal complete. Processed 252 total variants in 0.0 minutes.
+15:55:38.777 INFO  FilterMutectCalls - Shutting down engine
+[September 1, 2026 at 3:55:38 PM CEST] org.broadinstitute.hellbender.tools.walkers.mutect.filtering.FilterMutectCalls done. Elapsed time: 0.04 minutes.
+Runtime.totalMemory()=125829120
+=== no_alignment_start_cap / low: NA99A1_undil ===
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp LearnReadOrientationModel -I results2/spikein/mutect2_no_alignment_start_cap/f1r2/NA99A1_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/no_alignment_start_cap/NA99A1_undil.orientation.tar.gz --num-em-iterations 50 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar LearnReadOrientationModel -I results2/spikein/mutect2_no_alignment_start_cap/f1r2/NA99A1_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/no_alignment_start_cap/NA99A1_undil.orientation.tar.gz --num-em-iterations 50
+15:55:41.507 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:55:41.762 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:55:41.767 INFO  LearnReadOrientationModel - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:55:41.767 INFO  LearnReadOrientationModel - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:55:41.768 INFO  LearnReadOrientationModel - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:55:41.769 INFO  LearnReadOrientationModel - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:55:41.770 INFO  LearnReadOrientationModel - Start Date/Time: September 1, 2026 at 3:55:41 PM CEST
+15:55:41.771 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:55:41.771 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:55:41.772 INFO  LearnReadOrientationModel - HTSJDK Version: 4.1.0
+15:55:41.773 INFO  LearnReadOrientationModel - Picard Version: 3.1.1
+15:55:41.774 INFO  LearnReadOrientationModel - Built for Spark Version: 3.5.0
+15:55:41.775 INFO  LearnReadOrientationModel - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:55:41.776 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:55:41.776 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:55:41.777 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:55:41.778 INFO  LearnReadOrientationModel - Deflater: IntelDeflater
+15:55:41.778 INFO  LearnReadOrientationModel - Inflater: IntelInflater
+15:55:41.779 INFO  LearnReadOrientationModel - GCS max retries/reopens: 20
+15:55:41.780 INFO  LearnReadOrientationModel - Requester pays: disabled
+15:55:41.781 INFO  LearnReadOrientationModel - Initializing engine
+15:55:41.781 INFO  LearnReadOrientationModel - Done initializing engine
+15:55:41.789 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_no_alignment_start_cap/f1r2/NA99A1_undil.f1r2.tar.gz
+15:55:41.799 INFO  IOUtils - Extracting file: ./NA99A1_undil.alt_histogram
+15:55:41.825 INFO  IOUtils - Extracting file: ./NA99A1_undil.alt_table
+15:55:41.840 INFO  IOUtils - Extracting file: ./NA99A1_undil.ref_histogram
+15:55:42.377 INFO  LearnReadOrientationModel - Context AAC: with 452 ref and 234 alt examples, EM converged in 8 steps
+15:55:42.579 INFO  LearnReadOrientationModel - Context AAG: with 592 ref and 275 alt examples, EM converged in 6 steps
+15:55:42.780 INFO  LearnReadOrientationModel - Context AAT: with 684 ref and 349 alt examples, EM converged in 6 steps
+15:55:42.955 INFO  LearnReadOrientationModel - Context ACA: with 465 ref and 410 alt examples, EM converged in 8 steps
+15:55:43.072 INFO  LearnReadOrientationModel - Context ACC: with 308 ref and 241 alt examples, EM converged in 6 steps
+15:55:43.197 INFO  LearnReadOrientationModel - Context ACG: with 51 ref and 71 alt examples, EM converged in 8 steps
+15:55:43.300 INFO  LearnReadOrientationModel - Context ACT: with 430 ref and 219 alt examples, EM converged in 6 steps
+15:55:43.393 INFO  LearnReadOrientationModel - Context AGA: with 587 ref and 355 alt examples, EM converged in 6 steps
+15:55:43.483 INFO  LearnReadOrientationModel - Context AGC: with 388 ref and 263 alt examples, EM converged in 6 steps
+15:55:43.620 INFO  LearnReadOrientationModel - Context AGG: with 323 ref and 418 alt examples, EM converged in 8 steps
+15:55:43.723 INFO  LearnReadOrientationModel - Context ATA: with 479 ref and 241 alt examples, EM converged in 6 steps
+15:55:43.810 INFO  LearnReadOrientationModel - Context ATC: with 385 ref and 176 alt examples, EM converged in 6 steps
+15:55:43.893 INFO  LearnReadOrientationModel - Context ATG: with 585 ref and 225 alt examples, EM converged in 5 steps
+15:55:44.002 INFO  LearnReadOrientationModel - Context CAA: with 607 ref and 229 alt examples, EM converged in 6 steps
+15:55:44.098 INFO  LearnReadOrientationModel - Context CAC: with 465 ref and 190 alt examples, EM converged in 6 steps
+15:55:44.197 INFO  LearnReadOrientationModel - Context CAG: with 649 ref and 265 alt examples, EM converged in 6 steps
+15:55:44.354 INFO  LearnReadOrientationModel - Context CCA: with 289 ref and 516 alt examples, EM converged in 8 steps
+15:55:44.504 INFO  LearnReadOrientationModel - Context CCC: with 281 ref and 345 alt examples, EM converged in 8 steps
+15:55:44.653 INFO  LearnReadOrientationModel - Context CCG: with 102 ref and 92 alt examples, EM converged in 10 steps
+15:55:44.765 INFO  LearnReadOrientationModel - Context CGA: with 52 ref and 69 alt examples, EM converged in 8 steps
+15:55:44.912 INFO  LearnReadOrientationModel - Context CGC: with 122 ref and 70 alt examples, EM converged in 11 steps
+15:55:44.974 INFO  LearnReadOrientationModel - Context CTA: with 354 ref and 141 alt examples, EM converged in 5 steps
+15:55:45.068 INFO  LearnReadOrientationModel - Context CTC: with 482 ref and 226 alt examples, EM converged in 7 steps
+15:55:45.153 INFO  LearnReadOrientationModel - Context GAA: with 651 ref and 267 alt examples, EM converged in 6 steps
+15:55:45.235 INFO  LearnReadOrientationModel - Context GAC: with 277 ref and 139 alt examples, EM converged in 6 steps
+15:55:45.328 INFO  LearnReadOrientationModel - Context GCA: with 311 ref and 341 alt examples, EM converged in 7 steps
+15:55:48.382 INFO  LearnReadOrientationModel - Context GCC: with 273 ref and 262 alt examples, EM converged in 9 steps
+15:55:48.461 INFO  LearnReadOrientationModel - Context GGA: with 353 ref and 302 alt examples, EM converged in 6 steps
+15:55:48.539 INFO  LearnReadOrientationModel - Context GTA: with 278 ref and 162 alt examples, EM converged in 6 steps
+15:55:48.605 INFO  LearnReadOrientationModel - Context TAA: with 606 ref and 224 alt examples, EM converged in 5 steps
+15:55:48.690 INFO  LearnReadOrientationModel - Context TCA: with 455 ref and 429 alt examples, EM converged in 6 steps
+15:55:48.770 INFO  LearnReadOrientationModel - Context AAA: with 1078 ref and 534 alt examples, EM converged in 6 steps
+15:55:48.813 INFO  LearnReadOrientationModel - Shutting down engine
+[September 1, 2026 at 3:55:48 PM CEST] org.broadinstitute.hellbender.tools.walkers.readorientation.LearnReadOrientationModel done. Elapsed time: 0.12 minutes.
+Runtime.totalMemory()=301989888
+Tool returned:
+SUCCESS
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2_no_alignment_start_cap/vcf/NA99A1_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/no_alignment_start_cap/NA99A1_undil.orientation.tar.gz --stats results2/spikein/mutect2_no_alignment_start_cap/vcf/NA99A1_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/no_alignment_start_cap/NA99A1_undil.filtered.vcf.gz 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2_no_alignment_start_cap/vcf/NA99A1_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/no_alignment_start_cap/NA99A1_undil.orientation.tar.gz --stats results2/spikein/mutect2_no_alignment_start_cap/vcf/NA99A1_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/no_alignment_start_cap/NA99A1_undil.filtered.vcf.gz
+15:55:51.274 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:55:51.655 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:55:51.661 INFO  FilterMutectCalls - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:55:51.663 INFO  FilterMutectCalls - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:55:51.664 INFO  FilterMutectCalls - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:55:51.665 INFO  FilterMutectCalls - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:55:51.666 INFO  FilterMutectCalls - Start Date/Time: September 1, 2026 at 3:55:51 PM CEST
+15:55:51.667 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:55:51.669 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:55:51.671 INFO  FilterMutectCalls - HTSJDK Version: 4.1.0
+15:55:51.672 INFO  FilterMutectCalls - Picard Version: 3.1.1
+15:55:51.673 INFO  FilterMutectCalls - Built for Spark Version: 3.5.0
+15:55:51.674 INFO  FilterMutectCalls - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:55:51.675 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:55:51.677 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:55:51.678 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:55:51.679 INFO  FilterMutectCalls - Deflater: IntelDeflater
+15:55:51.681 INFO  FilterMutectCalls - Inflater: IntelInflater
+15:55:51.682 INFO  FilterMutectCalls - GCS max retries/reopens: 20
+15:55:51.683 INFO  FilterMutectCalls - Requester pays: disabled
+15:55:51.685 INFO  FilterMutectCalls - Initializing engine
+15:55:52.111 INFO  FeatureManager - Using codec VCFCodec to read file file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_no_alignment_start_cap/vcf/NA99A1_undil.raw.vcf.gz
+15:55:52.180 INFO  FilterMutectCalls - Done initializing engine
+15:55:52.280 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/no_alignment_start_cap/NA99A1_undil.orientation.tar.gz
+15:55:52.292 INFO  IOUtils - Extracting file: ./NA99A1_undil.orientation_priors
+15:55:52.374 INFO  ProgressMeter - Starting traversal
+15:55:52.376 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+15:55:52.377 INFO  FilterMutectCalls - Starting pass 0 through the variants
+15:55:52.770 INFO  FilterMutectCalls - Finished pass 0 through the variants
+15:55:52.821 INFO  FilterMutectCalls - Starting pass 1 through the variants
+15:55:52.968 INFO  FilterMutectCalls - Finished pass 1 through the variants
+15:55:52.973 INFO  FilterMutectCalls - Starting pass 2 through the variants
+15:55:53.102 INFO  FilterMutectCalls - Finished pass 2 through the variants
+15:55:53.103 INFO  FilterMutectCalls - Starting pass 3 through the variants
+15:55:53.254 INFO  FilterMutectCalls - Finished pass 3 through the variants
+15:55:53.270 INFO  FilterMutectCalls - No variants filtered by: AllowAllVariantsVariantFilter
+15:55:53.272 INFO  FilterMutectCalls - 0 read(s) filtered by: AllowAllReadsReadFilter 
+
+15:55:53.273 INFO  ProgressMeter -             unmapped              0.0                   128           8561.9
+15:55:53.274 INFO  ProgressMeter - Traversal complete. Processed 128 total variants in 0.0 minutes.
+15:55:53.320 INFO  FilterMutectCalls - Shutting down engine
+[September 1, 2026 at 3:55:53 PM CEST] org.broadinstitute.hellbender.tools.walkers.mutect.filtering.FilterMutectCalls done. Elapsed time: 0.04 minutes.
+Runtime.totalMemory()=142606336
+=== max_population_af_1 / high: NA995A05_undil ===
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp LearnReadOrientationModel -I results2/spikein/mutect2_max_population_af_1/f1r2/NA995A05_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/max_population_af_1/NA995A05_undil.orientation.tar.gz --num-em-iterations 50 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar LearnReadOrientationModel -I results2/spikein/mutect2_max_population_af_1/f1r2/NA995A05_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/max_population_af_1/NA995A05_undil.orientation.tar.gz --num-em-iterations 50
+15:55:56.996 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:55:57.325 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:55:57.331 INFO  LearnReadOrientationModel - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:55:57.332 INFO  LearnReadOrientationModel - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:55:57.333 INFO  LearnReadOrientationModel - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:55:57.334 INFO  LearnReadOrientationModel - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:55:57.335 INFO  LearnReadOrientationModel - Start Date/Time: September 1, 2026 at 3:55:56 PM CEST
+15:55:57.336 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:55:57.337 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:55:57.339 INFO  LearnReadOrientationModel - HTSJDK Version: 4.1.0
+15:55:57.340 INFO  LearnReadOrientationModel - Picard Version: 3.1.1
+15:55:57.342 INFO  LearnReadOrientationModel - Built for Spark Version: 3.5.0
+15:55:57.343 INFO  LearnReadOrientationModel - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:55:57.344 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:55:57.345 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:55:57.346 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:55:57.347 INFO  LearnReadOrientationModel - Deflater: IntelDeflater
+15:55:57.348 INFO  LearnReadOrientationModel - Inflater: IntelInflater
+15:55:57.349 INFO  LearnReadOrientationModel - GCS max retries/reopens: 20
+15:55:57.350 INFO  LearnReadOrientationModel - Requester pays: disabled
+15:55:57.352 INFO  LearnReadOrientationModel - Initializing engine
+15:55:57.352 INFO  LearnReadOrientationModel - Done initializing engine
+15:55:57.362 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/f1r2/NA995A05_undil.f1r2.tar.gz
+15:55:57.375 INFO  IOUtils - Extracting file: ./NA995A05_undil.alt_histogram
+15:55:57.404 INFO  IOUtils - Extracting file: ./NA995A05_undil.alt_table
+15:55:57.420 INFO  IOUtils - Extracting file: ./NA995A05_undil.ref_histogram
+15:55:58.069 INFO  LearnReadOrientationModel - Context AAC: with 370 ref and 316 alt examples, EM converged in 8 steps
+15:55:58.305 INFO  LearnReadOrientationModel - Context AAG: with 467 ref and 400 alt examples, EM converged in 7 steps
+15:55:58.510 INFO  LearnReadOrientationModel - Context AAT: with 542 ref and 491 alt examples, EM converged in 7 steps
+15:55:58.727 INFO  LearnReadOrientationModel - Context ACA: with 449 ref and 426 alt examples, EM converged in 7 steps
+15:55:58.943 INFO  LearnReadOrientationModel - Context ACC: with 294 ref and 255 alt examples, EM converged in 6 steps
+15:55:59.206 INFO  LearnReadOrientationModel - Context ACG: with 42 ref and 80 alt examples, EM converged in 9 steps
+15:55:59.313 INFO  LearnReadOrientationModel - Context ACT: with 404 ref and 245 alt examples, EM converged in 6 steps
+15:55:59.403 INFO  LearnReadOrientationModel - Context AGA: with 605 ref and 337 alt examples, EM converged in 6 steps
+15:55:59.513 INFO  LearnReadOrientationModel - Context AGC: with 354 ref and 297 alt examples, EM converged in 7 steps
+15:55:59.619 INFO  LearnReadOrientationModel - Context AGG: with 405 ref and 336 alt examples, EM converged in 6 steps
+15:55:59.732 INFO  LearnReadOrientationModel - Context ATA: with 400 ref and 320 alt examples, EM converged in 7 steps
+15:55:59.819 INFO  LearnReadOrientationModel - Context ATC: with 354 ref and 207 alt examples, EM converged in 6 steps
+15:55:59.920 INFO  LearnReadOrientationModel - Context ATG: with 519 ref and 291 alt examples, EM converged in 6 steps
+15:56:00.032 INFO  LearnReadOrientationModel - Context CAA: with 523 ref and 313 alt examples, EM converged in 7 steps
+15:56:00.131 INFO  LearnReadOrientationModel - Context CAC: with 377 ref and 278 alt examples, EM converged in 7 steps
+15:56:00.213 INFO  LearnReadOrientationModel - Context CAG: with 565 ref and 349 alt examples, EM converged in 6 steps
+15:56:00.316 INFO  LearnReadOrientationModel - Context CCA: with 359 ref and 446 alt examples, EM converged in 7 steps
+15:56:00.396 INFO  LearnReadOrientationModel - Context CCC: with 377 ref and 249 alt examples, EM converged in 6 steps
+15:56:00.518 INFO  LearnReadOrientationModel - Context CCG: with 109 ref and 85 alt examples, EM converged in 9 steps
+15:56:00.609 INFO  LearnReadOrientationModel - Context CGA: with 53 ref and 69 alt examples, EM converged in 7 steps
+15:56:00.721 INFO  LearnReadOrientationModel - Context CGC: with 127 ref and 65 alt examples, EM converged in 9 steps
+15:56:00.827 INFO  LearnReadOrientationModel - Context CTA: with 304 ref and 191 alt examples, EM converged in 8 steps
+15:56:00.905 INFO  LearnReadOrientationModel - Context CTC: with 432 ref and 276 alt examples, EM converged in 6 steps
+15:56:00.988 INFO  LearnReadOrientationModel - Context GAA: with 564 ref and 354 alt examples, EM converged in 6 steps
+15:56:01.064 INFO  LearnReadOrientationModel - Context GAC: with 217 ref and 199 alt examples, EM converged in 6 steps
+15:56:01.167 INFO  LearnReadOrientationModel - Context GCA: with 300 ref and 352 alt examples, EM converged in 7 steps
+15:56:01.249 INFO  LearnReadOrientationModel - Context GCC: with 281 ref and 254 alt examples, EM converged in 6 steps
+15:56:01.341 INFO  LearnReadOrientationModel - Context GGA: with 358 ref and 297 alt examples, EM converged in 7 steps
+15:56:01.433 INFO  LearnReadOrientationModel - Context GTA: with 255 ref and 185 alt examples, EM converged in 7 steps
+15:56:01.512 INFO  LearnReadOrientationModel - Context TAA: with 536 ref and 294 alt examples, EM converged in 6 steps
+15:56:01.608 INFO  LearnReadOrientationModel - Context TCA: with 462 ref and 422 alt examples, EM converged in 7 steps
+15:56:01.695 INFO  LearnReadOrientationModel - Context AAA: with 924 ref and 688 alt examples, EM converged in 6 steps
+15:56:01.742 INFO  LearnReadOrientationModel - Shutting down engine
+[September 1, 2026 at 3:56:01 PM CEST] org.broadinstitute.hellbender.tools.walkers.readorientation.LearnReadOrientationModel done. Elapsed time: 0.08 minutes.
+Runtime.totalMemory()=301989888
+Tool returned:
+SUCCESS
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2_max_population_af_1/vcf/NA995A05_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/max_population_af_1/NA995A05_undil.orientation.tar.gz --stats results2/spikein/mutect2_max_population_af_1/vcf/NA995A05_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/max_population_af_1/NA995A05_undil.filtered.vcf.gz 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2_max_population_af_1/vcf/NA995A05_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/max_population_af_1/NA995A05_undil.orientation.tar.gz --stats results2/spikein/mutect2_max_population_af_1/vcf/NA995A05_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/max_population_af_1/NA995A05_undil.filtered.vcf.gz
+15:56:03.863 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:56:04.161 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:56:04.166 INFO  FilterMutectCalls - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:56:04.166 INFO  FilterMutectCalls - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:56:04.167 INFO  FilterMutectCalls - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:56:04.168 INFO  FilterMutectCalls - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:56:04.169 INFO  FilterMutectCalls - Start Date/Time: September 1, 2026 at 3:56:03 PM CEST
+15:56:04.169 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:56:04.170 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:56:04.172 INFO  FilterMutectCalls - HTSJDK Version: 4.1.0
+15:56:04.173 INFO  FilterMutectCalls - Picard Version: 3.1.1
+15:56:04.174 INFO  FilterMutectCalls - Built for Spark Version: 3.5.0
+15:56:04.175 INFO  FilterMutectCalls - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:56:04.176 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:56:04.178 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:56:04.179 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:56:04.180 INFO  FilterMutectCalls - Deflater: IntelDeflater
+15:56:04.181 INFO  FilterMutectCalls - Inflater: IntelInflater
+15:56:04.182 INFO  FilterMutectCalls - GCS max retries/reopens: 20
+15:56:04.183 INFO  FilterMutectCalls - Requester pays: disabled
+15:56:04.185 INFO  FilterMutectCalls - Initializing engine
+15:56:04.476 INFO  FeatureManager - Using codec VCFCodec to read file file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/vcf/NA995A05_undil.raw.vcf.gz
+15:56:04.535 INFO  FilterMutectCalls - Done initializing engine
+15:56:04.610 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/max_population_af_1/NA995A05_undil.orientation.tar.gz
+15:56:04.620 INFO  IOUtils - Extracting file: ./NA995A05_undil.orientation_priors
+15:56:04.677 INFO  ProgressMeter - Starting traversal
+15:56:04.678 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+15:56:04.680 INFO  FilterMutectCalls - Starting pass 0 through the variants
+15:56:05.135 INFO  FilterMutectCalls - Finished pass 0 through the variants
+15:56:05.191 INFO  FilterMutectCalls - Starting pass 1 through the variants
+15:56:05.440 INFO  FilterMutectCalls - Finished pass 1 through the variants
+15:56:05.455 INFO  FilterMutectCalls - Starting pass 2 through the variants
+15:56:05.646 INFO  FilterMutectCalls - Finished pass 2 through the variants
+15:56:05.647 INFO  FilterMutectCalls - Starting pass 3 through the variants
+15:56:05.862 INFO  FilterMutectCalls - Finished pass 3 through the variants
+15:56:05.881 INFO  FilterMutectCalls - No variants filtered by: AllowAllVariantsVariantFilter
+15:56:05.883 INFO  FilterMutectCalls - 0 read(s) filtered by: AllowAllReadsReadFilter 
+
+15:56:05.884 INFO  ProgressMeter -             unmapped              0.0                   132           6572.6
+15:56:05.885 INFO  ProgressMeter - Traversal complete. Processed 132 total variants in 0.0 minutes.
+15:56:05.951 INFO  FilterMutectCalls - Shutting down engine
+[September 1, 2026 at 3:56:05 PM CEST] org.broadinstitute.hellbender.tools.walkers.mutect.filtering.FilterMutectCalls done. Elapsed time: 0.04 minutes.
+Runtime.totalMemory()=142606336
+=== max_population_af_1 / low: NA99A1_undil ===
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp LearnReadOrientationModel -I results2/spikein/mutect2_max_population_af_1/f1r2/NA99A1_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/max_population_af_1/NA99A1_undil.orientation.tar.gz --num-em-iterations 50 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar LearnReadOrientationModel -I results2/spikein/mutect2_max_population_af_1/f1r2/NA99A1_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/max_population_af_1/NA99A1_undil.orientation.tar.gz --num-em-iterations 50
+15:56:08.937 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:56:09.196 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:56:09.201 INFO  LearnReadOrientationModel - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:56:09.202 INFO  LearnReadOrientationModel - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:56:09.203 INFO  LearnReadOrientationModel - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:56:09.204 INFO  LearnReadOrientationModel - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:56:09.205 INFO  LearnReadOrientationModel - Start Date/Time: September 1, 2026 at 3:56:08 PM CEST
+15:56:09.206 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:56:09.206 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:56:09.208 INFO  LearnReadOrientationModel - HTSJDK Version: 4.1.0
+15:56:09.209 INFO  LearnReadOrientationModel - Picard Version: 3.1.1
+15:56:09.210 INFO  LearnReadOrientationModel - Built for Spark Version: 3.5.0
+15:56:09.211 INFO  LearnReadOrientationModel - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:56:09.212 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:56:09.213 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:56:09.214 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:56:09.214 INFO  LearnReadOrientationModel - Deflater: IntelDeflater
+15:56:09.215 INFO  LearnReadOrientationModel - Inflater: IntelInflater
+15:56:09.217 INFO  LearnReadOrientationModel - GCS max retries/reopens: 20
+15:56:09.218 INFO  LearnReadOrientationModel - Requester pays: disabled
+15:56:09.219 INFO  LearnReadOrientationModel - Initializing engine
+15:56:09.220 INFO  LearnReadOrientationModel - Done initializing engine
+15:56:09.228 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/f1r2/NA99A1_undil.f1r2.tar.gz
+15:56:09.238 INFO  IOUtils - Extracting file: ./NA99A1_undil.alt_histogram
+15:56:09.261 INFO  IOUtils - Extracting file: ./NA99A1_undil.alt_table
+15:56:09.275 INFO  IOUtils - Extracting file: ./NA99A1_undil.ref_histogram
+15:56:09.848 INFO  LearnReadOrientationModel - Context AAC: with 452 ref and 234 alt examples, EM converged in 8 steps
+15:56:09.993 INFO  LearnReadOrientationModel - Context AAG: with 592 ref and 275 alt examples, EM converged in 6 steps
+15:56:10.137 INFO  LearnReadOrientationModel - Context AAT: with 686 ref and 347 alt examples, EM converged in 6 steps
+15:56:10.322 INFO  LearnReadOrientationModel - Context ACA: with 467 ref and 408 alt examples, EM converged in 8 steps
+15:56:10.421 INFO  LearnReadOrientationModel - Context ACC: with 308 ref and 241 alt examples, EM converged in 6 steps
+15:56:10.547 INFO  LearnReadOrientationModel - Context ACG: with 51 ref and 71 alt examples, EM converged in 8 steps
+15:56:10.641 INFO  LearnReadOrientationModel - Context ACT: with 430 ref and 219 alt examples, EM converged in 6 steps
+15:56:10.773 INFO  LearnReadOrientationModel - Context AGA: with 590 ref and 352 alt examples, EM converged in 6 steps
+15:56:10.870 INFO  LearnReadOrientationModel - Context AGC: with 389 ref and 262 alt examples, EM converged in 6 steps
+15:56:11.016 INFO  LearnReadOrientationModel - Context AGG: with 323 ref and 418 alt examples, EM converged in 9 steps
+15:56:11.105 INFO  LearnReadOrientationModel - Context ATA: with 479 ref and 241 alt examples, EM converged in 6 steps
+15:56:11.182 INFO  LearnReadOrientationModel - Context ATC: with 387 ref and 174 alt examples, EM converged in 6 steps
+15:56:11.254 INFO  LearnReadOrientationModel - Context ATG: with 585 ref and 225 alt examples, EM converged in 5 steps
+15:56:11.345 INFO  LearnReadOrientationModel - Context CAA: with 609 ref and 227 alt examples, EM converged in 6 steps
+15:56:11.432 INFO  LearnReadOrientationModel - Context CAC: with 467 ref and 188 alt examples, EM converged in 6 steps
+15:56:11.521 INFO  LearnReadOrientationModel - Context CAG: with 650 ref and 264 alt examples, EM converged in 6 steps
+15:56:11.686 INFO  LearnReadOrientationModel - Context CCA: with 290 ref and 515 alt examples, EM converged in 8 steps
+15:56:11.861 INFO  LearnReadOrientationModel - Context CCC: with 283 ref and 343 alt examples, EM converged in 8 steps
+15:56:12.044 INFO  LearnReadOrientationModel - Context CCG: with 102 ref and 92 alt examples, EM converged in 10 steps
+15:56:12.160 INFO  LearnReadOrientationModel - Context CGA: with 52 ref and 69 alt examples, EM converged in 8 steps
+15:56:12.315 INFO  LearnReadOrientationModel - Context CGC: with 123 ref and 69 alt examples, EM converged in 11 steps
+15:56:12.385 INFO  LearnReadOrientationModel - Context CTA: with 355 ref and 140 alt examples, EM converged in 5 steps
+15:56:12.470 INFO  LearnReadOrientationModel - Context CTC: with 483 ref and 225 alt examples, EM converged in 6 steps
+15:56:12.554 INFO  LearnReadOrientationModel - Context GAA: with 652 ref and 266 alt examples, EM converged in 6 steps
+15:56:12.636 INFO  LearnReadOrientationModel - Context GAC: with 278 ref and 138 alt examples, EM converged in 6 steps
+15:56:12.735 INFO  LearnReadOrientationModel - Context GCA: with 312 ref and 340 alt examples, EM converged in 7 steps
+15:56:12.863 INFO  LearnReadOrientationModel - Context GCC: with 273 ref and 262 alt examples, EM converged in 9 steps
+15:56:12.953 INFO  LearnReadOrientationModel - Context GGA: with 354 ref and 301 alt examples, EM converged in 6 steps
+15:56:13.043 INFO  LearnReadOrientationModel - Context GTA: with 279 ref and 161 alt examples, EM converged in 6 steps
+15:56:13.127 INFO  LearnReadOrientationModel - Context TAA: with 606 ref and 224 alt examples, EM converged in 5 steps
+15:56:13.230 INFO  LearnReadOrientationModel - Context TCA: with 457 ref and 427 alt examples, EM converged in 6 steps
+15:56:13.318 INFO  LearnReadOrientationModel - Context AAA: with 1081 ref and 531 alt examples, EM converged in 6 steps
+15:56:13.364 INFO  LearnReadOrientationModel - Shutting down engine
+[September 1, 2026 at 3:56:13 PM CEST] org.broadinstitute.hellbender.tools.walkers.readorientation.LearnReadOrientationModel done. Elapsed time: 0.07 minutes.
+Runtime.totalMemory()=209715200
+Tool returned:
+SUCCESS
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2_max_population_af_1/vcf/NA99A1_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/max_population_af_1/NA99A1_undil.orientation.tar.gz --stats results2/spikein/mutect2_max_population_af_1/vcf/NA99A1_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/max_population_af_1/NA99A1_undil.filtered.vcf.gz 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2_max_population_af_1/vcf/NA99A1_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/max_population_af_1/NA99A1_undil.orientation.tar.gz --stats results2/spikein/mutect2_max_population_af_1/vcf/NA99A1_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/max_population_af_1/NA99A1_undil.filtered.vcf.gz
+15:56:15.202 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:56:15.430 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:56:15.433 INFO  FilterMutectCalls - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:56:15.434 INFO  FilterMutectCalls - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:56:15.435 INFO  FilterMutectCalls - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:56:15.435 INFO  FilterMutectCalls - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:56:15.436 INFO  FilterMutectCalls - Start Date/Time: September 1, 2026 at 3:56:15 PM CEST
+15:56:15.437 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:56:15.438 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:56:15.440 INFO  FilterMutectCalls - HTSJDK Version: 4.1.0
+15:56:15.440 INFO  FilterMutectCalls - Picard Version: 3.1.1
+15:56:15.441 INFO  FilterMutectCalls - Built for Spark Version: 3.5.0
+15:56:15.442 INFO  FilterMutectCalls - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:56:15.443 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:56:15.444 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:56:15.445 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:56:15.445 INFO  FilterMutectCalls - Deflater: IntelDeflater
+15:56:15.446 INFO  FilterMutectCalls - Inflater: IntelInflater
+15:56:15.446 INFO  FilterMutectCalls - GCS max retries/reopens: 20
+15:56:15.447 INFO  FilterMutectCalls - Requester pays: disabled
+15:56:15.448 INFO  FilterMutectCalls - Initializing engine
+15:56:15.720 INFO  FeatureManager - Using codec VCFCodec to read file file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1/vcf/NA99A1_undil.raw.vcf.gz
+15:56:15.773 INFO  FilterMutectCalls - Done initializing engine
+15:56:15.848 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/max_population_af_1/NA99A1_undil.orientation.tar.gz
+15:56:15.859 INFO  IOUtils - Extracting file: ./NA99A1_undil.orientation_priors
+15:56:15.927 INFO  ProgressMeter - Starting traversal
+15:56:15.928 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+15:56:15.930 INFO  FilterMutectCalls - Starting pass 0 through the variants
+15:56:16.208 INFO  FilterMutectCalls - Finished pass 0 through the variants
+15:56:16.239 INFO  FilterMutectCalls - Starting pass 1 through the variants
+15:56:16.392 INFO  FilterMutectCalls - Finished pass 1 through the variants
+15:56:16.407 INFO  FilterMutectCalls - Starting pass 2 through the variants
+15:56:16.560 INFO  FilterMutectCalls - Finished pass 2 through the variants
+15:56:16.561 INFO  FilterMutectCalls - Starting pass 3 through the variants
+15:56:16.716 INFO  FilterMutectCalls - Finished pass 3 through the variants
+15:56:16.730 INFO  FilterMutectCalls - No variants filtered by: AllowAllVariantsVariantFilter
+15:56:16.731 INFO  FilterMutectCalls - 0 read(s) filtered by: AllowAllReadsReadFilter 
+
+15:56:16.733 INFO  ProgressMeter -             unmapped              0.0                   128           9552.2
+15:56:16.734 INFO  ProgressMeter - Traversal complete. Processed 128 total variants in 0.0 minutes.
+15:56:16.775 INFO  FilterMutectCalls - Shutting down engine
+[September 1, 2026 at 3:56:16 PM CEST] org.broadinstitute.hellbender.tools.walkers.mutect.filtering.FilterMutectCalls done. Elapsed time: 0.03 minutes.
+Runtime.totalMemory()=142606336
+=== both_changes / high: NA995A05_undil ===
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp LearnReadOrientationModel -I results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/f1r2/NA995A05_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/both_changes/NA995A05_undil.orientation.tar.gz --num-em-iterations 50 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar LearnReadOrientationModel -I results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/f1r2/NA995A05_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/both_changes/NA995A05_undil.orientation.tar.gz --num-em-iterations 50
+15:56:19.317 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:56:19.610 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:56:19.613 INFO  LearnReadOrientationModel - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:56:19.614 INFO  LearnReadOrientationModel - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:56:19.615 INFO  LearnReadOrientationModel - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:56:19.616 INFO  LearnReadOrientationModel - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:56:19.617 INFO  LearnReadOrientationModel - Start Date/Time: September 1, 2026 at 3:56:19 PM CEST
+15:56:19.618 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:56:19.619 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:56:19.621 INFO  LearnReadOrientationModel - HTSJDK Version: 4.1.0
+15:56:19.622 INFO  LearnReadOrientationModel - Picard Version: 3.1.1
+15:56:19.623 INFO  LearnReadOrientationModel - Built for Spark Version: 3.5.0
+15:56:19.625 INFO  LearnReadOrientationModel - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:56:19.626 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:56:19.626 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:56:19.627 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:56:19.628 INFO  LearnReadOrientationModel - Deflater: IntelDeflater
+15:56:19.629 INFO  LearnReadOrientationModel - Inflater: IntelInflater
+15:56:19.630 INFO  LearnReadOrientationModel - GCS max retries/reopens: 20
+15:56:19.631 INFO  LearnReadOrientationModel - Requester pays: disabled
+15:56:19.632 INFO  LearnReadOrientationModel - Initializing engine
+15:56:19.633 INFO  LearnReadOrientationModel - Done initializing engine
+15:56:19.642 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/f1r2/NA995A05_undil.f1r2.tar.gz
+15:56:19.655 INFO  IOUtils - Extracting file: ./NA995A05_undil.alt_histogram
+15:56:19.686 INFO  IOUtils - Extracting file: ./NA995A05_undil.alt_table
+15:56:19.711 INFO  IOUtils - Extracting file: ./NA995A05_undil.ref_histogram
+15:56:20.485 INFO  LearnReadOrientationModel - Context AAC: with 295 ref and 391 alt examples, EM converged in 8 steps
+15:56:23.722 INFO  LearnReadOrientationModel - Context AAG: with 379 ref and 488 alt examples, EM converged in 7 steps
+15:56:23.891 INFO  LearnReadOrientationModel - Context AAT: with 450 ref and 583 alt examples, EM converged in 6 steps
+15:56:24.072 INFO  LearnReadOrientationModel - Context ACA: with 349 ref and 525 alt examples, EM converged in 7 steps
+15:56:24.204 INFO  LearnReadOrientationModel - Context ACC: with 238 ref and 311 alt examples, EM converged in 6 steps
+15:56:24.371 INFO  LearnReadOrientationModel - Context ACG: with 36 ref and 86 alt examples, EM converged in 10 steps
+15:56:24.466 INFO  LearnReadOrientationModel - Context ACT: with 330 ref and 320 alt examples, EM converged in 6 steps
+15:56:24.574 INFO  LearnReadOrientationModel - Context AGA: with 490 ref and 452 alt examples, EM converged in 7 steps
+15:56:24.665 INFO  LearnReadOrientationModel - Context AGC: with 303 ref and 348 alt examples, EM converged in 6 steps
+15:56:24.757 INFO  LearnReadOrientationModel - Context AGG: with 344 ref and 397 alt examples, EM converged in 6 steps
+15:56:24.891 INFO  LearnReadOrientationModel - Context ATA: with 337 ref and 383 alt examples, EM converged in 8 steps
+15:56:24.980 INFO  LearnReadOrientationModel - Context ATC: with 296 ref and 265 alt examples, EM converged in 6 steps
+15:56:25.100 INFO  LearnReadOrientationModel - Context ATG: with 431 ref and 379 alt examples, EM converged in 7 steps
+15:56:25.213 INFO  LearnReadOrientationModel - Context CAA: with 434 ref and 402 alt examples, EM converged in 7 steps
+15:56:25.319 INFO  LearnReadOrientationModel - Context CAC: with 304 ref and 351 alt examples, EM converged in 7 steps
+15:56:25.424 INFO  LearnReadOrientationModel - Context CAG: with 477 ref and 437 alt examples, EM converged in 7 steps
+15:56:25.525 INFO  LearnReadOrientationModel - Context CCA: with 272 ref and 533 alt examples, EM converged in 7 steps
+15:56:25.610 INFO  LearnReadOrientationModel - Context CCC: with 326 ref and 300 alt examples, EM converged in 6 steps
+15:56:25.718 INFO  LearnReadOrientationModel - Context CCG: with 105 ref and 89 alt examples, EM converged in 8 steps
+15:56:25.817 INFO  LearnReadOrientationModel - Context CGA: with 42 ref and 80 alt examples, EM converged in 7 steps
+15:56:25.944 INFO  LearnReadOrientationModel - Context CGC: with 116 ref and 76 alt examples, EM converged in 10 steps
+15:56:26.036 INFO  LearnReadOrientationModel - Context CTA: with 255 ref and 240 alt examples, EM converged in 7 steps
+15:56:26.120 INFO  LearnReadOrientationModel - Context CTC: with 351 ref and 357 alt examples, EM converged in 6 steps
+15:56:26.204 INFO  LearnReadOrientationModel - Context GAA: with 455 ref and 463 alt examples, EM converged in 6 steps
+15:56:26.287 INFO  LearnReadOrientationModel - Context GAC: with 168 ref and 248 alt examples, EM converged in 6 steps
+15:56:26.387 INFO  LearnReadOrientationModel - Context GCA: with 246 ref and 406 alt examples, EM converged in 7 steps
+15:56:26.473 INFO  LearnReadOrientationModel - Context GCC: with 247 ref and 288 alt examples, EM converged in 6 steps
+15:56:26.556 INFO  LearnReadOrientationModel - Context GGA: with 288 ref and 367 alt examples, EM converged in 6 steps
+15:56:26.649 INFO  LearnReadOrientationModel - Context GTA: with 210 ref and 230 alt examples, EM converged in 7 steps
+15:56:26.732 INFO  LearnReadOrientationModel - Context TAA: with 458 ref and 372 alt examples, EM converged in 6 steps
+15:56:26.832 INFO  LearnReadOrientationModel - Context TCA: with 354 ref and 530 alt examples, EM converged in 7 steps
+15:56:26.924 INFO  LearnReadOrientationModel - Context AAA: with 790 ref and 822 alt examples, EM converged in 6 steps
+15:56:26.972 INFO  LearnReadOrientationModel - Shutting down engine
+[September 1, 2026 at 3:56:26 PM CEST] org.broadinstitute.hellbender.tools.walkers.readorientation.LearnReadOrientationModel done. Elapsed time: 0.13 minutes.
+Runtime.totalMemory()=297795584
+Tool returned:
+SUCCESS
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/vcf/NA995A05_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/both_changes/NA995A05_undil.orientation.tar.gz --stats results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/vcf/NA995A05_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/both_changes/NA995A05_undil.filtered.vcf.gz 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/vcf/NA995A05_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/both_changes/NA995A05_undil.orientation.tar.gz --stats results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/vcf/NA995A05_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/both_changes/NA995A05_undil.filtered.vcf.gz
+15:56:28.919 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:56:29.198 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:56:29.205 INFO  FilterMutectCalls - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:56:29.206 INFO  FilterMutectCalls - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:56:29.207 INFO  FilterMutectCalls - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:56:29.208 INFO  FilterMutectCalls - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:56:29.210 INFO  FilterMutectCalls - Start Date/Time: September 1, 2026 at 3:56:28 PM CEST
+15:56:29.211 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:56:29.212 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:56:29.215 INFO  FilterMutectCalls - HTSJDK Version: 4.1.0
+15:56:29.216 INFO  FilterMutectCalls - Picard Version: 3.1.1
+15:56:29.217 INFO  FilterMutectCalls - Built for Spark Version: 3.5.0
+15:56:29.218 INFO  FilterMutectCalls - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:56:29.219 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:56:29.220 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:56:29.221 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:56:29.222 INFO  FilterMutectCalls - Deflater: IntelDeflater
+15:56:29.223 INFO  FilterMutectCalls - Inflater: IntelInflater
+15:56:29.224 INFO  FilterMutectCalls - GCS max retries/reopens: 20
+15:56:29.225 INFO  FilterMutectCalls - Requester pays: disabled
+15:56:29.226 INFO  FilterMutectCalls - Initializing engine
+15:56:29.604 INFO  FeatureManager - Using codec VCFCodec to read file file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/vcf/NA995A05_undil.raw.vcf.gz
+15:56:29.665 INFO  FilterMutectCalls - Done initializing engine
+15:56:29.737 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/both_changes/NA995A05_undil.orientation.tar.gz
+15:56:29.747 INFO  IOUtils - Extracting file: ./NA995A05_undil.orientation_priors
+15:56:29.806 INFO  ProgressMeter - Starting traversal
+15:56:29.808 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+15:56:29.810 INFO  FilterMutectCalls - Starting pass 0 through the variants
+15:56:30.331 INFO  FilterMutectCalls - Finished pass 0 through the variants
+15:56:30.379 INFO  FilterMutectCalls - Starting pass 1 through the variants
+15:56:30.653 INFO  FilterMutectCalls - Finished pass 1 through the variants
+15:56:30.673 INFO  FilterMutectCalls - Starting pass 2 through the variants
+15:56:30.904 INFO  FilterMutectCalls - Finished pass 2 through the variants
+15:56:30.905 INFO  FilterMutectCalls - Starting pass 3 through the variants
+15:56:31.189 INFO  FilterMutectCalls - Finished pass 3 through the variants
+15:56:31.208 INFO  FilterMutectCalls - No variants filtered by: AllowAllVariantsVariantFilter
+15:56:31.212 INFO  FilterMutectCalls - 0 read(s) filtered by: AllowAllReadsReadFilter 
+
+15:56:31.213 INFO  ProgressMeter -             unmapped              0.0                   252          10769.2
+15:56:31.214 INFO  ProgressMeter - Traversal complete. Processed 252 total variants in 0.0 minutes.
+15:56:31.283 INFO  FilterMutectCalls - Shutting down engine
+[September 1, 2026 at 3:56:31 PM CEST] org.broadinstitute.hellbender.tools.walkers.mutect.filtering.FilterMutectCalls done. Elapsed time: 0.04 minutes.
+Runtime.totalMemory()=142606336
+=== both_changes / low: NA99A1_undil ===
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp LearnReadOrientationModel -I results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/f1r2/NA99A1_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/both_changes/NA99A1_undil.orientation.tar.gz --num-em-iterations 50 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar LearnReadOrientationModel -I results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/f1r2/NA99A1_undil.f1r2.tar.gz -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/both_changes/NA99A1_undil.orientation.tar.gz --num-em-iterations 50
+15:56:34.860 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:56:35.167 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:56:35.172 INFO  LearnReadOrientationModel - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:56:35.173 INFO  LearnReadOrientationModel - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:56:35.174 INFO  LearnReadOrientationModel - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:56:35.175 INFO  LearnReadOrientationModel - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:56:35.176 INFO  LearnReadOrientationModel - Start Date/Time: September 1, 2026 at 3:56:34 PM CEST
+15:56:35.177 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:56:35.178 INFO  LearnReadOrientationModel - ------------------------------------------------------------
+15:56:35.180 INFO  LearnReadOrientationModel - HTSJDK Version: 4.1.0
+15:56:35.182 INFO  LearnReadOrientationModel - Picard Version: 3.1.1
+15:56:35.183 INFO  LearnReadOrientationModel - Built for Spark Version: 3.5.0
+15:56:35.184 INFO  LearnReadOrientationModel - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:56:35.185 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:56:35.187 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:56:35.188 INFO  LearnReadOrientationModel - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:56:35.189 INFO  LearnReadOrientationModel - Deflater: IntelDeflater
+15:56:35.190 INFO  LearnReadOrientationModel - Inflater: IntelInflater
+15:56:35.191 INFO  LearnReadOrientationModel - GCS max retries/reopens: 20
+15:56:35.192 INFO  LearnReadOrientationModel - Requester pays: disabled
+15:56:35.193 INFO  LearnReadOrientationModel - Initializing engine
+15:56:35.194 INFO  LearnReadOrientationModel - Done initializing engine
+15:56:35.205 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/f1r2/NA99A1_undil.f1r2.tar.gz
+15:56:35.219 INFO  IOUtils - Extracting file: ./NA99A1_undil.alt_histogram
+15:56:35.247 INFO  IOUtils - Extracting file: ./NA99A1_undil.alt_table
+15:56:35.265 INFO  IOUtils - Extracting file: ./NA99A1_undil.ref_histogram
+15:56:35.959 INFO  LearnReadOrientationModel - Context AAC: with 452 ref and 234 alt examples, EM converged in 8 steps
+15:56:36.172 INFO  LearnReadOrientationModel - Context AAG: with 592 ref and 275 alt examples, EM converged in 6 steps
+15:56:36.366 INFO  LearnReadOrientationModel - Context AAT: with 684 ref and 349 alt examples, EM converged in 6 steps
+15:56:36.712 INFO  LearnReadOrientationModel - Context ACA: with 465 ref and 410 alt examples, EM converged in 8 steps
+15:56:36.922 INFO  LearnReadOrientationModel - Context ACC: with 308 ref and 241 alt examples, EM converged in 6 steps
+15:56:37.110 INFO  LearnReadOrientationModel - Context ACG: with 51 ref and 71 alt examples, EM converged in 8 steps
+15:56:37.231 INFO  LearnReadOrientationModel - Context ACT: with 430 ref and 219 alt examples, EM converged in 6 steps
+15:56:37.344 INFO  LearnReadOrientationModel - Context AGA: with 587 ref and 355 alt examples, EM converged in 6 steps
+15:56:37.455 INFO  LearnReadOrientationModel - Context AGC: with 388 ref and 263 alt examples, EM converged in 6 steps
+15:56:37.596 INFO  LearnReadOrientationModel - Context AGG: with 323 ref and 418 alt examples, EM converged in 8 steps
+15:56:37.691 INFO  LearnReadOrientationModel - Context ATA: with 479 ref and 241 alt examples, EM converged in 6 steps
+15:56:37.777 INFO  LearnReadOrientationModel - Context ATC: with 385 ref and 176 alt examples, EM converged in 6 steps
+15:56:37.857 INFO  LearnReadOrientationModel - Context ATG: with 585 ref and 225 alt examples, EM converged in 5 steps
+15:56:37.949 INFO  LearnReadOrientationModel - Context CAA: with 607 ref and 229 alt examples, EM converged in 6 steps
+15:56:38.032 INFO  LearnReadOrientationModel - Context CAC: with 465 ref and 190 alt examples, EM converged in 6 steps
+15:56:38.110 INFO  LearnReadOrientationModel - Context CAG: with 649 ref and 265 alt examples, EM converged in 6 steps
+15:56:38.232 INFO  LearnReadOrientationModel - Context CCA: with 289 ref and 516 alt examples, EM converged in 8 steps
+15:56:38.348 INFO  LearnReadOrientationModel - Context CCC: with 281 ref and 345 alt examples, EM converged in 8 steps
+15:56:38.484 INFO  LearnReadOrientationModel - Context CCG: with 102 ref and 92 alt examples, EM converged in 10 steps
+15:56:38.587 INFO  LearnReadOrientationModel - Context CGA: with 52 ref and 69 alt examples, EM converged in 8 steps
+15:56:38.724 INFO  LearnReadOrientationModel - Context CGC: with 122 ref and 70 alt examples, EM converged in 11 steps
+15:56:38.788 INFO  LearnReadOrientationModel - Context CTA: with 354 ref and 141 alt examples, EM converged in 5 steps
+15:56:38.879 INFO  LearnReadOrientationModel - Context CTC: with 482 ref and 226 alt examples, EM converged in 7 steps
+15:56:38.962 INFO  LearnReadOrientationModel - Context GAA: with 651 ref and 267 alt examples, EM converged in 6 steps
+15:56:39.042 INFO  LearnReadOrientationModel - Context GAC: with 277 ref and 139 alt examples, EM converged in 6 steps
+15:56:39.141 INFO  LearnReadOrientationModel - Context GCA: with 311 ref and 341 alt examples, EM converged in 7 steps
+15:56:39.266 INFO  LearnReadOrientationModel - Context GCC: with 273 ref and 262 alt examples, EM converged in 9 steps
+15:56:39.361 INFO  LearnReadOrientationModel - Context GGA: with 353 ref and 302 alt examples, EM converged in 6 steps
+15:56:39.444 INFO  LearnReadOrientationModel - Context GTA: with 278 ref and 162 alt examples, EM converged in 6 steps
+15:56:39.516 INFO  LearnReadOrientationModel - Context TAA: with 606 ref and 224 alt examples, EM converged in 5 steps
+15:56:39.604 INFO  LearnReadOrientationModel - Context TCA: with 455 ref and 429 alt examples, EM converged in 6 steps
+15:56:39.692 INFO  LearnReadOrientationModel - Context AAA: with 1078 ref and 534 alt examples, EM converged in 6 steps
+15:56:39.745 INFO  LearnReadOrientationModel - Shutting down engine
+[September 1, 2026 at 3:56:39 PM CEST] org.broadinstitute.hellbender.tools.walkers.readorientation.LearnReadOrientationModel done. Elapsed time: 0.08 minutes.
+Runtime.totalMemory()=301989888
+Tool returned:
+SUCCESS
++ gatk --java-options -Xmx8g\ -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/vcf/NA99A1_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/both_changes/NA99A1_undil.orientation.tar.gz --stats results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/vcf/NA99A1_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/both_changes/NA99A1_undil.filtered.vcf.gz 
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=/mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/vcf/NA99A1_undil.raw.vcf.gz --orientation-bias-artifact-priors /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/both_changes/NA99A1_undil.orientation.tar.gz --stats results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/vcf/NA99A1_undil.raw.vcf.gz.stats -O /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/filtered/both_changes/NA99A1_undil.filtered.vcf.gz
+15:56:42.025 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+15:56:42.271 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:56:42.276 INFO  FilterMutectCalls - The Genome Analysis Toolkit (GATK) v4.5.0.0
+15:56:42.278 INFO  FilterMutectCalls - For support and documentation go to https://software.broadinstitute.org/gatk/
+15:56:42.279 INFO  FilterMutectCalls - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+15:56:42.279 INFO  FilterMutectCalls - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+15:56:42.281 INFO  FilterMutectCalls - Start Date/Time: September 1, 2026 at 3:56:41 PM CEST
+15:56:42.281 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:56:42.282 INFO  FilterMutectCalls - ------------------------------------------------------------
+15:56:42.284 INFO  FilterMutectCalls - HTSJDK Version: 4.1.0
+15:56:42.285 INFO  FilterMutectCalls - Picard Version: 3.1.1
+15:56:42.287 INFO  FilterMutectCalls - Built for Spark Version: 3.5.0
+15:56:42.289 INFO  FilterMutectCalls - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+15:56:42.289 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+15:56:42.290 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+15:56:42.291 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+15:56:42.292 INFO  FilterMutectCalls - Deflater: IntelDeflater
+15:56:42.293 INFO  FilterMutectCalls - Inflater: IntelInflater
+15:56:42.294 INFO  FilterMutectCalls - GCS max retries/reopens: 20
+15:56:42.295 INFO  FilterMutectCalls - Requester pays: disabled
+15:56:42.297 INFO  FilterMutectCalls - Initializing engine
+15:56:42.597 INFO  FeatureManager - Using codec VCFCodec to read file file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/vcf/NA99A1_undil.raw.vcf.gz
+15:56:42.647 INFO  FilterMutectCalls - Done initializing engine
+15:56:42.726 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203/orientation/both_changes/NA99A1_undil.orientation.tar.gz
+15:56:42.738 INFO  IOUtils - Extracting file: ./NA99A1_undil.orientation_priors
+15:56:42.803 INFO  ProgressMeter - Starting traversal
+15:56:42.804 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+15:56:42.806 INFO  FilterMutectCalls - Starting pass 0 through the variants
+15:56:43.140 INFO  FilterMutectCalls - Finished pass 0 through the variants
+15:56:43.179 INFO  FilterMutectCalls - Starting pass 1 through the variants
+15:56:43.358 INFO  FilterMutectCalls - Finished pass 1 through the variants
+15:56:43.364 INFO  FilterMutectCalls - Starting pass 2 through the variants
+15:56:43.480 INFO  FilterMutectCalls - Finished pass 2 through the variants
+15:56:43.481 INFO  FilterMutectCalls - Starting pass 3 through the variants
+15:56:43.629 INFO  FilterMutectCalls - Finished pass 3 through the variants
+15:56:43.646 INFO  FilterMutectCalls - No variants filtered by: AllowAllVariantsVariantFilter
+15:56:43.649 INFO  FilterMutectCalls - 0 read(s) filtered by: AllowAllReadsReadFilter 
+
+15:56:43.650 INFO  ProgressMeter -             unmapped              0.0                   128           9088.8
+15:56:43.651 INFO  ProgressMeter - Traversal complete. Processed 128 total variants in 0.0 minutes.
+15:56:43.697 INFO  FilterMutectCalls - Shutting down engine
+[September 1, 2026 at 3:56:43 PM CEST] org.broadinstitute.hellbender.tools.walkers.mutect.filtering.FilterMutectCalls done. Elapsed time: 0.03 minutes.
+Runtime.totalMemory()=142606336
++ python src2/spikein/10_compare_filtered_mutect2.py /mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_comparison.tmp.10203 

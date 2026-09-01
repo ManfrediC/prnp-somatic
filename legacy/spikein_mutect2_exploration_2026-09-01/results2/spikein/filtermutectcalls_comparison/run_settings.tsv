@@ -1,0 +1,11 @@
+key	value
+reference	resources/references/snv/chr2_chr4_chr20.fasta
+joint_pure_source_vcf	results2/spikein/discovery/joint.vcf.gz
+orientation_em_iterations	50
+java_mem_gb	8
+informative_markers_sha256	56d5f63410fb338e610d14f200a9c9ea05507b11a3d6a1f92ac3d69c24557a8f
+git_commit	475e834e21f802d81210430a98459f58791591ce
+original_defaults	results2/spikein/mutect2
+no_alignment_start_cap	results2/spikein/mutect2_no_alignment_start_cap
+max_population_af_1	results2/spikein/mutect2_max_population_af_1
+both_changes	results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap

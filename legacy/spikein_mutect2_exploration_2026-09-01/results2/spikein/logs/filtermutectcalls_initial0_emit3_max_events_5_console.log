@@ -1,0 +1,92 @@
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=results2/spikein/filtermutectcalls_initial0_emit3_max_events_5.tmp.662/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2_initial0_emit3/vcf/NA995A05_undil.raw.vcf.gz --orientation-bias-artifact-priors results2/spikein/filtermutectcalls_initial0_emit3_original/orientation/NA995A05_undil.orientation.tar.gz --stats results2/spikein/mutect2_initial0_emit3/vcf/NA995A05_undil.raw.vcf.gz.stats --max-events-in-region 5 -O results2/spikein/filtermutectcalls_initial0_emit3_max_events_5.tmp.662/filtered/NA995A05_undil.filtered.vcf.gz
+18:41:11.572 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+18:41:11.900 INFO  FilterMutectCalls - ------------------------------------------------------------
+18:41:11.904 INFO  FilterMutectCalls - The Genome Analysis Toolkit (GATK) v4.5.0.0
+18:41:11.905 INFO  FilterMutectCalls - For support and documentation go to https://software.broadinstitute.org/gatk/
+18:41:11.906 INFO  FilterMutectCalls - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+18:41:11.907 INFO  FilterMutectCalls - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+18:41:11.908 INFO  FilterMutectCalls - Start Date/Time: September 1, 2026 at 6:41:11 PM CEST
+18:41:11.909 INFO  FilterMutectCalls - ------------------------------------------------------------
+18:41:11.909 INFO  FilterMutectCalls - ------------------------------------------------------------
+18:41:11.911 INFO  FilterMutectCalls - HTSJDK Version: 4.1.0
+18:41:11.912 INFO  FilterMutectCalls - Picard Version: 3.1.1
+18:41:11.914 INFO  FilterMutectCalls - Built for Spark Version: 3.5.0
+18:41:11.915 INFO  FilterMutectCalls - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+18:41:11.916 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+18:41:11.917 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+18:41:11.918 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+18:41:11.919 INFO  FilterMutectCalls - Deflater: IntelDeflater
+18:41:11.919 INFO  FilterMutectCalls - Inflater: IntelInflater
+18:41:11.920 INFO  FilterMutectCalls - GCS max retries/reopens: 20
+18:41:11.921 INFO  FilterMutectCalls - Requester pays: disabled
+18:41:11.922 INFO  FilterMutectCalls - Initializing engine
+18:41:12.202 INFO  FeatureManager - Using codec VCFCodec to read file file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_initial0_emit3/vcf/NA995A05_undil.raw.vcf.gz
+18:41:12.274 INFO  FilterMutectCalls - Done initializing engine
+18:41:12.358 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_initial0_emit3_original/orientation/NA995A05_undil.orientation.tar.gz
+18:41:12.369 INFO  IOUtils - Extracting file: ./NA995A05_undil.orientation_priors
+18:41:12.418 INFO  ProgressMeter - Starting traversal
+18:41:12.420 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+18:41:12.421 INFO  FilterMutectCalls - Starting pass 0 through the variants
+18:41:12.801 INFO  FilterMutectCalls - Finished pass 0 through the variants
+18:41:12.865 INFO  FilterMutectCalls - Starting pass 1 through the variants
+18:41:13.079 INFO  FilterMutectCalls - Finished pass 1 through the variants
+18:41:13.104 INFO  FilterMutectCalls - Starting pass 2 through the variants
+18:41:13.276 INFO  FilterMutectCalls - Finished pass 2 through the variants
+18:41:13.277 INFO  FilterMutectCalls - Starting pass 3 through the variants
+18:41:13.470 INFO  FilterMutectCalls - Finished pass 3 through the variants
+18:41:13.483 INFO  FilterMutectCalls - No variants filtered by: AllowAllVariantsVariantFilter
+18:41:13.485 INFO  FilterMutectCalls - 0 read(s) filtered by: AllowAllReadsReadFilter 
+
+18:41:13.486 INFO  ProgressMeter -             unmapped              0.0                   252          14197.2
+18:41:13.487 INFO  ProgressMeter - Traversal complete. Processed 252 total variants in 0.0 minutes.
+18:41:13.529 INFO  FilterMutectCalls - Shutting down engine
+[September 1, 2026 at 6:41:13 PM CEST] org.broadinstitute.hellbender.tools.walkers.mutect.filtering.FilterMutectCalls done. Elapsed time: 0.03 minutes.
+Runtime.totalMemory()=125829120
+Using GATK jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -Djava.io.tmpdir=results2/spikein/filtermutectcalls_initial0_emit3_max_events_5.tmp.662/work/tmp -jar /home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar FilterMutectCalls -R resources/references/snv/chr2_chr4_chr20.fasta -V results2/spikein/mutect2_initial0_emit3/vcf/NA99A1_undil.raw.vcf.gz --orientation-bias-artifact-priors results2/spikein/filtermutectcalls_initial0_emit3_original/orientation/NA99A1_undil.orientation.tar.gz --stats results2/spikein/mutect2_initial0_emit3/vcf/NA99A1_undil.raw.vcf.gz.stats --max-events-in-region 5 -O results2/spikein/filtermutectcalls_initial0_emit3_max_events_5.tmp.662/filtered/NA99A1_undil.filtered.vcf.gz
+18:41:16.246 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/manfredi/miniforge3/envs/prnp-spikein/share/gatk4-4.5.0.0-0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+18:41:16.582 INFO  FilterMutectCalls - ------------------------------------------------------------
+18:41:16.588 INFO  FilterMutectCalls - The Genome Analysis Toolkit (GATK) v4.5.0.0
+18:41:16.589 INFO  FilterMutectCalls - For support and documentation go to https://software.broadinstitute.org/gatk/
+18:41:16.591 INFO  FilterMutectCalls - Executing as manfredi@HP-MC on Linux v6.18.33.2-microsoft-standard-WSL2 amd64
+18:41:16.592 INFO  FilterMutectCalls - Java runtime: OpenJDK 64-Bit Server VM v17.0.13-internal+0-adhoc..src
+18:41:16.593 INFO  FilterMutectCalls - Start Date/Time: September 1, 2026 at 6:41:16 PM CEST
+18:41:16.594 INFO  FilterMutectCalls - ------------------------------------------------------------
+18:41:16.595 INFO  FilterMutectCalls - ------------------------------------------------------------
+18:41:16.597 INFO  FilterMutectCalls - HTSJDK Version: 4.1.0
+18:41:16.599 INFO  FilterMutectCalls - Picard Version: 3.1.1
+18:41:16.600 INFO  FilterMutectCalls - Built for Spark Version: 3.5.0
+18:41:16.601 INFO  FilterMutectCalls - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+18:41:16.602 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+18:41:16.603 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+18:41:16.604 INFO  FilterMutectCalls - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+18:41:16.605 INFO  FilterMutectCalls - Deflater: IntelDeflater
+18:41:16.606 INFO  FilterMutectCalls - Inflater: IntelInflater
+18:41:16.607 INFO  FilterMutectCalls - GCS max retries/reopens: 20
+18:41:16.608 INFO  FilterMutectCalls - Requester pays: disabled
+18:41:16.610 INFO  FilterMutectCalls - Initializing engine
+18:41:16.986 INFO  FeatureManager - Using codec VCFCodec to read file file:///mnt/c/Projects/prnp-somatic/results2/spikein/mutect2_initial0_emit3/vcf/NA99A1_undil.raw.vcf.gz
+18:41:17.057 INFO  FilterMutectCalls - Done initializing engine
+18:41:17.187 INFO  IOUtils - Extracting data from archive: file:///mnt/c/Projects/prnp-somatic/results2/spikein/filtermutectcalls_initial0_emit3_original/orientation/NA99A1_undil.orientation.tar.gz
+18:41:17.203 INFO  IOUtils - Extracting file: ./NA99A1_undil.orientation_priors
+18:41:17.295 INFO  ProgressMeter - Starting traversal
+18:41:17.297 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+18:41:17.300 INFO  FilterMutectCalls - Starting pass 0 through the variants
+18:41:17.797 INFO  FilterMutectCalls - Finished pass 0 through the variants
+18:41:17.842 INFO  FilterMutectCalls - Starting pass 1 through the variants
+18:41:18.016 INFO  FilterMutectCalls - Finished pass 1 through the variants
+18:41:18.028 INFO  FilterMutectCalls - Starting pass 2 through the variants
+18:41:18.162 INFO  FilterMutectCalls - Finished pass 2 through the variants
+18:41:18.164 INFO  FilterMutectCalls - Starting pass 3 through the variants
+18:41:18.344 INFO  FilterMutectCalls - Finished pass 3 through the variants
+18:41:18.361 INFO  FilterMutectCalls - No variants filtered by: AllowAllVariantsVariantFilter
+18:41:18.363 INFO  FilterMutectCalls - 0 read(s) filtered by: AllowAllReadsReadFilter 
+
+18:41:18.365 INFO  ProgressMeter -             unmapped              0.0                   152           8547.3
+18:41:18.366 INFO  ProgressMeter - Traversal complete. Processed 152 total variants in 0.0 minutes.
+18:41:18.414 INFO  FilterMutectCalls - Shutting down engine
+[September 1, 2026 at 6:41:18 PM CEST] org.broadinstitute.hellbender.tools.walkers.mutect.filtering.FilterMutectCalls done. Elapsed time: 0.04 minutes.
+Runtime.totalMemory()=125829120
