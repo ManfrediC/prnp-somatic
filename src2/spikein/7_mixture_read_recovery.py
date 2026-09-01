@@ -117,30 +117,6 @@ def write_tsv(path, rows):
         writer.writerows(rows)
 
 
-def derive_empirical_lod(rows):
-    # Use the lowest recovered marker VAF across both mixtures.
-    recovered_results = []
-    for result in rows:
-        if result["read_level_recovered"] is True:
-            recovered_results.append(result)
-    if not recovered_results:
-        raise ValueError("Cannot derive an empirical LoD without a recovered marker")
-    source = min(recovered_results, key=lambda result: result["alt_vaf"])
-    vaf = source["alt_vaf"]
-
-    # Retain the observation that defines the empirical value.
-    return {
-        "estimate": "minimum_observed_recovered_vaf",
-        "scope": "all_markers_across_high_and_low_mixtures",
-        "empirical_lod_vaf": f"{vaf:.10f}",
-        "supporting_marker": source["marker_id"],
-        "supporting_mixture": source["sample_role"],
-        "supporting_sample": source["sample_id"],
-        "alt_count": source["alt_count"],
-        "usable_depth": source["usable_depth"],
-    }
-
-
 def main():
     # New files go to a fresh directory below results2/spikein.
     parser = argparse.ArgumentParser(description=__doc__)
@@ -181,13 +157,10 @@ def main():
         for sample in samples:
             rows.append(evaluate(marker, sample, counts[sample["role"]][site]))
 
-    # Derive the empirical LoD from all recovered marker observations.
-    empirical_lod = derive_empirical_lod(rows)
-
-    # Write mixture recovery, the empirical LoD and concise run settings.
+    # Write mixture recovery and concise run settings.
+    # Stage 10 derives the LoD after Mutect2 and FilterMutectCalls.
     output.mkdir(parents=True)
     write_tsv(output / "mixture_read_recovery.tsv", rows)
-    write_tsv(output / "empirical_lod.tsv", [empirical_lod])
 
     # Record the fixed recovery thresholds separately from the derived LoD.
     run_settings = {
@@ -201,8 +174,6 @@ def main():
     write_tsv(output / "run_settings.tsv",
               [{"key": key, "value": value} for key, value in run_settings.items()])
     print(f"Evaluated {len(markers)} markers in both mixtures: {output}")
-    print(f"Empirical LoD: {empirical_lod['alt_count']}/{empirical_lod['usable_depth']} "
-          f"({100 * float(empirical_lod['empirical_lod_vaf']):.3f}%)")
 
 
 if __name__ == "__main__":

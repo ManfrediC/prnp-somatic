@@ -129,9 +129,9 @@ Actual calling and the script's output validation have now completed. Marker
 eligibility and the direct-read A117V identity check remain for the next stage.
 
 The previously proposed **VAF >= 0.0081** comparator has been superseded. The
-spike-in analysis now derives its empirical LoD from the minimum technically
-recovered marker VAF across the two mixtures, including A117V. This first stage
-does not apply a VAF threshold or select informative markers.
+spike-in analysis derives its empirical LoD from the lowest bam-readcount VAF
+whose exact allele passes read-level QC, Mutect2 and FilterMutectCalls. A117V is
+eligible. This first stage does not apply a VAF threshold or select markers.
 
 ## Candidate selection
 
@@ -311,19 +311,16 @@ or complexity result for this stage.
 
 ## Mixture read recovery
 
-`7_mixture_read_recovery.py` is drafted to evaluate the frozen informative-marker
+`7_mixture_read_recovery.py` evaluates the frozen informative-marker
 set in the high and low mixture count tables. It applies the agreed depth,
 support, strand, base-quality and mapping-quality thresholds and records expected
-AF where the source fraction is established. After technical recovery is fixed,
-it derives the empirical LoD as the minimum recovered marker VAF across both
-mixtures, including A117V. The LoD is not applied back to the spike-in rows. The
-script does not read BAMs or call variants.
+AF where the source fraction is established. It does not derive the final LoD,
+read BAMs or call variants.
 
 The authorised run completed on 2026-09-01 and wrote
-`mixture_read_recovery.tsv`, `empirical_lod.tsv` and `run_settings.tsv` under
+`mixture_read_recovery.tsv` and `run_settings.tsv` under
 `results2/spikein/read_recovery/`. All ten marker-by-mixture observations passed
-the technical read-level criteria. The empirical LoD is 26/3,891 = 0.0066820869
-(0.668%), supported by chr20:4693455 G>A in the low mixture. Log:
+the technical read-level criteria. Log:
 `results2/spikein/logs/mixture_read_recovery_console.log`.
 
 ## Mixture Mutect2 calling
@@ -444,3 +441,17 @@ alleles from 37 to 68 and alleles without a pure-source match from 15 to 45,
 but all 45 were filtered. Raising maximum population AF did not change these
 aggregate outcomes. The directory contains the eight complete filtered VCFs,
 eight orientation models, one run log, settings and SHA-256 records.
+
+## Empirical complete-pipeline LoD
+
+`10_derive_empirical_lod.py` atomises the final filtered VCFs and matches exact
+alleles to the stage-7 direct counts. A marker observation qualifies only when
+it passes the read-level criteria and its exact allele has FilterMutectCalls
+status `PASS`. The lowest qualifying bam-readcount VAF defines the empirical
+LoD. Mutect2 AF is reported separately and does not define the value.
+
+The canonical `results2/spikein/read_recovery/empirical_lod.tsv` reports
+26/3,891 = 0.0066820869 (0.668%), supported by chr20:4693455 G>A in the low
+mixture. Mutect2 reports AF 0.005556 for the same observation. The earlier
+read-level-only LoD file is preserved under
+`legacy/spikein_read_level_lod_2026-09-01/`.
