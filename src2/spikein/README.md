@@ -9,9 +9,9 @@ and outputs confined to `results2/spikein/`. Existing inputs are read-only.
 The sample manifest, source genotyping, candidate selection, pure-source
 read-count collection, parsing and marker finalisation are implemented and have
 run. The fixed set contains four other SNPs plus the separate A117V control.
-Stage 6 raw mixture counting has run for the high and low mixtures. Stage 7 is
-drafted for read-level recovery calculation but has not run; no recovery table
-or recovery statuses exist yet.
+Stage 6 raw mixture counting, stage 7 read-level recovery and stage 8 Mutect2
+calling have run for the high and low mixtures. Stage 9 filtering is drafted
+but has not run.
 Source genotyping completed successfully on 2026-08-31;
 all four VCFs and their indexes passed the script's readability and sample checks.
 The full console log is `results2/spikein/logs/source_genotyping_console.log`;
@@ -326,3 +326,113 @@ The authorised run completed on 2026-09-01 and wrote
 the technical read-level criteria. The empirical LoD is 26/3,891 = 0.0066820869
 (0.668%), supported by chr20:4693455 G>A in the low mixture. Log:
 `results2/spikein/logs/mixture_read_recovery_console.log`.
+
+## Mixture Mutect2 calling
+
+`8_mixtures_mutect2_with_pon.sh` closely adapts the established stage 8. It
+checks that stage 5's marker table is unchanged, then calls only the high and
+low mixtures across the full capture panel. It uses the same panel of normals,
+gnomAD germline resource and allele-frequency prior as the existing pipeline.
+The final script sets `--initial-tumor-lod 0`, spike-in-only
+`--max-population-af 1.0` and `--max-reads-per-alignment-start 0`. Emission LOD
+3, activity-probability threshold 0.002 and all other caller parameters retain
+their GATK defaults. Its default output is `results2/spikein/mutect2_final/`.
+
+The default is a write-free dry run:
+
+```bash
+bash src2/spikein/8_mixtures_mutect2_with_pon.sh
+```
+
+The completed run wrote raw VCFs, statistics and orientation data under
+`results2/spikein/mutect2/`. This stage does not run `FilterMutectCalls`, apply
+somatic filters or change the stage-7 recovery result and empirical LoD. The
+high and low VCFs contain 33 and 32 raw records, respectively. Mutect2 represents
+A117V and the adjacent fixed marker as one `CA` to `TG` record in both mixtures;
+later fixed-marker comparison must atomise this record before exact matching.
+
+An earlier separate uncapped comparison under
+`results2/spikein/mutect2_no_alignment_start_cap/` changed only the
+alignment-start cap to 0. The high-mixture VCF increased from 33 to 63 raw
+records and newly emitted chr20:4693455 G>A, giving three of five atomised
+marker matches. The low-mixture
+VCF retained the same 32 raw record keys and two of five atomised marker matches.
+No filtering or further parameter tuning followed this comparison.
+
+The capped `--max-population-af 1.0` run under
+`results2/spikein/mutect2_max_population_af_1/` retained all 33 high and 32 low
+canonical record keys. Marker emission was unchanged: only A117V and the
+adjacent marker were present after atomisation in each mixture. Three non-marker
+records had small caller-field changes. FilterMutectCalls was not run.
+
+The combined run under
+`results2/spikein/mutect2_max_population_af_1_no_alignment_start_cap/` produced
+63 high and 32 low raw records. Its record keys and marker emissions match the
+earlier uncapped run: three atomised markers in high and two in low. Raising
+`max-population-af` did not add or remove a raw record when alignment-start
+downsampling was disabled. FilterMutectCalls was not run.
+
+Focused assembly-region diagnostics are under
+`results2/spikein/mutect2_diagnostics/`. The two markers at chr20:4688888 and
+chr20:4690735 are in inactive regions in both mixtures. chr20:4693455 is active
+in high and inactive in low. `--genotype-germline-sites true` does not change
+these states or marker emission. `--initial-tumor-lod 0` activates and emits
+chr20:4693455 in low, but the first two markers remain inactive. Forced calling
+shows strong later assembly evidence at all three missing sites, so their
+ordinary non-emission occurs at the earlier activity decision. The complete
+marker result is `mutect2_diagnostics/activity_profile_marker_summary.tsv`.
+
+Matched full-panel runs then compared `--tumor-lod-to-emit 3` with 0 while
+holding the other three settings fixed. Lowering the threshold increased the
+high raw VCF from 63 to 67 records and the low raw VCF from 38 to 39 records.
+It did not add a fixed marker. Both runs emitted chr20:4693455 G>A, A117V and
+chr20:4699571 A>G in both mixtures; chr20:4688888 G>A and chr20:4690735 T>G
+remained absent. The atomised comparison is
+`results2/spikein/logs/mutect2_initial0_emit_lod_comparison.tsv`.
+
+The emission-LOD 3 callset was then processed with the original project filter
+settings. A117V and chr20:4699571 A>G passed in both mixtures. The emitted
+chr20:4693455 G>A call was filtered for `clustered_events` in both mixtures.
+The two inactive markers remained absent. The ten-row marker result is
+`results2/spikein/logs/filtermutectcalls_initial0_emit3_marker_results.tsv`.
+
+Rerunning FilterMutectCalls with only `--max-events-in-region 5` allowed
+chr20:4693455 G>A to pass in both mixtures. A117V and chr20:4699571 A>G
+continued to pass, while the two markers absent from the raw VCF remained
+absent. PASS records increased from 6 to 13 in high and from 4 to 10 in low.
+Of the added non-marker PASS alleles, one in high and two in low lacked an exact
+allele match in the pure-source joint VCF. The concise comparison is
+`results2/spikein/logs/filtermutectcalls_initial0_emit3_max_events_5_comparison.tsv`.
+
+Full-panel caller runs compared activity-probability thresholds 0.002, 0.0002,
+0.00002 and 0. All four produced the same 63 high and 38 low raw records, the
+same atomised alleles and the same three emitted markers in each mixture. The
+comparison is `results2/spikein/logs/mutect2_active_probability_comparison.tsv`.
+
+## Mixture Mutect2 filtering
+
+`9_mixtures_filtermutectcalls.sh` learns the established orientation model for
+each final stage-8 call and runs FilterMutectCalls with
+`--max-events-in-region 5`. All other filtering parameters retain their GATK
+defaults. It writes through a temporary directory, validates both VCFs and
+publishes the completed output as
+`results2/spikein/filtermutectcalls/`.
+
+The exploratory Mutect2 and FilterMutectCalls runs, logs and comparison script
+are preserved under `legacy/spikein_mutect2_exploration_2026-09-01/`, with
+their original repository-relative paths and SHA-256 hashes. Stage 9 no longer
+recreates the historical four-run comparison.
+
+The original and maximum-population-AF-1 runs produced 33/5 total/PASS records
+in high and 32/4 in low. The two uncapped runs produced 63/6 in high and 32/3
+in low. With the cap, the A117V/adjacent-marker record was filtered for
+`strand_bias` in high and passed in low. Without the cap, that record passed in
+both mixtures; chr20:4693455 G>A was also emitted in high but filtered for
+`clustered_events`. The remaining fixed markers were not emitted.
+
+After atomisation, no PASS non-marker allele lacked an exact pure-source
+joint-VCF match in any run. Removing the cap increased high-mixture non-marker
+alleles from 37 to 68 and alleles without a pure-source match from 15 to 45,
+but all 45 were filtered. Raising maximum population AF did not change these
+aggregate outcomes. The directory contains the eight complete filtered VCFs,
+eight orientation models, one run log, settings and SHA-256 records.
