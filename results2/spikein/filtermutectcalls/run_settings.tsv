@@ -1,0 +1,8 @@
+key	value
+input_root	/mnt/c/Projects/prnp-somatic/results2/spikein/mutect2
+reference	resources/references/snv/chr2_chr4_chr20.fasta
+orientation_em_iterations	50
+max_events_in_region	5
+java_mem_gb	8
+informative_markers_sha256	56d5f63410fb338e610d14f200a9c9ea05507b11a3d6a1f92ac3d69c24557a8f
+git_commit	4b99b945e00ade554c360d1c7d2c02f97ab9cda8

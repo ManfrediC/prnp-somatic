@@ -9,9 +9,8 @@ and outputs confined to `results2/spikein/`. Existing inputs are read-only.
 The sample manifest, source genotyping, candidate selection, pure-source
 read-count collection, parsing and marker finalisation are implemented and have
 run. The fixed set contains four other SNPs plus the separate A117V control.
-Stage 6 raw mixture counting, stage 7 read-level recovery and stage 8 Mutect2
-calling have run for the high and low mixtures. Stage 9 filtering is drafted
-but has not run.
+Stage 6 raw mixture counting, stage 7 read-level recovery, stage 8 Mutect2
+calling and stage 9 filtering have run for the high and low mixtures.
 Source genotyping completed successfully on 2026-08-31;
 all four VCFs and their indexes passed the script's readability and sample checks.
 The full console log is `results2/spikein/logs/source_genotyping_console.log`;
