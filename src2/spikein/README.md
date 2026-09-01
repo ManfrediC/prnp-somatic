@@ -255,17 +255,22 @@ all nine sites in each sample. Every exported field was checked against the
 raw counts. A repeat invocation refused to overwrite the tables. The run and
 verification log is `results2/spikein/logs/readcount_conversion.log`.
 
-## Marker finalisation draft
+## Marker finalisation
 
-`5_marker_recovery.py` is drafted but has not run. It reads only the latest
+`5_marker_recovery.py` reads only the latest
 provisional candidates and the two pure-source metrics tables. It independently
 applies the agreed direct-count criteria, including WT AF at most 0.001 with no
 WT ALT-count cap. The stage-2 genotype decision remains a prerequisite.
 
 A117V must be the single labelled control, be heterozygous in the donor and pass
-all pure-source checks. A later authorised run will write `marker_qc.tsv`, its
-passing subset `informative_markers.tsv`, and minimal settings under a fresh
-results2 directory. The informative table is hashed before any mixture is read.
+all pure-source checks. The completed run wrote `marker_qc.tsv`, its passing
+subset `informative_markers.tsv`, and minimal settings under
+`results2/spikein/markers/`. The informative table was hashed before any mixture
+was read.
 
-The draft has no mixture, caller or recovery-status logic. Syntax, dependency,
-adversarial and simplicity reviews passed. No final marker output exists yet.
+The audit contains nine provisional markers. Four other SNPs plus A117V form the
+fixed informative set; four other SNPs fail mean base-quality criteria. The
+informative table SHA-256 is
+`56d5f63410fb338e610d14f200a9c9ea05507b11a3d6a1f92ac3d69c24557a8f`.
+No mixture, caller or recovery-status logic ran. Log:
+`results2/spikein/logs/marker_finalisation.log`.

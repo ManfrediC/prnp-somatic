@@ -14,7 +14,7 @@ CANDIDATES = ROOT / "results2/spikein/discovery/candidates_wt_vaf_only/candidate
 DONOR_METRICS = ROOT / "results2/spikein/readcount_qc/pure/metrics/A100_1to2_metrics.tsv"
 WT_METRICS = ROOT / "results2/spikein/readcount_qc/pure/metrics/NA100_undil_metrics.tsv"
 
-# Apply the agreed pure-source direct-count thresholds.
+# Apply the thresholds.
 MIN_DEPTH = 100
 MIN_DONOR_ALT = 10
 MIN_DONOR_ALT_STRAND = 3
@@ -44,7 +44,7 @@ def read_metrics(path):
 
 
 def get_site_metrics(marker, metrics, role):
-    # Require complete A/C/G/T rows and matching reference bases at the marker.
+    # Require complete A/C/G/T rows and matching reference bases.
     site = (marker["chromosome"], int(marker["position"]))
     ref, alt = marker["ref"].upper(), marker["alt"].upper()
     alleles = {base: metrics.get((*site, base)) for base in "ACGT"}
@@ -53,7 +53,7 @@ def get_site_metrics(marker, metrics, role):
     if {row["REF"].upper() for row in alleles.values()} != {ref}:
         raise ValueError(f"Mismatched {role} reference: {marker['marker_id']}")
 
-    # Use stage 4's depth after checking agreement across the four rows.
+    # Use stage 4 depth after checking agreement across the four rows.
     ref_row, alt_row = alleles[ref], alleles[alt]
     depth = int(ref_row["ACGT_DEPTH"])
     if {int(row["ACGT_DEPTH"]) for row in alleles.values()} != {depth}:
@@ -98,7 +98,7 @@ def evaluate_marker(marker, donor, wt):
     elif donor_gt not in (["0", "1"], ["1", "1"]):
         raise ValueError(f"Unsupported donor GT: {marker['marker_id']}")
 
-    # Keep source genotypes and direct evidence together in one auditable row.
+    # Keep source genotypes and direct evidence together in one row.
     return {
         "marker_id": marker["marker_id"], "chromosome": marker["chromosome"],
         "position": marker["position"], "ref": marker["ref"], "alt": marker["alt"],
@@ -137,7 +137,7 @@ def main():
     if not output.is_relative_to(ROOT / "results2/spikein") or output.exists():
         raise SystemExit("Use a new output directory below results2/spikein")
 
-    # Require one unique provisional marker per ID and genomic site.
+    # Require one unique marker per ID and genomic site.
     candidates = read_dict_tsv(CANDIDATES)
     candidates.sort(key=lambda row: (row["chromosome"], int(row["position"]), row["ref"], row["alt"]))
     marker_ids = [row["marker_id"] for row in candidates]

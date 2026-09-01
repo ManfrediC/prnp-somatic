@@ -1,0 +1,15 @@
+key	value
+git_commit	b23f29c010d8ed4d2146c2e311bd6873544e917f
+min_depth	100
+min_donor_alt	10
+min_donor_alt_strand	3
+min_mean_bq	20
+min_mean_mq	20
+het_min_af	0.3
+het_max_af	0.7
+hom_alt_min_af	0.9
+max_wt_af	0.001
+candidate_markers_sha256	41cb312a16fe1181129c75003498462fe6bd45e20971bef9cce5bad3d7ba831a
+donor_metrics_sha256	7e597b864ee956128c7e85c2cc0a4e03d7eb3b7603ca8c3b633c4359e99046e2
+wt_metrics_sha256	661d1b947ff7a47b9525d32469b9d683b9dbdb7cdd0c20f2fbfa126a2f51be51
+informative_markers_sha256	56d5f63410fb338e610d14f200a9c9ea05507b11a3d6a1f92ac3d69c24557a8f
