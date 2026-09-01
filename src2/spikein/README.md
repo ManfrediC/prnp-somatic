@@ -301,6 +301,14 @@ assign any recovery status. Bash syntax, ShellCheck and the real-input dry run
 passed; the dry-run log is
 `results2/spikein/logs/mixture_readcount_direct_bam_dry_run.log`.
 
+The script was then reorganised into small functions matching its existing
+validation blocks. All comments and commands were retained. A saved pre-refactor
+run and the canonical run produced byte-identical `sites.tsv` and raw count files
+for both mixtures. Paired SHA-256 hashes are recorded in
+`results2/spikein/logs/mixture_readcount_refactor_sha256.txt`. Ruff and Radon do
+not analyse Bash; their direct invocation therefore supplies no valid code-quality
+or complexity result for this stage.
+
 ## Mixture read recovery
 
 `7_mixture_read_recovery.py` is drafted to evaluate the frozen informative-marker
