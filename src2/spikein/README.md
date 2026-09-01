@@ -7,8 +7,10 @@ and outputs confined to `results2/spikein/`. Existing inputs are read-only.
 ## Current step
 
 The sample manifest, source genotyping, candidate selection, pure-source
-read-count collection and parsing are implemented and have run. Final marker
-selection, mixture counting/calling and recovery tables are not implemented yet.
+read-count collection, parsing and marker finalisation are implemented and have
+run. The fixed set contains four other SNPs plus the separate A117V control.
+Stage 6 is drafted for raw mixture counting but has not run. No mixture counts,
+calls or recovery tables exist yet.
 Source genotyping completed successfully on 2026-08-31;
 all four VCFs and their indexes passed the script's readability and sample checks.
 The full console log is `results2/spikein/logs/source_genotyping_console.log`;
@@ -197,11 +199,11 @@ creating files; set `DRY_RUN=0` for an authorised counting run:
 bash src2/spikein/3_fixed_site_readcount_qc.sh
 ```
 
-The script excludes reads already marked duplicate with `samtools view -F 0x400`.
-It writes derived BAMs and indexes under `results2/spikein/readcount_qc/pure/work/`,
-leaving the original BAMs and BAIs unchanged. A shared `sites.tsv` uses
-bam-readcount's 1-based inclusive coordinates. Explicit `-q 0 -b 0` retains the
-existing counting convention; the depth cap is 10,000,000.
+The current script runs bam-readcount directly on each original BAM.
+bam-readcount excludes duplicate, unmapped, secondary and QC-failed reads in its
+own pileup logic, so no filtered BAM or new index is needed. A shared `sites.tsv`
+uses bam-readcount's 1-based inclusive coordinates. Explicit `-q 0 -b 0` retains
+the existing counting convention; the depth cap is 10,000,000.
 
 Raw counts go into `readcounts/<sample>.txt`; commands, input table hashes and
 tool messages go into `run.log`. Tool versions are recorded with environment
@@ -210,7 +212,9 @@ setup in `doc/spikein_plan.md`. `OUT_ROOT` can name a fresh directory below
 
 Each requested coordinate must be returned exactly once. Zero-depth rows are
 accepted, but missing rows and reported depths at or above the cap stop the run.
-The authorised run completed successfully on 2026-08-31 in 95 seconds. Each pure
+The authorised run completed successfully on 2026-08-31 in 95 seconds using the
+earlier duplicate-filtered-BAM implementation. It has not been rerun with the
+direct-BAM script. Each pure
 sample returned all nine sites exactly once. Reported depth was 4,486–7,473 in
 donor and 3,848–6,544 in WT, well below the cap. Reference bases match the candidate
 table after case normalisation; bam-readcount preserves lower-case FASTA bases.
@@ -274,3 +278,24 @@ informative table SHA-256 is
 `56d5f63410fb338e610d14f200a9c9ea05507b11a3d6a1f92ac3d69c24557a8f`.
 No mixture, caller or recovery-status logic ran. Log:
 `results2/spikein/logs/marker_finalisation.log`.
+
+## Mixture read counting
+
+`6_mixtures_fixed_site_readcount_qc.sh` is a minimal adaptation of stage 3. It
+verifies the frozen marker-table hash and checks the manifest against the hash
+recorded by source genotyping. It then selects only the manifest's high and low
+BAMs. bam-readcount reads those BAMs directly with explicit `-q 0 -b 0` and a
+depth cap of 10,000,000; its own pileup logic excludes duplicate-flagged reads.
+
+The default is a write-free dry run:
+
+```bash
+bash src2/spikein/6_mixtures_fixed_site_readcount_qc.sh
+```
+
+An authorised run will use `DRY_RUN=0` and write `sites.tsv`, raw counts and its
+log under a fresh `results2/spikein/readcount_qc/mixtures/` directory. It checks
+coordinates, reference bases and the depth cap. It does not parse counts or
+assign any recovery status. Bash syntax, ShellCheck and the real-input dry run
+passed; the dry-run log is
+`results2/spikein/logs/mixture_readcount_direct_bam_dry_run.log`.
