@@ -1,0 +1,11 @@
+role	sample	marker_id	category	chromosome	position	ref	alt	raw_emitted	raw_vaf	filter_status	filtered_pass	filtered_vaf
+high	NA995A05_undil	chr20:4688888:G>A	other_snp	chr20	4688888	G	A	no	NA	not_emitted	no	NA
+low	NA99A1_undil	chr20:4688888:G>A	other_snp	chr20	4688888	G	A	no	NA	not_emitted	no	NA
+high	NA995A05_undil	chr20:4690735:T>G	other_snp	chr20	4690735	T	G	no	NA	not_emitted	no	NA
+low	NA99A1_undil	chr20:4690735:T>G	other_snp	chr20	4690735	T	G	no	NA	not_emitted	no	NA
+high	NA995A05_undil	chr20:4693455:G>A	other_snp	chr20	4693455	G	A	yes	0.01	PASS	yes	0.01
+low	NA99A1_undil	chr20:4693455:G>A	other_snp	chr20	4693455	G	A	yes	0.005556	PASS	yes	0.005556
+high	NA995A05_undil	chr20:4699570:C>T	a117v_positive_control	chr20	4699570	C	T	yes	0.014	PASS	yes	0.014
+low	NA99A1_undil	chr20:4699570:C>T	a117v_positive_control	chr20	4699570	C	T	yes	0.0076	PASS	yes	0.0076
+high	NA995A05_undil	chr20:4699571:A>G	other_snp	chr20	4699571	A	G	yes	0.014	PASS	yes	0.014
+low	NA99A1_undil	chr20:4699571:A>G	other_snp	chr20	4699571	A	G	yes	0.0076	PASS	yes	0.0076
