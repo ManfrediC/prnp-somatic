@@ -86,7 +86,12 @@ nohup.out
 /results2/spikein/filtermutectcalls/orientation/
 /results2/spikein/filtermutectcalls/work/
 /results2/spikein/filtermutectcalls/run.log
-/results2/sequencing2/
+# Sequencing2 runtime and audit artefacts; small final outputs remain trackable.
+/results2/sequencing2/runs/
+/results2/sequencing2/smoke/
+/results2/sequencing2/corrections/
+/results2/sequencing2/pipeline.log
+/results2/sequencing2/archive.log
 
 # Large generated media and archives
 *.pdf

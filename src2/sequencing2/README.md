@@ -25,6 +25,11 @@ All other Mutect2 and FilterMutectCalls settings remain as they were in
 as specific to spike-in validation and says the CJD/control analyses should
 retain the existing population-AF limit.
 
+The final variant-table quality-control stages use the empirical
+complete-pipeline LoD derived by the spike-in workflow as their AAF threshold:
+`26 / 3891 = 0.006682086867129272`. The existing strict `AAF > threshold`
+comparison is unchanged.
+
 The changes are applied consistently to the controls used to build the Panel
 of Normals and to the CJD/dilution calls that use it:
 
@@ -60,10 +65,34 @@ conda env create -f src2/sequencing2/environment.yml
 conda activate prnp-sequencing2
 ```
 
-Run scripts from the repository root through WSL. The existing numbered order
-is unchanged: controls calling and post-processing, control quality control and
-Panel of Normals construction, then CJD/dilution calling, post-processing,
-read-count collection, parsing and final variant-table quality control.
+Run the full analytical pipeline from the repository root through WSL:
+
+```bash
+bash src2/sequencing2/run_sequencing2.sh
+```
+
+The driver follows the original documented order: controls calling and
+post-processing, control quality control and Panel of Normals construction,
+then CJD/dilution calling, post-processing, read-count collection, parsing and
+final variant-table quality control. It excludes FASTQ preprocessing, as does
+the rest of this adapted analytical directory.
+
+After a complete verified run, archive the intermediate `runs/` tree with
+Windows-native file handling:
+
+```powershell
+powershell -NoProfile -File src2/sequencing2/archive_sequencing2_intermediates.ps1 `
+  -RemoveLocal -MakeOnlineOnly
+```
+
+The archival script requires the control, Panel of Normals, CJD and dilution
+final outputs before it starts. It copies the intermediates to a new run-specific
+folder under `CJD intermediates`, excludes the regenerable `bam_work` symlinks,
+verifies every copied file by size and SHA-256, then removes the local `runs/`
+tree and asks the cloud provider to make the archive online-only. Original BAMs
+under `results/final_bam/` and all final outputs under
+`results2/sequencing2/results/` remain on device. No live symlink is created,
+because it could rehydrate archived files and interfere with resume checks.
 
 For the publication-path Stage 12 wrapper, run:
 
@@ -71,5 +100,5 @@ For the publication-path Stage 12 wrapper, run:
 bash src2/sequencing2/run_cjd_dilutions_variant_qc_with_pon.sh
 ```
 
-This directory contains code only. No sequencing outputs were regenerated as
-part of the adaptation.
+This directory contains code only. Generated outputs are written under
+`results2/sequencing2/`.

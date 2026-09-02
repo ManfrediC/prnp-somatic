@@ -1,0 +1,12 @@
+key	value
+enable_aaf_filter	TRUE
+aaf_filter_applied	TRUE
+aaf_threshold	0.006682086867129272
+min_alt_count	10
+min_dp	100
+min_strand_alt	3
+min_mean_bq	20
+min_mean_mq	20
+max_pop_freq	0.001
+max_binom_p	1e-06
+sample_manifest	/mnt/c/Projects/prnp-somatic/config/sample_manifest.tsv

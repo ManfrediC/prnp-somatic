@@ -54,7 +54,7 @@ def parse_bam_readcount(input_file: str, output_file: str) -> None:
             ref = row[2]
 
             # row[4:] holds allele-specific payloads such as:
-            # A:count:meanBQ:meanMQ:...  C:count:meanBQ:meanMQ:...
+            # A:count:meanMQ:meanBQ:...  C:count:meanMQ:meanBQ:...
             for allele_field in row[4:]:
                 if not allele_field:
                     continue
@@ -73,8 +73,8 @@ def parse_bam_readcount(input_file: str, output_file: str) -> None:
                     ref,
                     base,
                     metrics[0],  # COUNT
-                    metrics[1],  # MEAN_BQ
-                    metrics[2],  # MEAN_MQ
+                    metrics[2],  # MEAN_BQ
+                    metrics[1],  # MEAN_MQ
                     metrics[3],  # MEAN_POS
                     metrics[4],  # FWD
                     metrics[5],  # REV

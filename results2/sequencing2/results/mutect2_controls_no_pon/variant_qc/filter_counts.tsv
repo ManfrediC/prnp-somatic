@@ -1,0 +1,6 @@
+step	rows_before	rows_after	rows_removed
+ALT >= 10 and DP >= 100	9	4	5
+strand balance >= 3 ALT reads per strand	4	3	1
+MEAN_BQ >= 20, MEAN_MQ >= 20, binomial p <= 1e-06	3	1	2
+population frequency < 0.001 or NA	1	0	1
+AAF > 0.00668208686712927	0	0	0

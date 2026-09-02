@@ -2,6 +2,28 @@ fail <- function(msg) {
   stop(msg, call. = FALSE)
 }
 
+empirical_lod_aaf <- 26 / 3891
+empirical_lod_aaf_text <- "0.006682086867129272"
+
+validate_aaf_threshold <- function(value) {
+  if (!identical(value, empirical_lod_aaf)) {
+    fail(paste0(
+      "AAF threshold must equal the spike-in empirical LoD: ",
+      empirical_lod_aaf_text
+    ))
+  }
+}
+
+exact_binomial_p_value <- function(alt_count, depth) {
+  if (length(alt_count) == 0L || length(depth) == 0L) {
+    return(numeric())
+  }
+  if (is.na(alt_count) || is.na(depth) || depth <= 0) {
+    return(NA_real_)
+  }
+  binom.test(alt_count, depth, p = 0.5)$p.value
+}
+
 required_pkgs <- c("dplyr", "readr", "stringr", "tidyr", "tibble")
 missing_pkgs <- required_pkgs[!vapply(
   required_pkgs,
@@ -125,7 +147,7 @@ parse_variant_table_qc_cli <- function(args, sample_manifest_default = NULL) {
       "enable-aaf-filter"
     ),
     aaf_threshold = parse_num(
-      get_arg(parsed, "aaf-threshold", "0.0081"),
+      get_arg(parsed, "aaf-threshold", empirical_lod_aaf_text),
       "aaf-threshold"
     ),
     thresholds = list(
@@ -192,9 +214,11 @@ run_variant_table_qc <- function(
   output_prefix,
   sample_manifest_path = NULL,
   enable_aaf_filter = TRUE,
-  aaf_threshold = 0.0081,
+  aaf_threshold = empirical_lod_aaf,
   thresholds
 ) {
+  validate_aaf_threshold(aaf_threshold)
+
   min_alt_count <- thresholds$min_alt_count
   min_dp <- thresholds$min_dp
   min_strand_alt <- thresholds$min_strand_alt
@@ -502,13 +526,7 @@ run_variant_table_qc <- function(
     filter(SB_altF >= min_strand_alt, SB_altR >= min_strand_alt) %>%
     filter(MEAN_BQ >= min_mean_bq & MEAN_MQ >= min_mean_mq) %>%
     rowwise() %>%
-    mutate(
-      p_value = if (is.na(ALT_count) || is.na(DP) || DP <= 0) {
-        NA_real_
-      } else {
-        binom.test(ALT_count, DP, p = 0.5)$p.value
-      }
-    ) %>%
+    mutate(p_value = exact_binomial_p_value(ALT_count, DP)) %>%
     ungroup() %>%
     filter(!is.na(p_value), p_value <= max_binom_p) %>%
     filter(is.na(population_frequency) | population_frequency < max_pop_freq)
@@ -547,13 +565,7 @@ run_variant_table_qc <- function(
   step3 <- step2 %>%
     filter(MEAN_BQ >= min_mean_bq, MEAN_MQ >= min_mean_mq) %>%
     rowwise() %>%
-    mutate(
-      p_value = if (is.na(ALT_count) || is.na(DP) || DP <= 0) {
-        NA_real_
-      } else {
-        binom.test(ALT_count, DP, p = 0.5)$p.value
-      }
-    ) %>%
+    mutate(p_value = exact_binomial_p_value(ALT_count, DP)) %>%
     ungroup() %>%
     filter(!is.na(p_value), p_value <= max_binom_p)
   n3 <- nrow(step3)
@@ -599,7 +611,7 @@ run_variant_table_qc <- function(
         "max_binom_p"
       ),
       value = c(
-        as.character(enable_aaf_filter), as.character(aaf_threshold),
+        as.character(enable_aaf_filter), empirical_lod_aaf_text,
         as.character(min_alt_count), as.character(min_dp),
         as.character(min_strand_alt), as.character(min_mean_bq),
         as.character(min_mean_mq), as.character(max_pop_freq),
@@ -615,7 +627,7 @@ run_variant_table_qc <- function(
       ),
       value = c(
         as.character(enable_aaf_filter), as.character(enable_aaf_filter),
-        as.character(aaf_threshold), as.character(min_alt_count),
+        empirical_lod_aaf_text, as.character(min_alt_count),
         as.character(min_dp), as.character(min_strand_alt),
         as.character(min_mean_bq), as.character(min_mean_mq),
         as.character(max_pop_freq), as.character(max_binom_p),

@@ -10,11 +10,9 @@ shopt -s nullglob
 # Downstream filtering/annotation are handled by 2_controls_postprocess_no_pon.sh.
 # ------------------------------------------------------------
 
-# -----------------------
-# Defaults (override via env or ENV_FILE)
-# -----------------------
-DRY_RUN="${DRY_RUN:-0}"
-JAVA_MEM_GB="${JAVA_MEM_GB:-8}"
+# Keep caller-provided values so ENV_FILE does not silently override them.
+CLI_DRY_RUN="${DRY_RUN-}"
+CLI_JAVA_MEM_GB="${JAVA_MEM_GB-}"
 
 # -----------------------
 # Repo root discovery
@@ -44,6 +42,12 @@ if [[ -f "$ENV_FILE" ]]; then
   # shellcheck disable=SC1090
   source "$ENV_FILE"
 fi
+
+# -----------------------
+# Defaults (override via env or ENV_FILE)
+# -----------------------
+DRY_RUN="${CLI_DRY_RUN:-${DRY_RUN:-0}}"
+JAVA_MEM_GB="${CLI_JAVA_MEM_GB:-${JAVA_MEM_GB:-8}}"
 
 # -----------------------
 # Inputs/outputs (repo-relative defaults)

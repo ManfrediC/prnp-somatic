@@ -12,8 +12,6 @@ shopt -s nullglob
 # Precedence: explicit CLI env vars > values from ENV_FILE > script defaults.
 CLI_DRY_RUN="${DRY_RUN-}"
 CLI_JAVA_MEM_GB="${JAVA_MEM_GB-}"
-CLI_ENABLE_AAF_FILTER="${ENABLE_AAF_FILTER-}"
-CLI_AAF_THRESHOLD="${AAF_THRESHOLD-}"
 
 # -----------------------
 # Repo root discovery (works from anywhere)
@@ -51,8 +49,8 @@ fi
 # -----------------------
 DRY_RUN="${CLI_DRY_RUN:-${DRY_RUN:-0}}"
 JAVA_MEM_GB="${CLI_JAVA_MEM_GB:-${JAVA_MEM_GB:-8}}"
-ENABLE_AAF_FILTER="${CLI_ENABLE_AAF_FILTER:-${ENABLE_AAF_FILTER:-1}}"
-AAF_THRESHOLD="${CLI_AAF_THRESHOLD:-${AAF_THRESHOLD:-0.0081}}"
+ENABLE_AAF_FILTER=1
+AAF_THRESHOLD=0.006682086867129272
 
 # Threshold defaults mirror the methods section and can be overridden per run.
 MIN_ALT_COUNT="${MIN_ALT_COUNT:-10}"
@@ -265,6 +263,8 @@ if [[ "$DRY_RUN" == "0" ]]; then
   [[ -s "$VARIANT_QC_OUTPUT_DIR/summary_combined_variants.tsv" ]] || die "Missing summary output: $VARIANT_QC_OUTPUT_DIR/summary_combined_variants.tsv"
   [[ -s "$VARIANT_QC_OUTPUT_DIR/filtered_variants.tsv" ]] || die "Missing filtered output: $VARIANT_QC_OUTPUT_DIR/filtered_variants.tsv"
   [[ -s "$VARIANT_QC_OUTPUT_DIR/filter_counts.tsv" ]] || die "Missing filter-count output: $VARIANT_QC_OUTPUT_DIR/filter_counts.tsv"
+  grep -Fqx $'aaf_threshold\t0.006682086867129272' "$VARIANT_QC_OUTPUT_DIR/run_settings.tsv" ||
+    die "Final settings do not record the empirical LoD"
 fi
 
 echo "=== Variant extraction + QC pipeline finished ==="
