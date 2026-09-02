@@ -1,0 +1,63 @@
+workflow	path	required	notes
+sequencing2-controls	results2/sequencing2/results/mutect2_controls_no_pon/variant_qc/summary_combined_variants.tsv	yes	stage 5 combined control calls
+sequencing2-controls	results2/sequencing2/results/mutect2_controls_no_pon/variant_qc/filtered_variants.tsv	yes	stage 5 retained control calls
+sequencing2-controls	results2/sequencing2/results/mutect2_controls_no_pon/variant_qc/filtered_prnp_variants.tsv	yes	stage 5 retained PRNP control calls
+sequencing2-controls	results2/sequencing2/results/mutect2_controls_no_pon/variant_qc/filtered_out_variants.tsv	yes	stage 5 excluded control calls
+sequencing2-controls	results2/sequencing2/results/mutect2_controls_no_pon/variant_qc/filter_counts.tsv	yes	stage 5 filter counts
+sequencing2-controls	results2/sequencing2/results/mutect2_controls_no_pon/variant_qc/run_settings.tsv	yes	stage 5 settings and exact LoD
+sequencing2-controls	results2/sequencing2/results/mutect2_controls_no_pon/variant_qc/final_noPoN_variants.tsv	yes	stage 5 final control calls
+sequencing2-controls	results2/sequencing2/results/mutect2_controls_no_pon/variant_qc/noPoN_PRNP_PASS.tsv	yes	stage 5 PRNP PASS table
+sequencing2-controls	results2/sequencing2/results/mutect2_controls_no_pon/variant_qc/noPoN_TET2_PASS.tsv	yes	stage 5 TET2 PASS table
+sequencing2-controls	results2/sequencing2/results/mutect2_controls_no_pon/variant_qc/noPoN_TTN_PASS.tsv	yes	stage 5 TTN PASS table
+sequencing2-cjd	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/summary_combined_variants.tsv	yes	stage 12 combined CJD calls
+sequencing2-cjd	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filtered_variants.tsv	yes	stage 12 retained CJD calls
+sequencing2-cjd	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filtered_prnp_variants.tsv	yes	stage 12 retained PRNP CJD calls
+sequencing2-cjd	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filtered_out_variants.tsv	yes	stage 12 excluded CJD calls
+sequencing2-cjd	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filter_counts.tsv	yes	stage 12 CJD filter counts
+sequencing2-cjd	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/run_settings.tsv	yes	stage 12 settings and exact LoD
+sequencing2-cjd	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/final_withPoN_variants.tsv	yes	stage 12 final CJD calls
+sequencing2-cjd	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/withPoN_PRNP_PASS.tsv	yes	stage 12 PRNP PASS table
+sequencing2-cjd	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/withPoN_TET2_PASS.tsv	yes	stage 12 TET2 PASS table
+sequencing2-cjd	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/withPoN_TTN_PASS.tsv	yes	stage 12 TTN PASS table
+sequencing2-dilutions	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/summary_combined_variants.tsv	yes	stage 12 combined dilution calls
+sequencing2-dilutions	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/filtered_variants.tsv	yes	stage 12 retained dilution calls
+sequencing2-dilutions	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/filtered_prnp_variants.tsv	yes	stage 12 retained PRNP dilution calls
+sequencing2-dilutions	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/filtered_out_variants.tsv	yes	stage 12 excluded dilution calls
+sequencing2-dilutions	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/filter_counts.tsv	yes	stage 12 dilution filter counts
+sequencing2-dilutions	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/run_settings.tsv	yes	stage 12 settings; AAF filter disabled and LoD recorded
+sequencing2-dilutions	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/final_withPoN_variants.tsv	yes	stage 12 final dilution calls
+sequencing2-dilutions	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/withPoN_PRNP_PASS.tsv	yes	stage 12 PRNP PASS table
+sequencing2-dilutions	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/withPoN_TET2_PASS.tsv	yes	stage 12 TET2 PASS table
+sequencing2-dilutions	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/withPoN_TTN_PASS.tsv	yes	stage 12 TTN PASS table
+spikein-source	results2/spikein/read_recovery/mixture_read_recovery.tsv	yes	direct-count source for isolated Table 4
+spikein-source	results2/spikein/logs/final/final_marker_calls.tsv	yes	retained exact-allele call extract for isolated Table 4
+spikein-source	results2/spikein/logs/final/final_validation_tables_sha256.txt	yes	verification record for the final-call extract
+spikein-source	results2/spikein/markers/informative_markers.tsv	yes	marker source for isolated Table 4
+spikein-source	results2/spikein/read_recovery/empirical_lod.tsv	yes	exact complete-pipeline LoD source
+manuscript2-config	manuscript2/config2/figure_table_crosswalk.tsv	yes	isolated figure and table crosswalk
+manuscript2-config	manuscript2/config2/figure_table_provenance_inputs.tsv	yes	isolated direct-input provenance
+manuscript2-table4	manuscript2/tables2/make_spikein_snp_recovery_table.R	yes	deterministic isolated Table 4 generator
+manuscript2-table4	manuscript2/tables2/table_spikein_snp_recovery.tex	yes	isolated Table 4 TeX
+manuscript2-table4	manuscript2/tables2/table_spikein_snp_recovery_preview.tex	yes	standalone isolated Table 4 wrapper
+manuscript2-table4	manuscript2/tables2/table_spikein_snp_recovery.pdf	yes	visually checked isolated Table 4 PDF
+manuscript2-table6	manuscript2/tables2/make_prnp_somatic_snv_summary_tex.py	yes	deterministic isolated Table 6 generator
+manuscript2-table6	manuscript2/tables2/table_prnp_somatic_snv_summary.tex	yes	isolated Table 6 TeX
+manuscript2-table6	manuscript2/tables2/table_prnp_somatic_snv_summary_preview.tex	yes	standalone isolated Table 6 wrapper
+manuscript2-table6	manuscript2/tables2/table_prnp_somatic_snv_summary.pdf	yes	visually checked isolated Table 6 PDF
+manuscript2-figure8	manuscript2/figures2/snv_lollipop/make_snv_lollipop.R	yes	deterministic isolated Figure 8 generator
+manuscript2-figure8	manuscript2/figures2/snv_lollipop/build_snv_lollipop_svg.py	yes	adapted original reviewed-SVG post-processor
+manuscript2-figure8	manuscript2/figures2/snv_lollipop/SNV_lollipop_baseline.svg	yes	isolated original R/trackViewer baseline
+manuscript2-figure8	manuscript2/figures2/snv_lollipop/SNV_lollipop_template.svg	yes	isolated original reviewed SVG template
+manuscript2-figure8	manuscript2/figures2/snv_lollipop/SNV_lollipop_data.csv	yes	isolated Figure 8 plotted data
+manuscript2-figure8	manuscript2/figures2/snv_lollipop/SNV_lollipop.svg	yes	isolated Figure 8 vector output
+manuscript2-figure8	manuscript2/figures2/snv_lollipop/SNV_lollipop.pdf	yes	visually checked isolated Figure 8 PDF
+manuscript2-figure8	manuscript2/figures2/snv_lollipop/SNV_lollipop_edit_diff.json	yes	retained SVG transformation record
+manuscript2-figure8	manuscript2/figures2/snv_lollipop/figure_snv_lollipop_variants.tex	yes	isolated Figure 8 TeX wrapper
+audit2	audit2/numerical_consistency/sequencing2/numeric_claims.tsv	yes	isolated numerical claims
+audit2	audit2/numerical_consistency/sequencing2/old_vs_sequencing2_calls.tsv	yes	old-to-sequencing2 call crosswalk
+audit2	audit2/numerical_consistency/sequencing2/provenance_map.md	yes	isolated provenance narrative
+audit2	audit2/numerical_consistency/sequencing2/verification_summary.md	yes	isolated verification summary
+audit2	audit2/numerical_consistency/sequencing2/audit_manifest.sha256	yes	isolated audit checksums
+tests2	tests2/regression/test_sequencing2_variant_table_provenance.R	yes	isolated provenance and content regression
+reproducibility2	reproducibility2/make_inventory.py	yes	isolated inventory generator
+reproducibility2	reproducibility2/inventory.tsv	yes	isolated generated script inventory

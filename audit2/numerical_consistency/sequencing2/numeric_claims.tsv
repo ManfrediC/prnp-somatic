@@ -1,0 +1,11 @@
+claim	value	source	verification
+empirical_complete_pipeline_lod	26/3891 = 0.006682086867129272	results2/spikein/read_recovery/empirical_lod.tsv	exact fraction and PASS status
+final_cjd_sample_level_calls	3	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filtered_prnp_variants.tsv	row count
+final_cjd_unique_sites	2	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filtered_prnp_variants.tsv	distinct CHROM/POS/REF/ALT
+final_control_calls	0	results2/sequencing2/results/mutect2_controls_no_pon/variant_qc/final_noPoN_variants.tsv	data-row count
+cjd_vaf_percent_range	0.8172362555720654-0.9463113171108536	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filtered_prnp_variants.tsv	100 * AAF
+cjd_alt_count_range	11-49	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filtered_prnp_variants.tsv	minimum and maximum ALT_count
+cjd_depth_range	1346-5178	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filtered_prnp_variants.tsv	minimum and maximum DP
+cjd_mean_bq_range	20.62-22.01	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filtered_prnp_variants.tsv	corrected MEAN_BQ field
+cjd_mean_mq_range	30.01-38.49	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filtered_prnp_variants.tsv	corrected MEAN_MQ field
+dilution_aaf_filter	FALSE	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/dilutions/run_settings.tsv	enable_aaf_filter and aaf_filter_applied

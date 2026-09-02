@@ -1,0 +1,6 @@
+step	rows_before	rows_after	rows_removed
+ALT >= 10 and DP >= 100	25	19	6
+strand balance >= 3 ALT reads per strand	19	19	0
+MEAN_BQ >= 20, MEAN_MQ >= 20, binomial p <= 1e-06	19	11	8
+population frequency < 0.001 or NA	11	4	7
+AAF filter temporarily disabled (configured threshold would be > 0.0081)	4	4	0

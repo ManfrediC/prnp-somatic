@@ -1,0 +1,5 @@
+sample	CHROM	POS	REF	ALT	old_manuscript_vaf	old_original_final	sequencing2_vaf	sequencing2_final	change
+CJD2	chr20	4691920	G	A	0.0055248618784530384	FALSE	0.008864499788940482	TRUE	retained_candidate_now_final
+CJD6	chr20	4691920	G	A	0.005169442848937392	FALSE		FALSE	removed_from_new_callset
+CJD23	chr20	4691920	G	A	0.006039353204753555	FALSE	0.009463113171108536	TRUE	retained_candidate_now_final
+CJD23	chr20	4694249	T	C	0.00818452380952381	TRUE	0.008172362555720654	TRUE	retained_final

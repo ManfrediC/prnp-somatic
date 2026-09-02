@@ -1,0 +1,11 @@
+key	value
+enable_aaf_filter	FALSE
+aaf_filter_applied	FALSE (temporary override)
+aaf_threshold	0.0081
+min_alt_count	10
+min_dp	100
+min_strand_alt	3
+min_mean_bq	20
+min_mean_mq	20
+max_pop_freq	0.001
+max_binom_p	1e-06
