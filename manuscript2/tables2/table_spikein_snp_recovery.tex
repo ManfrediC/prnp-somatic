@@ -6,7 +6,7 @@
       \toprule
       Sample & Marker & dbSNP ID & Chromosome & Position & REF & ALT
       & Usable depth & REF count & ALT count & bam-readcount VAF (exact 95\% CI, \%)
-      & Mutect2 AF (\%) & ALT mean BQ & ALT mean MQ
+      & Mutect2-estimated VAF (\%) & ALT mean BQ & ALT mean MQ
       & ALT forward & ALT reverse & Filter \\
       \midrule
       A117V high & chr20 4693455 G\textgreater{}A & NA & chr20 & 4693455 & G & A & 7870 & 7780 & 90 & 1.14 (0.92--1.40) & 1.00 & 22.54 & 60.00 & 47 & 43 & PASS \\
@@ -19,7 +19,7 @@
     \end{tabular}
   }
   \vspace{0.5em}
-  \caption{\textbf{Spike-in SNP recovery across both mixtures.} The table includes fixed SNP markers whose exact alleles passed read-level QC, Mutect2 and FilterMutectCalls in both A117V high and A117V low. bam-readcount VAFs use ALT count divided by usable A/C/G/T depth; Mutect2 AF is reported separately. The empirical complete-pipeline LoD is 26/3891 (0.668\%), defined by chr20:4693455 G\textgreater{}A in A117V low.}
+  \caption{\textbf{Spike-in SNP recovery across both mixtures.} The table includes fixed SNP markers whose exact alleles passed read-level QC, Mutect2 and FilterMutectCalls in both A117V high and A117V low. bam-readcount VAFs use ALT count divided by usable A/C/G/T depth; Mutect2-estimated VAF is reported separately. The empirical complete-pipeline LoD is 26/3891 (0.668\%), defined by chr20:4693455 G\textgreater{}A in A117V low.}
   \label{tab:spikein_snp_recovery}
 \end{table}
 

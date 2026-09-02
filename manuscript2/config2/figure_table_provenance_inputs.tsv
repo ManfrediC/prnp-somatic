@@ -1,0 +1,13 @@
+reference	input_role	path	required	produced_by	notes
+Table 4 (sequencing2)	read_recovery	results2/spikein/read_recovery/mixture_read_recovery.tsv	yes	src2/spikein/7_mixture_read_recovery.py	Direct bam-readcount evidence for the displayed markers.
+Table 4 (sequencing2)	final_calls	results2/spikein/logs/final/final_marker_calls.tsv	yes	retained verification extract from stage 9 filtered VCFs	Exact alleles passing Mutect2 and FilterMutectCalls; its hash is retained in final_validation_tables_sha256.txt.
+Table 4 (sequencing2)	marker_definition	results2/spikein/markers/informative_markers.tsv	yes	src2/spikein/5_marker_recovery.py	Marker identifiers and dbSNP annotations.
+Table 4 (sequencing2)	empirical_lod	results2/spikein/read_recovery/empirical_lod.tsv	yes	src2/spikein/10_derive_empirical_lod.py	Exact complete-pipeline LoD observation, 26/3891.
+Table 6 (sequencing2)	primary_data	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filtered_prnp_variants.tsv	yes	src2/sequencing2/12_cjd_dilutions_variant_qc_with_pon.sh	Three final CJD PRNP calls.
+Table 6 (sequencing2)	run_settings	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/run_settings.tsv	yes	src2/sequencing2/12_cjd_dilutions_variant_qc_with_pon.sh	Records the enabled AAF filter and exact threshold.
+Table 6 (sequencing2)	empirical_lod	results2/spikein/read_recovery/empirical_lod.tsv	yes	src2/spikein/10_derive_empirical_lod.py	Independent source for the exact threshold.
+Figure 8 (sequencing2)	primary_data	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/filtered_prnp_variants.tsv	yes	src2/sequencing2/12_cjd_dilutions_variant_qc_with_pon.sh	Same call membership and AAF source as Table 6.
+Figure 8 (sequencing2)	run_settings	results2/sequencing2/results/mutect2_cjd_dilutions_with_pon/variant_qc/cjd/run_settings.tsv	yes	src2/sequencing2/12_cjd_dilutions_variant_qc_with_pon.sh	Records the enabled AAF filter and exact threshold.
+Figure 8 (sequencing2)	empirical_lod	results2/spikein/read_recovery/empirical_lod.tsv	yes	src2/spikein/10_derive_empirical_lod.py	Source for the plotted LoD line.
+Figure 8 (sequencing2)	baseline_svg	manuscript2/figures2/snv_lollipop/SNV_lollipop_baseline.svg	yes	isolated copy of the original R/trackViewer baseline	Supplies the original R lollipop head paths.
+Figure 8 (sequencing2)	reviewed_template	manuscript2/figures2/snv_lollipop/SNV_lollipop_template.svg	yes	isolated copy of the original reviewed SVG template	Supplies the canonical axes, labels, legend and exon-track design.

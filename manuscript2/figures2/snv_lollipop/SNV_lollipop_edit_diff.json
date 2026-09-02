@@ -1,0 +1,77 @@
+{
+  "baseline_svg": "/mnt/c/Projects/prnp-somatic/manuscript2/figures2/snv_lollipop/SNV_lollipop_baseline.svg",
+  "reviewed_template_svg": "/mnt/c/Projects/prnp-somatic/manuscript2/figures2/snv_lollipop/SNV_lollipop_template.svg",
+  "canonical_svg": "/mnt/c/Projects/prnp-somatic/manuscript2/figures2/snv_lollipop/SNV_lollipop.svg",
+  "canonical_pdf": "/mnt/c/Projects/prnp-somatic/manuscript2/figures2/snv_lollipop/SNV_lollipop.pdf",
+  "data_sha256": "066e2be47a15b00ffe2fcd6e26089ae3d6eff049318d888ae1cf40736fdbaf21",
+  "lod_percent": 0.668208686712927,
+  "lod_line_y": 200.71211738031826,
+  "removed_ids": [
+    "path1013-2",
+    "path1019-0",
+    "path3082",
+    "path3084",
+    "path3086",
+    "text871-7-8-0",
+    "use3124",
+    "use3126",
+    "use3128",
+    "use3130",
+    "use3132",
+    "use3134",
+    "use3136",
+    "use3140",
+    "use3142",
+    "use3144"
+  ],
+  "head_edits": [
+    {
+      "key": "blue",
+      "sample": "CJD2",
+      "position": 4691920,
+      "vaf_percent": 0.8864499788940482,
+      "target_head_y": 156.78990221132813,
+      "baseline_path_sha256": "e8e58f0489448d22053a620ccda68baee22369b9a84f4041a0e20e412fb76af2",
+      "scale": [
+        1.3333333333333333,
+        1.3333333333333333
+      ],
+      "translation": [
+        -0.5102853333333428,
+        -53.56947245533854
+      ]
+    },
+    {
+      "key": "green_uncertain",
+      "sample": "CJD23",
+      "position": 4691920,
+      "vaf_percent": 0.9463113171108536,
+      "target_head_y": 147.33736270515118,
+      "baseline_path_sha256": "4aeba9cfb08771ea14d6f44c260a503cd3c2253a3234c9b01606e20e25cf0a44",
+      "scale": [
+        1.3333333333333333,
+        1.3333333333333333
+      ],
+      "translation": [
+        -0.5102899999999977,
+        -55.126178628182146
+      ]
+    },
+    {
+      "key": "green_high",
+      "sample": "CJD23",
+      "position": 4694249,
+      "vaf_percent": 0.8172362555720654,
+      "target_head_y": 167.7131343185195,
+      "baseline_path_sha256": "e994f8e3c925cbd230e8eac68592381f167e867207d4516470c0c483575b3dc3",
+      "scale": [
+        1.3333333333333333,
+        1.3333333333333333
+      ],
+      "translation": [
+        -0.5102939999999876,
+        -0.021240348147159693
+      ]
+    }
+  ]
+}

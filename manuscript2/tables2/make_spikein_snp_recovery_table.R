@@ -81,7 +81,7 @@ render_table <- function(data) {
     "      \\toprule",
     "      Sample & Marker & dbSNP ID & Chromosome & Position & REF & ALT",
     "      & Usable depth & REF count & ALT count & bam-readcount VAF (exact 95\\% CI, \\%)",
-    "      & Mutect2 AF (\\%) & ALT mean BQ & ALT mean MQ",
+    "      & Mutect2-estimated VAF (\\%) & ALT mean BQ & ALT mean MQ",
     "      & ALT forward & ALT reverse & Filter \\\\",
     "      \\midrule",
     rows,
@@ -93,7 +93,7 @@ render_table <- function(data) {
       "  \\caption{\\textbf{Spike-in SNP recovery across both mixtures.} ",
       "The table includes fixed SNP markers whose exact alleles passed read-level QC, Mutect2 and ",
       "FilterMutectCalls in both A117V high and A117V low. bam-readcount VAFs use ALT count divided ",
-      "by usable A/C/G/T depth; Mutect2 AF is reported separately. The empirical complete-pipeline ",
+      "by usable A/C/G/T depth; Mutect2-estimated VAF is reported separately. The empirical complete-pipeline ",
       "LoD is 26/3891 (0.668\\%), defined by chr20:4693455 G\\textgreater{}A in A117V low.}"
     ),
     "  \\label{tab:spikein_snp_recovery}",
@@ -111,9 +111,11 @@ lod <- read_tsv(lod_tsv)
 
 require_columns(
   recovery,
-  c("marker_id", "chromosome", "position", "ref", "alt", "category", "sample_role",
+  c(
+    "marker_id", "chromosome", "position", "ref", "alt", "category", "sample_role",
     "sample_id", "usable_depth", "ref_count", "alt_count", "alt_vaf", "alt_forward",
-    "alt_reverse", "alt_mean_bq", "alt_mean_mq", "read_level_recovered"),
+    "alt_reverse", "alt_mean_bq", "alt_mean_mq", "read_level_recovered"
+  ),
   "Mixture recovery table"
 )
 require_columns(
@@ -124,8 +126,10 @@ require_columns(
 require_columns(markers, c("marker_id", "dbsnp_id"), "Informative marker table")
 require_columns(
   lod,
-  c("supporting_marker", "supporting_sample", "bam_readcount_alt_count",
-    "bam_readcount_usable_depth", "filtermutectcalls_status"),
+  c(
+    "supporting_marker", "supporting_sample", "bam_readcount_alt_count",
+    "bam_readcount_usable_depth", "filtermutectcalls_status"
+  ),
   "Empirical LoD table"
 )
 
@@ -165,7 +169,7 @@ table_data$marker_label <- ifelse(
   paste(table_data$chromosome, table_data$position, paste0(table_data$ref, ">", table_data$alt))
 )
 
-# Calculate direct-count intervals and retain Mutect2 AF as a separate estimate.
+# Calculate direct-count intervals and retain the Mutect2-estimated VAF separately.
 intervals <- t(mapply(exact_ci_percent, table_data$alt_count, table_data$usable_depth))
 table_data$vaf_percent <- as.numeric(table_data$alt_vaf) * 100
 table_data$ci_lower_percent <- intervals[, 1]
@@ -174,12 +178,16 @@ table_data$mutect2_vaf_percent <- as.numeric(table_data$filtered_vaf) * 100
 
 # Verify that the canonical LoD row is present among the displayed PASS calls.
 lod_row <- table_data[
-  table_data$marker_id == lod$supporting_marker & table_data$sample_id == lod$supporting_sample,
-  , drop = FALSE
+  table_data$marker_id == lod$supporting_marker & table_data$sample_id == lod$supporting_sample, ,
+  drop = FALSE
 ]
-if (nrow(lod_row) != 1L || lod$filtermutectcalls_status != "PASS" ||
-    lod_row$alt_count != lod$bam_readcount_alt_count ||
-    lod_row$usable_depth != lod$bam_readcount_usable_depth) {
+lod_matches <- c(
+  nrow(lod_row) == 1L,
+  lod$filtermutectcalls_status == "PASS",
+  lod_row$alt_count == lod$bam_readcount_alt_count,
+  lod_row$usable_depth == lod$bam_readcount_usable_depth
+)
+if (!all(lod_matches)) {
   stop("Displayed rows do not contain the canonical empirical LoD observation")
 }
 
